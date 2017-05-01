@@ -83,18 +83,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fct</groupId>
+            <groupId>com.fct.common</groupId>
             <artifactId>fct-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fct.MessageService</groupId>
-            <artifactId>MessageService.Model</artifactId>
+            <groupId>com.fct.messageservice</groupId>
+            <artifactId>messageservice-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fct.MessageService</groupId>
-            <artifactId>MessageService.Interface</artifactId>
+            <groupId>com.fct.messageservice</groupId>
+            <artifactId>messageservice-interface</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

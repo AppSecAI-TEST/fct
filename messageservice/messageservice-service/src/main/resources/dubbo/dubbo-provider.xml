@@ -24,6 +24,6 @@
     <dubbo:application name="message-service"/>
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
     <dubbo:protocol name="dubbo" port="20881" />
-    <!--<dubbo:reference id="reservationServicinterfacesface="com.yimiao.vaccine.service.ReservationService" timeout="5000" check="false"/>-->
+
     <dubbo:service interface="com.fct.message.interfaces.MessageService" ref="messageService" timeout="5000"/>
 </beans>

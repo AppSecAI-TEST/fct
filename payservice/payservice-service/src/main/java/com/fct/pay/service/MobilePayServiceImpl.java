@@ -3,6 +3,7 @@ package com.fct.pay.service;
 import com.fct.pay.interfaces.MobilePayService;
 import com.fct.pay.model.PayNotify;
 import com.fct.pay.service.wxpay.WXPay;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
 /**
  * Created by jon on 2017/4/22.
  */
+@Service("mobilePayService")
 public class MobilePayServiceImpl implements MobilePayService {
 
     public String wxpayWap(String payment, String payOrderNo, String openId, BigDecimal total_fee, String body,

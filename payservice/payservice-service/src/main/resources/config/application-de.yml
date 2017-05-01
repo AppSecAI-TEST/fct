@@ -1,0 +1,80 @@
+server:
+  port: 8080
+  contextPath: /fct
+  tomcat:
+    uri-encoding: UTF-8
+
+
+redis:
+  host:
+    url: 127.0.0.1
+    port: 6379
+    test:
+      onborrow: true
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+mongo:
+  host:
+    port: 9024
+    url: mongo-m.fct.me
+    db: easemob
+    collectionName: sms_log
+
+mysql:
+  connection:
+    url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 123456
+
+pay:
+  wxpay_fyhwap:
+    key:  40030613ae6f219923c3634e047abe4e
+    mchid:  1405964802
+    notifyurl:  http://pay.fct.com/wap/wxpay/notify
+    cert_path:  conf\wxpay\1405964802_cert.p12
+    cert_password:  1405964802
+    appid:  wx5b63ee784fa7fc96
+    appsecret:  d70744148ac1f943f844caa175f8ee73
+
+  wxpay_fyhapp:
+    key:  40030613ae6f219923c3634e047abe4e
+    mchid:  1442883002
+    notifyurl:  http://pay.fct.com/wap/wxpay/appnotify
+    cert_path:  conf\wxpayapp\1442883002_cert.p12
+    cert_password:  1442883002
+    appid:  wx7c866f046dab34b8
+    appsecret:  7b6d038c11400a323bbd7f7849021159
+
+  alipay_fyhapp:
+    partner:  2088621198090730
+    key:  alhanc3pys7dm7o1vqdmtv5bzjj1kpvj
+    selleraccount:  pay@fct.com
+    notifyurl:  http://pay.golddiy.com/mobile/alipay/appnotify
+    privatekey_path:  conf\alipay\rsa_private_key.pem
+    publickey_path:  conf\alipay\rsa_public_key.pem
+
+  unionpay_fyhwap:
+    meriId: 802310054110766
+    frontTransUrl: https://gateway.95516.com/gateway/api/frontTransReq.do?
+    backTransUrl: https://gateway.95516.com/gateway/api/backTransReq.do?
+    signCert_path:  conf\unionpay\unionpay.pfx
+    signCert_pwd: 898989
+    validateCert_dir: conf\unionpay\
+    backUrl:  http://pay.golddiy.com/mobile/unionpay/notify
+    frontUrl: http://pay.golddiy.com/mobile/unionpay/callback
+    refund_backUrl: http://pay.golddiy.com/mobile/unionpay/refundnotify
+
+  platform_ids:
+    wxpay_appids: wx5b63ee784fa7fc96#wxpay_fctwap|wx7c866f046dab34b8#wxpay_fctapp
+    alipay_sellerids:  2088621198090730#alipay_fctapp
+
+
+
+
+
+
+
+

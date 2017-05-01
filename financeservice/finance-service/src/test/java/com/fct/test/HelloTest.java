@@ -1,7 +1,9 @@
 package com.fct.test;
 
+import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.service.ApplicationStartUp;
 import com.fct.finance.service.FinanceServiceImpl;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ public class HelloTest {
 
     @Test
     public void testService(){
-//        financeService.sayHello();
+        PayOrder payOrder = financeService.getPayOrder("123");
+        Assert.assertNotNull(payOrder);
     }
 }

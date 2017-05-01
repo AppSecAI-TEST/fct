@@ -2,6 +2,7 @@ package com.fct.finance.service;
 
 import com.fct.finance.data.entity.*;
 import com.fct.finance.service.business.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -13,40 +14,43 @@ import java.util.List;
  */
 @Service(value = "financeService")
 public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceService {
+    
+    @Autowired
+    private PayOrderManager payOrderManager;
 
     @Override
     public PayOrder createPayOrder(PayOrder payOrder) {
 
-        return PayOrderManager.instance.create(payOrder);
+        return payOrderManager.create(payOrder);
     }
 
     @Override
     public PayOrder getPayOrder(String orderId){
-        return  PayOrderManager.instance.findOne(orderId);
+        return  payOrderManager.findOne(orderId);
     }
 
     @Override
     public PayOrder getPayOrderByTrade(String tradeType, String tradeId)
     {
-        return  PayOrderManager.instance.findByTrade(tradeType,tradeId);
+        return  payOrderManager.findByTrade(tradeType,tradeId);
     }
 
     @Override
     public PayOrder paySuccess(String orderId, String platform, String notifyData){
-        return  PayOrderManager.instance.paySuccess(orderId,platform,notifyData);
+        return  payOrderManager.paySuccess(orderId,platform,notifyData);
     }
 
     @Override
     public void payTradeNotify(String jsonMQPayTrade){
 
-        PayOrderManager.instance.tradeNotify(jsonMQPayTrade);
+        payOrderManager.tradeNotify(jsonMQPayTrade);
     }
 
     @Override
     public Page<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
                                         Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return  PayOrderManager.instance.findAll(memberId,cellPhone,platform,tradeId,tradeType,status,
+        return  payOrderManager.findAll(memberId,cellPhone,platform,tradeId,tradeType,status,
                 beginTime,endTime,pageIndex,pageSize);
     }
 

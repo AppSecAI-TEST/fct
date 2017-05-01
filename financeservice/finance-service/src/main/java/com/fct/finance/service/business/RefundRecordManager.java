@@ -38,6 +38,9 @@ public class RefundRecordManager {
 
     @Autowired
     private RefundRecordRepository refundRecordRepository;
+    
+    @Autowired
+    private PayOrderManager payOrderManager;
 
     public static RefundRecordManager instance = new RefundRecordManager();
 
@@ -78,7 +81,7 @@ public class RefundRecordManager {
         ///线下处理退款，无法校验其有效性，所以不做校验。
         ///
         //校验退款金额是否与支付时产生的一致。
-        PayOrder pay = PayOrderManager.instance.findOne(refund.getPayOrderId());
+        PayOrder pay = payOrderManager.findOne(refund.getPayOrderId());
 
         if (pay != null)
         {
@@ -125,7 +128,7 @@ public class RefundRecordManager {
                 Constants.enumPayStatus.partrefund.getValue();
         pay.setStatus(payStatus);
 
-        PayOrderManager.instance.save(pay);
+        payOrderManager.save(pay);
 
         return refund;
     }

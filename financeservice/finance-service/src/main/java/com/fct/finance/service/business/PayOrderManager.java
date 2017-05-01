@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,16 +32,15 @@ import java.util.List;
 /**
  * Created by jon on 2017/4/10.
  */
+@Service
 public class PayOrderManager  {
 
     @Autowired
     private PayOrderRepository payOrderRepository;
 
-    public static PayOrderManager instance = new PayOrderManager();
-
     public void save(PayOrder pay)
     {
-        payOrderRepository.saveAndFlush(pay);
+        payOrderRepository.save(pay);
     }
 
     @Transactional

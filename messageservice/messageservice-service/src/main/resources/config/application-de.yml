@@ -1,6 +1,6 @@
 server:
-  port: 8080
-  contextPath: /fct
+  port: 8085
+  contextPath: /message-service
   tomcat:
     uri-encoding: UTF-8
 

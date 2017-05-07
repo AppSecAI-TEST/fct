@@ -18,7 +18,7 @@ redis:
 
 mongo:
   host:
-    port: 9024
+    port: 9025
     url: mongo-m.fct.me
     db: easemob
     collectionName: sms_log

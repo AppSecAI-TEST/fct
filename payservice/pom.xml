@@ -9,9 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>payservice-interfaces</module>
-        <module>payservice-model</module>
-        <module>payservice-service</module>
+        <module>pay-interface</module>
+        <module>pay-model</module>
+        <module>pay-service</module>
     </modules>
 
     <parent>

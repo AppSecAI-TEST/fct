@@ -9,10 +9,10 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>messageservice-data</module>
-        <module>messageservice-interface</module>
-        <module>messageservice-service</module>
-        <module>messageservice-model</module>
+        <module>message-data</module>
+        <module>message-interface</module>
+        <module>message-service</module>
+        <module>message-model</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -1,9 +1,7 @@
 package com.fct.common.utils;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Months;
+import org.joda.time.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -168,7 +166,26 @@ public class DateUtils {
         DateTime smDateTime = new DateTime(small);
         DateTime bigDateTime = new DateTime(future);
         int days = Days.daysBetween(smDateTime, bigDateTime).getDays();
+        Minutes.minutesBetween(smDateTime,bigDateTime).getMinutes();
         return days;
+    }
+
+    public static int minutesBetween(Date smdate,Date bdate){
+        String small = sdf_day.format(smdate);
+        String future = sdf_day.format(bdate);
+        DateTime smDateTime = new DateTime(small);
+        DateTime bigDateTime = new DateTime(future);
+        int minutes = Minutes.minutesBetween(smDateTime,bigDateTime).getMinutes();
+        return minutes;
+    }
+
+    public static int hourBetween(Date smdate,Date bdate){
+        String small = sdf_day.format(smdate);
+        String future = sdf_day.format(bdate);
+        DateTime smDateTime = new DateTime(small);
+        DateTime bigDateTime = new DateTime(future);
+        int hour = Hours.hoursBetween(smDateTime,bigDateTime).getHours();
+        return hour;
     }
 
     public static int MonthsBetween(Date smdate, Date bdate){
@@ -177,6 +194,24 @@ public class DateUtils {
         DateTime smDateTime = new DateTime(small);
         DateTime bigDateTime = new DateTime(future);
         return Months.monthsBetween(smDateTime, bigDateTime).getMonths();
+    }
+
+    public static Date addMinute(Date date, int minute){
+        DateTime dateTime = new DateTime(date);
+        dateTime = dateTime.plusMinutes(minute);
+        return  dateTime.toDate();
+    }
+
+    public static Date addHour(Date date, int hour){
+        DateTime dateTime = new DateTime(date);
+        dateTime = dateTime.plusHours(hour);
+        return  dateTime.toDate();
+    }
+
+    public static Date addDay(Date date, int day){
+        DateTime dateTime = new DateTime(date);
+        dateTime = dateTime.plusDays(day);
+        return  dateTime.toDate();
     }
 
     public static Date addMonth(Date date, int month){

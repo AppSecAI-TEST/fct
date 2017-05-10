@@ -9,10 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>fct-http</module>
-        <module>fct-data</module>
-        <module>fct-interface</module>
-        <module>fct-service</module>
+        <module>api-admin</module>
+        <module>api-web</module>
+        <module>api-data</module>
     </modules>
 
     <parent>

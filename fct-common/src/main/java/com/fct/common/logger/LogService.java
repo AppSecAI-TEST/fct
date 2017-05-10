@@ -55,6 +55,29 @@ public class LogService {
         logger.log(Level.ALL,msg,thrown);
     }
 
+
+    public static void error(String msg)
+    {
+        logger.log(Level.ALL,msg);
+    }
+
+    public static void error(String msg,Object param)
+    {
+        logger.log(Level.ALL,msg,param);
+    }
+
+    public static void error(String msg,Object[] params)
+    {
+        logger.log(Level.ALL,msg,params);
+    }
+
+    public static void error(String msg,Throwable thrown)
+    {
+        logger.log(Level.ALL,msg,thrown);
+    }
+
+
+
     public static void warning(String msg)
     {
         logger.log(Level.WARNING,msg);

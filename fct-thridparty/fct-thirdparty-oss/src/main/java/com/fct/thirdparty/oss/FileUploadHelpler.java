@@ -30,6 +30,7 @@ public class FileUploadHelpler {
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
         this.endpoint = endpoint;
+        initOssClient();
     }
 
     private ExecutorService pool = Executors.newFixedThreadPool(20);

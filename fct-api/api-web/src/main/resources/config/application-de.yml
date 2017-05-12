@@ -29,6 +29,15 @@ mysql:
     username: root
     password: 123456
 
+aliyun:
+  oss:
+    endpoint: http://oss-cn-shanghai.aliyuncs.com/
+    bucket:
+      name: fct-nick
+    access:
+      key:
+        id: LTAId0h3QAgdPmXT
+        secret: cLMJrTzs1APvyXehfjOQUsYq66A3Wc
 
 
 

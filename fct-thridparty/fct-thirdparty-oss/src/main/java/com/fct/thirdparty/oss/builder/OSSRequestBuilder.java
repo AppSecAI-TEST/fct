@@ -74,6 +74,6 @@ public class OSSRequestBuilder {
             throw new IllegalArgumentException("ossClient should not be null");
 
         if(builder.getOssRequest().getFile()==null)
-            throw new IllegalArgumentException("ossClient should not be null");
+            throw new IllegalArgumentException("file should not be null");
     }
 }

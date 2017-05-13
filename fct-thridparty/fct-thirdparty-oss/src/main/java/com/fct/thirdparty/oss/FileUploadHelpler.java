@@ -2,6 +2,7 @@ package com.fct.thirdparty.oss;
 
 import com.aliyun.oss.OSSClient;
 import com.fct.thirdparty.oss.builder.OSSRequestBuilder;
+import com.fct.thirdparty.oss.callback.Callback;
 import com.fct.thirdparty.oss.callback.OSSCallback;
 import com.fct.thirdparty.oss.factory.OSSClientFactory;
 import com.fct.thirdparty.oss.request.OSSRequest;
@@ -25,21 +26,29 @@ public class FileUploadHelpler {
     private String accessKeySecret;
     private String endpoint;
     private OSSClient ossClient;
-    private static final Integer THREAD_SIZE = 20;
-
-    public FileUploadHelpler(String bucketName, String accessKeyId,
-                             String accessKeySecret, String endpoint){
-        this.bucketName = bucketName;
-        this.accessKeyId = accessKeyId;
-        this.accessKeySecret = accessKeySecret;
-        this.endpoint = endpoint;
-        initOssClient();
-    }
+    private OSSCallback callback;
+    private Integer threadSize = 20;
 
     /**
      * 管理OSS上传任务的线程池 默认20个
      */
-    private ExecutorService pool = Executors.newFixedThreadPool(THREAD_SIZE);
+    private ExecutorService pool;
+
+    public FileUploadHelpler(String bucketName, String accessKeyId,
+                             String accessKeySecret, String endpoint,
+                             OSSCallback callback, Integer threadSize){
+
+        this.bucketName = bucketName;
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = accessKeySecret;
+        this.endpoint = endpoint;
+        this.callback = callback;
+        if(threadSize!=null|| threadSize > 0)
+            this.threadSize = threadSize;
+        pool = Executors.newFixedThreadPool(this.threadSize);
+        initOssClient();
+    }
+
 
     /**
      * 上传文件
@@ -55,7 +64,7 @@ public class FileUploadHelpler {
                                             ossClient(ossClient).
                                             file(file).
                                             key(fileName).
-                                            callBack(null).
+                                            callBack(callback).
                                             build();
             Future<UploadResponse> future = pool.submit(new OSS(request));
             return future.get();

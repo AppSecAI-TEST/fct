@@ -18,7 +18,7 @@ public class OSSTest {
     @Test
     public void uploadFileTest(){
         FileUploadHelpler helpler = new FileUploadHelpler(bucketName, accessKeyId,
-                accessKeySecret, endpoint);
+                accessKeySecret, endpoint, null, 10);
         String path = "/Users/ningyang/Documents/haha.png";
         File file = new File(path);
         UploadResponse response = helpler.uploadFile(file, "haha.png");

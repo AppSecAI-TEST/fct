@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,12 +25,17 @@ import java.util.List;
 /**
  * Created by jon on 2017/4/20.
  */
+@Service
 public class SettleRecordManager {
 
     @Autowired
     private SettleRecordRepository settleRecordRepository;
 
-    public static SettleRecordManager instance = new SettleRecordManager();
+    @Autowired
+    private MemberAccountManager memberAccountManager;
+
+    @Autowired
+    private MemberAccountHistoryManager memberAccountHistoryManager;
 
     public Integer create(SettleRecord record)
     {
@@ -108,7 +114,7 @@ public class SettleRecordManager {
     /// </summary>
     void addAccountAmount(Integer memberId,String cellPhone,BigDecimal commission,Integer settleId)
     {
-        MemberAccount account = MemberAccountManager.instance.findById(memberId);
+        MemberAccount account = memberAccountManager.findById(memberId);
 
         if (account == null)
         {
@@ -121,7 +127,7 @@ public class SettleRecordManager {
         account.setAccumulateIncome(account.getAccumulateIncome().add(commission));
         account.setWithdrawAmount(account.getWithdrawAmount().add(commission));
 
-        MemberAccountManager.instance.save(account);
+        memberAccountManager.save(account);
 
         MemberAccountHistory history = new MemberAccountHistory();
         history.setTradeId(settleId.toString());
@@ -133,7 +139,7 @@ public class SettleRecordManager {
         history.setBalancePoints(account.getPoints());
         history.setRemark("佣金结算");
         history.setBehaviorType(1); //收入
-        MemberAccountHistoryManager.instance.Create(history);
+        memberAccountHistoryManager.Create(history);
 
     }
 

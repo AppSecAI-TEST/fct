@@ -30,21 +30,16 @@ import java.util.List;
 @Service
 public class InviteCodeManager {
 
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final InviteCodeManager instance = new InviteCodeManager();
-
-    // 静态方法返回该类的实例
-    public static InviteCodeManager getInstance() {
-        return instance;
-    }
-
     @Autowired
     private InviteCodeRepository inviteCodeRepository;
+
+    @Autowired
+    private MemberManager memberManager;
 
     @Transactional
     public void create(Integer memberId)
     {
-        Member member = MemberManager.getInstance().findById(memberId);
+        Member member = memberManager.findById(memberId);
         if (member == null || member.getCanInviteCount() == 0)
         {
             throw new IllegalArgumentException("您没有生成邀请码权利！");
@@ -60,7 +55,7 @@ public class InviteCodeManager {
         inviteCodeRepository.save(code);
 
         member.setCanInviteCount(member.getCanInviteCount()-1);
-        MemberManager.getInstance().save(member);
+        memberManager.save(member);
     }
 
     public Page<InviteCode> findAll(Integer ownerId, String ownerCellPhone, int pageIndex, int pageSize)

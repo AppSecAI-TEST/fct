@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,14 +25,8 @@ import java.util.List;
  * Created by jon on 2017/5/8.
  * jon love nancy forever
  */
+@Service
 public class SystemUserManager {
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final SystemUserManager instance = new SystemUserManager();
-
-    // 静态方法返回该类的实例
-    public static SystemUserManager getInstance() {
-        return instance;
-    }
 
     @Autowired
     private SystemUserRepository systemUserRepository;

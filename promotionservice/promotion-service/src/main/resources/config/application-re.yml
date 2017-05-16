@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  contextPath: /fct
+  tomcat:
+    uri-encoding: UTF-8
+
+redis:
+  host:
+    url: 127.0.0.1
+    port: 6379
+    test:
+      onborrow: true
+    password: admin
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+mongo:
+  host:
+    port: 9023
+    url: mongo1-pe1.fct.me
+    db: message
+    collectionName: sms_log
+    username: admin
+    password: admin
+
+mysql:
+  connection:
+    url: jdbc:config://localhost:3306/test?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 3202547c

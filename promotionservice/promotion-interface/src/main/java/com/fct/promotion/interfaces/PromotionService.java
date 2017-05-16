@@ -24,13 +24,18 @@ public interface PromotionService {
     //获取优惠券策略对象
     CouponPolicy getCouponPolicy(Integer policyId);
 
-    Page<CouponPolicy> findCouponPolicy(Integer pageIndex, Integer pageSize);
+    Page<CouponPolicy> findCouponPolicy(Integer status,Integer fetchType,Integer generateStatus, String startTime,
+                                        String endTime,Integer pageIndex, Integer pageSize);
 
     List<CouponPolicy> findCanReceiveCouponPolicy();
 
     List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds);
 
-    Page<CouponCodeDTO> findMemberCouponCode(Integer pageIndex, Integer pageSize);
+    List<CouponCodeDTO> findMemberCouponCode(Integer policyId,Integer memberId,String code,Integer status,
+                                             Boolean isValid,Integer pageIndex, Integer pageSize);
+
+    Integer getMemberCouponCodeCount(Integer policyId,Integer memberId,String code,Integer status,
+                                     Boolean isValid);
 
     String receiveCouponCode(Integer memberId,Integer policyId);
 
@@ -50,7 +55,7 @@ public interface PromotionService {
 
     void auditDiscount(Integer discount,Boolean pass,Integer userId);
 
-    Page<Discount> findDiscount(Integer pageIndex,Integer pageSize);
+    Page<Discount> findDiscount(Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize);
 
     List<DiscountProduct> findDiscountProduct(Integer discountId);
 

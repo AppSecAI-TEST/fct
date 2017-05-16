@@ -8,6 +8,8 @@ import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DisCountDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import com.fct.promotion.service.business.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -15,49 +17,146 @@ import java.util.List;
 /**
  * Created by jon on 2017/5/9.
  */
-public class PromotionServiceImpl implements PromotionService{
+public class PromotionServiceImpl implements PromotionService {
 
-    CouponPolicy saveCouponPolicy(CouponPolicy policy);
+    @Autowired
+    CouponPolicyManager couponPolicyManager;
 
-    void auditCouponPolicy(Integer policyId, Boolean pass,Integer userId);
+    @Autowired
+    CouponCodeManager couponCodeManager;
+
+    @Autowired
+    CouponCodeDTOManager couponCodeDTOManager;
+
+    @Autowired
+    DiscountManager discountManager;
+
+    @Autowired
+    OrderManager orderManager;
+
+    @Autowired
+    DiscountProductManager discountProductManager;
+
+    @Autowired
+    DiscountProductDTOManager discountProductDTOManager;
+
+    public CouponPolicy saveCouponPolicy(CouponPolicy policy) {
+        return couponPolicyManager.add(policy);
+    }
+
+    public void auditCouponPolicy(Integer policyId, Boolean pass, Integer userId)
+    {
+        couponPolicyManager.audit(policyId,pass,userId);
+    }
 
     //获取优惠券策略对象
-    CouponPolicy getCouponPolicy(Integer policyId);
+    public CouponPolicy getCouponPolicy(Integer policyId)
+    {
+        return couponPolicyManager.findById(policyId);
+    }
 
-    Page<CouponPolicy> findCouponPolicy(Integer pageIndex, Integer pageSize);
+    public Page<CouponPolicy> findCouponPolicy(Integer status,Integer fetchType,Integer generateStatus, String startTime,
+                                               String endTime,Integer pageIndex, Integer pageSize)
+    {
+        return couponPolicyManager.findAll(status,fetchType,generateStatus,startTime,endTime,pageIndex,pageSize);
+    }
 
-    List<CouponPolicy> findCanReceiveCouponPolicy();
+    public List<CouponPolicy> findCanReceiveCouponPolicy()
+    {
+        return couponPolicyManager.findByCanReceive();
+    }
 
-    List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds);
+    public List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds)
+    {
+        return couponCodeManager.findReceivedPolicyId(memberId,policyIds);
+    }
 
-    Page<CouponCodeDTO> findMemberCouponCode(Integer pageIndex, Integer pageSize);
+    public List<CouponCodeDTO> findMemberCouponCode(Integer policyId,Integer memberId,String code,Integer status,
+                                                    Boolean isValid,Integer pageIndex, Integer pageSize)
+    {
+        return couponCodeDTOManager.findMemberCouponCode(policyId,memberId,code,status,
+                isValid,pageIndex,pageSize);
+    }
 
-    String receiveCouponCode(Integer memberId,Integer policyId);
+    public Integer getMemberCouponCodeCount(Integer policyId,Integer memberId,String code,Integer status,
+                                            Boolean isValid)
+    {
+        return couponCodeDTOManager.getMemberCouponCodeCount(policyId,memberId,code,status,
+                isValid);
+    }
 
-    CouponCodeDTO getCouponCodeDTOByOrder(Integer memberId, List<OrderProductDTO> productList);
+    public String receiveCouponCode(Integer memberId,Integer policyId)
+    {
+        return couponCodeManager.receive(memberId,policyId);
+    }
 
-    CouponCodeDTO validCouponCode(Integer memberId,List<OrderProductDTO> productList,String couponCode);
+    public CouponCodeDTO getCouponCodeDTOByOrder(Integer memberId, List<OrderProductDTO> productList)
+    {
+        return couponCodeDTOManager.findByMemberId(memberId,productList,"");
+    }
 
-    CouponCodeDTO getCouponCodeDTOByCode(String code);
+    public CouponCodeDTO validCouponCode(Integer memberId,List<OrderProductDTO> productList,String couponCode)
+    {
+        return couponCodeDTOManager.findByMemberId(memberId,productList,couponCode);
+    }
 
-    void useCouponCode(String code);
+    public CouponCodeDTO getCouponCodeDTOByCode(String code)
+    {
+        return couponCodeDTOManager.findByCode(code);
+    }
 
-    void cancelUseCouponCode(String code);
+    public void useCouponCode(String code)
+    {
+        couponCodeManager.setCodeUsed(code);
+    }
 
-    void saveDiscount(Discount discount, List<DiscountProduct> lsProduct);
+    public void cancelUseCouponCode(String code)
+    {
+        couponCodeManager.cancelCodeUsed(code);
+    }
 
-    Discount getDiscountById(Integer discountId);
+    public void saveDiscount(Discount discount, List<DiscountProduct> lsProduct)
+    {
+        discountManager.add(discount,lsProduct);
+    }
 
-    void auditDiscount(Integer discount,Boolean pass,Integer userId);
+    public Discount getDiscountById(Integer discountId)
+    {
+        return discountManager.findById(discountId);
+    }
 
-    Page<Discount> findDiscount(Integer pageIndex,Integer pageSize);
+    public void auditDiscount(Integer discountId,Boolean pass,Integer userId)
+    {
+        discountManager.audit(discountId,pass,userId);
+    }
 
-    List<DiscountProduct> findDiscountProduct(Integer discountId);
+    public Page<Discount> findDiscount(Integer status,String startTime,String endTime,Integer pageIndex,
+                                       Integer pageSize)
+    {
+        return discountManager.findAll(status,startTime,endTime,pageIndex,pageSize);
+    }
 
-    DisCountDTO getDisCountDTOById(Integer discountId);
+    public List<DiscountProduct> findDiscountProduct(Integer discountId)
+    {
+        return discountProductManager.findByDiscountId(discountId);
+    }
 
-    Integer useCouponCodeDiscount(String orderId,Integer memberId,Integer memberLevel,List<OrderProductDTO> products,
-                                  String couponCode);
+    public DisCountDTO getDisCountDTOById(Integer discountId)
+    {
+        DisCountDTO dto = new DisCountDTO();
+        dto.setDiscount(discountManager.findById(discountId));
+        dto.setProductList(discountProductManager.findByDiscountId(discountId));
+        return dto;
+    }
 
-    DiscountCouponDTO getPromotion(Integer memberId, List<OrderProductDTO> products, String couponCode);
+    public Integer useCouponCodeDiscount(String orderId,Integer memberId,Integer memberGradeId,List<OrderProductDTO> products,
+                                  String couponCode)
+    {
+        return orderManager.use(orderId,memberId,products,couponCode,memberGradeId);
+    }
+
+    public DiscountCouponDTO getPromotion(Integer memberId, List<OrderProductDTO> products, String couponCode)
+    {
+        return discountProductDTOManager.getDiscountCoupon(memberId,products,couponCode);
+    }
 }

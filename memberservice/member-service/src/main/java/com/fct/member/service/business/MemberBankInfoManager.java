@@ -24,14 +24,6 @@ import java.util.List;
 @Service
 public class MemberBankInfoManager {
 
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final MemberBankInfoManager instance = new MemberBankInfoManager();
-
-    // 静态方法返回该类的实例
-    public static MemberBankInfoManager getInstance() {
-        return instance;
-    }
-
     @Autowired
     private MemberBankInfoRepository memberBankInfoRepository;
 

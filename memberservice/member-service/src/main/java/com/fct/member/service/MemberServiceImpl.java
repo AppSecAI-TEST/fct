@@ -6,6 +6,7 @@ import com.fct.member.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,13 +17,37 @@ import java.util.List;
 public class MemberServiceImpl implements com.fct.member.interfaces.MemberService{
 
     @Autowired
-    MemberManager memberManager;
+    private MemberManager memberManager;
 
     @Autowired
-    MemberLoginManager memberLoginManager;
+    private MemberLoginManager memberLoginManager;
+
+    @Autowired
+    private MemberBankInfoManager memberBankInfoManager;
+
+    @Autowired
+    private MemberInfoManager memberInfoManager;
+
+    @Autowired
+    private InviteCodeManager inviteCodeManager;
+
+    @Autowired
+    private MemberAddressManager memberAddressManager;
+
+    @Autowired
+    private MemberAuthManager memberAuthManager;
+
+    @Autowired
+    private MemberStoreManager memberStoreManager;
+
+    @Autowired
+    private SystemUserManager systemUserManager;
+
     /*注册会员*/
+//    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
     {
+        System.out.println("in method>>");
         return memberManager.register(cellPhone,userName,password);
     }
 
@@ -34,6 +59,7 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public Member getMember(Integer memberId)
     {
+        System.out.println("getMember in");
         return memberManager.findById(memberId);
     }
 
@@ -60,84 +86,84 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public void updateMemberInfo(MemberInfo info)
     {
-        MemberInfoManager.getInstance().save(info);
+        memberInfoManager.save(info);
     }
 
     public MemberInfo getMemberInfo(Integer memberId)
     {
-        return MemberInfoManager.getInstance().findById(memberId);
+        return memberInfoManager.findById(memberId);
     }
 
     public void saveMemberAddress(MemberAddress address)
     {
-        MemberAddressManager.getInstance().save(address);
+        memberAddressManager.save(address);
     }
 
     public MemberAddress getMemberAddress(Integer id)
     {
-        return MemberAddressManager.getInstance().findById(id);
+        return memberAddressManager.findById(id);
     }
 
     public List<MemberAddress> findMemberAddress(Integer memberId)
     {
-        return MemberAddressManager.getInstance().findAll(memberId);
+        return memberAddressManager.findAll(memberId);
     }
 
     public void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                          String bankName,String bankAccount)
     {
-        MemberInfoManager.getInstance().authentication(memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
+        memberInfoManager.authentication(memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
     }
 
     public void verifyAuthentication(Integer memberId)
     {
-        MemberManager.getInstance().verifyAuthStatus(memberId);
+        memberManager.verifyAuthStatus(memberId);
     }
 
     public void saveMemberBankInfo(MemberBankInfo bankInfo)
     {
-        MemberBankInfoManager.getInstance().save(bankInfo);
+        memberBankInfoManager.save(bankInfo);
     }
 
     public MemberBankInfo getMemberBankInfo(Integer id)
     {
-        return MemberBankInfoManager.getInstance().findById(id);
+        return memberBankInfoManager.findById(id);
     }
 
     public Page<MemberBankInfo> findMemberBankInfo(String cellPhone,String name,Integer status,Integer pageIndex,
                                                    Integer pageSize)
     {
-        return MemberBankInfoManager.getInstance().findAll(cellPhone,name,status,pageIndex,pageSize);
+        return memberBankInfoManager.findAll(cellPhone,name,status,pageIndex,pageSize);
     }
 
     public void createInviteCode(Integer memberId)
     {
-        InviteCodeManager.getInstance().create(memberId);
+        inviteCodeManager.create(memberId);
     }
 
     public void addInviteCodeCount(Integer memberId,Integer count)
     {
-        MemberManager.getInstance().addInviteCount(memberId,count);
+        memberManager.addInviteCount(memberId,count);
     }
 
     public Page<InviteCode> findInviteCode(Integer ownerId, String ownerCellPhone, int pageIndex, int pageSize)
     {
-        return InviteCodeManager.getInstance().findAll(ownerId,ownerCellPhone,pageIndex,pageSize);
+        return inviteCodeManager.findAll(ownerId,ownerCellPhone,pageIndex,pageSize);
     }
 
     public MemberStore applyStore(Integer memberId,String inviteCode)
     {
-        return MemberStoreManager.getInstance().apply(memberId,inviteCode);
+        return memberStoreManager.apply(memberId,inviteCode);
     }
 
     public Page<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize)
     {
-        return MemberStoreManager.getInstance().findAll(cellPhone,status,pageIndex,pageSize);
+        return memberStoreManager.findAll(cellPhone,status,pageIndex,pageSize);
     }
 
     public MemberAuth saveMemberAuth(MemberAuth auth)
     {
-        return MemberAuthManager.getInstance().save(auth);
+        return memberAuthManager.save(auth);
     }
 
     public MemberAuth getMemberAuth(String platform)
@@ -147,26 +173,26 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public void createSystemUser(SystemUser user)
     {
-        SystemUserManager.getInstance().create(user);
+        systemUserManager.create(user);
     }
 
     public SystemUser loginSystemUser(String userName,String password)
     {
-        return SystemUserManager.getInstance().login(userName,password);
+        return systemUserManager.login(userName,password);
     }
 
     public void lockSystemUser(Integer userId)
     {
-        SystemUserManager.getInstance().lock(userId);
+        systemUserManager.lock(userId);
     }
 
     public void updateSystemUserPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword)
     {
-        SystemUserManager.getInstance().updatePassword(memberId,oldPassword,newPassword,reNewPassword);
+        systemUserManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
     }
 
     public Page<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize)
     {
-        return SystemUserManager.getInstance().findAll(userName,pageIndex,pageSize);
+        return systemUserManager.findAll(userName,pageIndex,pageSize);
     }
 }

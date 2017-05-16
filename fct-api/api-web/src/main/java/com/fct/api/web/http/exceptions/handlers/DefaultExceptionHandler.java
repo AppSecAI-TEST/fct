@@ -4,6 +4,7 @@ import com.fct.api.web.http.exceptions.ErrorMessage;
 import com.fct.api.web.utils.JsonModelAndViewBuilder;
 import com.fct.api.web.utils.servlet.ServletAttributeCacheUtil;
 import com.fct.api.web.utils.servlet.ServletRequestIPAddressUtil;
+import com.fct.common.exceptions.BaseException;
 import com.fct.common.exceptions.Exceptions;
 import com.google.common.base.Charsets;
 import okio.Okio;
@@ -29,7 +30,26 @@ public final class DefaultExceptionHandler implements HandlerExceptionResolver {
             response.setStatus(400);
             MissingServletRequestParameterException msrpe = (MissingServletRequestParameterException) ex;
             return JsonModelAndViewBuilder.build(new ErrorMessage(String.format("[%s]字段不能为空", msrpe.getParameterName())));
-        } else {
+        }
+        else if (ex instanceof IllegalArgumentException) {
+            response.setStatus(200);
+            logger.info(request.getHeader("request-id") + " " + request.getMethod() + request.getServletPath());
+            logger.info(request.getQueryString());
+            try {
+                logger.info(Okio.buffer(Okio.source(request.getInputStream())).readString(Charsets.UTF_8));
+            } catch (IOException e) {
+                //ignore
+            }
+            logger.info(getHeaderParam(request));
+            logger.info(Exceptions.getStackTraceAsString(ex));
+            return JsonModelAndViewBuilder.build(new ErrorMessage(404,ex.getMessage()));
+        }
+        else if (ex instanceof BaseException) {
+            response.setStatus(200);
+
+            return JsonModelAndViewBuilder.build(new ErrorMessage(1000,ex.getMessage()));
+        }
+        else {
             response.setStatus(500);
             logger.info(request.getHeader("request-id") + " " + request.getMethod() + request.getServletPath());
             logger.info(request.getQueryString());

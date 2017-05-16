@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -34,6 +35,7 @@ import java.util.Map;
 /**
  * Created by jon on 2017/4/20.
  */
+@Service
 public class RefundRecordManager {
 
     @Autowired
@@ -42,7 +44,11 @@ public class RefundRecordManager {
     @Autowired
     private PayOrderManager payOrderManager;
 
-    public static RefundRecordManager instance = new RefundRecordManager();
+    @Autowired
+    private MemberAccountHistoryManager memberAccountHistoryManager;
+
+    @Autowired
+    private MemberAccountManager memberAccountManager;
 
     @Transactional
     public RefundRecord create(RefundRecord refund)
@@ -242,7 +248,7 @@ public class RefundRecordManager {
             if (refund.getAccountAmount().doubleValue() > 0 || refund.getPoints()>0)
             {
                 //更新用户虚拟余额。
-                MemberAccount account = MemberAccountManager.instance.findById(refund.getMemberId());
+                MemberAccount account = memberAccountManager.findById(refund.getMemberId());
 
                 account.setAvailableAmount(account.getAvailableAmount().add(refund.getAccountAmount()));
 
@@ -250,7 +256,7 @@ public class RefundRecordManager {
 
                 account.setPoints(account.getPoints()+refund.getPoints());
 
-                MemberAccountManager.instance.save(account);
+                memberAccountManager.save(account);
 
                 MemberAccountHistory history = new MemberAccountHistory();
                 history.setTradeId(refund.getId().toString());
@@ -262,7 +268,7 @@ public class RefundRecordManager {
                 history.setBalancePoints(account.getPoints());
                 history.setRemark(refund.getRemark());
                 history.setBehaviorType(1); //收入
-                MemberAccountHistoryManager.instance.Create(history);
+                memberAccountHistoryManager.Create(history);
 
             }
 

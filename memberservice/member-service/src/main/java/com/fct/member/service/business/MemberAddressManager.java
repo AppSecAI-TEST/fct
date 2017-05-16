@@ -12,13 +12,6 @@ import java.util.List;
  */
 @Service
 public class MemberAddressManager {
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final MemberAddressManager instance = new MemberAddressManager();
-
-    // 静态方法返回该类的实例
-    public static MemberAddressManager getInstance() {
-        return instance;
-    }
 
     @Autowired
     private MemberAddressRepository memberAddressRepository;

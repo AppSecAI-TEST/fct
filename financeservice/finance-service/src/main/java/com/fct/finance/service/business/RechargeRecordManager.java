@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,12 +23,11 @@ import java.util.List;
 /**
  * Created by jon on 2017/4/21.
  */
+@Service
 public class RechargeRecordManager {
 
     @Autowired
     private RechargeRecordRepository rechargeRecordRepository;
-
-    public static RechargeRecordManager instance = new RechargeRecordManager();
 
     public Integer create(RechargeRecord record)
     {

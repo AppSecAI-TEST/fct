@@ -11,9 +11,10 @@
     <modules>
         <module>message-data</module>
         <module>message-interface</module>
-        <module>message-service</module>
         <module>message-model</module>
+        <module>message-service</module>
     </modules>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -72,5 +73,4 @@
             </plugin>
         </plugins>
     </reporting>
-
 </project>

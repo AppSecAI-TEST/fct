@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ImportResource;
  * Created by ningyang on 2017/4/11.
  */
 @SpringBootApplication(scanBasePackages = "com.fct.message")
-@ImportResource("classpath:dubbo/dubbo-provider.xml")
+@ImportResource("classpath:dubbo/dubbo-consumer.xml")
 public class StartUpApplication extends SpringBootServletInitializer {
 
     @Override

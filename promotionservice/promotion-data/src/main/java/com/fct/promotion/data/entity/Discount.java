@@ -52,7 +52,7 @@ public class Discount {
     /// <summary>
     /// 会员等级以上才有资格参与抢购
     /// </summary>
-    private Integer memberLevel;
+    private Integer memberGradeId;
 
     /// <summary>
     /// 订单关闭时间

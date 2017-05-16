@@ -22,6 +22,15 @@ public class MemberLoginManager {
     @Autowired
     private MemberLoginRepository memberLoginRepository;
 
+    @Autowired
+    private MemberManager memberManager;
+
+    @Autowired
+    private MemberInfoManager memberInfoManager;
+
+    @Autowired
+    private MemberStoreManager memberStoreManager;
+
 
     public MemberLogin login(String cellPhone, String password,String ip,Integer expireDay)
     {
@@ -30,15 +39,15 @@ public class MemberLoginManager {
             throw new IllegalArgumentException("手机号码为空。");
         }
         //普通登陆，用户名+密码
-        Member member =  MemberManager.getInstance().login(cellPhone,password);
+        Member member =  memberManager.login(cellPhone,password);
         if(member == null)
         {
             throw new IllegalArgumentException("用户户或密码错误。");
         }
 
-        MemberInfo info = MemberInfoManager.getInstance().findById(member.getId());
+        MemberInfo info = memberInfoManager.findById(member.getId());
 
-        MemberStore store = MemberStoreManager.getInstance().findByMemberId(member.getId());
+        MemberStore store = memberStoreManager.findByMemberId(member.getId());
 
         MemberLogin login = new MemberLogin();
         login.setCellPhone(cellPhone);

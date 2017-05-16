@@ -37,7 +37,7 @@ public class MemberController {
         Member member = memberService.getMember(id);
 
         JsonResponseEntity<Member> responseEntity = new JsonResponseEntity<>();
-
+        responseEntity.setData(member);
         return responseEntity;
     }
 }

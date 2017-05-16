@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
+
     <artifactId>message-service</artifactId>
 
     <dependencies>
-        <!--dubbo -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
@@ -24,14 +24,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>com.aliyun.mns</groupId>
-            <artifactId>aliyun-sdk-mns</artifactId>
-            <version>1.1.8</version>
-            <classifier>jar-with-dependencies</classifier>
-        </dependency>
-
 
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
@@ -77,27 +69,13 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fct.finance</groupId>
-            <artifactId>finance-data</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fct.finance</groupId>
-            <artifactId>finance-interface</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fct.messageservice</groupId>
-            <artifactId>messageservice-data</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.fct.messageservice</groupId>
             <artifactId>message-interface</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fct.messageservice</groupId>
+            <artifactId>message-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -110,6 +88,7 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -146,7 +125,7 @@
                     <server>tomcat-jenkins</server>
                     <username>jenkins</username>
                     <password>jenkins_password</password>
-                    <path>/message-service</path>
+                    <path>/message-services</path>
                 </configuration>
             </plugin>
             <plugin>
@@ -154,7 +133,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <warName>message-service</warName>
+                    <warName>message-services</warName>
                 </configuration>
             </plugin>
         </plugins>

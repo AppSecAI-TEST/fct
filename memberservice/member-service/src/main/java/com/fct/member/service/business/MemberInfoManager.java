@@ -15,20 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MemberInfoManager {
 
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final MemberInfoManager instance = new MemberInfoManager();
-
-    // 静态方法返回该类的实例
-    public static MemberInfoManager getInstance() {
-        return instance;
-    }
-
     @Autowired
     private MemberInfoRepository memberInfoRepository;
 
+    @Autowired
+    private MemberManager memberManager;
+
+    @Autowired
+    private MemberBankInfoManager memberBankInfoManager;
+
     public void save(MemberInfo info)
     {
-        memberInfoRepository.saveAndFlush(info);
+        memberInfoRepository.save(info);
     }
 
     public MemberInfo findById(Integer memberId)
@@ -40,7 +38,7 @@ public class MemberInfoManager {
     public void authentication(Integer memberId,String name,String identityCardNo,String identityCardImg,
                                      String bankName,String bankAccount)
     {
-        Member member = MemberManager.getInstance().findById(memberId);
+        Member member = memberManager.findById(memberId);
 
         if(member.getAuthStatus() ==1)
         {
@@ -48,15 +46,15 @@ public class MemberInfoManager {
         }
 
         member.setAuthStatus(1);//待审核认证
-        MemberManager.getInstance().save(member);
+        memberManager.save(member);
 
         MemberInfo info = memberInfoRepository.findOne(memberId);
         info.setRealName(name);
         info.setIdentityCardImg(identityCardImg);
         info.setIdentityCardNo(identityCardNo);
-        memberInfoRepository.saveAndFlush(info);
+        memberInfoRepository.save(info);
 
-        MemberBankInfo bank = MemberBankInfoManager.getInstance().findOne(memberId);
+        MemberBankInfo bank = memberBankInfoManager.findOne(memberId);
         if(bank == null)
         {
             bank = new MemberBankInfo();
@@ -67,7 +65,7 @@ public class MemberInfoManager {
         bank.setStatus(0);
         bank.setBankName(bankName);
         bank.setBankAccount(bankAccount);
-        MemberBankInfoManager.getInstance().save(bank);
+        memberBankInfoManager.save(bank);
 
     }
 }

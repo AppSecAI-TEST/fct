@@ -4,6 +4,7 @@ import com.fct.common.utils.StringHelper;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;
+import com.fct.member.data.repository.MemberInfoRepository;
 import com.fct.member.data.repository.MemberRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +30,19 @@ import java.util.List;
 @Service
 public class MemberManager {
 
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final MemberManager instance = new MemberManager();
-
-    // 静态方法返回该类的实例
-    public static MemberManager getInstance() {
-        return instance;
-    }
-
     @Autowired
     private MemberRepository memberRepository;
 
-    @Transactional
+    @Autowired
+    private MemberInfoRepository memberInfoRepository;
+
+    @Autowired
+    private MemberInfoManager memberInfoManager;
+
+    @Autowired
+    private MemberBankInfoManager memberBankInfoManager;
+
+//    @Transactional
     public Member register(String cellPhone, String userName, String password)
     {
         if(StringUtils.isEmpty(cellPhone))
@@ -78,8 +80,9 @@ public class MemberManager {
         //同步注册memberInfo
         MemberInfo info = new MemberInfo();
         info.setMemberId(member.getId());
-        MemberInfoManager.getInstance().save(info);
-
+//        memberInfoManager.save(info);
+        memberInfoRepository.save(info);
+        System.out.println("out method>>");
         return member;
     }
 
@@ -143,9 +146,9 @@ public class MemberManager {
     {
         memberRepository.verifyAuthStatus(memberId);
 
-        MemberBankInfo bank = MemberBankInfoManager.getInstance().findOne(memberId);
+        MemberBankInfo bank = memberBankInfoManager.findOne(memberId);
         bank.setStatus(1-bank.getStatus());  //审核通过
-        MemberBankInfoManager.getInstance().save(bank);
+        memberBankInfoManager.save(bank);
 
     }
 

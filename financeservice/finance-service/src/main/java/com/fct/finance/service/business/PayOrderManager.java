@@ -38,6 +38,15 @@ public class PayOrderManager  {
     @Autowired
     private PayOrderRepository payOrderRepository;
 
+    @Autowired
+    private MemberAccountManager memberAccountManager;
+
+    @Autowired
+    private MemberAccountHistoryManager memberAccountHistoryManager;
+
+    @Autowired
+    private RefundRecordManager refundRecordManager;
+
     public void save(PayOrder pay)
     {
         payOrderRepository.save(pay);
@@ -66,7 +75,7 @@ public class PayOrderManager  {
         pay.setCreateTime(new Date());
         pay.setOrderId("");
 
-        MemberAccount account = MemberAccountManager.instance.findById(pay.getMemberId());
+        MemberAccount account = memberAccountManager.findById(pay.getMemberId());
 
         //全部使用积分或账户余额支付
         if (pay.getPayAmount().doubleValue() <= 0 && (pay.getPoints()>0 || pay.getAccountAmount().doubleValue()>0))
@@ -94,7 +103,7 @@ public class PayOrderManager  {
             //减去充值金额或可申请提现金额
             account.setPoints(account.getPoints()-pay.getPoints());
 
-            MemberAccountManager.instance.save(account);
+            memberAccountManager.save(account);
 
             MemberAccountHistory history = new MemberAccountHistory();
             history.setTradeType(pay.getTradeType());
@@ -108,7 +117,7 @@ public class PayOrderManager  {
             history.setCreateTime(new Date());
             history.setBehaviorType(0); //支出
 
-            MemberAccountHistoryManager.instance.Create(history);
+            memberAccountHistoryManager.Create(history);
 
         }
         else {
@@ -120,7 +129,7 @@ public class PayOrderManager  {
                 account.setCellPhone(pay.getCellPhone());
                 account.setCreateTime(new Date());
 
-                MemberAccountManager.instance.save(account);
+                memberAccountManager.save(account);
             }
             payOrderRepository.save(pay);
         }
@@ -203,7 +212,7 @@ public class PayOrderManager  {
         pay.setPayTime(new Date());
         pay.setNotifyData(notifyData); //写入第三方支付平台异步通知的数据
 
-        MemberAccount account = MemberAccountManager.instance.findById(pay.getMemberId());
+        MemberAccount account = memberAccountManager.findById(pay.getMemberId());
         String logContent = "{支付单号:" + pay.getOrderId() + ",交易Id:" + pay.getTradeId() + "，交易类型:" +
                 pay.getTradeType() + "}";
 
@@ -242,7 +251,7 @@ public class PayOrderManager  {
                 calculateAmount(account,pay.getAccountAmount());
 
                 account.setPoints(account.getPoints()-pay.getPoints());
-                MemberAccountManager.instance.save(account);
+                memberAccountManager.save(account);
 
                 //消耗账户
                 MemberAccountHistory history = new MemberAccountHistory();
@@ -257,7 +266,7 @@ public class PayOrderManager  {
                 history.setCreateTime(new Date());
                 history.setBehaviorType(0); //支出
 
-                MemberAccountHistoryManager.instance.Create(history);
+                memberAccountHistoryManager.Create(history);
             }
 
             LogService.info(logContent + "支付成功。");
@@ -307,13 +316,13 @@ public class PayOrderManager  {
         //交易完成,并却业务类型为消费
         if (result.trade_status == 200)
         {
-            MemberAccount account = MemberAccountManager.instance.findById(pay.getMemberId());
+            MemberAccount account = memberAccountManager.findById(pay.getMemberId());
             //等比赠送积分
             Integer points = pay.getPayAmount().intValue();
             account.setPoints(account.getPoints()+points);
             account.setAccumulatePoints(account.getAccumulatePoints()+points);
 
-            MemberAccountManager.instance.save(account);
+            memberAccountManager.save(account);
 
             MemberAccountHistory history = new MemberAccountHistory();
             history.setTradeId(pay.getTradeId());
@@ -325,7 +334,7 @@ public class PayOrderManager  {
             history.setBalancePoints(account.getPoints());
             history.setRemark("用户消费使用现金赠送同比积分");
             history.setBehaviorType(1); //收入
-            MemberAccountHistoryManager.instance.Create(history);
+            memberAccountHistoryManager.Create(history);
 
             return;
         }
@@ -337,7 +346,7 @@ public class PayOrderManager  {
             for (MQPayRefund refund:result.refund
                  ) {
                     //退款
-                RefundRecordManager.instance.tradeException(refund,pay);
+                refundRecordManager.tradeException(refund,pay);
             }
             pay.setStatus(Constants.enumPayStatus.fullrefund.getValue());
             payOrderRepository.saveAndFlush(pay);

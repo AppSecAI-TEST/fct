@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,11 +25,16 @@ import java.util.List;
 /**
  * Created by jon on 2017/4/20.
  */
+@Service
 public class WithdrawRecordManager {
     @Autowired
     private WithdrawRecordRepository withdrawRecordRepository;
 
-    public static WithdrawRecordManager instance = new WithdrawRecordManager();
+    @Autowired
+    MemberAccountManager memberAccountManager;
+
+    @Autowired
+    MemberAccountHistoryManager memberAccountHistoryManager;
 
     @Transactional
     public void apply(WithdrawRecord record)
@@ -61,7 +67,7 @@ public class WithdrawRecordManager {
             throw new IllegalArgumentException("还有尚未处理的提现,不可连续申请。");
         }
 
-        MemberAccount account = MemberAccountManager.instance.findById(record.getMemberId());
+        MemberAccount account = memberAccountManager.findById(record.getMemberId());
         if(account == null || account.getWithdrawAmount().doubleValue() <record.getAmount().doubleValue())
         {
             throw  new IllegalArgumentException("非法操作。");
@@ -70,7 +76,7 @@ public class WithdrawRecordManager {
         account.setAvailableAmount(account.getAvailableAmount().subtract(record.getAmount()));
         account.setWithdrawAmount(account.getWithdrawAmount().subtract(record.getAmount()));
 
-        MemberAccountManager.instance.save(account);    //
+        memberAccountManager.save(account);    //
 
         record.setStatus(0);
         record.setCreateTime(new Date());
@@ -87,7 +93,7 @@ public class WithdrawRecordManager {
         history.setBalancePoints(account.getPoints());
         history.setRemark("提现");
         history.setBehaviorType(0); //支出
-        MemberAccountHistoryManager.instance.Create(history);
+        memberAccountHistoryManager.Create(history);
 
     }
 

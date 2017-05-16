@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.jws.Oneway;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -29,16 +30,14 @@ import java.util.List;
 @Service
 public class MemberStoreManager {
 
-    // 将自身的实例对象设置为一个属性,并加上Static和final修饰符
-    private static final MemberStoreManager instance = new MemberStoreManager();
-
-    // 静态方法返回该类的实例
-    public static MemberStoreManager getInstance() {
-        return instance;
-    }
-
     @Autowired
     private MemberStoreRepository memberStoreRepository;
+
+    @Autowired
+    private InviteCodeManager inviteCodeManager;
+
+    @Autowired
+    private MemberManager memberManager;
 
     public MemberStore findByMemberId(Integer memberId)
     {
@@ -48,13 +47,13 @@ public class MemberStoreManager {
     @Transient
     public  MemberStore apply(Integer memberId,String inviteCode)
     {
-        InviteCode code = InviteCodeManager.getInstance().findByCode(inviteCode);
+        InviteCode code = inviteCodeManager.findByCode(inviteCode);
 
         if(DateUtils.compareDate(new Date(),code.getExpireTime())>0 || code.getStatus() !=0)
         {
             throw new IllegalArgumentException("邀请码无效。");
         }
-        Member member = MemberManager.getInstance().findById(memberId);
+        Member member = memberManager.findById(memberId);
 
         if(memberStoreRepository.findByMemberId(memberId) !=null)
         {
@@ -65,7 +64,7 @@ public class MemberStoreManager {
         code.setToMemberId(memberId);
         code.setToCellPhone(member.getCellPhone());
         code.setUseTime(new Date());
-        InviteCodeManager.getInstance().save(code);
+        inviteCodeManager.save(code);
 
         MemberStore ms = new MemberStore();
         ms.setMemberId(memberId);

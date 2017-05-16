@@ -58,11 +58,13 @@ public final class OSS implements Callable<UploadResponse>{
     private String writeUrl(String bucketName, String key, String endpoint){
         StringBuffer sb = new StringBuffer();
         String[] splits = endpoint.split("http://");
+        splits[1] = "img-cn-shanghai.aliyuncs.com/";
         sb.append("http://").
                 append(bucketName).
                 append(".").
                 append(splits[1]).
-                append(key);
+                append(key).
+                append("@50p");
         return sb.toString();
     }
 }

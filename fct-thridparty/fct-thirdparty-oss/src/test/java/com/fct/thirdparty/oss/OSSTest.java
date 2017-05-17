@@ -22,18 +22,30 @@ public class OSSTest {
     @Test
     public void uploadFileTest(){
         String path = "/Users/ningyang/Documents/haha.png";
+        String path1 = "/Users/ningyang/Documents/haha1.png";
+        String path2 = "/Users/ningyang/Documents/haha2.png";
         File file = new File(path);
+        File file1 = new File(path1);
+        File file2 = new File(path2);
         FileServiceRequest fileServiceRequest = new FileServiceRequest();
         List<File> files = new ArrayList();
         List<String> keys = new ArrayList();
         files.add(file);
+        files.add(file1);
+        files.add(file2);
         keys.add("haha.png");
-        fileServiceRequest.setFile(files);
-        fileServiceRequest.setKey(keys);
+        keys.add("haha1.png");
+        keys.add("haha2.png");
+        fileServiceRequest.setFiles(files);
+        fileServiceRequest.setKeys(keys);
         fileServiceRequest.setUserMetaData(new HashedMap());
         FileOperatorHelper helper = new FileOperatorHelper(bucketName, accessKeyId,
-                accessKeySecret, endpoint, null, 10);
-        UploadResponse response = helper.uploadFile(fileServiceRequest);
-        System.out.println(response.getUrl());
+                accessKeySecret, endpoint);
+        List<UploadResponse> responses = helper.uploadFile(fileServiceRequest);
+        if(responses!=null&&responses.size()>0){
+            for(UploadResponse response: responses){
+                System.out.println(response.getUrl());
+            }
+        }
     }
 }

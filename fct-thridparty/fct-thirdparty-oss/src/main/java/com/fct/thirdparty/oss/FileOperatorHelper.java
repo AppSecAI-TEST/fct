@@ -9,6 +9,9 @@ import com.fct.thirdparty.oss.factory.OSSClientFactory;
 import com.fct.thirdparty.oss.request.OSSRequest;
 import com.fct.thirdparty.oss.response.DeleteResponse;
 import com.fct.thirdparty.oss.response.UploadResponse;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,6 +26,7 @@ import java.util.concurrent.Future;
 /**
  * Created by nick on 2017/5/12.
  */
+@Data
 public class FileOperatorHelper {
 
     private String bucketName;
@@ -38,10 +42,13 @@ public class FileOperatorHelper {
      */
     private ExecutorService pool;
 
+    public FileOperatorHelper(String bucketName, String accessKeyId, String accessKeySecret, String endpoint){
+        this(bucketName, accessKeyId, accessKeySecret, endpoint, null, 20);
+    }
+
     public FileOperatorHelper(String bucketName, String accessKeyId,
                               String accessKeySecret, String endpoint,
                               OSSCallback callback, Integer threadSize){
-
         this.bucketName = bucketName;
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;

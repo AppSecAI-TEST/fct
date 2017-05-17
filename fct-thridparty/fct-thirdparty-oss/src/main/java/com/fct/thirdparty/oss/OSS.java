@@ -38,6 +38,7 @@ public final class OSS implements Callable<UploadResponse>{
             response.setEtag(putObjectResult.getETag());
             response.setResult(putObjectResult);
             response.setCode(0);
+            response.setKey(request.getKey());
             response.setUrl(imgUrl);
             response.setMsg("上传成功");
             if(request.getCallback()!=null){

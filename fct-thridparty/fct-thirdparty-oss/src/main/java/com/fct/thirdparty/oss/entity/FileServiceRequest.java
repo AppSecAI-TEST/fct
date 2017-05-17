@@ -1,7 +1,6 @@
 package com.fct.thirdparty.oss.entity;
 
 import lombok.Data;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.io.File;
 import java.util.Map;
@@ -16,5 +15,5 @@ public class FileServiceRequest {
 
     private String key;
 
-    private Map<String, String> userMetaData = new HashedMap();
+    private Map<String, String> userMetaData;
 }

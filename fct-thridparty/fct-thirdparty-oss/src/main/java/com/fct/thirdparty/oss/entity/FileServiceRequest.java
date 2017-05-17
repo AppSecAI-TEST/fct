@@ -3,6 +3,7 @@ package com.fct.thirdparty.oss.entity;
 import lombok.Data;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,9 +12,9 @@ import java.util.Map;
 @Data
 public class FileServiceRequest {
 
-    private File file;
+    private List<File> files;
 
-    private String key;
+    private List<String> keys;
 
     private Map<String, String> userMetaData;
 }

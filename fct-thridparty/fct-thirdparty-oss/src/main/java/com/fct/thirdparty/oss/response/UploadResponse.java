@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by nick on 2017/5/12.
  */
 @Data
-public class UploadResponse {
+public class UploadResponse extends Response{
     /**
      * 返回文件的etag
      */
@@ -20,21 +20,10 @@ public class UploadResponse {
     private String url;
 
     /**
-     * 返回码 0 成功 1000 失败
-     */
-    private int code;
-
-    /**
-     * 返回信息
-     */
-    private String msg;
-
-    /**
      * 这个对象主要是为了以后做扩展用, 目前只是用oss来上传图像
      * 没有断点续传, 也没有服务器级别的回调
      */
     private PutObjectResult result;
-
     /**
      * 文件名称
      */

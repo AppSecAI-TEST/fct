@@ -1,16 +1,20 @@
 package com.fct.thirdparty.oss;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.fct.thirdparty.oss.builder.OSSRequestBuilder;
 import com.fct.thirdparty.oss.callback.OSSCallback;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.factory.OSSClientFactory;
 import com.fct.thirdparty.oss.request.OSSRequest;
+import com.fct.thirdparty.oss.response.DeleteResponse;
 import com.fct.thirdparty.oss.response.UploadResponse;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,28 +54,32 @@ public class FileOperatorHelper {
     }
 
     /**
-     * 上传文件
+     * 批量上传文件
      * @param fileServiceRequest
      * @return
      */
-    public UploadResponse uploadFile(FileServiceRequest fileServiceRequest){
+    public List<UploadResponse> uploadFile(FileServiceRequest fileServiceRequest){
+        List<UploadResponse> responses = new ArrayList<>();
         try {
-            fileCheck(fileServiceRequest.getFile(), fileServiceRequest.getKey());
-            OSSRequestBuilder builder = OSSRequestBuilder.builder();
-            OSSRequest request = builder.bucketName(bucketName).
-                                            ossClient(ossClient).
-                                            file(fileServiceRequest.getFile()).
-                                            key(fileServiceRequest.getKey()).
-                                            callBack(callback).
-                                            build();
-            Future<UploadResponse> future = pool.submit(new OSS(request));
-            return future.get();
+            fileCheck(fileServiceRequest.getFiles(), fileServiceRequest.getKeys());
+            for(int i=0; i<fileServiceRequest.getFiles().size();i++){
+                OSSRequestBuilder builder = OSSRequestBuilder.builder();
+                OSSRequest request = builder.bucketName(bucketName).
+                        ossClient(ossClient).
+                        file(fileServiceRequest.getFiles().get(i)).
+                        key(fileServiceRequest.getKeys().get(i)).
+                        callBack(callback).
+                        build();
+                Future<UploadResponse> future = pool.submit(new OSS(request));
+                UploadResponse response = future.get();
+                responses.add(response);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return null;
+        return responses;
     }
 
     private void initOssClient(){
@@ -79,21 +87,47 @@ public class FileOperatorHelper {
         this.ossClient = ossClientFactory.getOSSClient();
     }
 
-    private void fileCheck(File file, String name){
-        if(file == null)
+    /**
+     * 批量删除文件
+     * @param request
+     * @return
+     */
+    public DeleteResponse deleteFile(FileServiceRequest request){
+        DeleteResponse deleteResponse = new DeleteResponse();
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
+        deleteObjectsRequest.withKeys(request.getKeys());
+        ossClient.deleteObject(deleteObjectsRequest);
+        deleteResponse.setCode(0);
+        deleteResponse.setMsg("删除文件成功");
+        return deleteResponse;
+    }
+
+    private void fileCheck(List<File> files, List<String> keys){
+
+        if(files == null)
             throw new IllegalArgumentException("上传文件不能为空");
 
-        if(file.length() > 5 * 1024 * 1024L){
-            throw new IllegalArgumentException("上传图片大小不能大于5M");
+        if(keys == null)
+            throw new IllegalArgumentException("上传文件名称不能为空");
+
+        if(files.size()!=keys.size())
+            throw new IllegalArgumentException("上传文件的个数和名称个数不一致");
+
+        for(int i=0; i<files.size(); i++){
+
+            if(files.get(i).length() > 5 * 1024 * 1024L){
+                throw new IllegalArgumentException("上传图片大小不能大于5M");
+            }
+
+            if(!files.get(i).getName().equalsIgnoreCase(keys.get(i))){
+                throw new IllegalArgumentException("上传文件和所给名称不一致");
+            }
+
+            if(!isImage(files.get(i))){
+                throw new IllegalArgumentException("上传文件不是一个图片");
+            }
         }
 
-        if(!file.getName().equalsIgnoreCase(name)){
-            throw new IllegalArgumentException("上传文件和所给名称不一致");
-        }
-
-        if(!isImage(file)){
-            throw new IllegalArgumentException("上传文件不是一个图片");
-        }
     }
 
     /**

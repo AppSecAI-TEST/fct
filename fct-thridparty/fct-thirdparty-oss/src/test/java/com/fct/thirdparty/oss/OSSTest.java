@@ -6,6 +6,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nick on 2017/5/12.
@@ -22,8 +24,12 @@ public class OSSTest {
         String path = "/Users/ningyang/Documents/haha.png";
         File file = new File(path);
         FileServiceRequest fileServiceRequest = new FileServiceRequest();
-        fileServiceRequest.setFile(file);
-        fileServiceRequest.setKey("haha.png");
+        List<File> files = new ArrayList();
+        List<String> keys = new ArrayList();
+        files.add(file);
+        keys.add("haha.png");
+        fileServiceRequest.setFile(files);
+        fileServiceRequest.setKey(keys);
         fileServiceRequest.setUserMetaData(new HashedMap());
         FileOperatorHelper helper = new FileOperatorHelper(bucketName, accessKeyId,
                 accessKeySecret, endpoint, null, 10);

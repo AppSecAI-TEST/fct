@@ -25,23 +25,24 @@ public final class OSS implements Callable<UploadResponse>{
         //如果bucket没有创建就创建一个
         if(!request.getOssClient().doesBucketExist(request.getBucketName()))
             request.getOssClient().createBucket(request.getBucketName());
-
         UploadResponse response = new UploadResponse();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(request.getFile().length());
         metadata.setContentType("image/*");
+        metadata.setUserMetadata(request.getUserMetaData());
         PutObjectRequest putObjectRequest = new PutObjectRequest(request.getBucketName(), request.getKey(), request.getFile(), metadata);
         PutObjectResult putObjectResult = request.getOssClient().putObject(putObjectRequest);
         if(!StringUtils.isEmpty(putObjectResult.getETag())){
-            //if callback exist perform callback
-            if(request.getCallback()!=null){
-                request.getCallback().callBack();
-            }
+            //if upload file success and callback exist perform callback
+            String imgUrl = writeUrl(request.getBucketName(), request.getKey(), request.getOssClient().getEndpoint().toString());
             response.setEtag(putObjectResult.getETag());
             response.setResult(putObjectResult);
             response.setCode(0);
-            response.setUrl(writeUrl(request.getBucketName(), request.getKey(), request.getOssClient().getEndpoint().toString()));
+            response.setUrl(imgUrl);
             response.setMsg("上传成功");
+            if(request.getCallback()!=null){
+                request.getCallback().onSuccess(response);
+            }
             return response;
         }
         response.setCode(1000);

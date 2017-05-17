@@ -3,6 +3,8 @@ package com.fct.thirdparty.oss.response;
 import com.aliyun.oss.model.PutObjectResult;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * Created by nick on 2017/5/12.
  */
@@ -32,4 +34,11 @@ public class UploadResponse {
      * 没有断点续传, 也没有服务器级别的回调
      */
     private PutObjectResult result;
+
+    /**
+     * 文件名称
+     */
+    private String key;
+
+    private Map<String, String> userMetaData;
 }

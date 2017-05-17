@@ -1,6 +1,8 @@
 package com.fct.thirdparty.oss;
 
+import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 
 import java.io.File;
@@ -17,11 +19,15 @@ public class OSSTest {
 
     @Test
     public void uploadFileTest(){
-        FileUploadHelpler helpler = new FileUploadHelpler(bucketName, accessKeyId,
-                accessKeySecret, endpoint, null, 10);
         String path = "/Users/ningyang/Documents/haha.png";
         File file = new File(path);
-        UploadResponse response = helpler.uploadFile(file, "haha.png");
+        FileServiceRequest fileServiceRequest = new FileServiceRequest();
+        fileServiceRequest.setFile(file);
+        fileServiceRequest.setKey("haha.png");
+        fileServiceRequest.setUserMetaData(new HashedMap());
+        FileOperatorHelper helper = new FileOperatorHelper(bucketName, accessKeyId,
+                accessKeySecret, endpoint, null, 10);
+        UploadResponse response = helper.uploadFile(fileServiceRequest);
         System.out.println(response.getUrl());
     }
 }

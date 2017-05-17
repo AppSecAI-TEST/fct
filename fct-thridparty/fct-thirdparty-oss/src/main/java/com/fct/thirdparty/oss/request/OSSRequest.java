@@ -5,6 +5,7 @@ import com.fct.thirdparty.oss.callback.OSSCallback;
 import lombok.Data;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Created by nick on 2017/5/12.
@@ -16,4 +17,5 @@ public class OSSRequest {
     private OSSCallback callback;
     private OSSClient ossClient;
     private File file;
+    private Map<String, String> userMetaData;
 }

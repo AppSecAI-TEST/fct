@@ -2,8 +2,8 @@ package com.fct.thirdparty.oss;
 
 import com.aliyun.oss.OSSClient;
 import com.fct.thirdparty.oss.builder.OSSRequestBuilder;
-import com.fct.thirdparty.oss.callback.Callback;
 import com.fct.thirdparty.oss.callback.OSSCallback;
+import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.factory.OSSClientFactory;
 import com.fct.thirdparty.oss.request.OSSRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
@@ -19,7 +19,7 @@ import java.util.concurrent.Future;
 /**
  * Created by nick on 2017/5/12.
  */
-public class FileUploadHelpler {
+public class FileOperatorHelper {
 
     private String bucketName;
     private String accessKeyId;
@@ -34,9 +34,9 @@ public class FileUploadHelpler {
      */
     private ExecutorService pool;
 
-    public FileUploadHelpler(String bucketName, String accessKeyId,
-                             String accessKeySecret, String endpoint,
-                             OSSCallback callback, Integer threadSize){
+    public FileOperatorHelper(String bucketName, String accessKeyId,
+                              String accessKeySecret, String endpoint,
+                              OSSCallback callback, Integer threadSize){
 
         this.bucketName = bucketName;
         this.accessKeyId = accessKeyId;
@@ -49,21 +49,19 @@ public class FileUploadHelpler {
         initOssClient();
     }
 
-
     /**
      * 上传文件
-     * @param file
-     * @param fileName
+     * @param fileServiceRequest
      * @return
      */
-    public UploadResponse uploadFile(File file, String fileName){
+    public UploadResponse uploadFile(FileServiceRequest fileServiceRequest){
         try {
-            fileCheck(file, fileName);
+            fileCheck(fileServiceRequest.getFile(), fileServiceRequest.getKey());
             OSSRequestBuilder builder = OSSRequestBuilder.builder();
             OSSRequest request = builder.bucketName(bucketName).
                                             ossClient(ossClient).
-                                            file(file).
-                                            key(fileName).
+                                            file(fileServiceRequest.getFile()).
+                                            key(fileServiceRequest.getKey()).
                                             callBack(callback).
                                             build();
             Future<UploadResponse> future = pool.submit(new OSS(request));

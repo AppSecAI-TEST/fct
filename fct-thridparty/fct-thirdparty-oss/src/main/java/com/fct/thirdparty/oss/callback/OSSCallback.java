@@ -1,5 +1,8 @@
 package com.fct.thirdparty.oss.callback;
 
+import com.fct.thirdparty.oss.request.OSSRequest;
+import com.fct.thirdparty.oss.response.UploadResponse;
+
 /**
  * Created by nick on 2017/5/12.
  */
@@ -11,7 +14,12 @@ public class OSSCallback<T> {
         this.callback = callback;
     }
 
-    public T callBack(){
-        return callback.callback();
+    public T onSuccess(UploadResponse response){
+        return callback.onSuccess(response);
+    }
+
+
+    public T onFailure(UploadResponse response){
+        return callback.onFailure(response);
     }
 }

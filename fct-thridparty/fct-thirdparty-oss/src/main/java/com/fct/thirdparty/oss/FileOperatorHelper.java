@@ -10,8 +10,6 @@ import com.fct.thirdparty.oss.request.OSSRequest;
 import com.fct.thirdparty.oss.response.DeleteResponse;
 import com.fct.thirdparty.oss.response.UploadResponse;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

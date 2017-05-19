@@ -162,3 +162,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# not exclude below jars
+!aliyun-java-vod-upload-1.0.1.jar
+

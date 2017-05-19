@@ -1,6 +1,10 @@
 package com.fct.thridparty.vod.builder;
 
+import com.fct.thridparty.vod.RequestType;
+import com.fct.thridparty.vod.request.VodAPIDeleteRequest;
+import com.fct.thridparty.vod.request.VodAPIGetInfoRequest;
 import com.fct.thridparty.vod.request.VodAPIRequest;
+import com.fct.thridparty.vod.request.VodAPIUploadRequest;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -10,8 +14,21 @@ public class VodAPIRequestBuilder {
 
     private VodAPIRequest request;
 
-    public VodAPIRequestBuilder(){
-        request = new VodAPIRequest();
+    public VodAPIRequestBuilder(RequestType requestType){
+
+        switch (requestType){
+            case DELETE:
+                request = new VodAPIDeleteRequest();
+                break;
+            case UPLOAD:
+                request = new VodAPIUploadRequest();
+                break;
+            case GETVOD:
+                request = new VodAPIGetInfoRequest();
+                break;
+        }
+        if(request!=null)
+            request.setVersion("2017-03-21");
     }
 
     public VodAPIRequestBuilder accessKeyId(String accessKeyId){
@@ -24,16 +41,37 @@ public class VodAPIRequestBuilder {
         return this;
     }
 
-    public VodAPIRequestBuilder version(String version){
-        request.setVersion(version);
-        return this;
-    }
-
     public VodAPIRequestBuilder signatureMethod(String signatureMethod){
         if(StringUtils.isEmpty(signatureMethod)){
             signatureMethod = "HMAC-SHA1";
         }
         request.setSignatureMethod(signatureMethod);
         return this;
+    }
+
+    public VodAPIRequestBuilder timestamp(String timestamp){
+        request.setTimestamp(timestamp);
+        return this;
+    }
+
+    public VodAPIRequestBuilder signatureVersion(String signatureVersion){
+        request.setSignatureVersion(signatureVersion);
+        return this;
+    }
+
+    public VodAPIRequestBuilder signature(String signature){
+        if(StringUtils.isEmpty(signature))
+            throw new IllegalArgumentException("signature should not be null");
+        request.setSignature(signature);
+        return this;
+    }
+
+    public VodAPIRequestBuilder signatureNonce(String signatureNonce){
+        request.setSignatureNonce(signatureNonce);
+        return this;
+    }
+
+    public VodAPIRequest build(){
+        return request;
     }
 }

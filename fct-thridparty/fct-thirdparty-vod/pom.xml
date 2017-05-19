@@ -37,6 +37,13 @@
             <artifactId>fct-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-vod-upload</artifactId>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/aliyun-java-vod-upload-1.0.1.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <repositories>

@@ -1,10 +1,7 @@
 package com.fct.thridparty.vod.builder;
 
 import com.fct.thridparty.vod.RequestType;
-import com.fct.thridparty.vod.request.VodAPIDeleteRequest;
-import com.fct.thridparty.vod.request.VodAPIGetInfoRequest;
-import com.fct.thridparty.vod.request.VodAPIRequest;
-import com.fct.thridparty.vod.request.VodAPIUploadRequest;
+import com.fct.thridparty.vod.request.*;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -15,7 +12,6 @@ public class VodAPIRequestBuilder {
     private VodAPIRequest request;
 
     public VodAPIRequestBuilder(RequestType requestType){
-
         switch (requestType){
             case DELETE:
                 request = new VodAPIDeleteRequest();
@@ -23,9 +19,11 @@ public class VodAPIRequestBuilder {
             case UPLOAD:
                 request = new VodAPIUploadRequest();
                 break;
-            case GETVOD:
+            case GET:
                 request = new VodAPIGetInfoRequest();
                 break;
+            case UPDATE:
+                request = new VodAPIUpdateRequest();
         }
         if(request!=null)
             request.setVersion("2017-03-21");
@@ -56,13 +54,6 @@ public class VodAPIRequestBuilder {
 
     public VodAPIRequestBuilder signatureVersion(String signatureVersion){
         request.setSignatureVersion(signatureVersion);
-        return this;
-    }
-
-    public VodAPIRequestBuilder signature(String signature){
-        if(StringUtils.isEmpty(signature))
-            throw new IllegalArgumentException("signature should not be null");
-        request.setSignature(signature);
         return this;
     }
 

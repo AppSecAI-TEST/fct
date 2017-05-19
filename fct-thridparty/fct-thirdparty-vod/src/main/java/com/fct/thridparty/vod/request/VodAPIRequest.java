@@ -16,4 +16,5 @@ public class VodAPIRequest {
     private String Timestamp;
     private String SignatureVersion;
     private String SignatureNonce;
+    private String Action;
 }

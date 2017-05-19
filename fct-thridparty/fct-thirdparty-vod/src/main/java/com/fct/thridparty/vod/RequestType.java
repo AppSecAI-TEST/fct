@@ -5,5 +5,5 @@ package com.fct.thridparty.vod;
  */
 public enum  RequestType {
 
-    UPLOAD, GETVOD, DELETE
+    UPLOAD, GET, DELETE, UPDATE;
 }

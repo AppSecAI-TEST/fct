@@ -40,7 +40,8 @@ public class AliyunVod {
     }
 
     public AliyunVod signature(){
-        handler.signature(SignatureGenerator.generator(handler.getRequest(), accessKeySecret));
+        handler.allParam();
+        handler.signature(SignatureGenerator.generator(handler, accessKeySecret));
         return this;
     }
 

@@ -29,7 +29,7 @@ public class VodUploadHandler extends VodOperatorAdapter implements VodHandler{
 
     @Override
     public VodHandler signature(String signature) {
-        setSignature(SignatureGenerator.generator(vodAPIRequest, accessKeySecret));
+        setSignature(signature);
         return this;
     }
 

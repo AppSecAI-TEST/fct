@@ -22,9 +22,13 @@ public interface VodHandler {
 
     void selfParam(Map<String, Object> selfParam);
 
+    void allParam();
+
     VodHandler signature(String signature);
 
     void buildRequest();
 
     VodAPIRequest getRequest();
+
+    Map<String, Object> getAllParam();
 }

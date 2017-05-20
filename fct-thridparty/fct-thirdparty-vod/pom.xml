@@ -44,6 +44,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/aliyun-java-vod-upload-1.0.1.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.5</version>
+        </dependency>
     </dependencies>
 
     <repositories>

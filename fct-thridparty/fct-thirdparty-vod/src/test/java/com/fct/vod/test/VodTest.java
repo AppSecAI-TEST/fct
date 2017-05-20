@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class VodTest {
 
     private HttpRequestExecutorManager manager;
-    private String accessKeyId = "LTAId0h3QAgdPmXT";
-    private String accessKeySecret = "cLMJrTzs1APvyXehfjOQUsYq66A3Wc";
+    private String accessKeyId = "LTAI07UgXOHTbHd6";
+    private String accessKeySecret = "j2PAwnos4tLfBXyOUzrF4bormfc3vt";
 
     @Before
     public void init(){
@@ -40,10 +40,15 @@ public class VodTest {
 
     @Test
     public void vodTest(){
-        AliyunVod aliyun = new AliyunVod(manager, RequestType.GET, accessKeyId, accessKeySecret);
         Map<String, Object> selfParam = Maps.newHashMap();
-        selfParam.putIfAbsent("vodId", "212411251515");
-        VodResponse response = aliyun.buildRequest().withSelfParam(selfParam).action("GetVideoInfo").signature().run().response();
-        System.out.println(response.getCode());
+        selfParam.putIfAbsent("VideoId", "212411251515");
+        VodResponse response = new AliyunVod(manager, RequestType.GET, accessKeyId, accessKeySecret).
+                                buildRequest().
+                                withSelfParam(selfParam).
+                                action("GetVideoInfo").
+                                signature().
+                                run().
+                                response();
+        System.out.println(response.getCode() + ":" + response.getMessage());
     }
 }

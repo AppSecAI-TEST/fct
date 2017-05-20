@@ -19,13 +19,13 @@ public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
         this.builder = builder;
     }
 
-    public void setVodId(String vodId){
+    private void setVodId(String vodId){
         ((VodAPIGetInfoRequest)vodAPIRequest).setVideoId(vodId);
     }
 
     @Override
     public void getVod() {
-        if(vodAPIRequest==null&& StringUtils.isEmpty(((VodAPIGetInfoRequest)vodAPIRequest).getVideoId()))
+        if(vodAPIRequest==null && StringUtils.isEmpty(((VodAPIGetInfoRequest)vodAPIRequest).getVideoId()))
             throw new IllegalArgumentException("get video request should not be null and video id should not empty");
         call();
     }
@@ -33,7 +33,7 @@ public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
     @Override
     public void selfParam(Map<String, Object> selfParam) {
         this.selfParam = selfParam;
-        setVodId((String) this.selfParam.get("vodId"));
+        setVodId((String) this.selfParam.get("VodId"));
     }
 
     public VodHandler signature(String signature) {

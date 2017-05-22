@@ -1,5 +1,6 @@
 package com.fct.thridparty.vod.handler;
 
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.request.VodAPIRequest;
 import com.fct.thridparty.vod.response.VodResponse;
 
@@ -16,7 +17,7 @@ public interface VodHandler {
 
     void handle();
 
-    void action(String action);
+    void action(Action action);
 
     void commonParam(String accessKeyId);
 

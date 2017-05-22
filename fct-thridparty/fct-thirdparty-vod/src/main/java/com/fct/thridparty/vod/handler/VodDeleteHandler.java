@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
@@ -34,7 +35,7 @@ public class VodDeleteHandler extends VodOperatorAdapter implements VodHandler{
     @Override
     public void selfParam(Map<String, Object> selfParam) {
         this.selfParam = selfParam;
-        setVideoIds((String) this.selfParam.get("videoIds"));
+        setVideoIds((String) this.selfParam.get("VideoIds"));
     }
 
     public VodHandler signature(String signature) {
@@ -51,7 +52,7 @@ public class VodDeleteHandler extends VodOperatorAdapter implements VodHandler{
     }
 
     @Override
-    public void action(String action) {
+    public void action(Action action) {
         setAction(action);
     }
 }

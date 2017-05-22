@@ -59,7 +59,7 @@ public class AliyunVod {
         return handler.getResponse();
     }
 
-    public AliyunVod action(String action){
+    public AliyunVod action(Action action){
         handler.action(action);
         return this;
     }

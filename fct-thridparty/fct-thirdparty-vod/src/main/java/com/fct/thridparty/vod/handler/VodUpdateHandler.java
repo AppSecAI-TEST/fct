@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
@@ -60,12 +61,12 @@ public class VodUpdateHandler extends VodOperatorAdapter implements VodHandler{
     @Override
     public void selfParam(Map<String, Object> selfParam) {
         this.selfParam = selfParam;
-        setVideoId((String) this.selfParam.get("videoId"));
-        setTitle((String) this.selfParam.get("title"));
-        setDescription((String) this.selfParam.get("description"));
-        setCoverURL((String) this.selfParam.get("coverUrl"));
-        setCateId((String) this.selfParam.get("catId"));
-        setTags((String)this.selfParam.get("tags"));
+        setVideoId((String) this.selfParam.get("VideoId"));
+        setTitle((String) this.selfParam.get("Title"));
+        setDescription((String) this.selfParam.get("Description"));
+        setCoverURL((String) this.selfParam.get("CoverURL"));
+        setCateId((String) this.selfParam.get("CateId"));
+        setTags((String)this.selfParam.get("Tags"));
     }
 
     public VodHandler signature(String signature) {
@@ -82,7 +83,7 @@ public class VodUpdateHandler extends VodOperatorAdapter implements VodHandler{
     }
 
     @Override
-    public void action(String action) {
+    public void action(Action action) {
         setAction(action);
     }
 }

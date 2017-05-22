@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
@@ -46,7 +47,7 @@ public class VodUploadHandler extends VodOperatorAdapter implements VodHandler{
     }
 
     @Override
-    public void action(String action) {
+    public void action(Action action) {
         setAction(action);
     }
 }

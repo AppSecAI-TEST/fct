@@ -5,7 +5,10 @@ import com.fct.common.utils.UUIDUtil;
 import com.fct.thirdparty.http.builder.RequestBuilder;
 import com.fct.thirdparty.http.entity.JsonNodeResponseWrapper;
 import com.fct.thirdparty.http.util.JsonConverter;
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.response.VodInfoResponse;
+import com.fct.thridparty.vod.response.VodInfosResponse;
+import com.fct.thridparty.vod.response.VodPlayAuthResponse;
 import com.fct.thridparty.vod.response.VodResponse;
 import com.fct.thridparty.vod.utils.SignatureGenerator;
 import com.google.common.collect.Maps;
@@ -58,9 +61,9 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
         //do nothing
     }
 
-    public void setAction(String action){
-        vodAPIRequest.setAction(action);
-        selfParam.put("Action", action);
+    public void setAction(Action action){
+        vodAPIRequest.setAction(action.name());
+        selfParam.put("Action", action.name());
     }
 
     public void commonParam(String accessKeyId){
@@ -107,16 +110,23 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
             for (Map.Entry<String, Object> e : allParam.entrySet()) {
                 requestURL.append("&").append(SignatureGenerator.percentEncode(e.getKey())).
                         append("=").
-                        append(SignatureGenerator.percentEncode((String)e.getValue()));
+                        append(SignatureGenerator.percentEncode(e.getValue().toString()));
             }
             Request request = new RequestBuilder().get().url(requestURL.toString()).build();
+            System.out.println(requestURL.toString());
             JsonNodeResponseWrapper wrapper = (JsonNodeResponseWrapper)manager.newCall(request).run().as(JsonNodeResponseWrapper.class);
             JsonNode node = wrapper.convertBody();
             if(node!=null){
                 Class<? extends VodResponse> targetClass = null;
                 switch (requestType){
                     case GET:
-                        targetClass = VodInfoResponse.class;
+                        if(Action.GetVideoPlayAuth.name().equalsIgnoreCase(vodAPIRequest.getAction()))
+                            targetClass = VodInfoResponse.class;
+                        else
+                            targetClass = VodPlayAuthResponse.class;
+                        break;
+                    case GETLIST:
+                        targetClass = VodInfosResponse.class;
                         break;
                     case DELETE:
                     case UPDATE:

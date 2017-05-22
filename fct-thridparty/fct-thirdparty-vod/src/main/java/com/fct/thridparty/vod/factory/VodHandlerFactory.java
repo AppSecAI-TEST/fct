@@ -13,18 +13,22 @@ public class VodHandlerFactory {
     private static VodHandler handler;
 
     public static VodHandler getHandler(RequestType requestType, HttpRequestExecutorManager manager){
+        VodAPIRequestBuilder builder = new VodAPIRequestBuilder(requestType);
         switch (requestType){
             case GET:
-                handler = new VodGetInfoHandler(requestType, manager, new VodAPIRequestBuilder(requestType));
+                handler = new VodGetInfoHandler(requestType, manager, builder);
                 break;
             case DELETE:
-                handler = new VodDeleteHandler(requestType, manager, new VodAPIRequestBuilder(requestType));
+                handler = new VodDeleteHandler(requestType, manager, builder);
                 break;
             case UPLOAD:
-                handler = new VodUploadHandler(requestType, manager, new VodAPIRequestBuilder(requestType));
+                handler = new VodUploadHandler(requestType, manager, builder);
                 break;
             case UPDATE:
-                handler = new VodUpdateHandler(requestType, manager, new VodAPIRequestBuilder(requestType));
+                handler = new VodUpdateHandler(requestType, manager, builder);
+                break;
+            case GETLIST:
+                handler = new VodGetVideosHandler(requestType, manager, builder);
                 break;
         }
         return handler;

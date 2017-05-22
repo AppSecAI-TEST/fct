@@ -1,11 +1,13 @@
 package com.fct.thridparty.vod.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
  * Created by nick on 2017/5/19.
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Video {
 
     /**

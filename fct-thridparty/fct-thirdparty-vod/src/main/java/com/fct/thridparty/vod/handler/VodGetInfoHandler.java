@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
@@ -12,6 +13,9 @@ import java.util.Map;
 
 /**
  * Created by nick on 2017/5/19.
+ * 这个handler类既可以当获取单个视频信息的功能,
+ * 还包含获取播放凭证的功能
+ *
  */
 public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
 
@@ -52,8 +56,7 @@ public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
     }
 
     @Override
-    public void action(String action) {
+    public void action(Action action) {
         setAction(action);
     }
-
 }

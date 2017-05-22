@@ -7,7 +7,6 @@ import lombok.Data;
  */
 @Data
 public class VodAPIUpdateRequest extends VodAPIRequest{
-
     private String VideoId;
     private String Title;
     private String Description;

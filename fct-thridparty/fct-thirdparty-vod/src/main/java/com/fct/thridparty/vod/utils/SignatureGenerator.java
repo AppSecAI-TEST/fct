@@ -45,7 +45,7 @@ public class SignatureGenerator {
             StringBuilder canonicalizedQueryString = new StringBuilder();
             for (String key : sortedKeys) {
                 // 此处需要对key和value进行编码
-                String value = (String)param.get(key);
+                String value = param.get(key).toString();
                 canonicalizedQueryString.append(SEPARATOR).append(percentEncode(key)).append(EQUAL).append(percentEncode(value));
             }
             // 此处需要对canonicalizedQueryString进行编码

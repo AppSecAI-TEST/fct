@@ -24,6 +24,9 @@ public class VodAPIRequestBuilder {
                 break;
             case UPDATE:
                 request = new VodAPIUpdateRequest();
+                break;
+            case GETLIST:
+                request = new VodAPIGetVideosRequest();
         }
         if(request!=null)
             request.setVersion("2017-03-21");

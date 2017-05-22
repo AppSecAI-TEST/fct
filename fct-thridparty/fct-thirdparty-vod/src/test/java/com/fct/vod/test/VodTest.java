@@ -49,6 +49,6 @@ public class VodTest {
                                 signature().
                                 run().
                                 response();
-        System.out.println(response.getCode() + ":" + response.getMessage());
+        System.out.println(response.getCode() + " : " + response.getMessage());
     }
 }

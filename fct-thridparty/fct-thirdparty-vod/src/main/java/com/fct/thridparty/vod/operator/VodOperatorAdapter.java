@@ -5,6 +5,7 @@ import com.fct.common.utils.UUIDUtil;
 import com.fct.thirdparty.http.builder.RequestBuilder;
 import com.fct.thirdparty.http.entity.JsonNodeResponseWrapper;
 import com.fct.thirdparty.http.util.JsonConverter;
+import com.fct.thridparty.vod.response.VodInfoResponse;
 import com.fct.thridparty.vod.response.VodResponse;
 import com.fct.thridparty.vod.utils.SignatureGenerator;
 import com.google.common.collect.Maps;
@@ -67,7 +68,6 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
     }
 
     private void initCommonParam(String accessKeyId){
-        commonParam = Maps.newHashMap();
         setFormat("JSON");
         setVersion("2017-03-21");
         setAccessKeyId(accessKeyId);
@@ -75,6 +75,7 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
         setSignatureNonce(UUIDUtil.generateUUID());
         setTimestamp(ISO8601TimeFormate(new Date()));
         setSignatureVersion("1.0");
+        commonParam = Maps.newHashMap();
         commonParam.putIfAbsent("Format", Format);
         commonParam.putIfAbsent("Version", Version);
         commonParam.putIfAbsent("AccessKeyId", AccessKeyId);
@@ -111,8 +112,19 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
             Request request = new RequestBuilder().get().url(requestURL.toString()).build();
             JsonNodeResponseWrapper wrapper = (JsonNodeResponseWrapper)manager.newCall(request).run().as(JsonNodeResponseWrapper.class);
             JsonNode node = wrapper.convertBody();
-            if(node!=null)
-                response = JsonConverter.toObject(JsonConverter.toJson(node), VodResponse.class);
+            if(node!=null){
+                Class<? extends VodResponse> targetClass = null;
+                switch (requestType){
+                    case GET:
+                        targetClass = VodInfoResponse.class;
+                        break;
+                    case DELETE:
+                    case UPDATE:
+                    case UPLOAD:
+                        targetClass = VodResponse.class;
+                }
+                response = JsonConverter.toObject(JsonConverter.toJson(node), targetClass);
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

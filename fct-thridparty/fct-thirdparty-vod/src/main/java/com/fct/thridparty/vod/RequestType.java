@@ -5,5 +5,10 @@ package com.fct.thridparty.vod;
  */
 public enum  RequestType {
 
-    UPLOAD, GET, DELETE, UPDATE;
+    UPLOAD, //上传视频
+    GET, //获取单个视频信息
+    DELETE, //批量删除视频
+    UPDATE, //更新视频信息
+    GETLIST //获取视频信息列表
+
 }

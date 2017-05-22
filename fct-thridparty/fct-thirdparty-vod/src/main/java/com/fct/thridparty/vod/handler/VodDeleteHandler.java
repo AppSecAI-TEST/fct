@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
 import com.fct.thridparty.vod.request.VodAPIDeleteRequest;
@@ -13,9 +14,10 @@ import java.util.Map;
  */
 public class VodDeleteHandler extends VodOperatorAdapter implements VodHandler{
 
-    public VodDeleteHandler(HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
+    public VodDeleteHandler(RequestType requestType, HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
         this.manager = manager;
         this.builder = builder;
+        this.requestType = requestType;
     }
 
     private void setVideoIds(String VideoIds){

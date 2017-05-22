@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
 import com.fct.thridparty.vod.request.VodAPIUpdateRequest;
@@ -13,9 +14,10 @@ import java.util.Map;
  */
 public class VodUpdateHandler extends VodOperatorAdapter implements VodHandler{
 
-    public VodUpdateHandler(HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
+    public VodUpdateHandler(RequestType requestType, HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
         this.builder = builder;
         this.manager = manager;
+        this.requestType = requestType;
     }
 
     /**
@@ -46,6 +48,10 @@ public class VodUpdateHandler extends VodOperatorAdapter implements VodHandler{
         ((VodAPIUpdateRequest)vodAPIRequest).setCateId(CateId);
     }
 
+    private void setTags(String tags){
+        ((VodAPIUpdateRequest)vodAPIRequest).setTags(tags);
+    }
+
     @Override
     public void updateVod() {
         call();
@@ -59,6 +65,7 @@ public class VodUpdateHandler extends VodOperatorAdapter implements VodHandler{
         setDescription((String) this.selfParam.get("description"));
         setCoverURL((String) this.selfParam.get("coverUrl"));
         setCateId((String) this.selfParam.get("catId"));
+        setTags((String)this.selfParam.get("tags"));
     }
 
     public VodHandler signature(String signature) {

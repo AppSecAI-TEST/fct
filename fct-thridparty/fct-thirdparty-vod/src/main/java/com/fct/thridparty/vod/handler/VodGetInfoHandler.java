@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
 import com.fct.thridparty.vod.request.VodAPIGetInfoRequest;
@@ -14,9 +15,10 @@ import java.util.Map;
  */
 public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
 
-    public VodGetInfoHandler(HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
+    public VodGetInfoHandler(RequestType requestType, HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
         this.manager = manager;
         this.builder = builder;
+        this.requestType = requestType;
     }
 
     private void setVodId(String vodId){
@@ -53,4 +55,5 @@ public class VodGetInfoHandler extends VodOperatorAdapter implements VodHandler{
     public void action(String action) {
         setAction(action);
     }
+
 }

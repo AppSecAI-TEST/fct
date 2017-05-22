@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.operator;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.handler.VodHandler;
 import com.fct.thridparty.vod.request.VodAPIRequest;
@@ -17,6 +18,7 @@ public abstract class AbstractVodOperator implements VodOperator, VodHandler{
     protected VodAPIRequestBuilder builder;
     protected VodResponse response;
     protected String accessKeySecret;
+    protected RequestType requestType;
     private static final String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     protected static final String URL = "http://vod.cn-shanghai.aliyuncs.com?";

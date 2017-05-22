@@ -13,5 +13,5 @@ public class VodAPIUpdateRequest extends VodAPIRequest{
     private String Description;
     private String CoverURL;
     private String CateId;
-    private String[] Tags;
+    private String Tags;
 }

@@ -1,9 +1,9 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
 import com.fct.thridparty.vod.operator.VodOperatorAdapter;
-import com.fct.thridparty.vod.utils.SignatureGenerator;
 
 import java.util.Map;
 
@@ -12,9 +12,11 @@ import java.util.Map;
  */
 public class VodUploadHandler extends VodOperatorAdapter implements VodHandler{
 
-    public VodUploadHandler(HttpRequestExecutorManager manager, VodAPIRequestBuilder builder){
+    public VodUploadHandler(RequestType requestType, HttpRequestExecutorManager manager,
+                            VodAPIRequestBuilder builder){
         this.manager = manager;
         this.builder = builder;
+        this.requestType = requestType;
     }
 
     @Override

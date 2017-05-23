@@ -22,7 +22,7 @@ public class VodHandlerFactory {
                 handler = new VodDeleteHandler(requestType, manager, builder);
                 break;
             case UPLOAD:
-                handler = new VodUploadHandler(requestType, manager, builder);
+                handler = new VodUploadHandler(requestType, builder);
                 break;
             case UPDATE:
                 handler = new VodUpdateHandler(requestType, manager, builder);

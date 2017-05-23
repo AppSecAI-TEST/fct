@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod;
 
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
+import com.fct.thridparty.vod.callback.Callback;
 import com.fct.thridparty.vod.factory.VodHandlerFactory;
 import com.fct.thridparty.vod.handler.VodHandler;
 import com.fct.thridparty.vod.response.VodResponse;
@@ -19,6 +20,7 @@ public class AliyunVod {
     private String accessKeyId;
     private String accessKeySecret;
 
+
     public AliyunVod(HttpRequestExecutorManager manager, RequestType requestType,
                      String accessKeyId, String accessKeySecret){
         this.manager = manager;
@@ -26,6 +28,11 @@ public class AliyunVod {
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
         init();
+    }
+
+    public AliyunVod(RequestType requestType,
+                     String accessKeyId, String accessKeySecret){
+        this(null, requestType, accessKeyId, accessKeySecret);
     }
 
     protected void init(){
@@ -52,6 +59,11 @@ public class AliyunVod {
 
     public AliyunVod run(){
         handler.handle();
+        return this;
+    }
+
+    public AliyunVod callBack(Callback callback){
+        handler.setCallback(callback);
         return this;
     }
 

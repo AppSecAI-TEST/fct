@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-vod</artifactId>
-            <version>2.0.3</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun.oss</groupId>
@@ -40,9 +40,9 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-vod-upload</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/aliyun-java-vod-upload-1.0.1.jar</systemPath>
+            <systemPath>${project.basedir}/lib/aliyun-java-vod-upload-1.0.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>

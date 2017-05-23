@@ -3,6 +3,7 @@ package com.fct.thridparty.vod.operator;
 import com.fct.thirdparty.http.HttpRequestExecutorManager;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.builder.VodAPIRequestBuilder;
+import com.fct.thridparty.vod.callback.Callback;
 import com.fct.thridparty.vod.handler.VodHandler;
 import com.fct.thridparty.vod.request.VodAPIRequest;
 import com.fct.thridparty.vod.response.VodResponse;
@@ -20,6 +21,7 @@ public abstract class AbstractVodOperator implements VodOperator, VodHandler{
     protected String accessKeySecret;
     protected RequestType requestType;
     private static final String ISO8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    protected Callback callback;
 
     protected static final String URL = "http://vod.cn-shanghai.aliyuncs.com?";
 
@@ -50,5 +52,10 @@ public abstract class AbstractVodOperator implements VodOperator, VodHandler{
         SimpleDateFormat df = new SimpleDateFormat(ISO8601_DATE_FORMAT);
         df.setTimeZone(new SimpleTimeZone(0, "GMT"));
         return df.format(date);
+    }
+
+    @Override
+    public void setCallback(Callback callback){
+        this.callback = callback;
     }
 }

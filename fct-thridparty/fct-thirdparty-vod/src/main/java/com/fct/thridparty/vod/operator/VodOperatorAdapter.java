@@ -130,10 +130,19 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
                         break;
                     case DELETE:
                     case UPDATE:
-                    case UPLOAD:
                         targetClass = VodResponse.class;
                 }
                 response = JsonConverter.toObject(JsonConverter.toJson(node), targetClass);
+                //增加回调功能
+                if(callback!=null){
+                    if(response!=null){
+                        if("0".equalsIgnoreCase(response.getCode())){
+                            callback.onSuccess(response);
+                        }else {
+                            callback.onFail(response);
+                        }
+                    }
+                }
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

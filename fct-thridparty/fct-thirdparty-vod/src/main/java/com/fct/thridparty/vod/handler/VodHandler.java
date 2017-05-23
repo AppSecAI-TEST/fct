@@ -1,6 +1,7 @@
 package com.fct.thridparty.vod.handler;
 
 import com.fct.thridparty.vod.Action;
+import com.fct.thridparty.vod.callback.Callback;
 import com.fct.thridparty.vod.request.VodAPIRequest;
 import com.fct.thridparty.vod.response.VodResponse;
 
@@ -32,4 +33,6 @@ public interface VodHandler {
     VodAPIRequest getRequest();
 
     Map<String, Object> getAllParam();
+
+    void setCallback(Callback callBack);
 }

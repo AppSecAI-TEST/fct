@@ -11,7 +11,7 @@
     <modules>
         <module>fct-thirdparty-oss</module>
         <module>fct-thirdparty-im</module>
-        <module>fct-thridparty-http</module>
+        <module>fct-thirdparty-http</module>
         <module>fct-thirdparty-vod</module>
     </modules>
 

@@ -8,6 +8,8 @@ import java.util.Date;
  */
 public class MasterDto implements Serializable{
 
+    private Long masterId;
+
     private String masterName;
 
     private String coverUrl;
@@ -89,4 +91,13 @@ public class MasterDto implements Serializable{
     public void setDelflag(int delflag) {
         this.delflag = delflag;
     }
+
+    public Long getMasterId() {
+        return masterId;
+    }
+
+    public void setMasterId(Long masterId) {
+        this.masterId = masterId;
+    }
+
 }

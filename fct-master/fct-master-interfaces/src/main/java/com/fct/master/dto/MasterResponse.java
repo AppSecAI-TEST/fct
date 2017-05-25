@@ -11,7 +11,7 @@ public class MasterResponse {
 
     private List<MasterDto> masters;
 
-    private int allCount;
+    private Long allCount;
 
     private boolean hasMore;
 
@@ -31,11 +31,11 @@ public class MasterResponse {
         this.masters = masters;
     }
 
-    public int getAllCount() {
+    public Long getAllCount() {
         return allCount;
     }
 
-    public void setAllCount(int allCount) {
+    public void setAllCount(Long allCount) {
         this.allCount = allCount;
     }
 

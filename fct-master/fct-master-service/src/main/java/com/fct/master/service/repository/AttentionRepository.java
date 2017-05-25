@@ -1,6 +1,6 @@
-package com.fct.master.data.repository;
+package com.fct.master.service.repository;
 
-import com.fct.master.data.entity.Attention;
+import com.fct.master.service.domain.Attention;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

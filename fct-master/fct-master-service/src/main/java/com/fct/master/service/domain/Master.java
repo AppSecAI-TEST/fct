@@ -1,5 +1,6 @@
-package com.fct.master.data.entity;
+package com.fct.master.service.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fct.master.dto.MasterDto;
 import lombok.Data;
 
@@ -11,8 +12,8 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table
-public class Master extends Base{
+@Table(name = "master")
+public class Master {
 
     public Master(){}
 
@@ -53,5 +54,15 @@ public class Master extends Base{
 
     @Column(name = "works_count")
     private Long worksCount;
+
+    @Column(name = "del_flag")
+    private int delFlag; //逻辑删除 0 是不删除 1 是删除 默认是0
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "update_time")
+    private Date updateTime;
 
 }

@@ -38,7 +38,7 @@ public class MasterNews {
     @Column(name = "cover_url")
     private String coverUrl;
 
-    //观众端推流地址
+    //观众端拉流地址
     @Column(name = "live_pull_url")
     private String livePullUrl;
 

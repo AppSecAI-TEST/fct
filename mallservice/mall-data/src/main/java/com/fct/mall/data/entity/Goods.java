@@ -26,7 +26,10 @@ public class Goods {
     /// <summary>
     /// 分类
     /// </summary>
-    private String categoryId;
+    private String categoryCode;
+
+    //品级
+    private Integer gradeId;
 
     /// <summary>
     /// 艺人(多个，逗号隔开)
@@ -73,11 +76,6 @@ public class Goods {
     private Integer stockCount;
 
     /// <summary>
-    /// 销售总数
-    /// </summary>
-    private Integer sellCount;
-
-    /// <summary>
     /// 编码
     /// </summary>
     private String code;
@@ -103,7 +101,7 @@ public class Goods {
     private String content;
 
     //材质--泥料介绍
-    private String materialId;
+    private Integer materialId;
 
     //预售时间（天为单位，正常商品默认为0）
     private Integer advanceSaleDays;
@@ -122,6 +120,20 @@ public class Goods {
     /// 排序
     /// </summary>
     private Integer sortIndex;
+
+    /// <summary>
+    /// 销售总数，付款成功为计算，如有退换货则相应减去
+    /// </summary>
+    private Integer sellCount;
+
+    //已付款总笔数，如有退款则不减
+    private Integer payCount;
+
+    //累计评论总数
+    private Integer commentCount;
+
+    //评论分数；(描述分)
+    private float commnetScore;
 
     ///浏览次数
     private Integer viewCount;

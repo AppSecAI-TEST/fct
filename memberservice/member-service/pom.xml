@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>com.fct.messageservice</groupId>
-            <artifactId>messageservice-interface</artifactId>
+            <artifactId>message-interface</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

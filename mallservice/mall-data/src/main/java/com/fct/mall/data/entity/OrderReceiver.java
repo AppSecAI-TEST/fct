@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * Created by jon on 2017/5/15.
@@ -51,4 +52,17 @@ public class OrderReceiver {
     /// 邮政编码
     /// </summary>
     private String postCode;
+
+    /// <summary>
+    /// 快递公司平台
+    /// </summary>
+    private String expressPlatform;
+
+    /// <summary>
+    /// 快递单号
+    /// </summary>
+    private String expressNO;
+
+    //发货时间
+    private Date deliveryTime;
 }

@@ -18,4 +18,17 @@ public class GoodsGrade {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
+
+    /// <summary>
+    /// 宝贝分类名称
+    /// </summary>
+    private String name;
+
+    //图片
+    private Integer img;
+
+    /// <summary>
+    /// 排序值
+    /// </summary>
+    private Integer sortIndex;
 }

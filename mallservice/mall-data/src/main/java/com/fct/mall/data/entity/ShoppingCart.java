@@ -16,7 +16,7 @@ import java.util.Date;
 public class ShoppingCart {
 
     @Id
-    private String token;
+    private Integer id;
 
     /// <summary>
     /// 会员Id

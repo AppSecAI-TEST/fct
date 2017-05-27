@@ -23,4 +23,9 @@ public class GoodsSpecificationManager {
     {
         return goodsSpecificationRepository.findByGoodsId(goodsId);
     }
+
+    public void save(GoodsSpecification gs)
+    {
+        goodsSpecificationRepository.saveAndFlush(gs);
+    }
 }

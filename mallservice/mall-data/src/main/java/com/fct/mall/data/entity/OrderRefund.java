@@ -72,5 +72,5 @@ public class OrderRefund {
     /// <summary>
     /// 修改时间
     /// </summary>
-    private List<OrderRefundContent> refundContent;
+    private List<OrderRefundMessage> refundContent;
 }

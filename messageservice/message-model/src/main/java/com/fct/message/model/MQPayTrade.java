@@ -1,35 +1,38 @@
 package com.fct.message.model;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * Created by jon on 2017/4/20.
  */
+@Data
 public class MQPayTrade {
     /// <summary>
     /// 支付Id
     /// </summary>
-    public String pay_orderid;
+    private String pay_orderid;
 
     /// <summary>
     /// 订单状态
     /// </summary>
-    public Integer trade_status;
+    private Integer trade_status;
 
     /// <summary>
     /// 支付业务类型
     /// </summary>
-    public String trade_type;
+    private String trade_type;
 
     /// <summary>
     /// 支付业务id
     /// </summary>
-    public String trade_id;
+    private String trade_id;
 
     /// <summary>
     /// 备注
     /// </summary>
-    public String desc;
+    private String desc;
 
-    public List<MQPayRefund> refund;
+    private List<MQPayRefund> refund;
 }

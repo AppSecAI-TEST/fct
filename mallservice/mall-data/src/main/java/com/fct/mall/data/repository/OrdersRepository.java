@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by jon on 2017/5/8.
  */
-public interface OrdersRepository extends JpaRepository<Orders, Integer> {
+public interface OrdersRepository extends JpaRepository<Orders, String> {
 
 
     Page<Orders> findAll(Specification<Orders> spec, Pageable pageable);  //分页按条件查询

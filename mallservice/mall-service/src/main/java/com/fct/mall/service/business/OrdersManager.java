@@ -1,27 +1,34 @@
 package com.fct.mall.service.business;
 
 import com.fct.common.exceptions.BaseException;
+import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
 import com.fct.finance.data.entity.MemberAccount;
-import com.fct.mall.data.entity.Goods;
-import com.fct.mall.data.entity.GoodsSpecification;
-import com.fct.mall.data.entity.OrderGoods;
-import com.fct.mall.data.entity.Orders;
+import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
+import com.fct.message.model.MQPayRefund;
+import com.fct.message.model.MQPayTrade;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Created by jon on 2017/5/16.
- * always loves tutu
+ * Created by jon on 2017/5/24.
+ * The more I know of you is the more I know I love you
  */
 @Service
 public class OrdersManager {
@@ -34,6 +41,23 @@ public class OrdersManager {
 
     @Autowired
     private GoodsManager goodsManager;
+
+    @Autowired
+    private OrderGoodsManager orderGoodsManager;
+
+    @Autowired
+    private OrderReceiverManager orderReceiverManager;
+
+    @Autowired
+    private OrderRefundManager orderRefundManager;
+
+    @Autowired
+    JdbcTemplate jt;
+
+    public void save(Orders orders)
+    {
+        ordersRepository.saveAndFlush(orders);
+    }
 
     private OrderProductDTO getSingleProduct(List<OrderProductDTO> lsProduct, Integer pid)
     {
@@ -49,16 +73,16 @@ public class OrdersManager {
     }
 
     @Transactional
-    public void create(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
-                       List<OrderGoods> lsOrderGoods, String couponCode, String remark)
+    public String create(Integer memberId, String cellPhone, Integer shopId, Integer points, BigDecimal accountAmount,
+                       List<OrderGoods> lsOrderGoods, String couponCode, String remark,OrderReceiver orderReceiver)
     {
         if (memberId < 1)
         {
             throw new IllegalArgumentException("用户不存在");
         }
-        if (StringUtils.isEmpty(userName))
+        if (StringUtils.isEmpty(cellPhone))
         {
-            throw new IllegalArgumentException("用户不存在");
+            throw new IllegalArgumentException("手机不存在");
         }
         if (shopId < 0)
         {
@@ -156,13 +180,16 @@ public class OrdersManager {
             }
 
             g.setName(goods.getName());
-            g.setSpecName(goods.getSpecification() != null ? goods.getSpecification().get(0).getName() : "");
+            if(goods.getSpecification() != null) {
+                g.setSpecName(goods.getSpecification().get(0).getName());
+                g.setImage(goods.getSpecification().get(0).getImage());
+            }
             //单价
             g.setPrice(price);
             //应付金额
             g.setPayAmount(g.getPromotionPrice().subtract(g.getCouponAmount()).multiply(new BigDecimal(g.getBuyCount())));
             //总价
-            g.setTotalAmount(price.multiply(new BigDecimal(g.getBuyCount()));
+            g.setTotalAmount(price.multiply(new BigDecimal(g.getBuyCount())));
 
             OrderProductDTO p = new OrderProductDTO();
             p.setProductId(g.getGoodsId());
@@ -216,8 +243,9 @@ public class OrdersManager {
                 String[] arrProductId = cc.getProductIds().split(",");
                 for (String pid:arrProductId
                      ) {
-                    if(Integer.getInteger(pid) == g.getGoodsId()) {
+                    if (Integer.getInteger(pid) == g.getGoodsId()) {
                         BigDecimal couponAmount = g.getPromotionPrice().multiply(new BigDecimal(g.getBuyCount()));
+
                         couponAmount = couponAmount.divide(couponTotalPrice).multiply(cc.getAmount());
 
                         g.setCouponAmount(couponAmount.multiply(new BigDecimal(g.getBuyCount())));
@@ -247,11 +275,11 @@ public class OrdersManager {
         //关闭时间
         if (closeTime > 0)
         {
-            order.getOrderTime().setExpiresTime(DateUtils.addMinute(new Date(),closeTime));
+            order.setExpiresTime(DateUtils.addMinute(new Date(),closeTime));
         }
         else
         {
-            order.getOrderTime().setExpiresTime(DateUtils.addDay(new Date(),1));
+            order.setExpiresTime(DateUtils.addDay(new Date(),1));
         }
 
         //验证
@@ -270,95 +298,439 @@ public class OrdersManager {
             throw new BaseException("使用积分不能大于自己拥有的积分");
         }
 
-        BigDecimal autoPay = accountAmount + (points / 100);
-        if (orderCashAmount < autoPay)
+        BigDecimal autoPay = accountAmount.add(new BigDecimal(points / 100));
+        if (orderCashAmount.doubleValue() < autoPay.doubleValue())
         {
-            entityContext.Rollback();
-            throw new BusinessException("余额与积分不能大于应付");
+            throw new BaseException("余额与积分不能大于应付");
         }
+        order.setMemberId(memberId);
+        order.setCellPhone(cellPhone);
+        order.setShopId(shopId);
+        order.setPoints(points);
+        order.setAccountAmount(accountAmount);
+        order.setCashAmount(orderCashAmount.divide(autoPay)); //实际现金支付
+        order.setPayAmount(orderCashAmount);    //应付金额
+        order.setTotalAmount(orderTotalAmount);
+        order.setCouponCode(couponCode);
+        order.setStatus(Constants.enumOrderStatus.waitPay.getValue());
+        order.setRemark(remark);
+        order.setCreateTime(new Date());
+        ordersRepository.save(order);
 
+        orderReceiver.setOrderId(order.getOrderId());
+        //insert、
+        orderReceiverManager.save(orderReceiver);
 
-        //同组支付订单
-        order.GroupId = groupPayId;
-        order.SupplierId = g.Key;
-        order.MemberId = memberId;
-        order.UserName = userName;
-        order.ShopId = shopId;
-        order.Points = points;
-        order.AccountAmount = accountAmount;
-        order.CashAmount = orderCashAmount - autoPay; //实际现金支付
-        order.PayAmount = orderCashAmount; //应付金额
-        order.TotalAmount = orderTotalAmount;
-        order.CouponCode = coupon;
-        order.Status = (int)Constants.EnumOrderStatus.Wait_Buyer_Pay;
-        order.Remark = remark;
-        order.CreateTime = DateTime.Now;
-        entityContext.Add<Orders>(order);
-        order.OrderReceiver.OrderId = order.OrderId;
-        entityContext.Add<OrderReceiver>(order.OrderReceiver);
-
-        order.OrderTime.OrderId = order.OrderId;
-        entityContext.Add<OrderTime>(order.OrderTime);
-
-        string sql = string.Empty;
+        String sql = "";
         int sqlExeCount = 0;
-        string goodsIds = string.Empty;
-        string goodsSpecIds = string.Empty;
-        foreach (OrderGoods orderGoods in orderGoodses)
-        {
+        String goodsIds = "";
+        String goodsSpecIds = "";
+        for (OrderGoods g:lsGoods
+             ) {
+
             //减去规格库存
-            if (orderGoods.GoodsSpecId > 0)
+            if (g.getGoodsSpecId() > 0)
             {
-                sql += string.Format("UPDATE GoodsSpecification SET StockCount=StockCount-{0} WHERE Id={1} AND StockCount>={0};",
-                        orderGoods.BuyCount, orderGoods.GoodsSpecId);
+                sql += String.format("UPDATE GoodsSpecification SET StockCount=StockCount-d% WHERE Id=d% AND StockCount>=d%;",
+                        g.getBuyCount(), g.getGoodsSpecId(),g.getBuyCount());
 
                 sqlExeCount += 1;
 
             }
-            //减去产品
-            sql += string.Format("UPDATE Goods SET StockCount=StockCount-{0} WHERE Id={1} AND StockCount>={0};",
-                    orderGoods.BuyCount, orderGoods.GoodsId);
+            //减去产品库存
+            sql += String.format("UPDATE Goods SET StockCount=StockCount-d% WHERE Id=d% AND StockCount>=d%;",
+                    g.getBuyCount(), g.getGoodsId(),g.getBuyCount());
 
-            ///增加销售量
-            sql += string.Format("UPDATE Goods SET SellCount=SellCount+{0} WHERE Id={1};",
-                    orderGoods.BuyCount, orderGoods.GoodsId);
+            /*增加销售量
+            sql += String.format("UPDATE Goods SET SellCount=SellCount+d% WHERE Id=d%;",
+                    g.getBuyCount(), g.getGoodsId());*/
 
             //从购物车中删除,拼接ID
-            if (string.IsNullOrEmpty(goodsIds))
+            if (StringUtils.isEmpty(goodsIds))
             {
-                goodsIds = "" + orderGoods.GoodsId;
+                goodsIds = "" + g.getGoodsId();
             }
             else
             {
-                goodsIds += "," + orderGoods.GoodsId;
+                goodsIds += "," + g.getGoodsId();
             }
 
-            if (string.IsNullOrEmpty(goodsSpecIds))
+            if (StringUtils.isEmpty(goodsSpecIds))
             {
-                goodsSpecIds = "" + orderGoods.GoodsSpecId;
+                goodsSpecIds = "" + g.getGoodsSpecId();
             }
             else
             {
-                goodsSpecIds += "," + orderGoods.GoodsSpecId;
+                goodsSpecIds += "," + g.getGoodsSpecId();
             }
 
-            orderGoods.OrderId = order.OrderId;
-            entityContext.Add<OrderGoods>(orderGoods);
+            g.setOrderId(order.getOrderId());
+            //add orderGoods
+            orderGoodsManager.save(g);
 
-            sqlExeCount += 2;
+            sqlExeCount += 1;
         }
-
-        if (entityContext.ExecuteNonQuery(sql) != sqlExeCount)
+        if (jt.update(sql) != sqlExeCount)
         {
-            entityContext.Rollback();
-            throw new ArgumentException("库存不足。");
+            throw new IllegalArgumentException("库存不足。");
         }
-
         //删除购物车
-        entityContext.ExecuteNonQuery(
-                string.Format("DELETE ShoppingCart WHERE MemberId={0} AND ShopId={1} GoodsId in ({2}) AND GoodsSpecId in ({3});",
-                        memberId, shopId, goodsIds, goodsSpecIds));
+        jt.execute(String.format("DELETE ShoppingCart WHERE MemberId=d% AND ShopId=d% GoodsId in (s%) AND GoodsSpecId in (s%);",
+                memberId, shopId, goodsIds, goodsSpecIds));
+
+        return order.getOrderId();
+
     }
 
+    //获取订单列表
+    public Page<Orders> findAll(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
+                                Integer status,String payPaltform,String payOrderId,Integer timeType,String beginTime,
+                                String endTime,Integer pageIndex, Integer pageSize)
+    {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+
+        Specification<Orders> spec = new Specification<Orders>() {
+            @Override
+            public Predicate toPredicate(Root<Orders> root,
+                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<Predicate>();
+                if (!StringUtils.isEmpty(orderId)) {
+                    predicates.add(cb.equal(root.get("orderId"), orderId));
+                }
+                if(!StringUtils.isEmpty(cellPhone))
+                {
+                    predicates.add(cb.equal(root.get("cellPhone"),cellPhone));
+                }
+
+                if (memberId>0) {
+                    predicates.add(cb.equal(root.get("memberId"), memberId));
+                }
+
+                if (shopId>0) {
+                    predicates.add(cb.equal(root.get("shopId"), shopId));
+                }
+
+                if(!StringUtils.isEmpty(goodsName))
+                {
+                    //定义一个Expression
+                    Expression<String> exp = root.get("orderId");
+
+                    predicates.add(exp.in(orderGoodsManager.getOrderId(goodsName)));
+
+                }
+
+                if(!StringUtils.isEmpty(payPaltform))
+                {
+                    predicates.add(cb.equal(root.get("payPaltform"),payPaltform));
+                }
+
+                if(!StringUtils.isEmpty(payOrderId))
+                {
+                    predicates.add(cb.equal(root.get("payOrderId"),payOrderId));
+                }
+
+                if (status>-1) {
+                    predicates.add(cb.equal(root.get("status"), status));
+                }
+
+                String timeColumn = "createTime";
+                if (timeType>2) {
+                    timeColumn = "payTime";
+                }
+                if (!StringUtils.isEmpty(beginTime)) {
+                    predicates.add(cb.greaterThanOrEqualTo(root.get(timeColumn), beginTime));
+                }
+                if (!StringUtils.isEmpty(endTime)) {
+                    predicates.add(cb.lessThanOrEqualTo(root.get(timeColumn), endTime));
+                }
+                query.where(predicates.toArray(new Predicate[predicates.size()]));
+                return null;
+            }
+        };
+
+        return ordersRepository.findAll(spec,pageable);
+    }
+
+    //获取订单
+    public Orders findById(String orderId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        Orders order = ordersRepository.findOne(orderId);
+        order.setOrderReceiver(orderReceiverManager.findByOrderId(orderId));
+        order.setOrderGoods(orderGoodsManager.findByOrderId(orderId));
+
+        return order;
+    }
+
+    //后台管理员设置为已支付（线下行为）
+    public void offPaySuccess(String orderId, String payPlatform, Integer operatorId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (StringUtils.isEmpty(payPlatform))
+        {
+            throw new IllegalArgumentException("支付方式不能为空");
+        }
+
+        //多订单处理
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
+        {
+            throw new BaseException("不能执行此操作");
+        }
+        order.setStatus(Constants.enumOrderStatus.paySuccess.getValue());
+        order.setPayPlatform(payPlatform);
+        order.setPayTime(new Date()); //设置支付时间
+        order.setUpdateTime(new Date());
+        order.setExpiresTime(null);
+        order.setOperatorId(order.getOperatorId() + "paysuccess:"+operatorId+",");
+        ordersRepository.saveAndFlush(order);
+
+        //设置销售量
+        List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
+        for (OrderGoods g: lsOrderGoods
+             ) {
+            jt.update(String.format("UPDATE Goods SET PayCount=PayCount+d%,SellCount=SellCount+d% WHERE Id=d%",
+                    g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
+        }
+    }
+
+    //设置为已取消
+    public void cancel(String orderId,Integer memberId,Integer operatorId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if(order.getMemberId() != memberId)
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+
+        if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
+        {
+            throw new IllegalArgumentException("不能执行此操作");
+        }
+
+        order.setStatus(Constants.enumOrderStatus.close.getValue());
+        order.setUpdateTime(new Date());
+        order.setExpiresTime(null);
+        order.setOperatorId(order.getOperatorId() + "cancel:"+operatorId+",");
+        ordersRepository.saveAndFlush(order);
+
+        //恢复库存
+        List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
+        for (OrderGoods g: lsOrderGoods
+                ) {
+            //减去规格库存
+            if (g.getGoodsSpecId() > 0)
+            {
+                jt.update("UPDATE GoodsSpecification SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsSpecId());
+
+            }
+            //减去产品
+            jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
+        }
+    }
+
+    @Transactional
+    //设置为已发货
+    public void saveDeliver(String orderId, String expressPlatform, String expressNo, Integer operatorId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (StringUtils.isEmpty(expressPlatform))
+        {
+            throw new IllegalArgumentException("物流不能为空");
+        }
+        if (StringUtils.isEmpty(expressNo))
+        {
+            throw new IllegalArgumentException("物流单号不能为空");
+        }
+        //设置发货
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (order.getStatus() != Constants.enumOrderStatus.paySuccess.getValue())
+        {
+            throw new BaseException("不能执行此操作");
+        }
+        order.setStatus(Constants.enumOrderStatus.delivered.getValue());
+        order.setOperatorId(order.getOperatorId() + "deliver:"+operatorId+",");
+        order.setUpdateTime(new Date());
+        order.setFinishTime(DateUtils.addDay(new Date(),12));
+        ordersRepository.saveAndFlush(order);
+
+        OrderReceiver or = orderReceiverManager.findByOrderId(orderId);
+        or.setExpressNO(expressNo);
+        or.setExpressPlatform(expressPlatform);
+        or.setDeliveryTime(new Date());
+        orderReceiverManager.save(or);
+
+    }
+
+    ///延长订单取消时间
+    public void delayExpiresTime(String orderId, Integer day, Integer operatorId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (day < 1)
+        {
+            throw new IllegalArgumentException("增加天数不能少于1");
+        }
+
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
+        {
+            throw new BaseException("订单不能执行此操作");
+        }
+        //延长订单取消时间
+        order.setExpiresTime(DateUtils.addDay(order.getExpiresTime(),day));
+        order.setOperatorId(order.getOperatorId() + "delayOrderCloseTime:"+operatorId+",");
+        ordersRepository.saveAndFlush(order);
+    }
+
+
+    ///延长订单收货时间
+    public void delayFinishTime(String orderId, Integer day, Integer operatorId)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (day < 1)
+        {
+            throw new IllegalArgumentException("增加天数不能少于1");
+        }
+
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (order.getStatus() != Constants.enumOrderStatus.delivered.getValue())
+        {
+            throw new BaseException("订单不能执行此操作");
+        }
+        //延长订单收货时间
+        order.setFinishTime(DateUtils.addDay(order.getFinishTime(),day));
+        order.setOperatorId(order.getOperatorId() + "delayFinishTime:"+operatorId+",");
+        ordersRepository.saveAndFlush(order);
+    }
+
+
+    /// <summary>
+    /// 支付系统响应业务方进行业务处理。
+    /// </summary>
+    public void paySuccess(String orderId, String payOrderId, String payPlatform, Integer payStatus, String payTime)
+    {
+        if (StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单号不能为空");
+        }
+        if (StringUtils.isEmpty(payPlatform))
+        {
+            throw new IllegalArgumentException("支付方式不能为空");
+        }
+
+        Orders order = ordersRepository.findOne(orderId);
+        if (order == null)
+        {
+            throw new BaseException("订单号不能为空");
+        }
+
+        //异常或关闭订单处理退款
+        if (payStatus == 1000 || order.getStatus() == Constants.enumOrderStatus.close.getValue())
+        {
+            //如果是支付异常就退优惠券
+            APIClient.promotionService.cancelUseCouponCode(order.getCouponCode());
+
+            //设置取消时间
+            order.setStatus(Constants.enumOrderStatus.close.getValue());
+            order.setUpdateTime(new Date());
+            order.setExpiresTime(new Date());
+            ordersRepository.saveAndFlush(order);
+
+            List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
+            for (OrderGoods g: lsOrderGoods
+                    ) {
+                //减去规格库存
+                if (g.getGoodsSpecId() > 0)
+                {
+                    jt.update("UPDATE GoodsSpecification SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsSpecId());
+                }
+                //减去产品
+                jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
+            }
+            //系统发起退款
+            List<MQPayRefund> lsRefund = orderRefundManager.payException(order.getMemberId(),order,payOrderId,lsOrderGoods);
+
+            sendPayTradeMessage(payOrderId,orderId,1000,lsRefund);
+        }
+        else
+        {
+            if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
+            {
+                throw new BaseException("不能执行此操作");
+            }
+            //设置支付时间
+            order.setPayOrderId(payOrderId);
+            order.setPayPlatform(payPlatform);
+            order.setPayTime(DateUtils.parseString(payTime));
+            order.setExpiresTime(null);
+            order.setStatus(Constants.enumOrderStatus.paySuccess.getValue());
+
+            ordersRepository.saveAndFlush(order);
+
+            //设置销售量
+            List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
+            for (OrderGoods g: lsOrderGoods
+                    ) {
+                    jt.update(String.format("UPDATE Goods SET payCount=payCount+d%,sellCount=sellCount+d% WHERE Id=d%",
+                    g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
+            }
+
+            sendPayTradeMessage(payOrderId,orderId,200,null);
+        }
+    }
+
+    void sendPayTradeMessage(String payOrderId,String orderId,Integer tradeState,List<MQPayRefund> lsRefund)
+    {
+        //String typeId, String targetModule, String sourceAppName, String jsonBody, String remark
+
+        MQPayTrade result = new MQPayTrade();
+        result.setPay_orderid(payOrderId);
+        result.setRefund(lsRefund);
+        result.setTrade_id(orderId);
+        result.setTrade_type("buy");
+        result.setTrade_status(tradeState); //200:success,1000:fail
+        result.setDesc("");
+        APIClient.messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
     }
 }

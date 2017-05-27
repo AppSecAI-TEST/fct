@@ -1,10 +1,13 @@
 package com.fct.message.model;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
 /**
  * Created by jon on 2017/4/11.
  */
+@Data
 public class MQPaySuccess {
 
     /// <summary>
@@ -23,11 +26,11 @@ public class MQPaySuccess {
     public String trade_id;
 
     /// <summary>
-    /// 支付状态{支付成功、支付余额异常}
+    /// 支付状态{支付成功200、支付余额异常500}
     /// 业务方接受支付成功状态后，如业务正常进行则通知支付方成功，否则告知交易失败发起退款请求
     /// 业务方接受支付余额异常状态，将业务状态更新为交易关闭，并发起退款请求。
     /// </summary>
-    public String pay_status;
+    public Integer pay_status;
 
     /// <summary>
     /// 支付时间

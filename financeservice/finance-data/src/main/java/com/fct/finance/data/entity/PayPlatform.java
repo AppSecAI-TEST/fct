@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * Created by jon on 2017/4/7.
@@ -14,7 +15,7 @@ import javax.persistence.Id;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PayPlatform {
+public class PayPlatform implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;

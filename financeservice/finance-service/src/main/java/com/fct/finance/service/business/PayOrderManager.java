@@ -187,10 +187,6 @@ public class PayOrderManager  {
     /// <summary>
     /// 接收到用户通过第三方平台支付成功，处理我们系统相关的业务,并发送消息供业务方处理。
     /// </summary>
-    /// <param name="orderId">支付记录Id</param>
-    /// <param name="platform">支付平台</param>
-    /// <param name="notifyData"></param>
-    /// <returns></returns>
     @Transactional
     public PayOrder paySuccess(String orderId, String platform, String notifyData)
     {
@@ -281,20 +277,20 @@ public class PayOrderManager  {
     {
         MQPaySuccess mq = new MQPaySuccess();
 
-        mq.pay_time = pay.getPayTime().toString();
-        mq.pay_status = payStatus.getkey();
-        mq.pay_orderid = pay.getOrderId();
-        mq.pay_platform = pay.getPayPlatform();
+        mq.setPay_time(pay.getPayTime().toString());
+        mq.setPay_status(payStatus.getValue()==1 ? 200 :1000);
+        mq.setPay_orderid(pay.getOrderId());
+        mq.setPay_platform(pay.getPayPlatform());
 
-        mq.trade_id = pay.getTradeId();
-        mq.trade_type = pay.getTradeType();
-        mq.account_amount = pay.getAccountAmount();
-        mq.pay_amount = pay.getPayAmount();
-        mq.points = pay.getPoints();
-        mq.discount_amount = pay.getDiscountAmount();
-        mq.total_amount = pay.getTotalAmount();
-        mq.remark = "支付结果通知";
-        mq.notify_url = pay.getNotifyUrl();
+        mq.setTrade_id(pay.getTradeId());
+        mq.setTrade_type(pay.getTradeType());
+        mq.setAccount_amount(pay.getAccountAmount());
+        mq.setPay_amount(pay.getPayAmount());
+        mq.setPoints(pay.getPoints());
+        mq.setDiscount_amount(pay.getDiscountAmount());
+        mq.setTotal_amount(pay.getTotalAmount());
+        mq.setRemark("支付结果通知");
+        mq.setNotify_url(pay.getNotifyUrl());
 
         APIClient.messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
                 JsonConverter.toJson(mq),"发送支付成功通知消息");
@@ -305,7 +301,7 @@ public class PayOrderManager  {
     {
         MQPayTrade result = JsonConverter.toObject(json,MQPayTrade.class);
 
-        PayOrder pay = payOrderRepository.findOne(result.pay_orderid);
+        PayOrder pay = payOrderRepository.findOne(result.getPay_orderid());
 
         if(pay ==null || pay.getStatus() == Constants.enumPayStatus.fullrefund.getValue())
         {
@@ -314,7 +310,7 @@ public class PayOrderManager  {
         }
 
         //交易完成,并却业务类型为消费
-        if (result.trade_status == 200)
+        if (result.getTrade_status() == 200)
         {
             MemberAccount account = memberAccountManager.findById(pay.getMemberId());
             //等比赠送积分
@@ -340,10 +336,10 @@ public class PayOrderManager  {
         }
 
         //业务异常，发起退款请求,销售订单会有多个商品存在且多条退款记录
-        if (result.trade_status == 1000 && result.refund!=null &&
-                result.refund.size()>0)
+        if (result.getTrade_status() == 1000 && result.getRefund()!=null &&
+                result.getRefund().size()>0)
         {
-            for (MQPayRefund refund:result.refund
+            for (MQPayRefund refund:result.getRefund()
                  ) {
                     //退款
                 refundRecordManager.tradeException(refund,pay);

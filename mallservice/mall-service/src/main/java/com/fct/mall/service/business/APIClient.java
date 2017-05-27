@@ -1,6 +1,7 @@
 package com.fct.mall.service.business;
 
 import com.fct.finance.interfaces.FinanceService;
+import com.fct.message.interfaces.MessageService;
 import com.fct.promotion.interfaces.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,4 +15,7 @@ public class APIClient {
 
     @Autowired
     public  static FinanceService financeService;
+
+    @Autowired
+    public  static MessageService messageService;
 }

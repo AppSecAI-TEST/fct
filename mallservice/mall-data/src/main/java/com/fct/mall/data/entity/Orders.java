@@ -2,6 +2,7 @@ package com.fct.mall.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,9 +27,9 @@ public class Orders{
     private Integer memberId;
 
     /// <summary>
-    /// 用户名
+    /// 手机号码
     /// </summary>
-    private String userName;
+    private String cellPhone;
 
     /// <summary>
     /// 店铺id
@@ -81,24 +82,9 @@ public class Orders{
     private String payPlatform;
 
     /// <summary>
-    /// 快递公司平台
-    /// </summary>
-    private String expressPlatform;
-
-    /// <summary>
-    /// 快递单号
-    /// </summary>
-    private String expressNO;
-
-    /// <summary>
     /// 备注
     /// </summary>
     private String remark;
-
-    /// <summary>
-    /// 下单时间
-    /// </summary>
-    private Date createTime;
 
     /// <summary>
     /// 订单产品
@@ -110,8 +96,35 @@ public class Orders{
     /// </summary>
     private OrderReceiver orderReceiver;
 
+    //结算Id
+    private Integer settleId;
+
+    //评论id
+    private Integer commentId;
+
     /// <summary>
-    /// 订单相关时间，关闭时间、过期时间、发货时间...
+    /// 支付时间
     /// </summary>
-    private OrderTime orderTime;
+    private Date payTime;
+
+    /// <summary>
+    /// 下单时间
+    /// </summary>
+    private Date createTime;
+
+    /// <summary>
+    /// 订单状态相关更新时间，关闭时间、过期时间、发货时间...
+    /// </summary>
+    private Date updateTime;
+
+    /// <summary>
+    /// 过期时间
+    /// </summary>
+    private Date expiresTime;
+
+    //订单完成时间，默认为12天未确认，系统默认交易完成
+    private Date finishTime;
+
+    //冗余管理员操作者Id
+    private String operatorId;
 }

@@ -68,17 +68,12 @@ public class OrderGoods {
     private BigDecimal couponAmount;
 
     /// <summary>
-    /// 积分
-    /// </summary>
-    private Integer point;
-
-    /// <summary>
-    /// 应支付金额
+    /// 应支付金额(promotionPrice-couponAmount)*buyCount
     /// </summary>
     private BigDecimal payAmount;
 
     /// <summary>
-    /// 总金额
+    /// 总金额(price*buycount)
     /// </summary>
     private BigDecimal totalAmount;
 
@@ -86,9 +81,4 @@ public class OrderGoods {
     /// 内容（快照）
     /// </summary>
     private String content;
-
-    /// <summary>
-    /// 状态（退货，换货。）
-    /// </summary>
-    private Integer status;
 }

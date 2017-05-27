@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Date;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MemberAccount {
+public class MemberAccount implements Serializable {
 
     //会会Id
     @Id

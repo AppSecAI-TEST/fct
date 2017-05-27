@@ -13,33 +13,33 @@ import java.util.Date;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderTime {
+public class OrderRefundMessage {
 
     @Id
-    private String orderId;
+    private Integer id;
 
     /// <summary>
-    /// 支付时间
+    /// 退款编号
     /// </summary>
-    private Date payTime;
+    private Integer refundId;
 
     /// <summary>
-    /// 取消时间
+    /// 系统用户操作者Id
     /// </summary>
-    private Date cancelTime;
+    private Integer operatorId;
 
     /// <summary>
-    /// 发货时间
+    /// 说明
     /// </summary>
-    private Date sendTime;
+    private String description;
 
     /// <summary>
-    /// 完成时间
+    /// 上传图片
     /// </summary>
-    private Date finshTime;
+    private String images;
 
     /// <summary>
-    /// 过期时间
+    /// 创建时间
     /// </summary>
-    private Date expiresTime;
+    private Date createTime;
 }

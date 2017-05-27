@@ -292,12 +292,12 @@ public class RefundRecordManager {
         MQPayRefund message = new MQPayRefund();
 
         //如果为银联支付则支付单号必须是银联提供的orgId
-        message.pay_orderid = refund.getPayPlatform().toLowerCase() == "unionpay_fcth5" ? refund.getPayPlatformOrderId() : refund.getPayOrderId();
-        message.pay_platform = refund.getPayPlatform();
-        message.refund_id = refund.getId();
-        message.pay_amount = refund.getPayAmount();
-        message.cash_amount = refund.getCashAmount();
-        message.desc = "退款";
+        message.setPay_orderid(refund.getPayPlatform().toLowerCase() == "unionpay_fcth5" ? refund.getPayPlatformOrderId() : refund.getPayOrderId());
+        message.setPay_platform(refund.getPayPlatform());
+        message.setRefund_id(refund.getId());
+        message.setPay_amount(refund.getPayAmount());
+        message.setCash_amount(refund.getCashAmount());
+        message.setDesc("退款");
 
         APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
                 JsonConverter.toJson(message),"原路返回退款至第三方支付平台");

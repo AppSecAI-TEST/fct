@@ -1,10 +1,13 @@
 package com.fct.message.model;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
 /**
  * Created by jon on 2017/4/11.
  */
+@Data
 public class MQPayRefund {
 
     /// <summary>

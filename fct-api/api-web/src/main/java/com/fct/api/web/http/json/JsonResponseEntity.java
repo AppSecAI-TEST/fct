@@ -13,8 +13,8 @@ public class JsonResponseEntity<T> {
     private T data;
 
     public JsonResponseEntity() {
-        this.code = 404;
-        this.msg="error";
+        this.code = 200;
+        this.msg="success";
         this.data = null;
     }
 

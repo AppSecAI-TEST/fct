@@ -129,7 +129,7 @@
                     <server>tomcat-jenkins</server>
                     <username>jenkins</username>
                     <password>jenkins_password</password>
-                    <path>/fct-services</path>
+                    <path>/member-service</path>
                 </configuration>
             </plugin>
             <plugin>
@@ -137,7 +137,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <warName>fct-services</warName>
+                    <warName>member-service</warName>
                 </configuration>
             </plugin>
         </plugins>

@@ -28,7 +28,7 @@ public class OrderGoodsManager {
 
     public OrderGoods findByOrderIdAndGoods(String orderId, Integer goodsId, Integer goodsSpecId)
     {
-        return orderGoodsRepository.findByOrderIdAAndGoodsIdAndGoodsSpecId(orderId,goodsId,goodsSpecId);
+        return orderGoodsRepository.findByOrderIdAndGoodsIdAndGoodsSpecId(orderId,goodsId,goodsSpecId);
     }
 
     public List<String> getOrderId(String name)

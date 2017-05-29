@@ -24,8 +24,10 @@
     <dubbo:application name="fct-api"/>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
+    <dubbo:protocol name="dubbo"/>
     
     <!-- 引入财务服务-->
     <dubbo:reference id="financeService" interface="com.fct.finance.interfaces.FinanceService" timeout="5000" check="false"/>
     <dubbo:reference id="memberService" interface="com.fct.member.interfaces.MemberService" timeout="5000" check="false"/>
+    <dubbo:reference id="mallService" interface="com.fct.mall.interfaces.MallService" timeout="5000" check="false"/>
 </beans>

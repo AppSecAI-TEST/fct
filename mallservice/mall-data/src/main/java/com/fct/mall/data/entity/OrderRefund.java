@@ -3,8 +3,11 @@ package com.fct.mall.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +17,7 @@ import java.util.List;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRefund {
+public class OrderRefund implements Serializable{
 
     @Id
     private Integer id;
@@ -72,5 +75,6 @@ public class OrderRefund {
     /// <summary>
     /// 修改时间
     /// </summary>
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OrderRefundMessage> refundContent;
 }

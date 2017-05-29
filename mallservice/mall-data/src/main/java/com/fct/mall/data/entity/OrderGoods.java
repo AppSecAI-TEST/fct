@@ -2,9 +2,11 @@ package com.fct.mall.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -13,7 +15,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderGoods {
+public class OrderGoods implements Serializable{
 
     @Id
     private Integer id;

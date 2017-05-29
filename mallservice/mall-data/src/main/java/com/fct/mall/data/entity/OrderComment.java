@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Date;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderComment {
+public class OrderComment implements Serializable{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
@@ -23,7 +24,7 @@ public class OrderComment {
     private Integer memberId;
 
     //商品+订单号=唯一
-    private Integer GoodsId;
+    private Integer goodsId;
 
     private String orderId;
 

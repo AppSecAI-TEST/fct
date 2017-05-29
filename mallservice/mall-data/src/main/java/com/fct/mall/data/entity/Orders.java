@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Orders{
+public class Orders implements Serializable{
 
     @Id
     private String orderId;
@@ -89,11 +89,13 @@ public class Orders{
     /// <summary>
     /// 订单产品
     /// </summary>
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OrderGoods> orderGoods;
 
     /// <summary>
     /// 订单收货信息
     /// </summary>
+    @OneToOne(cascade = CascadeType.ALL)
     private OrderReceiver orderReceiver;
 
     //结算Id

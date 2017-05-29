@@ -3,8 +3,11 @@ package com.fct.mall.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +16,7 @@ import java.util.Date;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ShoppingCart {
+public class ShoppingCart implements Serializable{
 
     @Id
     private Integer id;
@@ -56,5 +59,6 @@ public class ShoppingCart {
     /// <summary>
     /// 产品信息
     /// </summary>
+    @OneToOne(cascade = CascadeType.ALL)
     private Goods goods;
 }

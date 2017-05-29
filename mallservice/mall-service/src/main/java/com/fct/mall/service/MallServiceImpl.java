@@ -5,6 +5,7 @@ import com.fct.mall.interfaces.MallService;
 import com.fct.mall.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Created by jon on 2017/5/16.
  */
+@Service("mallService")
 public class MallServiceImpl implements MallService {
 
     @Autowired

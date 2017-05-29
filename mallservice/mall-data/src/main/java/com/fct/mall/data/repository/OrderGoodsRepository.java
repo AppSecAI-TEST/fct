@@ -13,7 +13,7 @@ public interface OrderGoodsRepository extends JpaRepository<OrderGoods, Integer>
 
     List<OrderGoods> findByOrderId(String orderId);
 
-    OrderGoods findByOrderIdAAndGoodsIdAndGoodsSpecId(String orderId, Integer goodsId, Integer goodsSpecId);
+    OrderGoods findByOrderIdAndGoodsIdAndGoodsSpecId(String orderId, Integer goodsId, Integer goodsSpecId);
 
     @Query(nativeQuery = true,
             value = "select orderId from OrderGoods where name like '%?1%' order by createTime desc limit 1000")

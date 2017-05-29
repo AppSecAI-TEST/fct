@@ -3,10 +3,7 @@ package com.fct.mall.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -151,5 +148,6 @@ public class Goods {
     /// <summary>
     /// 商品规格属性
     /// </summary>
+    @OneToMany(cascade = CascadeType.ALL)
     private List<GoodsSpecification> specification;
 }

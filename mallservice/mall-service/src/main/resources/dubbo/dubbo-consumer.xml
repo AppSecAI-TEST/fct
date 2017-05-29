@@ -21,7 +21,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="financeService"/>
+    <dubbo:application name="mallService"/>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
 

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Date;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRefundMessage {
+public class OrderRefundMessage implements Serializable{
 
     @Id
     private Integer id;

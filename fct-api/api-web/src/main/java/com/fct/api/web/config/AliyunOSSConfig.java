@@ -1,7 +1,7 @@
 package com.fct.api.web.config;
 
 
-import com.fct.thirdparty.oss.FileOperatorHelper;
+//import com.fct.thirdparty.oss.FileOperatorHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class AliyunOSSConfig {
 
     @Autowired
     private Environment env;
-
+/*
     @Bean
     public FileOperatorHelper fileUploadHelpler(){
         String bucketName = env.getProperty("aliyun.oss.bucket.name");
@@ -25,5 +25,5 @@ public class AliyunOSSConfig {
         FileOperatorHelper helper = new FileOperatorHelper(bucketName, accessKeyId,
                 accessKeySecret, endpoint);
         return helper;
-    }
+    }*/
 }

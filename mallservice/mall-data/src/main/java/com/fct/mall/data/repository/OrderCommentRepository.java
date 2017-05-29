@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface OrderCommentRepository extends JpaRepository<OrderComment, Integer> {
 
-    int countByOrderIdAAndGoodsId(String orderId,Integer goodsId);
+    int countByOrderIdAndGoodsId(String orderId,Integer goodsId);
 
     Page<OrderComment> findAll(Specification<OrderComment> spec, Pageable pageable);  //分页按条件查询
 

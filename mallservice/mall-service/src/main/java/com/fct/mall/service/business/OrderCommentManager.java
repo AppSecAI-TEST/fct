@@ -63,7 +63,7 @@ public class OrderCommentManager {
             throw new IllegalArgumentException("订单为空");
         }
 
-        int count = orderCommentRepository.countByOrderIdAAndGoodsId(commnet.getOrderId(),commnet.getGoodsId());
+        int count = orderCommentRepository.countByOrderIdAndGoodsId(commnet.getOrderId(),commnet.getGoodsId());
         if(count>0)
         {
             throw new IllegalArgumentException("已评论");

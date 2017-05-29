@@ -1,5 +1,6 @@
 package com.fct.master.interfaces;
 
+import com.fct.master.dto.MasterBrief;
 import com.fct.master.dto.MasterDto;
 import com.fct.master.dto.MasterResponse;
 
@@ -14,4 +15,6 @@ public interface MasterService {
     MasterResponse getMasters(int start, int size);
 
     void openMasterLive();
+
+    MasterBrief getMasterBrief(int masterId);
 }

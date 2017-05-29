@@ -1,6 +1,7 @@
 package com.fct.master.service.impl;
 
 
+import com.fct.master.dto.MasterBrief;
 import com.fct.master.dto.MasterDto;
 import com.fct.master.dto.MasterResponse;
 import com.fct.master.interfaces.MasterService;
@@ -8,9 +9,11 @@ import com.fct.master.service.domain.Master;
 import com.fct.master.service.repository.MasterRepository;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nick on 2017/5/25.
@@ -20,6 +23,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Autowired
     private MasterRepository masterRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public MasterDto insertMaster(MasterDto masterDto) {
@@ -70,5 +76,31 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public void openMasterLive() {
 
+    }
+
+    @Override
+    public MasterBrief getMasterBrief(int masterId) {
+        String sql1 = String.format("select a.master_id, a.brief, a.cover_url from master a where a.master_id = %d and a.del_flag = 0", masterId);
+        String sql2 = String.format("select count(*) as count from attention a where a.master_id = %d and a.del_flag = 0", masterId);
+        Map<String, Object> results1 = jdbcTemplate.queryForMap(sql1);
+        Map<String, Object> results2 = jdbcTemplate.queryForMap(sql2);
+        MasterBrief masterBrief = new MasterBrief();
+        if(results1!=null&&results1.size()>0){
+            int id = ((Long) results1.get("master_id")).intValue();
+            String coverUrl = (String) results1.get("cover_url");
+            String brief = (String) results1.get("brief");
+            Long count = (Long) results2.get("count");
+            Double attentionCount = 0.0d;
+            if(count>10000){
+                attentionCount = count/10000d;
+                masterBrief.setAttentionCount(String.valueOf(attentionCount));
+            }else{
+                masterBrief.setAttentionCount(String.valueOf(attentionCount.intValue()));
+            }
+            masterBrief.setBrief(brief);
+            masterBrief.setMasterId(id);
+            masterBrief.setCoverUrl(coverUrl);
+        }
+        return masterBrief;
     }
 }

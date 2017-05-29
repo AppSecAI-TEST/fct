@@ -8,22 +8,11 @@ import java.util.List;
  */
 public class MasterSerialsDto implements Serializable{
 
-    private String brief;
-
-    private String coverUrl;
+    private MasterBrief brief;
 
     private List<MasterNewsDto> masterNews;
 
     private MasterLiveDto masterLive;
-
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
 
     public List<MasterNewsDto> getMasterNews() {
         return masterNews;
@@ -41,11 +30,11 @@ public class MasterSerialsDto implements Serializable{
         this.masterLive = masterLive;
     }
 
-    public String getBrief() {
+    public MasterBrief getBrief() {
         return brief;
     }
 
-    public void setBrief(String brief) {
+    public void setBrief(MasterBrief brief) {
         this.brief = brief;
     }
 }

@@ -55,7 +55,7 @@ public class GoodsGradeManager {
         if (!StringUtils.isEmpty(name)) {
             condition += " AND name like '%" + name + "%'";
         }
-        String sql = String.format("select * from GoodsGrade where 1=1 s% order by sortindex asc",condition);
+        String sql = String.format("select * from GoodsGrade where 1=1 %s order by sortindex asc",condition);
 
         return  jt.queryForList(sql,GoodsGrade.class);
     }

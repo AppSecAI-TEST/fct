@@ -3,6 +3,8 @@ package com.fct.mall.service;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
 
 /**
@@ -10,7 +12,12 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication(scanBasePackages = "com.fct.mall")
 @ImportResource(value = "classpath:dubbo/dubbo-consumer.xml")
-public class StartupApplication {
+public class StartupApplication extends SpringBootServletInitializer{
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder applicationBuilder){
+        return applicationBuilder.sources(StartupApplication.class);
+    }
 
     public static void main(String[] args){
         SpringApplication application = new SpringApplication(StartupApplication.class);

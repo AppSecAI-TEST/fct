@@ -14,14 +14,6 @@ public class MasterSerialsDto implements Serializable{
 
     private MasterLiveDto masterLive;
 
-    public List<MasterNewsDto> getMasterNews() {
-        return masterNews;
-    }
-
-    public void setMasterNews(List<MasterNewsDto> masterNews) {
-        this.masterNews = masterNews;
-    }
-
     public MasterLiveDto getMasterLive() {
         return masterLive;
     }

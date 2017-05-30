@@ -1,6 +1,5 @@
 package com.fct.thirdparty.oss.callback;
 
-import com.fct.thirdparty.oss.request.OSSRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
 
 /**

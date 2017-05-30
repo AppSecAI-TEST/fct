@@ -1,5 +1,6 @@
 package com.fct.thirdparty.oss.entity;
 
+import com.fct.thirdparty.oss.callback.OSSCallback;
 import lombok.Data;
 
 import java.io.File;
@@ -17,4 +18,6 @@ public class FileServiceRequest {
     private List<String> keys;
 
     private Map<String, String> userMetaData;
+
+    private OSSCallback callback;
 }

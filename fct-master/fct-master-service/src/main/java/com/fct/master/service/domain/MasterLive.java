@@ -34,7 +34,7 @@ public class MasterLive {
     @Column(name = "http_push_url")//http推流地址
     private String httpPushUrl;
 
-    @Column(name = "status")
+    @Column(name = "status")//0 是正常 正在直播 1 是断开或者停掉
     private int status;
 
     @Column(name = "del_flag")

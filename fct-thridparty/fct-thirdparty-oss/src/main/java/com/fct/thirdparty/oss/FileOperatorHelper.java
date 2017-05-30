@@ -66,6 +66,8 @@ public class FileOperatorHelper {
     public List<UploadResponse> uploadFile(FileServiceRequest fileServiceRequest){
         List<UploadResponse> responses = new ArrayList<>();
         try {
+            if(callback==null)
+                callback = fileServiceRequest.getCallback();
             fileCheck(fileServiceRequest.getFiles(), fileServiceRequest.getKeys());
             for(int i=0; i<fileServiceRequest.getFiles().size();i++){
                 OSSRequestBuilder builder = OSSRequestBuilder.builder();

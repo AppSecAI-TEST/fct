@@ -25,22 +25,14 @@ public class MasterNews {
     @Column(name = "master_id")
     private Long masterId;
 
-    @Column(name = "news_type")
-    private NewsType newsType;
+    @Column(name = "news_type", length = 10)
+    private String newsType;
 
     @Column(name = "imgs")
     private String imgs;
 
     @Column(name = "text", columnDefinition = "text")
     private String text;
-
-    //这个封面既可以用作视频封面也可以用作直播封面
-    @Column(name = "cover_url")
-    private String coverUrl;
-
-    //观众端拉流地址
-    @Column(name = "live_pull_url")
-    private String livePullUrl;
 
     @Column(name = "vod_id")
     private String vodId;

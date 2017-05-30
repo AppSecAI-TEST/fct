@@ -4,6 +4,8 @@ import com.fct.master.service.converter.MyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.convert.converter.Converter;
@@ -28,10 +30,15 @@ import java.util.Properties;
 @SpringBootApplication(scanBasePackages = "com.fct.master")
 @EnableJpaRepositories(basePackages = "com.fct.master.service.repository")
 @ImportResource("classpath:dubbo/dubbo-provider.xml")
-public class ApplicationStartup {
+public class ApplicationStartup extends SpringBootServletInitializer{
 
     @Autowired
     private Environment environment;
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(ApplicationStartup.class);
+    }
 
     public static void main(String[] args){
         SpringApplication.run(ApplicationStartup.class, args);

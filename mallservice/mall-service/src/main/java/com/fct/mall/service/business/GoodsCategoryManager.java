@@ -73,7 +73,7 @@ public class GoodsCategoryManager {
         {
             condition += " AND parentId="+parentId;
         }
-        String sql = String.format("select * from GoodsCategory where 1=1 s% order by sortindex asc",condition);
+        String sql = String.format("select * from GoodsCategory where 1=1 %s order by sortindex asc",condition);
 
         return  jt.queryForList(sql,GoodsCategory.class);
     }

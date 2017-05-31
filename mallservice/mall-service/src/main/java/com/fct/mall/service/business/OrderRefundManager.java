@@ -393,7 +393,7 @@ public class OrderRefundManager {
 
         this.save(refund, Constants.multiRefundStatus.REFUND_MONEY_SUCCESS.getValue(), 0, description, "");
 
-        jt.update(String.format("UPDATE Goods SET sellCount=sellCount-d% WHERE Id=d%",
+        jt.update(String.format("UPDATE Goods SET sellCount=sellCount-%d WHERE Id=%d",
                 og.getBuyCount(),og.getGoodsId()));
 
     }

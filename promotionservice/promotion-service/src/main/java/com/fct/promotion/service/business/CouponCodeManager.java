@@ -86,7 +86,7 @@ public class CouponCodeManager {
 
     void setCodeUsing(String code)
     {
-        String sql = String.format("update CouponCode set Status =1,UseTime=getdate(),LastUpdateTime=getdate() where code='s%' and Status=0",
+        String sql = String.format("update CouponCode set Status =1,UseTime=getdate(),LastUpdateTime=getdate() where code='%s' and Status=0",
                 code);
 
         synchronized (syncObj)
@@ -101,7 +101,7 @@ public class CouponCodeManager {
 
     public void setCodeUsed(String code)
     {
-        String sql = String.format("update CouponCode set Status =2,LastUpdateTime=getdate() where code='s%' and Status=1",code);
+        String sql = String.format("update CouponCode set Status =2,LastUpdateTime=getdate() where code='%s' and Status=1",code);
 
         synchronized (syncObj)
         {
@@ -115,7 +115,7 @@ public class CouponCodeManager {
 
     public void cancelCodeUsed(String code)
     {
-        String sql = String.format("update CouponCode set Status =0,LastUpdateTime=getdate() where code='s%' and Status!=0",code);
+        String sql = String.format("update CouponCode set Status =0,LastUpdateTime=getdate() where code='%s' and Status!=0",code);
 
         synchronized (syncObj)
         {

@@ -16,7 +16,6 @@ import java.io.Serializable;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoodsGrade implements Serializable{
-    public GoodsGrade(){}
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

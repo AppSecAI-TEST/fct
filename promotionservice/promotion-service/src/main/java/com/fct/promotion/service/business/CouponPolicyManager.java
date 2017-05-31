@@ -265,7 +265,7 @@ public class CouponPolicyManager {
             if (!StringUtils.isEmpty(oldPolicy.getProductIds()))
             {
                 String[] arr = oldPolicy.getProductIds().split(",");
-                String temp = String.format(",s%,", policy.getProductIds());
+                String temp = String.format(",%s,", policy.getProductIds());
                 for (String productId:arr
                      ) {
                     if (!temp.contains("," + productId + ","))

@@ -1,9 +1,11 @@
 package com.fct.api.web.http.controller;
 
 import com.fct.api.web.http.json.JsonResponseEntity;
+import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,18 @@ public class GoodsController {
 
         JsonResponseEntity<List<GoodsGrade>> responseEntity = new JsonResponseEntity<>();
         responseEntity.setData(lsGG);
+
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    public JsonResponseEntity<Page<Goods>> findGoods(String name, String categorycode, Integer gradeid,
+                                                     Integer pageindex, Integer pagesize){
+
+        Page<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
+
+        JsonResponseEntity<Page<Goods>> responseEntity = new JsonResponseEntity<>();
+        responseEntity.setData(ls);
 
         return responseEntity;
     }

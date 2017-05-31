@@ -34,9 +34,6 @@ public class MemberManager {
     private MemberRepository memberRepository;
 
     @Autowired
-    private MemberInfoRepository memberInfoRepository;
-
-    @Autowired
     private MemberInfoManager memberInfoManager;
 
     @Autowired
@@ -80,9 +77,7 @@ public class MemberManager {
         //同步注册memberInfo
         MemberInfo info = new MemberInfo();
         info.setMemberId(member.getId());
-//        memberInfoManager.save(info);
-        memberInfoRepository.save(info);
-        System.out.println("out method>>");
+        memberInfoManager.save(info);
         return member;
     }
 

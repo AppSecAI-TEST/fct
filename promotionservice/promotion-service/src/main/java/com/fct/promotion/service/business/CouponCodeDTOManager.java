@@ -28,7 +28,7 @@ public class CouponCodeDTOManager {
 
         String orderby = " c.Id desc";
         String fields = "c.*,p.Name as CouponName,p.StartTime,p.EndTime,p.Amount as Amount,p.FullAmount as FullAmount,p.ProductIds as ProductIds";
-        String sql = String.format("select * from (select s%,ROW_NUMBER() over(order by  s%) as r  from CouponPolicy p inner join CouponCode c on p.Id = c.policyId where s%)t where t.r between s% and s%",
+        String sql = String.format("select * from (select %s,ROW_NUMBER() over(order by  %s) as r  from CouponPolicy p inner join CouponCode c on p.Id = c.policyId where %s)t where t.r between %s and %s",
                 fields, orderby, condition, startIndex, startIndex + count - 1);
 
         return jt.queryForList(sql,CouponCodeDTO.class);
@@ -128,7 +128,7 @@ public class CouponCodeDTOManager {
             if (!StringUtils.isEmpty(code.getProductIds())) //只针对某些产品
             {
                 BigDecimal price = new BigDecimal(0);
-                String temp = String.format(",s%,", code.getProductIds());
+                String temp = String.format(",%s,", code.getProductIds());
                 for (OrderProductDTO product:products
                         ) {
                     if (!temp.contains("," + product.getProductId() + ","))

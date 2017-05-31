@@ -4,6 +4,7 @@ import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.repository.GoodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -158,6 +160,7 @@ public class GoodsManager {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
 
+        /*
         Specification<Goods> spec = new Specification<Goods>() {
             @Override
             public Predicate toPredicate(Root<Goods> root,
@@ -182,9 +185,11 @@ public class GoodsManager {
                 query.where(predicates.toArray(new Predicate[predicates.size()]));
                 return null;
             }
-        };
+        };*/
 
-        return goodsRepository.findAll(spec,pageable);
+        return goodsRepository.findAll(pageable);
+
+        //return goodsRepository.findAll(spec,pageable);
 
     }
 
@@ -221,12 +226,12 @@ public class GoodsManager {
             throw new IllegalArgumentException("添加库存不能小于1");
         }
 
-        String sql = String.format("UPDATE Goods set StockCount=StockCount+d%, UpdateTime='s%' WHERE Id=d%;",
+        String sql = String.format("UPDATE Goods set StockCount=StockCount+%d, UpdateTime='%s' WHERE Id=d%;",
                 stockCount, new Date(), id);
 
         if (specificationId > 0)
         {
-            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount+d% WHERE Id=d% AND GoodsId=d%",
+            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount+%d WHERE Id=%d AND GoodsId=%d",
                     stockCount, specificationId, id);
         }
 
@@ -246,12 +251,12 @@ public class GoodsManager {
             throw new IllegalArgumentException("减去的库存不能小于1");
         }
 
-        String sql = String.format("UPDATE Goods set StockCount=StockCount-d%, UpdateTime='s%' WHERE Id=d% AND StockCount>=d%;",
+        String sql = String.format("UPDATE Goods set StockCount=StockCount-%d, UpdateTime='%s' WHERE Id=%d AND StockCount>=%d;",
                 stockCount, new Date(), id,stockCount);
 
         if (specificationId > 0)
         {
-            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount-d% WHERE Id=d% AND GoodsId=d% AND StockCount>=d%",
+            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount-%d WHERE Id=%d AND GoodsId=%d AND StockCount>=%d",
                     stockCount, specificationId, id,stockCount);
         }
         jt.update(sql);

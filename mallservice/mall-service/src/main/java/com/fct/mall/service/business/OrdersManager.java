@@ -331,14 +331,14 @@ public class OrdersManager {
             //减去规格库存
             if (g.getGoodsSpecId() > 0)
             {
-                sql += String.format("UPDATE GoodsSpecification SET StockCount=StockCount-d% WHERE Id=d% AND StockCount>=d%;",
+                sql += String.format("UPDATE GoodsSpecification SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d;",
                         g.getBuyCount(), g.getGoodsSpecId(),g.getBuyCount());
 
                 sqlExeCount += 1;
 
             }
             //减去产品库存
-            sql += String.format("UPDATE Goods SET StockCount=StockCount-d% WHERE Id=d% AND StockCount>=d%;",
+            sql += String.format("UPDATE Goods SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d;",
                     g.getBuyCount(), g.getGoodsId(),g.getBuyCount());
 
             /*增加销售量
@@ -375,7 +375,7 @@ public class OrdersManager {
             throw new IllegalArgumentException("库存不足。");
         }
         //删除购物车
-        jt.execute(String.format("DELETE ShoppingCart WHERE MemberId=d% AND ShopId=d% GoodsId in (s%) AND GoodsSpecId in (s%);",
+        jt.execute(String.format("DELETE ShoppingCart WHERE MemberId=%d AND ShopId=%d GoodsId in (%s) AND GoodsSpecId in (%s);",
                 memberId, shopId, goodsIds, goodsSpecIds));
 
         return order.getOrderId();
@@ -500,7 +500,7 @@ public class OrdersManager {
         List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
         for (OrderGoods g: lsOrderGoods
              ) {
-            jt.update(String.format("UPDATE Goods SET PayCount=PayCount+d%,SellCount=SellCount+d% WHERE Id=d%",
+            jt.update(String.format("UPDATE Goods SET PayCount=PayCount+%d,SellCount=SellCount+%d WHERE Id=%d",
                     g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
         }
     }
@@ -712,7 +712,7 @@ public class OrdersManager {
             List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
             for (OrderGoods g: lsOrderGoods
                     ) {
-                    jt.update(String.format("UPDATE Goods SET payCount=payCount+d%,sellCount=sellCount+d% WHERE Id=d%",
+                    jt.update(String.format("UPDATE Goods SET payCount=payCount+%d,sellCount=sellCount+%d WHERE Id=%d",
                     g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
             }
 

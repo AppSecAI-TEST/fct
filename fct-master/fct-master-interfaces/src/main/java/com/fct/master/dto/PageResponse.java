@@ -1,11 +1,12 @@
 package com.fct.master.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by nick on 2017/5/31.
  */
-public class PageResponse<T> {
+public class PageResponse<T> implements Serializable{
 
     private List<T> elements;
     private int current;

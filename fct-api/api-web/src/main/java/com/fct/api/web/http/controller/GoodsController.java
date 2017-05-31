@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller;
 
+import com.fct.api.web.http.json.JsonListResponseEntity;
 import com.fct.api.web.http.json.JsonResponseEntity;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsGrade;
@@ -38,13 +39,13 @@ public class GoodsController {
     }
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
-    public JsonResponseEntity<Page<Goods>> findGoods(String name, String categorycode, Integer gradeid,
-                                                     Integer pageindex, Integer pagesize){
+    public JsonListResponseEntity<Goods> findGoods(String name, String categorycode, Integer gradeid,
+                                                         Integer pageindex, Integer pagesize){
 
         Page<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
 
-        JsonResponseEntity<Page<Goods>> responseEntity = new JsonResponseEntity<>();
-        responseEntity.setData(ls);
+        JsonListResponseEntity<Goods> responseEntity = new JsonListResponseEntity<>();
+        responseEntity.setContent(ls.getContent(), true, "xx:desc", String.valueOf(pageindex));
 
         return responseEntity;
     }

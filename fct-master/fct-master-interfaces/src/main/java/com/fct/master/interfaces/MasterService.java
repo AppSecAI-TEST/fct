@@ -67,7 +67,7 @@ public interface MasterService {
      * @param size
      * @return
      */
-    MasterNewsResponse getMasterNewsResponse(int masterId, int start, int size);
+    PageResponse<MasterNewsDto> getMasterNewsResponse(int masterId, int start, int size);
 
     /**
      * 獲取大師的直播信息

@@ -144,8 +144,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public MasterNewsResponse getMasterNewsResponse(int masterId, int start, int size) {
-        MasterNewsResponse response = new MasterNewsResponse();
+    public PageResponse<MasterNewsDto> getMasterNewsResponse(int masterId, int start, int size) {
+        PageResponse<MasterNewsDto> response = new PageResponse<>();
         long count = masterNewsRepository.countMasterNews(masterId);
         int end = start + size;
         boolean hasMore = true;
@@ -154,10 +154,10 @@ public class MasterServiceImpl implements MasterService {
             end = ((Long)count).intValue();
         }
         List<MasterNewsDto> newsDtos = getMasterNews(masterId, start, end);
-        response.setCount(count);
+        response.setTotalCount(count);
         response.setCurrent(end);
         response.setHasMore(hasMore);
-        response.setMasterNewsDtoList(newsDtos);
+        response.setElements(newsDtos);
         return response;
     }
 

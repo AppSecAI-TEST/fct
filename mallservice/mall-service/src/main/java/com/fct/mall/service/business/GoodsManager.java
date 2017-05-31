@@ -109,8 +109,7 @@ public class GoodsManager {
         //验证多规格
         if (goods.getSpecification() != null && goods.getSpecification().size() > 0)
         {
-            for (GoodsSpecification spec:goods.getSpecification()
-                 ) {
+            for (GoodsSpecification spec:goods.getSpecification()) {
                 if (StringUtils.isEmpty(spec.getName()))
                 {
                     throw new IllegalArgumentException("规格名称为空");

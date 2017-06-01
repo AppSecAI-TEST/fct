@@ -2,7 +2,6 @@ package com.fct.master.test;
 
 import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
-import com.fct.master.service.domain.Master;
 import com.fct.master.service.startup.ApplicationStartup;
 import org.junit.Test;
 import org.junit.runner.RunWith;

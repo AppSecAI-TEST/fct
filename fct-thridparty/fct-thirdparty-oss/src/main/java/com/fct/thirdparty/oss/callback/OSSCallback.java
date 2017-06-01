@@ -1,5 +1,6 @@
 package com.fct.thirdparty.oss.callback;
 
+import com.fct.thirdparty.oss.response.Response;
 import com.fct.thirdparty.oss.response.UploadResponse;
 
 /**
@@ -13,12 +14,12 @@ public class OSSCallback<T> {
         this.callback = callback;
     }
 
-    public T onSuccess(UploadResponse response){
+    public T onSuccess(Response response){
         return callback.onSuccess(response);
     }
 
 
-    public T onFailure(UploadResponse response){
+    public T onFailure(Response response){
         return callback.onFailure(response);
     }
 }

@@ -1,9 +1,6 @@
 package com.fct.master.test;
 
-import com.fct.master.dto.MasterBrief;
-import com.fct.master.dto.MasterDto;
-import com.fct.master.dto.MasterNewsResponse;
-import com.fct.master.dto.MasterSerialsDto;
+import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
 import com.fct.master.service.domain.Master;
 import com.fct.master.service.startup.ApplicationStartup;
@@ -52,8 +49,8 @@ public class MasterTest {
     @Test
     public void masterTest(){
         Integer masterId = 1;
-        MasterNewsResponse response = masterService.getMasterNewsResponse(masterId, 0, 20);
-        System.out.println(response.getCount());
+        PageResponse<MasterNewsDto> pageResponse = masterService.getMasterNewsResponse(masterId, 0, 20);
+        System.out.println(pageResponse.getTotalCount());
     }
 
     @Test

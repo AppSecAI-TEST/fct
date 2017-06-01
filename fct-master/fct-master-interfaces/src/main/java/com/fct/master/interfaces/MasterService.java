@@ -100,7 +100,8 @@ public interface MasterService {
     /**
      * 删除上传的图片
      * @param fileNames
+     * @param masterId
      */
-    void deleteImgFiles(List<String> fileNames);
+    void deleteImgFiles(long masterId, List<String> fileNames);
 
 }

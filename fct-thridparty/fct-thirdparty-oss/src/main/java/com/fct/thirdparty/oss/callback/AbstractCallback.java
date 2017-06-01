@@ -2,6 +2,7 @@ package com.fct.thirdparty.oss.callback;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.GenericRequest;
+import com.fct.thirdparty.oss.response.Response;
 import com.fct.thirdparty.oss.response.UploadResponse;
 
 /**
@@ -13,9 +14,4 @@ public abstract class AbstractCallback<T> implements Callback<T>{
 
     protected GenericRequest request;
 
-    @Override
-    public abstract T onSuccess(UploadResponse response);
-
-    @Override
-    public abstract T onFailure(UploadResponse response);
 }

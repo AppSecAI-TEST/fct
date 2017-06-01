@@ -3,6 +3,7 @@ package com.fct.master.service.impl;
 
 import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
+import com.fct.master.service.callback.MasterCallback;
 import com.fct.master.service.domain.Master;
 import com.fct.master.service.domain.MasterLive;
 import com.fct.master.service.domain.MasterNews;
@@ -10,6 +11,7 @@ import com.fct.master.service.repository.MasterLiveRepository;
 import com.fct.master.service.repository.MasterNewsRepository;
 import com.fct.master.service.repository.MasterRepository;
 import com.fct.thirdparty.oss.FileOperatorHelper;
+import com.fct.thirdparty.oss.callback.OSSCallback;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
 import com.fct.thridparty.vod.AliyunVod;
@@ -46,6 +48,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Autowired
     private FileOperatorHelper helper;
+
+    @Autowired
+    private MasterCallback masterCallback;
 
     @Value("aliyun.oss.access.key.id")
     private String accessKeyId;
@@ -195,13 +200,15 @@ public class MasterServiceImpl implements MasterService {
         List<File> fileList = Arrays.asList(files);
         List<String> keys = Lists.newArrayList();
         Map<String, String> userMetaData = Maps.newConcurrentMap();
-        userMetaData.put("masterId", String.valueOf(masterId));
+        userMetaData.putIfAbsent("masterId", String.valueOf(masterId));
+        userMetaData.putIfAbsent("action", "add");
         for(File file: files){
             keys.add(file.getName());
         }
         fileServiceRequest.setFiles(fileList);
         fileServiceRequest.setKeys(keys);
         fileServiceRequest.setUserMetaData(userMetaData);
+        fileServiceRequest.setCallback(new OSSCallback(masterCallback));
         List<UploadResponse> responses = helper.uploadFile(fileServiceRequest);
         List<String> urls = Lists.newArrayList();
         if(responses!=null&&responses.size()>0){
@@ -229,8 +236,14 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public void deleteImgFiles(List<String> fileNames) {
-
+    public void deleteImgFiles(long masterId, List<String> fileNames) {
+        FileServiceRequest fileServiceRequest = new FileServiceRequest();
+        Map<String, String> userMetaData = Maps.newHashMap();
+        userMetaData.putIfAbsent("masterId", String.valueOf(masterId));
+        fileServiceRequest.setKeys(fileNames);
+        fileServiceRequest.setUserMetaData(userMetaData);
+        fileServiceRequest.setCallback(new OSSCallback(masterCallback));
+        helper.deleteFile(fileServiceRequest);
     }
 
     private List<MasterNewsDto> convertNews(List<MasterNews> news){

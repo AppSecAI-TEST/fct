@@ -66,8 +66,7 @@ public class FileOperatorHelper {
     public List<UploadResponse> uploadFile(FileServiceRequest fileServiceRequest){
         List<UploadResponse> responses = new ArrayList<>();
         try {
-            if(callback==null)
-                callback = fileServiceRequest.getCallback();
+            getCallBack(fileServiceRequest);
             fileCheck(fileServiceRequest.getFiles(), fileServiceRequest.getKeys());
             for(int i=0; i<fileServiceRequest.getFiles().size();i++){
                 OSSRequestBuilder builder = OSSRequestBuilder.builder();
@@ -104,8 +103,13 @@ public class FileOperatorHelper {
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
         deleteObjectsRequest.withKeys(request.getKeys());
         ossClient.deleteObject(deleteObjectsRequest);
+        getCallBack(request);
+        deleteResponse.setUserMetaData(request.getUserMetaData());
+        deleteResponse.setKeys(request.getKeys());
         deleteResponse.setCode(0);
         deleteResponse.setMsg("删除文件成功");
+        if(callback!=null)
+            callback.onSuccess(deleteResponse);
         return deleteResponse;
     }
 
@@ -158,5 +162,11 @@ public class FileOperatorHelper {
         } finally {
             img = null;
         }
+    }
+
+    private OSSCallback getCallBack(FileServiceRequest fileServiceRequest){
+        if(callback==null)
+            callback = fileServiceRequest.getCallback();
+        return callback;
     }
 }

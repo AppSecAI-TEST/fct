@@ -2,7 +2,6 @@ package com.fct.master.service.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fct.master.service.NewsType;
 import lombok.Data;
 
 import javax.persistence.*;

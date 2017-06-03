@@ -119,4 +119,28 @@ public interface MasterService {
      * @param goodsId
      */
     void plusMasterWorks(long masterId, long goodsId);
+
+    /**
+     * 查询大师的评论列表并且分页
+     * @param masterId
+     * @param start
+     * @param size
+     * @return
+     */
+    PageResponse<CommentDto> getComments(long masterId, int start, int size);
+
+    /**
+     * 添加评论, 分为大师回复 和用户评论
+     * @param uid
+     * @param masterId
+     * @param content
+     * @return
+     */
+    CommentDto addMasterrComment(long uid, long masterId, String content, int commentType, long replyCommentId);
+
+    /**
+     * 删除评论 逻辑删除
+     * @param commentId
+     */
+    void deleteComment(long commentId);
 }

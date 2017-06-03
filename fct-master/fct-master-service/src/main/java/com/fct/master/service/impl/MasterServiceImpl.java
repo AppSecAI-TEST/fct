@@ -5,10 +5,7 @@ import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
 import com.fct.master.service.callback.MasterCallback;
 import com.fct.master.service.domain.*;
-import com.fct.master.service.repository.MasterGoodsRepository;
-import com.fct.master.service.repository.MasterLiveRepository;
-import com.fct.master.service.repository.MasterNewsRepository;
-import com.fct.master.service.repository.MasterRepository;
+import com.fct.master.service.repository.*;
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import com.fct.thirdparty.oss.callback.OSSCallback;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
@@ -43,6 +40,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Autowired
     private MasterGoodsRepository masterGoodsRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -279,6 +279,84 @@ public class MasterServiceImpl implements MasterService {
         masterGoods.setMaster_id(masterId);
         masterGoods.setId(IDGen.gen());
         masterGoodsRepository.save(masterGoods);
+    }
+
+    @Override
+    public PageResponse<CommentDto> getComments(long masterId, int start, int size) {
+        long totalCount = commentRepository.countByDelFlagAndMasterId(0, masterId);
+        PageResponse<CommentDto> pageResponse = new PageResponse<>();
+        boolean hasMore = true;
+        if(totalCount==0)
+            return null;
+        int end = start + size;
+        if(end >= totalCount){
+            end = (int)totalCount;
+            hasMore = false;
+        }
+        List<Comment> comments = commentRepository.getComments(0, masterId, start, end);
+        if(comments!=null&&comments.size()>0){
+            List<CommentDto> commentDtos = Lists.newArrayList();
+            for(Comment comment: comments){
+                commentDtos.add(convertComment(comment));
+            }
+            pageResponse.setElements(commentDtos);
+        }
+        pageResponse.setHasMore(hasMore);
+        pageResponse.setCurrent(end);
+        pageResponse.setTotalCount(totalCount);
+        return pageResponse;
+    }
+
+    @Override
+    public CommentDto addMasterrComment(long uid, long masterId, String content, int commentType, long replyCommentId) {
+        Comment comment = new Comment();
+        comment.setCommentType(commentType);
+        comment.setCreateTime(new Date());
+        comment.setUpdateTime(new Date());
+        comment.setMasterId(masterId);
+        comment.setUid(uid);
+        comment.setReplyContent(content);
+        if(commentType==2){
+            comment.setReplyCommentId(replyCommentId);
+        }
+        comment = commentRepository.save(comment);
+        CommentDto commentDto = convertComment(comment);
+        return commentDto;
+    }
+
+    private CommentDto convertComment(Comment comment){
+        if(comment!=null){
+            CommentDto commentDto = new CommentDto();
+            commentDto.setCommentId(comment.getCommentId());
+            commentDto.setCommentType(comment.getCommentType());
+            commentDto.setCreateTime(comment.getCreateTime());
+            commentDto.setDelFlag(comment.getDelFlag());
+            commentDto.setMasterId(comment.getMasterId());
+            commentDto.setReplyCommentId(comment.getReplyCommentId());
+            commentDto.setReplyContent(comment.getReplyContent());
+            commentDto.setUid(comment.getUid());
+            commentDto.setUpdateTime(comment.getUpdateTime());
+            if(comment.getReplies()!=null&&comment.getReplies().size()>0){
+                List<CommentDto> commentDtos = Lists.newArrayList();
+                for(Comment subComment: comment.getReplies()){
+                    CommentDto subCommentDto = convertComment(subComment);
+                    commentDtos.add(subCommentDto);
+                }
+                commentDto.setReplies(commentDtos);
+            }
+            return commentDto;
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteComment(long commentId) {
+        Comment comment = commentRepository.findOne(commentId);
+        if(comment!=null){
+            comment.setDelFlag(1);
+            comment.setUpdateTime(new Date());
+            commentRepository.save(comment);
+        }
     }
 
     private List<GoodsDto> convertGoods(List<Goods> subGoods) {

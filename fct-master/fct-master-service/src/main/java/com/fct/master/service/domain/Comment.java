@@ -2,9 +2,12 @@ package com.fct.master.service.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by nick on 2017/5/24.
@@ -43,4 +46,9 @@ public class Comment {
 
     @Column(name = "update_time")
     private Date updateTime;
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Comment.class, mappedBy = "replyCommentId")
+    @Fetch(FetchMode.SUBSELECT)
+    @OrderBy("create_time")
+    List<Comment> replies;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by nick on 2017/5/24.
@@ -23,7 +24,6 @@ public class Master {
         this.title = masterDto.getTitle();
         this.brief = masterDto.getBrief();
         this.profile = masterDto.getProfile();
-        this.worksCount = masterDto.getWorksCount();
         if(createTime==null)
             createTime = new Date();
         this.updateTime = masterDto.getUpdateTime();
@@ -52,9 +52,6 @@ public class Master {
     @Column(name = "profile", length = 500)
     private String profile;
 
-    @Column(name = "works_count")
-    private Long worksCount;
-
     @Column(name = "del_flag")
     private int delFlag; //逻辑删除 0 是不删除 1 是删除 默认是0
 
@@ -64,5 +61,9 @@ public class Master {
 
     @Column(name = "update_time")
     private Date updateTime;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "tb_master_goods", joinColumns = @JoinColumn(name = "master_id"), inverseJoinColumns = @JoinColumn(name = "goods_id"))
+    List<Goods> goods;
 
 }

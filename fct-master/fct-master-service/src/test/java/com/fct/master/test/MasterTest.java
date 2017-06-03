@@ -23,6 +23,9 @@ public class MasterTest {
     @Autowired
     private MasterService masterService;
 
+    /**
+     * 获取大师简介
+     */
     @Test
     public void getBrief(){
         Integer masterId = 1;
@@ -32,6 +35,9 @@ public class MasterTest {
         }
     }
 
+    /**
+     * 添加大师
+     */
     @Test
     public void insertMaster(){
         MasterDto master = new MasterDto();
@@ -45,6 +51,9 @@ public class MasterTest {
         masterService.insertMaster(master);
     }
 
+    /**
+     * 获取大师动态分页
+     */
     @Test
     public void masterTest(){
         Integer masterId = 1;
@@ -52,10 +61,22 @@ public class MasterTest {
         System.out.println(pageResponse.getTotalCount());
     }
 
+    /**
+     * 大师公共数据
+     */
     @Test
     public void masterCommonDataTest(){
         Integer masterId = 1;
         MasterSerialsDto masterSerialsDto = masterService.getMasterCommonData(masterId);
         System.out.println(masterSerialsDto.getMasterLive().getChannelId());
+    }
+
+    /**
+     * 获取大师列表分页
+     */
+    @Test
+    public void getMasterListTest(){
+        PageResponse<MasterDto> pageResponse = masterService.getMasters(0, 20);
+        System.out.println(pageResponse.getElements().size());
     }
 }

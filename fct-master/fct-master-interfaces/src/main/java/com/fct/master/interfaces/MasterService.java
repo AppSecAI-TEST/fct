@@ -25,7 +25,7 @@ public interface MasterService {
      * @param size
      * @return
      */
-    MasterResponse getMasters(int start, int size);
+    PageResponse<MasterDto> getMasters(int start, int size);
 
     /**
      * 给管理后台用
@@ -104,4 +104,19 @@ public interface MasterService {
      */
     void deleteImgFiles(long masterId, List<String> fileNames);
 
+    /**
+     * 获取大师相关作品列表并且分页
+     * @param masterId
+     * @param start
+     * @param size
+     * @return
+     */
+    PageResponse<GoodsDto> getMasterWorks(long masterId, int start, int size);
+
+    /**
+     * 当添加一个商品的时候, 则添加一个大师和商品的关联关系
+     * @param masterId
+     * @param goodsId
+     */
+    void plusMasterWorks(long masterId, long goodsId);
 }

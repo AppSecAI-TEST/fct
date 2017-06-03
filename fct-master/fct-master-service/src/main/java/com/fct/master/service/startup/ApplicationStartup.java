@@ -76,7 +76,7 @@ public class ApplicationStartup extends SpringBootServletInitializer{
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
         properties.setProperty("hibernate.enable_lazy_load_no_trans", "true");
         if(environment.getActiveProfiles()[0].equals("de")){
-            properties.setProperty("hibernate.hbm2ddl.auto", "create");
+//            properties.setProperty("hibernate.hbm2ddl.auto", "update");
             properties.setProperty("hibernate.show_sql", "false");
             properties.setProperty("hibernate.format_sql","true");
         }

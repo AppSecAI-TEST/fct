@@ -4,9 +4,8 @@ package com.fct.master.service.impl;
 import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
 import com.fct.master.service.callback.MasterCallback;
-import com.fct.master.service.domain.Master;
-import com.fct.master.service.domain.MasterLive;
-import com.fct.master.service.domain.MasterNews;
+import com.fct.master.service.domain.*;
+import com.fct.master.service.repository.MasterGoodsRepository;
 import com.fct.master.service.repository.MasterLiveRepository;
 import com.fct.master.service.repository.MasterNewsRepository;
 import com.fct.master.service.repository.MasterRepository;
@@ -16,6 +15,7 @@ import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
 import com.fct.thridparty.vod.AliyunVod;
 import com.fct.thridparty.vod.RequestType;
+import com.fct.thridparty.vod.utils.IDGen;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by nick on 2017/5/25.
@@ -42,6 +40,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Autowired
     private MasterNewsRepository masterNewsRepository;
+
+    @Autowired
+    private MasterGoodsRepository masterGoodsRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -67,8 +68,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public MasterResponse getMasters(int start, int size) {
-        MasterResponse response = new MasterResponse();
+    public PageResponse<MasterDto> getMasters(int start, int size) {
+        PageResponse<MasterDto> response = new PageResponse<>();
         boolean hasMore = true;
         Long count = masterRepository.countAllByDelFlag(0);
         int end = start + size;
@@ -79,8 +80,8 @@ public class MasterServiceImpl implements MasterService {
         List<Master> masters = masterRepository.getAllMaster(start, end);
         response.setHasMore(hasMore);
         response.setCurrent(end);
-        response.setAllCount(count);
-        response.setMasters(getMasterDtos(masters));
+        response.setTotalCount(count);
+        response.setElements(getMasterDtos(masters));
         return response;
     }
 
@@ -97,7 +98,7 @@ public class MasterServiceImpl implements MasterService {
                 masterDto.setMasterName(master.getMasterName());
                 masterDto.setUpdateTime(master.getUpdateTime());
                 masterDto.setTitle(master.getTitle());
-                masterDto.setWorksCount(master.getWorksCount());
+                masterDto.setWorksCount((long)master.getGoods().size());
                 masterDtos.add(masterDto);
             }
         }
@@ -244,6 +245,81 @@ public class MasterServiceImpl implements MasterService {
         fileServiceRequest.setUserMetaData(userMetaData);
         fileServiceRequest.setCallback(new OSSCallback(masterCallback));
         helper.deleteFile(fileServiceRequest);
+    }
+
+    @Override
+    public PageResponse<GoodsDto> getMasterWorks(long masterId, int start, int size) {
+        PageResponse<GoodsDto> pageResponse = new PageResponse<>();
+        Master master = masterRepository.findOne(masterId);
+        if(master!=null){
+            if(master.getGoods()!=null&&master.getGoods().size()>0){
+                List<Goods> goods = new ArrayList<>(master.getGoods());
+                boolean hasMore = true;
+                long totalCount = goods.size();
+                int end = start + size;
+                if(end >= totalCount){
+                    end = (int)totalCount;
+                    hasMore = false;
+                }
+                List<Goods> subGoods = new ArrayList<>(goods.subList(start, end));
+                List<GoodsDto> elements = convertGoods(subGoods);
+                pageResponse.setElements(elements);
+                pageResponse.setCurrent(end);
+                pageResponse.setHasMore(hasMore);
+            }
+        }
+        return pageResponse;
+    }
+
+    @Override
+    public void plusMasterWorks(long masterId, long goodsId) {
+        MasterGoods masterGoods = new MasterGoods();
+        masterGoods.setCreateTime(new Date());
+        masterGoods.setGoods_id(goodsId);
+        masterGoods.setMaster_id(masterId);
+        masterGoods.setId(IDGen.gen());
+        masterGoodsRepository.save(masterGoods);
+    }
+
+    private List<GoodsDto> convertGoods(List<Goods> subGoods) {
+        List<GoodsDto> goodsDtos = Lists.newArrayList();
+        if(subGoods!=null&&subGoods.size()>0){
+            for(Goods goods:subGoods){
+                GoodsDto goodsDto = new GoodsDto();
+                goodsDto.setAdvanceSaleDays(goods.getAdvanceSaleDays());
+                goodsDto.setArtistIds(goods.getArtistIds());
+                goodsDto.setBarCode(goods.getBarCode());
+                goodsDto.setCategoryCode(goods.getCategoryCode());
+                goodsDto.setCode(goods.getCode());
+                goodsDto.setCommentCount(goods.getCommentCount());
+                goodsDto.setCommission(goods.getCommission());
+                goodsDto.setCommnetScore(goods.getCommnetScore());
+                goodsDto.setContent(goods.getContent());
+                goodsDto.setCreateTime(goods.getCreateTime());
+                goodsDto.setDefaultImage(goods.getDefaultImage());
+                goodsDto.setGradeId(goods.getGradeId());
+                goodsDto.setId(goods.getId());
+                goodsDto.setIntro(goods.getIntro());
+                goodsDto.setIsDel(goods.getIsDel());
+                goodsDto.setMarketPrice(goods.getMarketPrice());
+                goodsDto.setMultiImages(goods.getMultiImages());
+                goodsDto.setName(goods.getName());
+                goodsDto.setMaterialId(goods.getMaterialId());
+                goodsDto.setPayCount(goods.getPayCount());
+                goodsDto.setSalePrice(goods.getSalePrice());
+                goodsDto.setSortIndex(goods.getSortIndex());
+                goodsDto.setSellCount(goods.getSellCount());
+                goodsDto.setStatus(goods.getStatus());
+                goodsDto.setStockCount(goods.getStockCount());
+                goodsDto.setSubTitle(goods.getSubTitle());
+                goodsDto.setUpdateTime(goods.getUpdateTime());
+                goodsDto.setVideoId(goods.getVideoId());
+                goodsDto.setVideoImg(goods.getVideoImg());
+                goodsDto.setViewCount(goods.getViewCount());
+                goodsDtos.add(goodsDto);
+            }
+        }
+        return goodsDtos;
     }
 
     private List<MasterNewsDto> convertNews(List<MasterNews> news){

@@ -13,6 +13,6 @@ public interface MasterRepository extends JpaRepository<Master, Long>{
 
     Long countAllByDelFlag(int delflag);
 
-    @Query(nativeQuery = true, value = "select * from master a where a.del_flag = 0 order by a.create_time desc limit ?2, ?3 ")
+    @Query(nativeQuery = true, value = "select * from master a where a.del_flag = 0 order by a.create_time desc limit ?1, ?2 ")
     List<Master> getAllMaster(int start, int end);
 }

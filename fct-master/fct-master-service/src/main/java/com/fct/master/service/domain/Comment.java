@@ -25,6 +25,9 @@ public class Comment {
     @Column(name = "master_id")
     private Long masterId;
 
+    @Column(name = "comment_type", length = 2)//user comment 1 master comment 2
+    private int commentType;
+
     @Column(name = "reply_comment_id")
     private Long replyCommentId;
 

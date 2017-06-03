@@ -2,23 +2,15 @@ package com.fct.mall.service.business;
 
 import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
-import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.repository.GoodsRepository;
 import com.fct.mall.interfaces.PageResponse;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

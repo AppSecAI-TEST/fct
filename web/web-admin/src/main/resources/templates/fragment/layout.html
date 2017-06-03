@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="header(title, links)">
+    <!--/*  Title will be replaced by their respective titles in the calling template. */-->
+    <title th:replace="${title}">方寸堂</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lt IE 8]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link href="//static/bootstrap.min.css" rel="stylesheet" th:href="@{/bootstrap.min.css}" />
+    <link href="//static/css/font-awesome.min.css" rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+    <link href="//static/css/style.min.css" rel="stylesheet" th:href="@{/css/style.min.css}" />
+
+    <!--/* Per-page placeholder for additional links */-->
+    <th:block th:replace="${links}" />
+
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden" th:fragment="body(content,slide_menu,scripts)">
+<div id="wrapper">
+    <!--左侧导航开始-->
+
+     <th:block th:include="fragment/left::content">
+
+     </th:block>
+
+    <!--左侧导航结束-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+
+        <th:block th:replace="${content}">
+
+        </th:block>
+
+        <!--右侧边栏结束-->
+        <div class="footer navbar-fixed-bottom">
+            <div style="">
+                <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            </div>
+            <div class="pull-right">
+                &copy; 2016 <a href="http://www.fangcuntang.com/" target="_blank">fangcuntang.com</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:text="${slide_menu}" id="current_slide"></div>
+
+<script src="//static/js/jquery.js" th:src="@{/js/jquery.js}"></script>
+<script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="//static/js/plugins/metisMenu/jquery.metisMenu.js" th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script src="//static/js/plugins/slimscroll/jquery.slimscroll.min.js" th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<!--菜单高亮-->
+<script type="application/javascript">
+
+    $(function () {
+        alert($("#current_slide").text());
+        var arr =  $("#current_slide").text().split('_');
+        alert(arr);
+        var slideName = "#slide_" + arr[0];
+        $(slideName).addClass('active');
+        $(slideName+" ul").children('li').each(
+            function (i,t) {
+                var view = $(t).attr('data-view');
+                if (view == arr[1]) {
+                    $(t).addClass('active');
+                }
+            }
+        );
+    })
+</script>
+
+<script src="//static/js/plugins/layer/layer.js" th:src="@{/js/plugins/layer/layer.js}"></script>
+<script src="//static/js/hplus.min.js?v=4.0.0" th:src="@{/js/hplus.min.js}"></script>
+<script src="//static/js/fct.js" th:src="@{/js/fct.js}"></script>
+
+<th:block th:replace="${scripts}" />
+
+</body>
+</html>

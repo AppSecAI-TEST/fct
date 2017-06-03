@@ -3,18 +3,23 @@ package com.fct.promotion.service.business;
 import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
+import com.fct.common.utils.PageUtil;
 import com.fct.promotion.data.entity.CouponOperateLog;
+import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.data.repository.DiscountRepository;
+import com.fct.promotion.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -149,33 +154,56 @@ public class DiscountManager {
         this.save(obj);
     }
 
-    public Page<Discount> findAll(Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize)
+    private String getCondition(Integer status, String startTime, String endTime,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition ="";
+        if(status>0)
+        {
+            condition += " AND AuditStatus="+status;
+        }
 
-        Specification<Discount> spec = new Specification<Discount>() {
-            @Override
-            public Predicate toPredicate(Root<Discount> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                java.util.List<Predicate> predicates = new ArrayList<Predicate>();
+        if (!StringUtils.isEmpty(startTime)) {
+            condition += " AND startTime>=?";
+            param.add(startTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition += " AND endTime <?";
+            param.add(endTime);
+        }
+        return condition;
+    }
 
-                if(status>0)
-                {
-                    predicates.add(cb.equal(root.get("Status"),status));
-                }
-                if (!org.apache.commons.lang3.StringUtils.isEmpty(startTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("startTime"), startTime));
-                }
-                if (!org.apache.commons.lang3.StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+    public PageResponse<Discount> findAll(Integer status, String startTime, String endTime, Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-        return discountRepository.findAll(spec,pageable);
+        String table="Discount";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getCondition(status,startTime,endTime,param);
+
+        String sql = "SELECT Count(0) FROM Discount WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<Discount> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Discount>(Discount.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<Discount> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
 
     }
 

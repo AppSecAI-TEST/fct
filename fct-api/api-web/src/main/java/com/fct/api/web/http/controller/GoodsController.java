@@ -5,8 +5,8 @@ import com.fct.api.web.http.json.JsonResponseEntity;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
+import com.fct.mall.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,13 +39,23 @@ public class GoodsController {
     }
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
+<<<<<<< Updated upstream
     public JsonListResponseEntity<Goods> findGoods(String name, String categorycode, Integer gradeid,
                                                          Integer pageindex, Integer pagesize){
+=======
+    public JsonResponseEntity<PageResponse<Goods>> findGoods(String name, String categorycode, Integer gradeid,
+                                                      Integer pageindex, Integer pagesize){
+>>>>>>> Stashed changes
 
-        Page<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
+        PageResponse<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
 
+<<<<<<< Updated upstream
         JsonListResponseEntity<Goods> responseEntity = new JsonListResponseEntity<>();
         responseEntity.setContent(ls.getContent(), true, "xx:desc", String.valueOf(pageindex));
+=======
+        JsonResponseEntity<PageResponse<Goods>> responseEntity = new JsonResponseEntity<>();
+        responseEntity.setData(ls);
+>>>>>>> Stashed changes
 
         return responseEntity;
     }

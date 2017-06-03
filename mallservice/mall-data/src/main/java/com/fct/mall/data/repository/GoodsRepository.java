@@ -2,6 +2,7 @@ package com.fct.mall.data.repository;
 
 import com.fct.mall.data.entity.Goods;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +31,6 @@ public interface GoodsRepository extends JpaRepository<Goods, Integer> {
             value = "UPDATE Goods set IsDel=1, Status=-1,UpdateTime='?1' WHERE Id=?2")
     void delete(String updateTime,Integer id);
 
-    Page<Goods> findAll(Specification<Goods> spec, Pageable pageable);  //分页按条件查询
+    PageImpl<Goods> findAll(Specification<Goods> spec, Pageable pageable);  //分页按条件查询
 
 }

@@ -17,4 +17,7 @@ public interface MobilePayService {
 
     String wxpayApp(String payment, String payOrderNo, BigDecimal total_fee, String body,
                     String callBackUrl, String notifyUrl, String createIP, Integer expireMinutes);
+
+    PayNotify wxpayRefund(String payPlatform,String payOrderId,String refundId,
+                          BigDecimal payAmount,BigDecimal refundAmount);
 }

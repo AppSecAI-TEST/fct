@@ -2,6 +2,7 @@ package com.fct.mall.service;
 
 import com.fct.mall.data.entity.*;
 import com.fct.mall.interfaces.MallService;
+import com.fct.mall.interfaces.PageResponse;
 import com.fct.mall.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,8 +47,8 @@ public class MallServiceImpl implements MallService {
     @Autowired
     private ShoppingCartManager shoppingCartManager;
 
-    public Page<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
-                                 Integer pageIndex, Integer pageSize) {
+    public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
+                                         Integer pageIndex, Integer pageSize) {
         return goodsManager.find(name, categoryCode, gradeId, status, pageIndex, pageSize);
     }
 
@@ -144,7 +145,7 @@ public class MallServiceImpl implements MallService {
                 lsOrderGoods,couponCode,remark,orderReceiver);
     }
 
-    public Page<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
+    public PageResponse<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
                             Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,
                             String endTime,Integer pageIndex, Integer pageSize)
     {
@@ -243,7 +244,7 @@ public class MallServiceImpl implements MallService {
         return orderRefundManager.findById(refundId);
     }
 
-    public Page<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
+    public PageResponse<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
                                       String endTime,Integer pageIndex,Integer pageSize)
     {
         return orderRefundManager.findAll(orderId,goodsId,memberId,status,beginTime,endTime,pageIndex,pageSize);
@@ -264,7 +265,7 @@ public class MallServiceImpl implements MallService {
         orderCommentManager.reply(id,replyContent);
     }
 
-    public Page<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,
+    public PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,
                                                Integer pageSize)
     {
         return orderCommentManager.findAll(goodsId,memberId,orderId,pageIndex,pageSize);
@@ -285,7 +286,7 @@ public class MallServiceImpl implements MallService {
         goodsMaterialManager.updateStatus(id);
     }
 
-    public Page<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize)
+    public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize)
     {
         return goodsMaterialManager.findAll(goodsId,name,status,pageIndex,pageSize);
     }

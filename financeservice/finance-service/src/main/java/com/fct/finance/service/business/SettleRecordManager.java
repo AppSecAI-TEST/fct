@@ -1,9 +1,12 @@
 package com.fct.finance.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.SettleRecord;
+import com.fct.finance.data.entity.WithdrawRecord;
 import com.fct.finance.data.repository.SettleRecordRepository;
+import com.fct.finance.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -36,6 +41,9 @@ public class SettleRecordManager {
 
     @Autowired
     private MemberAccountHistoryManager memberAccountHistoryManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public Integer create(SettleRecord record)
     {
@@ -148,49 +156,77 @@ public class SettleRecordManager {
         return settleRecordRepository.findOne(id);
     }
 
-    public Page<SettleRecord> findAll(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
+    private String getCondition(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
+                                String beginTime, String endTime,List<Object> param)
+    {
+        String condition = "";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition +=" AND cellPhone=?";
+            param.add(cellPhone);
+        }
+
+        if (!StringUtils.isEmpty(tradeType)) {
+            condition +=" AND tradeType=?";
+            param.add(tradeType);
+        }
+
+        if (!StringUtils.isEmpty(tradeId)) {
+            condition +=" AND tradeId=?";
+            param.add(tradeId);
+        }
+
+        if(memberId>0)
+        {
+            condition+=" AND memberId="+memberId;
+        }
+        if(status>-1)
+        {
+            condition+=" AND status="+status;
+        }
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition +=" AND createTime >=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition +=" AND createTime <?";
+            param.add(endTime);
+        }
+        return condition;
+    }
+
+    public PageResponse<SettleRecord> findAll(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                       String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<SettleRecord> spec = new Specification<SettleRecord>() {
-            @Override
-            public Predicate toPredicate(Root<SettleRecord> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
+        String table="SettleRecord";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getCondition(memberId,cellPhone,tradeType,tradeId,status,
+                beginTime,endTime,param);
 
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
+        String sql = "SELECT Count(0) FROM SettleRecord WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
 
-                if (!StringUtils.isEmpty(tradeType)) {
-                    predicates.add(cb.equal(root.get("tradeType"), tradeType));
-                }
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
 
-                if (!StringUtils.isEmpty(tradeId)) {
-                    predicates.add(cb.equal(root.get("tradeId"), tradeId));
-                }
+        List<SettleRecord> ls = jt.query(sql, param.toArray(),
+                new BeanPropertyRowMapper<SettleRecord>(SettleRecord.class));
 
-                if(memberId>0)
-                {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"), status));
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("beginTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
 
-        return settleRecordRepository.findAll(spec,pageable);
+        PageResponse<SettleRecord> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

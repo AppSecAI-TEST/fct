@@ -1,7 +1,6 @@
 package com.fct.mall.service.business;
 
 import com.fct.common.exceptions.BaseException;
-import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.repository.GoodsGradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.List;
-import java.util.Map;
-
+import java.util.ArrayList;
 
 /**
  * Created by jon on 2017/5/19.
@@ -56,13 +52,14 @@ public class GoodsGradeManager {
     public List<GoodsGrade> findAll(String name) {
 
         String condition = "";
-
+        List<Object> param = new ArrayList<>();
         if (!StringUtils.isEmpty(name)) {
-            condition += " AND name like '%" + name + "%'";
+            condition += " AND name like ?";
+            param.add("%"+ name +"%");
         }
         String sql = String.format("select * from GoodsGrade where 1=1 %s order by sortindex asc",condition);
 
-        List<GoodsGrade> list = jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<GoodsGrade>(GoodsGrade.class));
+        List<GoodsGrade> list = jt.query(sql,param.toArray(), new BeanPropertyRowMapper<GoodsGrade>(GoodsGrade.class));
         return list;
     }
 

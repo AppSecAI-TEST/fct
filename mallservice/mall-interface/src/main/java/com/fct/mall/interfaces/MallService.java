@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface MallService {
 
-    Page<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
-                            Integer pageIndex, Integer pageSize);
+    PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
+                                  Integer pageIndex, Integer pageSize);
 
     Goods getGoods(Integer id);
 
@@ -53,7 +53,7 @@ public interface MallService {
     String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
                        List<OrderGoods> lsOrderGoods, String couponCode, String remark,OrderReceiver orderReceiver);
 
-    Page<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
+    PageResponse<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
                             Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,
                             String endTime,Integer pageIndex, Integer pageSize);
 
@@ -94,7 +94,7 @@ public interface MallService {
 
     OrderRefund getOrderRefund(Integer refundId);
 
-    Page<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
+    PageResponse<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
                                       String endTime,Integer pageIndex,Integer pageSize);
 
     void refundSuccess (Integer refundId, String description);
@@ -103,7 +103,7 @@ public interface MallService {
 
     void replyOrderComment(Integer id,String replyContent);
 
-    Page<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,Integer pageSize);
+    PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,Integer pageSize);
 
     void saveMaterial(GoodsMaterial goodsMaterial);
 
@@ -111,5 +111,5 @@ public interface MallService {
 
     void updateMaterialStatus(Integer id);
 
-    Page<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize);
+    PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize);
 }

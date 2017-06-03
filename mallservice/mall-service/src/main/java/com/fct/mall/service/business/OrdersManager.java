@@ -3,9 +3,11 @@ package com.fct.mall.service.business;
 import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
+import com.fct.mall.interfaces.PageResponse;
 import com.fct.message.model.MQPayRefund;
 import com.fct.message.model.MQPayTrade;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -382,74 +385,104 @@ public class OrdersManager {
 
     }
 
-    //获取订单列表
-    public Page<Orders> findAll(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
-                                Integer status,String payPaltform,String payOrderId,Integer timeType,String beginTime,
-                                String endTime,Integer pageIndex, Integer pageSize)
+    private String getCondition(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
+                                Integer status, String payPaltform, String payOrderId, Integer timeType, String beginTime,
+                                String endTime,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition = "";
 
-        Specification<Orders> spec = new Specification<Orders>() {
-            @Override
-            public Predicate toPredicate(Root<Orders> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(orderId)) {
-                    predicates.add(cb.equal(root.get("orderId"), orderId));
-                }
-                if(!StringUtils.isEmpty(cellPhone))
-                {
-                    predicates.add(cb.equal(root.get("cellPhone"),cellPhone));
-                }
+        if (!StringUtils.isEmpty(orderId)) {
+            condition += " AND orderId=?";
+            param.add(orderId);
+        }
+        if(!StringUtils.isEmpty(cellPhone))
+        {
+            condition += " AND cellPhone=?";
+            param.add(cellPhone);
+        }
 
-                if (memberId>0) {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
+        if (memberId>0) {
+            condition += " AND memberId="+memberId;
+        }
 
-                if (shopId>0) {
-                    predicates.add(cb.equal(root.get("shopId"), shopId));
-                }
+        if (shopId>0) {
+            condition += " AND shopId="+shopId;
+        }
 
-                if(!StringUtils.isEmpty(goodsName))
-                {
-                    //定义一个Expression
-                    Expression<String> exp = root.get("orderId");
+        if(!StringUtils.isEmpty(goodsName))
+        {
+            condition += "AND orderId In(Select orderId from orderGoods where name like ?)";
+            param.add("%"+ goodsName +"%");
+        }
 
-                    predicates.add(exp.in(orderGoodsManager.getOrderId(goodsName)));
+        if(!StringUtils.isEmpty(payPaltform))
+        {
+            condition += " AND payPaltform=?";
+            param.add(payPaltform);
+        }
 
-                }
+        if(!StringUtils.isEmpty(payOrderId))
+        {
+            condition += " AND payOrderId=?";
+            param.add(payOrderId);
+        }
 
-                if(!StringUtils.isEmpty(payPaltform))
-                {
-                    predicates.add(cb.equal(root.get("payPaltform"),payPaltform));
-                }
+        if (status>-1) {
+            condition += " AND status="+status;
+        }
 
-                if(!StringUtils.isEmpty(payOrderId))
-                {
-                    predicates.add(cb.equal(root.get("payOrderId"),payOrderId));
-                }
+        String timeColumn = "createTime";
+        if (timeType>2) {
+            timeColumn = "payTime";
+        }
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition += " AND "+ timeColumn +">=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition += " AND "+ timeColumn +"<?";
+            param.add(endTime);
+        }
+        return  condition;
+    }
 
-                if (status>-1) {
-                    predicates.add(cb.equal(root.get("status"), status));
-                }
+    //获取订单列表
+    public PageResponse<Orders> findAll(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
+                                        Integer status, String payPaltform, String payOrderId, Integer timeType, String beginTime,
+                                        String endTime, Integer pageIndex, Integer pageSize)
+    {
+        //定义一个Expression
+        //Expression<String> exp = root.get("orderId");
+        List<Object> param = new ArrayList<>();
 
-                String timeColumn = "createTime";
-                if (timeType>2) {
-                    timeColumn = "payTime";
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get(timeColumn), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get(timeColumn), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="Orders";
+        String field ="*";
+        String orderBy = "createTime Desc";
+        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,payPaltform,payOrderId,
+                timeType,beginTime,endTime,param);
 
-        return ordersRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM OrderRefund WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<Orders> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Orders>(Orders.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<Orders> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 
     //获取订单

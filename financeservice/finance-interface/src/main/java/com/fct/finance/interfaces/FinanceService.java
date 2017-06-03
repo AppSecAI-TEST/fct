@@ -1,7 +1,6 @@
 package com.fct.finance.interfaces;
 
 import com.fct.finance.data.entity.*;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -26,17 +25,17 @@ public interface FinanceService {
     void payTradeNotify(String jsonMQPayTrade);
 
     //根据条件获取支付记录
-    Page<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
+    PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
                                  Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize);
 
     //根据用户id获取账户
     MemberAccount getMemberAccount(Integer memberId);
 
     //获取账户列表
-    Page<MemberAccount> findMemberAccount(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize);
+    PageResponse<MemberAccount> findMemberAccount(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize);
 
     //获取账户变更记录
-    Page<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
+    PageResponse<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
                                                         Integer pageIndex, Integer pageSize);
     //创建退款记录
     RefundRecord createRefundRecord(RefundRecord refund);
@@ -48,7 +47,7 @@ public interface FinanceService {
     void refundSuccess(Integer refundId, String notifyData);
 
     //根据条件获取退款数据
-    Page<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
+    PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
                                         Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize);
     //用户申请提现
     void applyWithdraw(WithdrawRecord withdrawRecord);
@@ -60,7 +59,7 @@ public interface FinanceService {
     void withdrawFail(Integer omsOperaterId, Integer id, String desc);
 
     //根据条件获取提现数据
-    Page<WithdrawRecord> findWithdrawRecord(Integer memberId, String cellPhone, Integer status,
+    PageResponse<WithdrawRecord> findWithdrawRecord(Integer memberId, String cellPhone, Integer status,
                                             String beginTime, String endTime, Integer pageIndex, Integer pageSize);
     //创建销售结算，并返回结算Id，订单保存
     Integer createSettleRecord(SettleRecord settleRecord);
@@ -77,7 +76,7 @@ public interface FinanceService {
     SettleRecord getSettleRecord(Integer recordId);
 
     //根据条件获取结算数据列表
-    Page<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
+    PageResponse<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                         String beginTime, String endTime, Integer pageIndex, Integer pageSize);
     //获取支付平台方式
     List<PayPlatform> findPayPlatform();
@@ -88,6 +87,6 @@ public interface FinanceService {
 
     void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, String payStatus);
 
-    Page<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
+    PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
                                             String beginTime, String endTime, Integer pageIndex, Integer pageSize);
 }

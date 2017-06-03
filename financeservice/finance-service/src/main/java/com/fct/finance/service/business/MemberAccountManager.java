@@ -1,20 +1,15 @@
 package com.fct.finance.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.repository.MemberAccountRepository;
+import com.fct.finance.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +22,9 @@ public class MemberAccountManager {
     @Autowired
     private MemberAccountRepository memberAccountRepository;
 
+    @Autowired
+    private JdbcTemplate jt;
+
     public void save(MemberAccount account)
     {
         memberAccountRepository.saveAndFlush(account);
@@ -37,38 +35,60 @@ public class MemberAccountManager {
         return memberAccountRepository.findOne(memberId);
     }
 
-    public Page<MemberAccount> findAll(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize)
+    private String getCondition(String cellPhone,List<Object> param)
+    {
+        String condition ="";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition+=" AND cellPhone=?";
+            param.add(cellPhone);
+        }
+        return condition;
+    }
+
+    public PageResponse<MemberAccount> findAll(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize)
     {
         String sortName = " CreateTime";
         switch (orderBy)
         {
             case 1:
-                sortName = "availableAmount";
+                sortName = "availableAmount Desc";
                 break;
             case 2:
-                sortName = "points";
+                sortName = "points Desc";
                 break;
             case 3:
-                sortName = "accumulateIncome";
+                sortName = "accumulateIncome Desc";
                 break;
         }
-        Sort sort = new Sort(Sort.Direction.DESC, sortName);
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
 
-        Specification<MemberAccount> spec = new Specification<MemberAccount>() {
-            @Override
-            public Predicate toPredicate(Root<MemberAccount> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        List<Object> param = new ArrayList<>();
 
-        return memberAccountRepository.findAll(spec,pageable);
+        String table="MemberAccount";
+        String field ="*";
+        String condition= getCondition(cellPhone,param);
+
+        String sql = "SELECT Count(0) FROM MemberAccount WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,sortName,pageIndex,pageSize);
+
+        List<MemberAccount> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MemberAccount>(MemberAccount.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<MemberAccount> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 
 }

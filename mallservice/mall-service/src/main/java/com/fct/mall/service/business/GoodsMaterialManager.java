@@ -1,13 +1,18 @@
 package com.fct.mall.service.business;
 
+import com.fct.common.utils.PageUtil;
+import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.data.repository.GoodsMaterialRepository;
+import com.fct.mall.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +35,9 @@ public class GoodsMaterialManager {
     @Autowired
     private GoodsMaterialRepository goodsMaterialRepository;
 
+    @Autowired
+    private JdbcTemplate jt;
+
     public void save(GoodsMaterial goodsMaterial) {
         goodsMaterial.setUpdateTime(new Date());
         if (goodsMaterial.getId() > 0) {
@@ -49,34 +57,57 @@ public class GoodsMaterialManager {
         goodsMaterialRepository.updateStatus(id,new Date().toString());
     }
 
-    public Page<GoodsMaterial> findAll(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize)
+    private String getContion(Integer goodsId, String name, Integer status,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition = "";
+        if(!StringUtils.isEmpty(name))
+        {
+            condition += " And name like ?";
+            param.add("%"+ name +"%");
+        }
+        if(goodsId>0)
+        {
+            condition +=" AND GoodsId="+goodsId;
+        }
+        if(status>-1)
+        {
+            condition += " AND Status="+status;
+        }
+        return condition;
+    }
 
-        Specification<GoodsMaterial> spec = new Specification<GoodsMaterial>() {
-            @Override
-            public Predicate toPredicate(Root<GoodsMaterial> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(name)) {
-                    predicates.add(cb.like(root.get("name"), name));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"),status));
-                }
+    public PageResponse<GoodsMaterial> findAll(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize)
+    {
 
-                if (goodsId>0) {
-                    predicates.add(cb.equal(root.get("goodsId"), goodsId));
-                }
+        List<Object> param = new ArrayList<>();
 
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="GoodsMaterial";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getContion(goodsId,name,status,param);
 
-        return goodsMaterialRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM GoodsMaterial WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<GoodsMaterial> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<GoodsMaterial>(GoodsMaterial.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<GoodsMaterial> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
 
     }
 }

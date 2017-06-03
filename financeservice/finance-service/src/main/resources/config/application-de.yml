@@ -1,6 +1,6 @@
 server:
-  port: 8081
-  contextPath: /fct-finance
+  port: 8083
+  contextPath: /finance
   tomcat:
     uri-encoding: UTF-8
 

@@ -1,0 +1,43 @@
+server:
+  port: 8090
+  contextPath: /adminweb
+  tomcat:
+    uri-encoding: UTF-8
+
+
+redis:
+  host:
+    url: 127.0.0.1
+    port: 6379
+    test:
+      onborrow: true
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+mongo:
+  host:
+    port: 9024
+    url: mongo-m.fct.me
+    db: easemob
+    collectionName: sms_log
+
+mysql:
+  connection:
+    url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 123456
+
+spring:
+  thymeleaf:
+    #prefix: classpath:/templates,classpath:/static/
+    #suffix: .html
+    cache: false
+    check-template: true
+    content-type: text/html
+    encoding: UTF-8
+    mode: HTML5
+
+
+

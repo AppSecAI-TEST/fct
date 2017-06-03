@@ -1,15 +1,19 @@
 package com.fct.mall.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
+import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.data.entity.OrderComment;
 import com.fct.mall.data.entity.Orders;
 import com.fct.mall.data.repository.OrderCommentRepository;
+import com.fct.mall.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -92,35 +96,55 @@ public class OrderCommentManager {
         orderCommentRepository.save(comment);
     }
 
-    public Page<OrderComment> findAll(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,Integer pageSize)
+    private String getContion(Integer goodsId, Integer memberId, String orderId,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition ="";
+        if(goodsId>0)
+        {
+            condition += " AND goodsId="+goodsId;
+        }
 
-        Specification<OrderComment> spec = new Specification<OrderComment>() {
-            @Override
-            public Predicate toPredicate(Root<OrderComment> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
+        if (memberId>0) {
+            condition += " AND memberId="+memberId;
+        }
 
-                if(goodsId>0)
-                {
-                    predicates.add(cb.equal(root.get("goodsId"),goodsId));
-                }
+        if (!StringUtils.isEmpty(orderId)) {
+            condition += " AND orderId=?";
+            param.add(orderId);
+        }
+        return condition;
+    }
 
-                if (memberId>0) {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
+    public PageResponse<OrderComment> findAll(Integer goodsId, Integer memberId, String orderId, Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-                if (!StringUtils.isEmpty(orderId)) {
-                    predicates.add(cb.equal(root.get("orderId"), orderId));
-                }
+        String table="OrderComment";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getContion(goodsId,memberId,orderId,param);
 
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String sql = "SELECT Count(0) FROM OrderComment WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
 
-        return orderCommentRepository.findAll(spec,pageable);
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<OrderComment> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<OrderComment>(OrderComment.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<OrderComment> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

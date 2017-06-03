@@ -3,6 +3,7 @@ package com.fct.promotion.service;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
+import com.fct.promotion.interfaces.PageResponse;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DisCountDTO;
@@ -55,7 +56,7 @@ public class PromotionServiceImpl implements PromotionService {
         return couponPolicyManager.findById(policyId);
     }
 
-    public Page<CouponPolicy> findCouponPolicy(Integer status,Integer fetchType,Integer generateStatus, String startTime,
+    public PageResponse<CouponPolicy> findCouponPolicy(Integer status,Integer fetchType,Integer generateStatus, String startTime,
                                                String endTime,Integer pageIndex, Integer pageSize)
     {
         return couponPolicyManager.findAll(status,fetchType,generateStatus,startTime,endTime,pageIndex,pageSize);
@@ -130,8 +131,8 @@ public class PromotionServiceImpl implements PromotionService {
         discountManager.audit(discountId,pass,userId);
     }
 
-    public Page<Discount> findDiscount(Integer status,String startTime,String endTime,Integer pageIndex,
-                                       Integer pageSize)
+    public PageResponse<Discount> findDiscount(Integer status, String startTime, String endTime, Integer pageIndex,
+                                               Integer pageSize)
     {
         return discountManager.findAll(status,startTime,endTime,pageIndex,pageSize);
     }

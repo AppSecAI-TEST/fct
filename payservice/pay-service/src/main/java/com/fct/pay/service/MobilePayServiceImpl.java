@@ -39,4 +39,18 @@ public class MobilePayServiceImpl implements MobilePayService {
         return  "";
     }
 
+    public PayNotify wxpayRefund(String payPlatform,String payOrderId,String refundId,
+                                 BigDecimal payAmount,BigDecimal refundAmount)
+    {
+        try {
+            return WXPay.requestRefundService(payPlatform, payOrderId, refundId, payAmount, refundAmount);
+        }
+        catch (Exception exp)
+        {
+            exp.printStackTrace();
+        }
+        return new PayNotify();
+    }
+
+
 }

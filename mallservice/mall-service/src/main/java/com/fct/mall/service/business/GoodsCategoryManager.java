@@ -2,11 +2,14 @@ package com.fct.mall.service.business;
 
 import com.fct.common.exceptions.BaseException;
 import com.fct.mall.data.entity.GoodsCategory;
+import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.repository.GoodsCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -62,12 +65,16 @@ public class GoodsCategoryManager {
 
         String condition ="";
 
+        List<Object> param = new ArrayList<>();
+
         if (!StringUtils.isEmpty(name)) {
-            condition += " AND name like '%" + name + "%'";
+            condition += " AND name like ?";
+            param.add("%"+name+"%");
         }
         if (!StringUtils.isEmpty(categoryCode))
         {
-            condition += " AND code like '," + categoryCode + ",%'";
+            condition += " AND code like ?";
+            param.add(","+ categoryCode +"%");
         }
         if (parentId>-1)
         {
@@ -75,7 +82,7 @@ public class GoodsCategoryManager {
         }
         String sql = String.format("select * from GoodsCategory where 1=1 %s order by sortindex asc",condition);
 
-        return  jt.queryForList(sql,GoodsCategory.class);
+        return  jt.query(sql,param.toArray(),new BeanPropertyRowMapper<GoodsCategory>(GoodsCategory.class));
     }
 
     public GoodsCategory findById (Integer id)

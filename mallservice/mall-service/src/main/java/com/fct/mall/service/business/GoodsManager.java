@@ -1,15 +1,16 @@
 package com.fct.mall.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
+import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.repository.GoodsRepository;
+import com.fct.mall.interfaces.PageResponse;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,7 +21,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -153,43 +153,61 @@ public class GoodsManager {
     }
 
     //查询列表 categorycode= catecode+cateid,
-    public Page<Goods> find(String name, String categoryCode, Integer gradeId, Integer status,
-                            Integer pageIndex, Integer pageSize)
+    public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId, Integer status,
+                                    Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        /*
-        Specification<Goods> spec = new Specification<Goods>() {
-            @Override
-            public Predicate toPredicate(Root<Goods> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(name)) {
-                    predicates.add(cb.like(root.get("name"), name));
-                }
-                if(!StringUtils.isEmpty(categoryCode))
-                {
-                    predicates.add(cb.equal(root.get("categoryCode"),categoryCode));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"),status));
-                }
+        String table="Goods";
+        String field ="*";
+        String orderBy = "sortIndex asc";
+        String condition= getContion(name,categoryCode,gradeId,status,param);
 
-                if (gradeId>0) {
-                    predicates.add(cb.equal(root.get("gradeId"), gradeId));
-                }
+        String sql = "SELECT Count(0) FROM Goods WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
 
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };*/
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
 
-        return goodsRepository.findAll(pageable);
+        List<Goods> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Goods>(Goods.class));
 
-        //return goodsRepository.findAll(spec,pageable);
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<Goods> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
 
+        return p;
+    }
+
+    private String getContion(String name, String categoryCode, Integer gradeId, Integer status,
+                              List<Object> param)
+    {
+        String condition="";
+        if (!StringUtils.isEmpty(name)) {
+            condition += " AND name like ?";
+            param.add("%"+ name +"%");
+        }
+        if(!StringUtils.isEmpty(categoryCode))
+        {
+            condition += " AND categoryCode=?";
+            param.add(categoryCode);
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
+
+        if (gradeId>0) {
+            condition += " AND gradeId="+gradeId;
+        }
+        return condition;
     }
 
     //修改排序

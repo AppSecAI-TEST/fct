@@ -3,27 +3,22 @@ package com.fct.finance.service.business;
 import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.logger.LogService;
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.repository.PayOrderRepository;
+import com.fct.finance.interfaces.PageResponse;
 import com.fct.message.model.MQPayRefund;
 import com.fct.message.model.MQPaySuccess;
 import com.fct.message.model.MQPayTrade;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +41,9 @@ public class PayOrderManager  {
 
     @Autowired
     private RefundRecordManager refundRecordManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public void save(PayOrder pay)
     {
@@ -350,50 +348,78 @@ public class PayOrderManager  {
         }
     }
 
-    public Page<PayOrder> findAll(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                  Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    private String getCondition(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
+                                Integer status, String beginTime, String endTime,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "PayTime");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition ="";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition +=" AND cellPhone=?";
+            param.add(cellPhone);
+        }
+        if(memberId>0)
+        {
+            condition+=" AND memberId="+memberId;
+        }
+        if (!StringUtils.isEmpty(platform)) {
+            condition +=" AND platform=?";
+            param.add(platform);
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
 
-        Specification<PayOrder> spec = new Specification<PayOrder>() {
-            @Override
-            public Predicate toPredicate(Root<PayOrder> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if(memberId>0)
-                {
-                    predicates.add(cb.equal(root.get("memberId"),memberId));
-                }
-                if (!StringUtils.isEmpty(platform)) {
-                    predicates.add(cb.equal(root.get("platform"), platform));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"),status));
-                }
+        if (!StringUtils.isEmpty(tradeId)) {
+            condition += " AND tradeId=?";
+            param.add(tradeId);
+        }
 
-                if (!StringUtils.isEmpty(tradeId)) {
-                    predicates.add(cb.equal(root.get("tradeId"), tradeId));
-                }
+        if (!StringUtils.isEmpty(tradeType)) {
+            condition += " AND tradeType=?";
+            param.add(tradeType);
+        }
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition += " AND beginTime=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition += " AND endTime?";
+            param.add(endTime);
+        }
+        return condition;
+    }
 
-                if (!StringUtils.isEmpty(tradeType)) {
-                    predicates.add(cb.equal(root.get("tradeType"), tradeType));
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("beginTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+    public PageResponse<PayOrder> findAll(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
+                                          Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-        return payOrderRepository.findAll(spec,pageable);
+        String table="PayOrder";
+        String field ="*";
+        String orderBy = "createTime Desc";
+        String condition= getCondition(memberId,cellPhone,platform,tradeId,tradeType,status,beginTime,endTime,param);
+
+        String sql = "SELECT Count(0) FROM PayOrder WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<PayOrder> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<PayOrder>(PayOrder.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<PayOrder> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

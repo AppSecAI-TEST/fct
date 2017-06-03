@@ -1,8 +1,11 @@
 package com.fct.finance.service.business;
 
 import com.fct.common.converter.DateFormatter;
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.RechargeRecord;
+import com.fct.finance.data.entity.SettleRecord;
 import com.fct.finance.data.repository.RechargeRecordRepository;
+import com.fct.finance.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,6 +33,9 @@ public class RechargeRecordManager {
 
     @Autowired
     private RechargeRecordRepository rechargeRecordRepository;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public Integer create(RechargeRecord record)
     {
@@ -67,41 +75,66 @@ public class RechargeRecordManager {
         rechargeRecordRepository.save(record);
     }
 
+    private String getCondition(Integer memberId, String cellPhone, Integer status,
+                                String beginTime, String endTime,List<Object> param)
+    {
+        String condition = "";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition +=" AND cellPhone=?";
+            param.add(cellPhone);
+        }
 
-    public Page<RechargeRecord> findAll(Integer memberId, String cellPhone, Integer status,
+        if (memberId > 0) {
+            condition +=" AND memberId="+memberId;
+        }
+
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition +=" AND createTime>=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition +=" AND endTime<?";
+            param.add(endTime);
+        }
+        if (status > -1) {
+            condition +=" AND status="+status;
+        }
+        return condition;
+    }
+
+    public PageResponse<RechargeRecord> findAll(Integer memberId, String cellPhone, Integer status,
                                         String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<RechargeRecord> spec = new Specification<RechargeRecord>() {
-            @Override
-            public Predicate toPredicate(Root<RechargeRecord> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
+        String table="RechargeRecord";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getCondition(memberId,cellPhone,status,
+                beginTime,endTime,param);
 
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
+        String sql = "SELECT Count(0) FROM RechargeRecord WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
 
-                if (memberId > 0) {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
 
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("beginTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                if (status > -1) {
-                    predicates.add(cb.equal(root.get("status"), status));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        List<RechargeRecord> ls = jt.query(sql, param.toArray(),
+                new BeanPropertyRowMapper<RechargeRecord>(RechargeRecord.class));
 
-        return rechargeRecordRepository.findAll(spec,pageable);
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<RechargeRecord> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

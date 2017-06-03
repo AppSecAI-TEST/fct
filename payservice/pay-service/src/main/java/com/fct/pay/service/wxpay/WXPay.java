@@ -217,8 +217,44 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-    public static String requestRefundService(RefundReqData refundReqData) throws Exception{
-        return new RefundService().request(refundReqData);
+    public static PayNotify requestRefundService(String payPlatform,String payOrderId,String refundId,
+                                                 BigDecimal payAmount,BigDecimal refundAmount) throws Exception{
+
+        Map<String,String> config = PayConfig.instance.getWxpay_fctwap();
+
+        initSDKConfiguration(config.get("key"),config.get("appid"),config.get("mchid"),"",config.get("cert_path"),
+                config.get("cert_password"));
+
+        RefundReqData refundReqData = new RefundReqData(payOrderId,payOrderId,"",refundId,
+                payAmount.multiply(new BigDecimal(100)).intValue(),refundAmount.multiply(new BigDecimal(100)).intValue(),
+                config.get("mchid"),"");
+
+        String reqdata =  new RefundService().request(refundReqData); //提交退款申请给API，接收返回数据
+
+        Map<String,Object> result = XMLParser.getMapFromXML(reqdata);
+
+        PayNotify notify = new PayNotify();
+
+        LogService.info("wxpay:" + reqdata);
+
+        if (result.get("return_code").toString().toLowerCase() == "success" &&
+                result.get("result_code").toString().toLowerCase() == "success" &&
+                result.get("out_trade_no").toString() == payOrderId
+                )
+        {
+            //交易成功并在页面返回success
+            notify.setHasError(false);
+            notify.setPayOrderNo(refundId);
+            notify.setExtandProperties(result);
+        }
+        else
+        {
+            //签名验证失败
+            notify.setHasError(true);
+            notify.setErrorMessage("微信支付平台退款异步通知签名验证失败.");
+        }
+
+        return notify;
     }
 
     /**

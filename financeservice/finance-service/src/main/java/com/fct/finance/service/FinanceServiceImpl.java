@@ -1,6 +1,7 @@
 package com.fct.finance.service;
 
 import com.fct.finance.data.entity.*;
+import com.fct.finance.interfaces.PageResponse;
 import com.fct.finance.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,8 +69,8 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                        Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
+                                                Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         return  payOrderManager.findAll(memberId,cellPhone,platform,tradeId,tradeType,status,
                 beginTime,endTime,pageIndex,pageSize);
@@ -82,13 +83,13 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<MemberAccount> findMemberAccount(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize)
+    public PageResponse<MemberAccount> findMemberAccount(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize)
     {
         return  memberAccountManager.findAll(cellPhone,orderBy,pageIndex,pageSize);
     }
 
     @Override
-    public Page<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
+    public PageResponse<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
                                                                Integer pageIndex, Integer pageSize)
     {
         return memberAccountHistoryManager.findAll(memberId,cellPhone,tradeId,tradeType,pageIndex,pageSize);
@@ -112,7 +113,7 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
+    public PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
                                                Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         return  refundRecordManager.findAll(memberId,cellPhone,tradeId,tradeType,payPlatform,status,beginTime,endTime,
@@ -137,7 +138,7 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<WithdrawRecord> findWithdrawRecord(Integer memberId, String cellPhone, Integer status,
+    public PageResponse<WithdrawRecord> findWithdrawRecord(Integer memberId, String cellPhone, Integer status,
                                                    String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         return  withdrawRecordManager.findAll(memberId,cellPhone,status,beginTime,endTime,pageIndex,
@@ -175,7 +176,7 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
+    public PageResponse<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                                String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         return  settleRecordManager.findAll(memberId,cellPhone,tradeType,tradeId,status,beginTime,endTime,
@@ -206,7 +207,7 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     @Override
-    public Page<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
+    public PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
                                                    String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         return rechargeRecordManager.findAll(memberId,cellPhone,status,beginTime,endTime,pageIndex,pageSize);

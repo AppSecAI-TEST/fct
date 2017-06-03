@@ -1,8 +1,10 @@
 package com.fct.mall.service.business;
 
 import com.fct.common.exceptions.BaseException;
+import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrderRefundRepository;
+import com.fct.mall.interfaces.PageResponse;
 import com.fct.message.model.MQPayRefund;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -329,10 +332,74 @@ public class OrderRefundManager {
 
     }
 
-    public Page<OrderRefund> findAll(String orderId, Integer goodsId, Integer memberId, Integer status, String beginTime,
-                                      String endTime, Integer pageIndex, Integer pageSize)
+    private String getContion(String orderId, Integer goodsId, Integer memberId, Integer status, String beginTime,
+                              String endTime,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        String condition = "";
+
+        if (!StringUtils.isEmpty(orderId)) {
+            condition += " AND orderId=?";
+            param.add(orderId);
+        }
+        if(goodsId>0)
+        {
+            condition +=" AND goodsId="+goodsId;
+        }
+
+        if (memberId>0) {
+            condition += " AND memberId="+memberId;
+        }
+
+        if (status>-1) {
+            condition += " AND status="+status;
+        }
+        if(!StringUtils.isEmpty(beginTime))
+        {
+            condition += " AND createTime >=?";
+            param.add(beginTime);
+        }
+        if(!StringUtils.isEmpty(endTime))
+        {
+            condition += " AND createTime <=?";
+            param.add(endTime);
+        }
+        return  condition;
+
+    }
+
+    public PageResponse<OrderRefund> findAll(String orderId, Integer goodsId, Integer memberId, Integer status, String beginTime,
+                                             String endTime, Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
+
+        String table="OrderRefund";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getContion(orderId,goodsId,memberId,status,beginTime,endTime,param);
+
+        String sql = "SELECT Count(0) FROM OrderRefund WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<OrderRefund> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<OrderRefund>(OrderRefund.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<OrderRefund> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
+        /*Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
 
         Specification<OrderRefund> spec = new Specification<OrderRefund>() {
@@ -367,7 +434,7 @@ public class OrderRefundManager {
             }
         };
 
-        return orderRefundRepository.findAll(spec,pageable);
+        return orderRefundRepository.findAll(spec,pageable);*/
     }
 
 

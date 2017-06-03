@@ -1,18 +1,16 @@
 package com.fct.message.service;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.message.data.entity.MessageQueue;
 import com.fct.message.data.repository.MessageQueueRepository;
 import com.fct.message.interfaces.MessageService;
+import com.fct.message.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +24,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageQueueRepository messageQueueRepository;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     @Override
     public void create(MessageQueue message) {
@@ -81,25 +82,46 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Page<MessageQueue> findAll(String targetModule, Integer status, Integer pageIndex, Integer pageSize) {
+    public PageResponse<MessageQueue> findAll(String targetModule, Integer status, Integer pageIndex, Integer pageSize) {
 
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
+        String condition ="";
+        if (StringUtils.isEmpty(targetModule)) {
+            condition +=" AND targetModule=?";
+            param.add(targetModule);
+        }
+        if(status > -1)
+        {
+            condition +=" AND status="+status;
+        }
 
-        Specification<MessageQueue> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<Predicate>();
-            if (StringUtils.isEmpty(targetModule)) {
-                predicates.add(cb.equal(root.get("targetModule"), targetModule));
-            }
-            if(status > -1)
-            {
-                predicates.add(cb.equal(root.get("status"),status));
-            }
-            query.where(predicates.toArray(new Predicate[predicates.size()]));
-            return null;
-        };
+        String table="MessageQueue";
+        String field ="*";
+        String orderBy = "Id Desc";
 
-        return messageQueueRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM MessageQueue WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<MessageQueue> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MessageQueue>(MessageQueue.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<MessageQueue> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
+
     }
 
     @Autowired

@@ -3,22 +3,27 @@ package com.fct.finance.service.business;
 import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.logger.LogService;
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.entity.RefundRecord;
 import com.fct.finance.data.repository.RefundRecordRepository;
+import com.fct.finance.interfaces.PageResponse;
 import com.fct.message.model.MQPayRefund;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +54,9 @@ public class RefundRecordManager {
 
     @Autowired
     private MemberAccountManager memberAccountManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     @Transactional
     public RefundRecord create(RefundRecord refund)
@@ -317,48 +325,77 @@ public class RefundRecordManager {
         refundRecordRepository.updatSuccess(refundId,notifyData, Constants.enumRefundStatus.success.getValue());
     }
 
-    public Page<RefundRecord> findAll(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
+    private String getCondition(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
+                                Integer status, String beginTime, String endTime, List<Object> param)
+    {
+        String condition = "";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition += " AND cellPhone=?";
+            param.add(cellPhone);
+        }
+        if(memberId>0)
+        {
+            condition +=" AND memberId="+memberId;
+        }
+        if (!StringUtils.isEmpty(tradeId)) {
+            condition += " AND tradeId=?";
+            param.add(tradeId);
+        }
+        if (!StringUtils.isEmpty(tradeType)) {
+            condition += " AND tradeType=?";
+            param.add(tradeType);
+        }
+        if (!StringUtils.isEmpty(payPlatform)) {
+            condition +=" AND payPlatform=?";
+            param.add(payPlatform);
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition +=" AND createTime>=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition +=" AND createTime<?";
+            param.add(endTime);
+        }
+        return condition;
+    }
+
+    public PageResponse<RefundRecord> findAll(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
                                       Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<RefundRecord> spec = new Specification<RefundRecord>() {
-            @Override
-            public Predicate toPredicate(Root<RefundRecord> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if(memberId>0)
-                {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
-                if (!StringUtils.isEmpty(tradeId)) {
-                    predicates.add(cb.equal(root.get("tradeId"), tradeId));
-                }
-                if (!StringUtils.isEmpty(tradeType)) {
-                    predicates.add(cb.equal(root.get("tradeType"), tradeType));
-                }
-                if (!StringUtils.isEmpty(payPlatform)) {
-                    predicates.add(cb.equal(root.get("payPlatform"), payPlatform));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"), status));
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("beginTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="RefundRecord";
+        String field ="*";
+        String orderBy = "createTime Desc";
+        String condition= getCondition(memberId,cellPhone,tradeId,tradeType,payPlatform,status,beginTime,endTime,param);
 
-        return refundRecordRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM RefundRecord WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<RefundRecord> ls = jt.query(sql, param.toArray(),
+                new BeanPropertyRowMapper<RefundRecord>(RefundRecord.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<RefundRecord> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

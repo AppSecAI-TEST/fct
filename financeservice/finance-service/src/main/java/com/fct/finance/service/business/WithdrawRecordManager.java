@@ -1,23 +1,19 @@
 package com.fct.finance.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
+import com.fct.finance.data.entity.RefundRecord;
 import com.fct.finance.data.entity.WithdrawRecord;
 import com.fct.finance.data.repository.WithdrawRecordRepository;
+import com.fct.finance.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,10 +27,13 @@ public class WithdrawRecordManager {
     private WithdrawRecordRepository withdrawRecordRepository;
 
     @Autowired
-    MemberAccountManager memberAccountManager;
+    private MemberAccountManager memberAccountManager;
 
     @Autowired
-    MemberAccountHistoryManager memberAccountHistoryManager;
+    private MemberAccountHistoryManager memberAccountHistoryManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     @Transactional
     public void apply(WithdrawRecord record)
@@ -103,39 +102,66 @@ public class WithdrawRecordManager {
         withdrawRecordRepository.updateStatus(omsOperaterId,id,status,desc,new Date());
     }
 
-    public Page<WithdrawRecord> findAll(Integer memberId, String cellPhone, Integer status,
+    private String getCondition(Integer memberId, String cellPhone, Integer status,
+                                String beginTime, String endTime,List<Object> param)
+    {
+        String condition="";
+        if (!StringUtils.isEmpty(cellPhone)) {
+            condition +=" AND cellPhone=?";
+            param.add(cellPhone);
+        }
+        if(memberId>0)
+        {
+            condition +=" AND memberId="+memberId;
+            param.add(memberId);
+        }
+        if(status>-1)
+        {
+            condition += " AND Status="+status;
+        }
+        if (!StringUtils.isEmpty(beginTime)) {
+            condition +=" AND createTime >=?";
+            param.add(beginTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition +=" AND createTime <?";
+            param.add(endTime);
+        }
+        return condition;
+    }
+
+    public PageResponse<WithdrawRecord> findAll(Integer memberId, String cellPhone, Integer status,
                                         String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<WithdrawRecord> spec = new Specification<WithdrawRecord>() {
-            @Override
-            public Predicate toPredicate(Root<WithdrawRecord> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if(memberId>0)
-                {
-                    predicates.add(cb.equal(root.get("memberId"), memberId));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"), status));
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("beginTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("endTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="WithdrawRecord";
+        String field ="*";
+        String orderBy = "createTime Desc";
+        String condition= getCondition(memberId,cellPhone,status,beginTime,endTime,param);
 
-        return withdrawRecordRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM WithdrawRecord WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<WithdrawRecord> ls = jt.query(sql, param.toArray(),
+                new BeanPropertyRowMapper<WithdrawRecord>(WithdrawRecord.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        PageResponse<WithdrawRecord> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
     }
 }

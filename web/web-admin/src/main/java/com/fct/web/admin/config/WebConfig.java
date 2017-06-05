@@ -3,6 +3,7 @@ package com.fct.web.admin.config;
 import com.fct.web.admin.http.exceptions.handlers.DefaultExceptionHandler;
 import com.fct.web.admin.http.exceptions.handlers.ServiceExceptionHandler;
 import com.fct.web.admin.http.filters.RequestWrapperFilter;
+import com.fct.web.admin.http.filters.StringMethodParamResolver;
 import com.fct.web.admin.http.support.session.SessionExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -62,10 +64,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         super.addFormatters(registry);
     }
 
-//    @Override
-//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//        argumentResolvers.add(new AccessTokenResolver(sessionService));
-//    }
 
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
@@ -80,6 +78,12 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         registration.setFilter(new RequestWrapperFilter());
         registration.setDispatcherTypes(DispatcherType.REQUEST);
         return registration;
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers){
+        super.addArgumentResolvers(resolvers);
+        resolvers.add(new StringMethodParamResolver());
     }
 
     @Bean//etag

@@ -1,7 +1,6 @@
 package com.fct.mall.data.repository;
 
 import com.fct.mall.data.entity.OrderRefund;
-import com.fct.mall.data.entity.Orders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

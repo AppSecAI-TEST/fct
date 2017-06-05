@@ -32,7 +32,8 @@ public class GoodsManager {
 
     public Integer countByCategory(Integer categoryId)
     {
-        return goodsRepository.countByCategory(categoryId);
+
+        return goodsRepository.countByCategory(","+ categoryId +",%");
     }
 
     public Integer countByGrade(Integer gradeId)
@@ -144,6 +145,13 @@ public class GoodsManager {
         }
     }
 
+    public void updateCategory(String newCode,Integer cagetoryId)
+    {
+        String sql = "update goods set categoryCode='"+ newCode +"' where categoryCode like ',"+ cagetoryId +",%'";
+
+        jt.update(sql);
+    }
+
     //查询列表 categorycode= catecode+cateid,
     public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId, Integer status,
                                     Integer pageIndex, Integer pageSize)
@@ -188,8 +196,8 @@ public class GoodsManager {
         }
         if(!StringUtils.isEmpty(categoryCode))
         {
-            condition += " AND categoryCode=?";
-            param.add(categoryCode);
+            condition += " AND categoryCode like ?";
+            param.add(","+ categoryCode +",%");
         }
         if(status>-1)
         {

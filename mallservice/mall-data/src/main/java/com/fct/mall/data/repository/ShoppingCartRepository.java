@@ -1,7 +1,6 @@
 package com.fct.mall.data.repository;
 
 import com.fct.mall.data.entity.ShoppingCart;
-import org.jboss.netty.util.internal.StringUtil;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,6 +20,6 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Inte
     List<ShoppingCart> findByMemberId(Integer memberId, Integer shopId);
 
     @Query(nativeQuery = true,
-            value = "Delete FROM ShoppingCart WHERE MemberId=?1 And ShopId=?2 AND id='?3'")
+            value = "Delete FROM ShoppingCart WHERE MemberId=?1 And ShopId=?2 AND id=?3")
     void  delete(Integer memberId,Integer shopId,Integer cartId);
 }

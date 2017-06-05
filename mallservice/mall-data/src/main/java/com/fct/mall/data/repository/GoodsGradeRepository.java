@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface GoodsGradeRepository  extends JpaRepository<GoodsGrade, Integer> {
 
     @Query(nativeQuery = true,
-            value = "select count(0) from GoodsGrade where name='?1' and id!=?3")
+            value = "select count(0) from GoodsGrade where name=?1 and id!=?2")
     int exitSameName(String name, Integer id);
 
     @Query(nativeQuery = true,

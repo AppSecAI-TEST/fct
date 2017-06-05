@@ -1,5 +1,6 @@
 package com.fct.mall.service;
 
+import com.fct.common.logger.LogService;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.PageResponse;

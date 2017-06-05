@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content" style="border-style:none;">
+            <div class="alert alert-danger alert-dismissable dn" id="valid_remind"></div>
+            <form class="form-horizontal m-t" id="submitForm">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">名称：</label>
+                    <div class="col-sm-8">
+                        <input name="name" th:value="${goodsGrade.name}" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">图片：</label>
+                    <div class="col-sm-8">
+                        <input name="img" th:value="${goodsGrade.img}" type="hidden" class="form-control" />
+                        <div id="dropzoneDemo" class="dropzone">
+                            <div class="dropzone-previews"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">排序值：</label>
+                    <div class="col-sm-8">
+                        <input name="sortindex" th:value="${goodsGrade.sortIndex}" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-3">
+                        <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        $("#btnClick").click(function () {
+            JQAjax.post(this, {
+                form:"submitForm",
+                url: '/goods/grade/save?id='+[[${goodsGrade.id}]],
+                wait:true
+            });
+        });
+
+        Dropzone.autoDiscover = false;
+        var tem_str = '<div class=\"dz-preview sortable_img dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>';
+        $("div#dropzoneDemo").dropzone({
+            url:'fct_admin_form_basic.html#',
+            autoProcessQueue:false,
+            uploadMultiple:true,
+            parallelUploads:100,
+            maxFiles:100,
+            addRemoveLinks:true,
+            init:function(){
+                var myDropzone=this;
+                this.element.querySelector("button[type=submit]").addEventListener("click",function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var current_queue = [];
+                    $('div.sortable_img').each( function(){
+                        current_queue.push($(this).data('file'));
+                    });
+
+                    myDropzone.removeAllFiles();
+
+                    for(i=0;i<current_queue.length;i++){
+                        myDropzone.addFile(current_queue[i]);
+                    }
+
+                    myDropzone.processQueue()
+                });
+
+                this.on('addedfile', function(file) {
+                    $('div.sortable_img:last-of-type').data('file', file);
+                });
+
+            },
+            previewTemplate: tem_str
+        });
+
+        var el = document.getElementById('dropzoneDemo');
+        var sortable = new Sortable(el, {
+            animation: 150,
+            ghostClass: "sortable-ghost",
+            handle: '.dz-preview'
+        });
+    </script>
+
+</html>

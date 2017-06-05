@@ -1,6 +1,5 @@
 package com.fct.mall.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
@@ -14,17 +13,11 @@ import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
@@ -127,11 +120,11 @@ public class OrdersManager {
             goods = goodsManager.findById(g.getGoodsId());
             if (goods == null)
             {
-                throw new BaseException("订单商品错误");
+                throw new IllegalArgumentException("订单商品错误");
             }
             if (goods.getStatus() < 1)
             {
-                throw new BaseException("订单商品已下架");
+                throw new IllegalArgumentException("订单商品已下架");
             }
             //无规格的价格、佣金、库存
             price = goods.getSalePrice();
@@ -144,11 +137,11 @@ public class OrdersManager {
                 GoodsSpecification gs = goodsSpecificationManager.findById(g.getGoodsSpecId());
                 if (gs == null)
                 {
-                    throw new BaseException("订单商品规格错误");
+                    throw new IllegalArgumentException("订单商品规格错误");
                 }
                 if (goods.getId() != gs.getGoodsId())
                 {
-                    throw new BaseException("订单商品规格错误");
+                    throw new IllegalArgumentException("订单商品规格错误");
                 }
 
                 //有规格的价格、佣金、库存
@@ -168,18 +161,18 @@ public class OrdersManager {
 
                 if (lsGS != null && lsGS.size() >0)
                 {
-                    throw new BaseException("订单商品存在规格，您没有选择规格");
+                    throw new IllegalArgumentException("订单商品存在规格，您没有选择规格");
                 }
                 goods.setSpecification(lsGS);
             }
 
             if (stockCount < g.getBuyCount())
             {
-                throw new BaseException("订单商品库存不足");
+                throw new IllegalArgumentException("订单商品库存不足");
             }
             if (price.doubleValue() <= 0)
             {
-                throw new BaseException("订单商品有还未开始销售的商品");
+                throw new IllegalArgumentException("订单商品有还未开始销售的商品");
             }
 
             g.setName(goods.getName());
@@ -294,17 +287,17 @@ public class OrdersManager {
         }
         if (memberAccount.getAvailableAmount().doubleValue() < accountAmount.doubleValue())
         {
-            throw new BaseException("使用余额不能大于自己拥有的余额");
+            throw new IllegalArgumentException("使用余额不能大于自己拥有的余额");
         }
         if (memberAccount.getPoints() < points)
         {
-            throw new BaseException("使用积分不能大于自己拥有的积分");
+            throw new IllegalArgumentException("使用积分不能大于自己拥有的积分");
         }
 
         BigDecimal autoPay = accountAmount.add(new BigDecimal(points / 100));
         if (orderCashAmount.doubleValue() < autoPay.doubleValue())
         {
-            throw new BaseException("余额与积分不能大于应付");
+            throw new IllegalArgumentException("余额与积分不能大于应付");
         }
         order.setMemberId(memberId);
         order.setCellPhone(cellPhone);
@@ -519,7 +512,7 @@ public class OrdersManager {
         }
         if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
         {
-            throw new BaseException("不能执行此操作");
+            throw new IllegalArgumentException("不能执行此操作");
         }
         order.setStatus(Constants.enumOrderStatus.paySuccess.getValue());
         order.setPayPlatform(payPlatform);
@@ -606,7 +599,7 @@ public class OrdersManager {
         }
         if (order.getStatus() != Constants.enumOrderStatus.paySuccess.getValue())
         {
-            throw new BaseException("不能执行此操作");
+            throw new IllegalArgumentException("不能执行此操作");
         }
         order.setStatus(Constants.enumOrderStatus.delivered.getValue());
         order.setOperatorId(order.getOperatorId() + "deliver:"+operatorId+",");
@@ -641,7 +634,7 @@ public class OrdersManager {
         }
         if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
         {
-            throw new BaseException("订单不能执行此操作");
+            throw new IllegalArgumentException("订单不能执行此操作");
         }
         //延长订单取消时间
         order.setExpiresTime(DateUtils.addDay(order.getExpiresTime(),day));
@@ -669,7 +662,7 @@ public class OrdersManager {
         }
         if (order.getStatus() != Constants.enumOrderStatus.delivered.getValue())
         {
-            throw new BaseException("订单不能执行此操作");
+            throw new IllegalArgumentException("订单不能执行此操作");
         }
         //延长订单收货时间
         order.setFinishTime(DateUtils.addDay(order.getFinishTime(),day));
@@ -695,7 +688,7 @@ public class OrdersManager {
         Orders order = ordersRepository.findOne(orderId);
         if (order == null)
         {
-            throw new BaseException("订单号不能为空");
+            throw new IllegalArgumentException("订单号不能为空");
         }
 
         //异常或关闭订单处理退款
@@ -730,7 +723,7 @@ public class OrdersManager {
         {
             if (order.getStatus() != Constants.enumOrderStatus.waitPay.getValue())
             {
-                throw new BaseException("不能执行此操作");
+                throw new IllegalArgumentException("不能执行此操作");
             }
             //设置支付时间
             order.setPayOrderId(payOrderId);

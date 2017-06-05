@@ -120,7 +120,8 @@ var JQAjax = {
             form: options.form,
             waitinfo: options.waitinfo,
             callback: function (result) {
-                var data = eval('(' + result + ')');
+                //var data = eval('(' + result + ')');
+                var data = result;
                 if (data.method) {
                     switch (data.method) {
                         case "func":

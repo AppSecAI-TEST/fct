@@ -2,6 +2,8 @@ package com.fct.common.exceptions;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * @author ningyang
  */

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false">
-    <property name="LOG_HOME" value="/Users/jon/local/dir_samba/HC_logs/fct/adminweb"/>
-    <property name="APP_NAME" value="web-admin"/>
+    <property name="LOG_HOME" value="Users/jon/local/dir_samba/HC_logs/fct/mallservice"/>
+    <property name="APP_NAME" value="api-web"/>
     <contextName>${APP_NAME}</contextName>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

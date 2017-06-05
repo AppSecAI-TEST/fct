@@ -27,7 +27,7 @@ public class GoodsGrade implements Serializable{
     private String name;
 
     //图片
-    private Integer img;
+    private String img;
 
     /// <summary>
     /// 排序值

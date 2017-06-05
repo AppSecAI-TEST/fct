@@ -1,6 +1,5 @@
 package com.fct.mall.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.repository.GoodsGradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +27,16 @@ public class GoodsGradeManager {
     private JdbcTemplate jt;
 
     //添加商品分类
-    public void save (GoodsGrade grade)
-    {
-        if (StringUtils.isEmpty (grade.getName())) {
-            throw new IllegalArgumentException ("品级分类名称不能为空");
+    public void save (GoodsGrade grade) {
+        if (StringUtils.isEmpty(grade.getName())) {
+            throw new IllegalArgumentException("品级分类名称不能为空");
         }
+        int count = goodsGradeRepository.exitSameName(grade.getName(), grade.getId() == null ? 0 : grade.getId());
 
-        //名字不能相同
-        int count = goodsGradeRepository.exitSameName(grade.getName(),grade.getId());
         if (count > 0) {
-            throw new BaseException("名称不能重复");
+            throw new IllegalArgumentException("名称不能重复");
         }
-        if(grade.getId()>0) {
-            goodsGradeRepository.saveAndFlush(grade);
-        }
-        else
-        {
-            goodsGradeRepository.save(grade);
-        }
+        goodsGradeRepository.save(grade);
     }
 
     //获取分类列表

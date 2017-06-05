@@ -26,7 +26,7 @@ public class GoodsCategory implements Serializable{
     private String name;
 
     //图片
-    private Integer img;
+    private String img;
 
     /// <summary>
     /// 分类父Id(默认现一级0)

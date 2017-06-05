@@ -1,26 +1,16 @@
 package com.fct.mall.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrderRefundRepository;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.message.model.MQPayRefund;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -230,7 +220,7 @@ public class OrderRefundManager {
             throw new IllegalArgumentException ("非法操作");
         }
         if (refund.getStatus() != Constants.multiRefundStatus.WAIT_REFUND.getValue()) {
-            throw new BaseException ("非法操作");
+            throw new IllegalArgumentException ("非法操作");
         }
 
         //判断是否为申请退款
@@ -279,10 +269,10 @@ public class OrderRefundManager {
         }
         OrderRefund refund = orderRefundRepository.findOne(refundId);
         if (refund == null) {
-            throw new BaseException("非法操作");
+            throw new IllegalArgumentException("非法操作");
         }
         if (refund.getStatus() != Constants.multiRefundStatus.WAIT_REFUND.getValue()) {
-            throw new BaseException ("非法操作");
+            throw new IllegalArgumentException ("非法操作");
         }
 
         //判断是否为申请退款
@@ -453,7 +443,7 @@ public class OrderRefundManager {
             throw new IllegalArgumentException ("非法操作");
         }
         if (refund.getStatus() != Constants.multiRefundStatus.WAIT_REFUND.getValue()) {
-            throw new BaseException ("非法操作");
+            throw new IllegalArgumentException ("非法操作");
         }
 
         OrderGoods og = orderGoodsManager.findByOrderIdAndGoods(refund.getOrderId(),refund.getGoodsId(),refund.getGoodsSpecId());

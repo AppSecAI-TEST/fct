@@ -1,5 +1,6 @@
 package com.fct.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import java.io.UnsupportedEncodingException;
@@ -56,5 +57,33 @@ public class StringHelper {
             sb.append(base.charAt(number));
         }
         return sb.toString();
+    }
+
+    public static String toString(String value)
+    {
+        if(StringUtils.isEmpty(value) || value == null)
+        {
+            return "";
+        }
+        return value;
+    }
+
+    public static Integer toInteger(String value)
+    {
+        if(StringUtils.isEmpty(value) || value == null)
+        {
+            return 0;
+        }
+        return Integer.valueOf(value);
+    }
+
+
+    public static String[] toStringArray(String value)
+    {
+        if(StringUtils.isEmpty(value) || value == null)
+        {
+            return new String[]{};
+        }
+        return value.split(",");
     }
 }

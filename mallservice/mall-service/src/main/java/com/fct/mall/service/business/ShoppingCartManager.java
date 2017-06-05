@@ -1,6 +1,5 @@
 package com.fct.mall.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.entity.ShoppingCart;
@@ -51,11 +50,11 @@ public class ShoppingCartManager {
         Goods goods = goodsManager.findById(goodsId);
         if (goods.getStockCount() < 1)
         {
-            throw new BaseException("库存不足");
+            throw new IllegalArgumentException("库存不足");
         }
         if (goods.getStockCount() < buyCount)
         {
-            throw new BaseException("购买量不能大于库存");
+            throw new IllegalArgumentException("购买量不能大于库存");
         }
 
         GoodsSpecification spec = null;
@@ -72,11 +71,11 @@ public class ShoppingCartManager {
             }
             if (spec.getStockCount() < 1)
             {
-                throw new BaseException("规格库存不足");
+                throw new IllegalArgumentException("规格库存不足");
             }
             if (spec.getStockCount() < buyCount)
             {
-                throw new BaseException("购买量不能大于规格库存");
+                throw new IllegalArgumentException("购买量不能大于规格库存");
             }
         }
         else
@@ -108,11 +107,11 @@ public class ShoppingCartManager {
 
         if (cart.getBuyCount() > goods.getStockCount())
         {
-            throw new BaseException("购买量不能大于库存");
+            throw new IllegalArgumentException("购买量不能大于库存");
         }
         if (goodsSpecId > 0 && cart.getBuyCount() > spec.getStockCount())
         {
-            throw new BaseException("购买量不能大于规格库存");
+            throw new IllegalArgumentException("购买量不能大于规格库存");
         }
 
         shoppingCartRepository.saveAndFlush(cart);
@@ -146,7 +145,7 @@ public class ShoppingCartManager {
                     GoodsSpecification gsp = goodsSpecificationManager.findById(cart.getGoodsSpecId());
                     if (gsp.getGoodsId() != g.getId())
                     {
-                        throw new BaseException("非法数据");
+                        throw new IllegalArgumentException("非法数据");
                     }
                     List<GoodsSpecification> lsGS = new ArrayList<>();
                     lsGS.add(gsp);

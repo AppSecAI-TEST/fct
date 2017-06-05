@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface GoodsMaterialRepository extends JpaRepository<GoodsMaterial, Integer> {
 
     @Query(nativeQuery = true,
-            value = "UPDATE GoodsMaterial set Status=1-Status,updatetime='?2' WHERE Id=?1")
+            value = "UPDATE GoodsMaterial set Status=1-Status,updatetime=?2 WHERE Id=?1")
     void updateStatus(Integer id,String updateTime);
 
     Page<GoodsMaterial> findAll(Specification<GoodsMaterial> spec, Pageable pageable);  //分页按条件查询

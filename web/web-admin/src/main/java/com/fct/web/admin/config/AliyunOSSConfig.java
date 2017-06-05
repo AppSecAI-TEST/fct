@@ -1,11 +1,10 @@
 package com.fct.web.admin.config;
 
 
-//import com.fct.thirdparty.oss.FileOperatorHelper;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fct.thirdparty.oss.FileOperatorHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * Created by ningyang on 2017/5/12.
@@ -13,17 +12,22 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class AliyunOSSConfig {
 
-    @Autowired
-    private Environment env;
-/*
+    @Value("${aliyun.oss.bucketName}")
+    private String bucketName;
+
+    @Value("${aliyun.oss.accesskeyId}")
+    private String accessKeyId;
+
+    @Value("${aliyun.oss.accesskeySecret}")
+    private String accessKeySecret;
+
+    @Value("${aliyun.oss.endpoint}")
+    private String endpoint;
+
     @Bean
-    public FileOperatorHelper fileUploadHelpler(){
-        String bucketName = env.getProperty("aliyun.oss.bucket.name");
-        String accessKeyId = env.getProperty("aliyun.oss.access.key.id");
-        String accessKeySecret = env.getProperty("aliyun.oss.access.key.secret");
-        String endpoint = env.getProperty("aliyun.oss.endpoint");
+    public FileOperatorHelper fileUploadHelper(){
         FileOperatorHelper helper = new FileOperatorHelper(bucketName, accessKeyId,
                 accessKeySecret, endpoint);
         return helper;
-    }*/
+    }
 }

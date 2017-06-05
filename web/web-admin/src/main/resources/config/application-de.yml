@@ -30,6 +30,10 @@ mysql:
     password: 3202547c
 
 spring:
+  http:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
   thymeleaf:
     #prefix: classpath:/templates,classpath:/static/
     #suffix: .html
@@ -38,6 +42,13 @@ spring:
     content-type: text/html
     encoding: UTF-8
     mode: HTML5
+
+aliyun:
+  oss:
+    bucketName: fct-nick
+    accesskeyId: LTAId0h3QAgdPmXT
+    accesskeySecret: cLMJrTzs1APvyXehfjOQUsYq66A3Wc
+    endpoint: http://oss-cn-shanghai.aliyuncs.com/
 
 
 

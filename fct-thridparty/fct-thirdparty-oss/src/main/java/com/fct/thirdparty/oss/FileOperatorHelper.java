@@ -11,9 +11,14 @@ import com.fct.thirdparty.oss.response.DeleteResponse;
 import com.fct.thirdparty.oss.response.UploadResponse;
 import lombok.Data;
 
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
+import javax.xml.crypto.dsig.SignatureMethod;
 import java.awt.*;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +44,8 @@ public class FileOperatorHelper {
      * 管理OSS上传任务的线程池 默认20个
      */
     private ExecutorService pool;
+    private final static String PREFIX = "fct/";
+    private final static String ALGORITHM = "HmacSHA1";
 
     public FileOperatorHelper(String bucketName, String accessKeyId, String accessKeySecret, String endpoint){
         this(bucketName, accessKeyId, accessKeySecret, endpoint, null, 20);
@@ -73,7 +80,7 @@ public class FileOperatorHelper {
                 OSSRequest request = builder.bucketName(bucketName).
                         ossClient(ossClient).
                         file(fileServiceRequest.getFiles().get(i)).
-                        key(fileServiceRequest.getKeys().get(i)).
+                        key(buildKey(fileServiceRequest.getKeys().get(i))).
                         callBack(callback).
                         build();
                 Future<UploadResponse> future = pool.submit(new OSS(request));
@@ -130,9 +137,9 @@ public class FileOperatorHelper {
                 throw new IllegalArgumentException("上传图片大小不能大于5M");
             }
 
-            if(!files.get(i).getName().equalsIgnoreCase(keys.get(i))){
-                throw new IllegalArgumentException("上传文件和所给名称不一致");
-            }
+//            if(!files.get(i).getName().equalsIgnoreCase(keys.get(i))){
+//                throw new IllegalArgumentException("上传文件和所给名称不一致");
+//            }
 
             if(!isImage(files.get(i))){
                 throw new IllegalArgumentException("上传文件不是一个图片");
@@ -168,5 +175,9 @@ public class FileOperatorHelper {
         if(callback==null)
             callback = fileServiceRequest.getCallback();
         return callback;
+    }
+
+    private String buildKey(String fileName){
+        return KeyBuilder.buildKey(fileName);
     }
 }

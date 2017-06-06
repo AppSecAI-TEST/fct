@@ -187,12 +187,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public String uploadMasterSingleImg(long masterId, File file) {
-        File[] files = new File[1];
-        files[0] = file;
-        List<String> urls = uploadMasterMultiImg(masterId, files);
-        if(urls!=null&&urls.size()>0)
-            return urls.get(0);
-        return null;
+        return uploadMasterMultiImg(masterId, new File[]{file}).get(0);
     }
 
     @Override

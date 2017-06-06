@@ -10,8 +10,6 @@ public class MasterSerialsDto implements Serializable{
 
     private MasterBrief brief;
 
-    private List<MasterNewsDto> masterNews;
-
     private MasterLiveDto masterLive;
 
     public MasterLiveDto getMasterLive() {
@@ -28,13 +26,5 @@ public class MasterSerialsDto implements Serializable{
 
     public void setBrief(MasterBrief brief) {
         this.brief = brief;
-    }
-
-    public List<MasterNewsDto> getMasterNews() {
-        return masterNews;
-    }
-
-    public void setMasterNews(List<MasterNewsDto> masterNews) {
-        this.masterNews = masterNews;
     }
 }

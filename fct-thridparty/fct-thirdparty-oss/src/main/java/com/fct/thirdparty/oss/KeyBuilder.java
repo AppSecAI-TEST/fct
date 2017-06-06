@@ -1,5 +1,8 @@
 package com.fct.thirdparty.oss;
 
+import com.fct.common.utils.UUIDUtil;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -8,11 +11,13 @@ import java.util.Date;
 public class KeyBuilder {
 
     private static final String PREFIX = "upload/";
+    private static SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
 
     public static String buildKey(String fileName){
-
+        String suffix = fileName.split("\\.")[1];
         StringBuffer str = new StringBuffer();
-        str.append(PREFIX).append(new Date().getTime()).append("/").append(fileName);
+        str.append(PREFIX).append(format.format(new Date())).append("/").append(UUIDUtil.generateUUID()).
+                append(".").append(suffix);
         return str.toString();
     }
 }

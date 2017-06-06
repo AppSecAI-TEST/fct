@@ -17,7 +17,7 @@ public class CommentDto implements Serializable{
 
     private Long masterId;
 
-    private int commentType;
+    private int commentType;//1 用户回复 2 大师回复
 
     private Long replyCommentId;
 

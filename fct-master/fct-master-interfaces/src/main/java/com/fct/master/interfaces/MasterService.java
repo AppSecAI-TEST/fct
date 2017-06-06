@@ -61,7 +61,8 @@ public interface MasterService {
 
     /**
      * 獲取動態列表 並且告知api 是否有下一頁
-     * 這個方法會調用 @Link{getMasterNews}
+     * 這個方法會調用
+     * {@Link com.fct.master.interfaces.Master.getMasterNewsResponse}
      * @param masterId
      * @param start
      * @param size
@@ -134,6 +135,8 @@ public interface MasterService {
      * @param uid
      * @param masterId
      * @param content
+     * @param commentType 1 用户回复 2 大师回复
+     * @param replyCommentId
      * @return
      */
     CommentDto addMasterrComment(long uid, long masterId, String content, int commentType, long replyCommentId);

@@ -3,6 +3,7 @@ package com.fct.master.test;
 import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
 import com.fct.master.service.startup.ApplicationStartup;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,11 @@ public class MasterTest {
     public void getMasterListTest(){
         PageResponse<MasterDto> pageResponse = masterService.getMasters(0, 20);
         System.out.println(pageResponse.getElements().size());
+    }
+
+    @Test
+    public void addComment(){
+        CommentDto commentDto = masterService.addMasterrComment(10, 1, "你是傻逼吗?", 1, 0);
+        Assert.assertNotNull(commentDto);
     }
 }

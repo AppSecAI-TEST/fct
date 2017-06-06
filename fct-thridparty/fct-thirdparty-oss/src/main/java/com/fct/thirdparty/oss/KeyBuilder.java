@@ -7,12 +7,12 @@ import java.util.Date;
  */
 public class KeyBuilder {
 
-    private static final String PREFIX = "fct/";
+    private static final String PREFIX = "upload/";
 
     public static String buildKey(String fileName){
-        String suffix = fileName.split("\\.")[1];
+
         StringBuffer str = new StringBuffer();
-        str.append(PREFIX).append(new Date().getTime()).append(".").append(suffix);
+        str.append(PREFIX).append(new Date().getTime()).append("/").append(fileName);
         return str.toString();
     }
 }

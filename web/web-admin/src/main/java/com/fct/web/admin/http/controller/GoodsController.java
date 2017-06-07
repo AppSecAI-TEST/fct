@@ -1,11 +1,9 @@
 package com.fct.web.admin.http.controller;
 
-import com.fct.common.utils.StringHelper;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
-import com.sun.deploy.panel.ITreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -56,6 +56,12 @@ public class GoodsCategoryManager {
         }
         else {
             newadd =false;
+            code = code + category.getId() +",";
+            if(category.getCode() != code)  //父类有变化
+            {
+                goodsManager.updateCategory(category.getCode(), category.getId());
+            }
+            category.setCode(code);
             count = goodsCategoryRepository.exitSameName(category.getName(), category.getParentId(), category.getId());
         }
         if (count > 0) {
@@ -63,18 +69,11 @@ public class GoodsCategoryManager {
         }
 
         goodsCategoryRepository.save(category);
-
-
-        code = code + category.getId() +",";
-        if(category.getCode() != code)  //父类有变化
+        if(newadd)
         {
-            //更新商品表分类字段值
-            if(!newadd) {
-                goodsManager.updateCategory(category.getCode(),category.getId());
-            }
-
+            code = code + category.getId() +",";
             String sql = String.format("update GoodsCategory set code='%s' where id=%d",
-                    code,category.getId());
+                    code, category.getId());
             jt.update(sql);
         }
 

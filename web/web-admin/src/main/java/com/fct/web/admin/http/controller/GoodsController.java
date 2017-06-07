@@ -9,6 +9,7 @@ import com.sun.deploy.panel.ITreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,8 +57,20 @@ public class GoodsController {
         if(lsCategory ==null && lsCategory.size() <=0) {
             lsCategory = new ArrayList<>();
         }
+        Integer parentid=0;
+        Integer subid=0;
+        if(!StringUtils.isEmpty(goods.getCategoryCode())) {
+            String[] arrCate = goods.getCategoryCode().split(",");
+            parentid = Integer.valueOf(arrCate[1]);
+            if(arrCate.length>=2) {
+                subid = Integer.valueOf(arrCate[2]);
+            }
+        }
+
         model.addAttribute("parentCate", lsCategory);
         model.addAttribute("goods", goods);
+        model.addAttribute("parentid",parentid);
+        model.addAttribute("subid",subid);
         return "goods/create";
     }
 }

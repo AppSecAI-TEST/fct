@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 public class StringMethodParamResolver implements HandlerMethodArgumentResolver {
 
 
+    /**
+     * 只要加了NoNullValue注解的方法就会去判断方法参数是不是null如果是null就返回""
+     * @param methodParameter
+     * @return
+     */
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         Class<?> paramType = methodParameter.getParameterType();

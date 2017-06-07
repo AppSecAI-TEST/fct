@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
-    <title>方寸堂-宝贝品级管理</title>
+    <title>方寸堂-泥料管理</title>
     <link />
 </head>
 
-<body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_grade',~{::.script})">
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_material',~{::.script})">
 
 <div class="row border-bottom bodyContent">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -13,14 +13,14 @@
             <div class="minimalize-styl-2">
                 <form action="" method="get">
                     <div class="input-group col-sm-3 pull-left">
-                        <input type="text" placeholder="请输入品级名称" value="" class="input-sm form-control" name="q">
+                        <input type="text" placeholder="请输入泥料名称" value="" class="input-sm form-control" name="q">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
                         </span>
                     </div>
                 </form>
                 <div class="pull-right" style="padding-right:20px;">
-                    <a class="btn btn-default btn-outline btn-sm update">
+                    <a class="btn btn-default btn-outline btn-sm" th:href="@{/goods/material/create}">
                         <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
                     </a>
                 </div>
@@ -39,26 +39,30 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>名称</th>
-                                <th>排序</th>
+                                <th>图片/名称</th>
+                                <th>状态</th>
+                                <th>更新时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="grade : ${lsGrade}">
-                                <td th:text="${grade.id}"></td>
-                                <td th:text="${grade.name}"></td>
-                                <td th:text="${grade.sortIndex}"></td>
+                            <tr th:each="m : ${lsMaterial}">
+                                <td th:text="${m.id}"></td>
+                                <td th:text="${m.name}"></td>
                                 <td>
-                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default update" th:attr="data-id=${grade.id}" >修改</a>
+                                    <a href="javascript:;" th:if="${m.status eq 0}" th:attr="data-id=${m.id}" th:class="statusClick" title="待审核"><i class="fa fa-check text-navy"></i> </a>
+                                    <a href="javascript:;" th:if="${m.status eq 1}" th:attr="data-id=${m.id}" th:class="statusClick" title="已审核"><i class="fa fa-close"></i> </a>
+                                </td>
+                                <td th:text="${#dates.format(m.updateTime, 'yyyy-MM-dd hh:mm')}"></td>
+                                <td>
+                                    <a th:href="@{/goods/material/create(id=${m.id})}" class="btn btn-xs btn-outline btn-default update">修改</a>
                                 </td>
                             </tr>
                             </tbody>
                             <tfoot>
                             <tr>
                                 <td colspan="12" class="footable-visible">
-                                    <div class="pager pull-right">
-
+                                    <div class="pager pull-right" th:utext="${pageHtml}">
                                     </div>
                                 </td>
                             </tr>
@@ -76,17 +80,13 @@
 <script type="application/javascript" class="script">
 
     $(function () {
-        $(".update").click(function () {
+        $("#statusClick").click(function () {
             var id = $(this).attr("data-id");
-            if(!id){
-                id=0;
-            }
-            JQbox.open({
-                title:"宝贝品级",
-                width: 500,
-                url: '/goods/grade/create?id=' + id
-            })
-        });
+            JQAjax.post(this, {
+                form:"",
+                url: '/goods/material/upstatus?id='+id
+            });
+        })
     })
 </script>
 </body>

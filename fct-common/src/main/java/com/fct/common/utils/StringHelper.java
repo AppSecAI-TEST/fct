@@ -68,11 +68,20 @@ public class StringHelper {
         return value;
     }
 
-    public static Integer toInteger(String value)
+    public static Integer toInteger(String value,Integer defaultValue)
     {
         if(StringUtils.isEmpty(value) || value == null)
         {
-            return 0;
+            return defaultValue;
+        }
+        return Integer.valueOf(value);
+    }
+
+    public static Integer toPageIndex(String value)
+    {
+        if(StringUtils.isEmpty(value) || value == null)
+        {
+            return 1;
         }
         return Integer.valueOf(value);
     }

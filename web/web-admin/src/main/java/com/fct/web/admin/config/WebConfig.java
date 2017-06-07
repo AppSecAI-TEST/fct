@@ -81,6 +81,10 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         return registration;
     }
 
+    /**
+     * 这个是框架层面加了一个方法参数解析 解决string null 转成""问题
+     * @param resolvers
+     */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers){
         super.addArgumentResolvers(resolvers);
@@ -109,6 +113,10 @@ public class WebConfig extends WebMvcConfigurerAdapter{
                 .addResourceLocations("classpath:/static/");
     }
 
+    /**
+     * 这个是加上为了文件传输用的 前端传文件给服务端服务端传给阿里云
+     * @return
+     */
     @Bean
     public CommonsMultipartResolver commonsMultipartResolver(){
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();

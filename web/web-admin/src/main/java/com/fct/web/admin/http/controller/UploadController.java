@@ -3,15 +3,13 @@ package com.fct.web.admin.http.controller;
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
-import com.fct.web.admin.http.json.JsonListResponseEntity;
+import com.fct.web.admin.http.json.JsonResponseEntity;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedOutputStream;
@@ -24,8 +22,8 @@ import java.util.List;
  * Created by nick on 2017/6/5.
  */
 @RestController
-@RequestMapping("/imageUpload")
-public class ImageUploadController {
+@RequestMapping("/upload")
+public class UploadController {
 
     @Autowired
     private FileOperatorHelper fileOperatorHelper;
@@ -35,15 +33,17 @@ public class ImageUploadController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public JsonListResponseEntity<String> batchUploadImgs(HttpServletRequest request){
-        JsonListResponseEntity<String> responseEntity = new JsonListResponseEntity<>();
+    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    public JsonResponseEntity<Object> batchUploadImgs(HttpServletRequest request){
+        JsonResponseEntity<Object> responseEntity =  new JsonResponseEntity<>();
         List<File> fileList = Lists.newArrayList();
         FileServiceRequest fileServiceRequest = new FileServiceRequest();
         List<String> keys = Lists.newArrayList();
         List<String> imgUrls = Lists.newArrayList();
         List<MultipartFile> files = ((MultipartHttpServletRequest) request)
                 .getFiles("file");
+
+        List<UploadResponse> responses = null;
         try{
             if(files!=null&&files.size()>0){
                 for(MultipartFile multipartFile: files){
@@ -59,16 +59,20 @@ public class ImageUploadController {
             fileServiceRequest.setFiles(fileList);
             fileServiceRequest.setKeys(keys);
             fileServiceRequest.setUserMetaData(new HashedMap());
-            List<UploadResponse> responses = fileOperatorHelper.uploadFile(fileServiceRequest);
+            responses = fileOperatorHelper.uploadFile(fileServiceRequest);
             if(responses!=null&&responses.size()>0){
                 for(UploadResponse response: responses){
+                    keys.add(response.getKey());
                     imgUrls.add(response.getUrl());
                 }
             }
         }catch (IOException e){
             e.printStackTrace();
         }
-        responseEntity.setContent(imgUrls);
+        //responseEntity.setContent(imgUrls);
+        if(responses != null) {
+            responseEntity.setData(responses.get(0));
+        }
         return responseEntity;
     }
 }

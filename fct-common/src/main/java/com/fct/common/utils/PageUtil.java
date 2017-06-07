@@ -121,7 +121,7 @@ public class PageUtil {
             if (i == currentPage)
                 sb.append(String.format("<strong class=\"page_on\">%d</strong>", i));
             else
-                sb.append(String.format("<a href=\"%s\" class=\"page_able\">{1}</a>", String.format(sUrlBase, i), i));
+                sb.append(String.format("<a href=\"%s\" class=\"page_able\">%d</a>", String.format(sUrlBase, i), i));
         }
         return sb;
     }

@@ -250,3 +250,85 @@ var JQbox = {
     }
 };
 
+
+  var dropZoneUploads = {
+      init: function (ele,options) {
+          var input = options.input;
+          var url = options.url;
+          var max = options.max || 1;
+          var default_img = options.default_img || '';
+          var imgs = [];
+          Dropzone.autoDiscover = false;
+          var tem_str = '<div class=\"dz-preview sortable_img dz-file-preview\">\n  ' +
+              '<div class="preview-img">\n    ' +
+              '<img data-dz-thumbnail />\n  ' +
+              '<div data-dz-name></div>\n    ' +
+              '</div>\n  ' +
+              '<a name class="fork-remove" data-dz-remove />' +
+              '<div class=\"dz-success-mark\"><span>✔</span></div>\n  ' +
+              '<div class=\"dz-error-mark\"><span>✘</span></div>\n ' +
+              ' <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n' +
+              '</div>';
+          $(ele).dropzone({
+              url:url,
+              autoProcessQueue:true,
+              parallelUploads:100,
+              maxFiles:max,
+              init:function(){
+                  var myDropzone=this;
+
+                  for(var i=0;i<default_img.length;i++){
+                      //{img_url:,img_name:}
+                    myDropzone.emit("addedfile", default_img[i]);
+                    myDropzone.emit("thumbnail", default_img[i], default_img[i].img_url);
+                  }
+
+                  myDropzone.on("maxfilesexceeded", function(file) {
+                      if(parseInt(myDropzone.options.maxFiles) == 1){
+                          myDropzone.removeAllFiles();
+                          myDropzone.addFile(file);
+                      }else {
+                          myDropzone.removeFile(file);
+                      }
+                  });
+
+              },
+              success: function (file, response, e) {
+                    //var res = JSON.parse(response);
+                    if(response.data) {
+                        imgs.push(response.data.url);
+                        $("#"+input).val(imgs.join());
+                        // If the image is already a thumbnail:
+                        this.emit('thumbnail', file, response.data.url);
+                    }
+              },
+              error: function(file, errorMessage, xhr) {
+                  $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1');
+              },
+              previewTemplate: tem_str
+          });
+
+      }
+  };
+
+    var webUploads = function (ele,opt) {
+
+        var defaults = {
+            url: '',
+            input: '',
+            max: 1,
+            default_img: ''
+
+        };
+        var options = $.extend({}, defaults, opt);
+
+        dropZoneUploads.init(ele, options);
+
+        var sortable = new Sortable(ele[0], {
+          animation: 150,
+          ghostClass: "sortable-ghost",
+          handle: '.dz-preview'
+        });
+    };
+
+

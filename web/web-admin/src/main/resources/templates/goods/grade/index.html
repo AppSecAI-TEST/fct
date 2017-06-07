@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/layout :: header(~{this :: title})">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
     <title>方寸堂-宝贝品级管理</title>
+    <link/>
 </head>
 
 <body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_grade',~{::.script})">
@@ -86,6 +87,8 @@
                 url: '/goods/grade/create?id=' + id
             })
         });
+
+        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})
     })
 </script>
 </body>

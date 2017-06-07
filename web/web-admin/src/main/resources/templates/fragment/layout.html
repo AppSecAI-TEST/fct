@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="header(title)">
+<head th:fragment="header(title,links)">
     <!--/*  Title will be replaced by their respective titles in the calling template. */-->
     <title th:replace="${title}">方寸堂</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -17,7 +17,7 @@
     <link href="//static/css/dropzone.css" rel="stylesheet" th:href="@{/static/css/dropzone.css}" />
 
     <!--/* Per-page placeholder for additional links */-->
-
+    <th:block th:replace="${links}" />
 </head>
 
 <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden" th:fragment="body(content,slide_menu,scripts)">
@@ -69,6 +69,7 @@
 
 <script src="//static/js/plugins/layer/layer.js" th:src="@{/static/js/plugins/layer/layer.js}"></script>
 <script src="//static/js/hplus.min.js?v=4.0.0" th:src="@{/static/js/hplus.min.js}"></script>
+        <script src="//static/js/plugins/icheck.min.js" th:src="@{/static/js/plugins/icheck.min.js}"></script>
 <script src="//static/js/fct.js" th:src="@{/static/js/fct.js}"></script>
 
 <th:block th:replace="${scripts}" />

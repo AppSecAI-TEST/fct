@@ -15,7 +15,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">图片：</label>
                     <div class="col-sm-8">
-                        <input name="img" th:value="${goodsGrade.img}" type="hidden" class="form-control" />
+                        <input name="img" th:value="${goodsGrade.img}" type="hidden" id="imgPath" class="form-control" />
                         <div id="dropzoneDemo" class="dropzone">
                             <div class="dropzone-previews"></div>
                         </div>
@@ -47,49 +47,13 @@
             });
         });
 
-        Dropzone.autoDiscover = false;
-        var tem_str = '<div class=\"dz-preview sortable_img dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>';
-        $("div#dropzoneDemo").dropzone({
-            url:'fct_admin_form_basic.html#',
-            autoProcessQueue:false,
-            uploadMultiple:true,
-            parallelUploads:100,
-            maxFiles:100,
-            addRemoveLinks:true,
-            init:function(){
-                var myDropzone=this;
-                this.element.querySelector("button[type=submit]").addEventListener("click",function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var current_queue = [];
-                    $('div.sortable_img').each( function(){
-                        current_queue.push($(this).data('file'));
-                    });
-
-                    myDropzone.removeAllFiles();
-
-                    for(i=0;i<current_queue.length;i++){
-                        myDropzone.addFile(current_queue[i]);
-                    }
-
-                    myDropzone.processQueue()
-                });
-
-                this.on('addedfile', function(file) {
-                    $('div.sortable_img:last-of-type').data('file', file);
-                });
-
-            },
-            previewTemplate: tem_str
+        webUploads($('#dropzoneDemo'), {
+            url: '/upload/image',
+            input: 'imgPath',
+            max: 1
+            //default_img: [{img_url: 'aaa', img_name: 'asdas.png'}]   //默认已经上传的图片
         });
 
-        var el = document.getElementById('dropzoneDemo');
-        var sortable = new Sortable(el, {
-            animation: 150,
-            ghostClass: "sortable-ghost",
-            handle: '.dz-preview'
-        });
     </script>
 
 </html>

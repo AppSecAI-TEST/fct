@@ -1,6 +1,6 @@
-package com.fct.master.service.startup;
+package com.fct.encyclopedia.service;
 
-import com.fct.master.service.converter.MyConverter;
+import com.fct.encyclopedia.service.convertor.MyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,8 +28,8 @@ import java.util.Properties;
  * Created by nick on 2017/5/24.
  * 项目启动类
  */
-@SpringBootApplication(scanBasePackages = "com.fct.master")
-@EnableJpaRepositories(basePackages = "com.fct.master.service.repository")
+@SpringBootApplication(scanBasePackages = "com.fct.encyclopedia")
+@EnableJpaRepositories(basePackages = "com.fct.encyclopedia.service.repository")
 @ImportResource("classpath:dubbo/dubbo-provider.xml")
 @EnableAutoConfiguration
 public class ApplicationStartup extends SpringBootServletInitializer{
@@ -64,7 +64,7 @@ public class ApplicationStartup extends SpringBootServletInitializer{
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.fct.master.service.domain");
+        em.setPackagesToScan("com.fct.encyclopedia.service.domain");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -78,7 +78,7 @@ public class ApplicationStartup extends SpringBootServletInitializer{
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
         properties.setProperty("hibernate.enable_lazy_load_no_trans", "true");
         if(environment.getActiveProfiles()[0].equals("de")){
-            properties.setProperty("hibernate.hbm2ddl.auto", "create");
+//            properties.setProperty("hibernate.hbm2ddl.auto", "create");
             properties.setProperty("hibernate.show_sql", "false");
             properties.setProperty("hibernate.format_sql","true");
         }

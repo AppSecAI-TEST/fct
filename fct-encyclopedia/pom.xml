@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.fct.master</groupId>
-    <artifactId>fct-master</artifactId>
+    <groupId>com.fct.encyclopedia</groupId>
+    <artifactId>fct-encyclopedia</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>fct-master-interfaces</module>
-        <module>fct-master-service</module>
+        <module>fct-encyclopedia-interfaces</module>
+        <module>fct-encyclopedia-services</module>
     </modules>
 
     <parent>
@@ -46,4 +46,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

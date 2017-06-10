@@ -1,6 +1,7 @@
 package com.fct.master.service.impl;
 
 
+import com.fct.common.exceptions.Exceptions;
 import com.fct.master.dto.*;
 import com.fct.master.interfaces.MasterService;
 import com.fct.master.service.callback.MasterCallback;
@@ -15,8 +16,11 @@ import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.utils.IDGen;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +30,10 @@ import java.util.*;
 /**
  * Created by nick on 2017/5/25.
  */
-@Service
+@Service("masterService")
 public class MasterServiceImpl implements MasterService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MasterServiceImpl.class);
 
     @Autowired
     private MasterRepository masterRepository;
@@ -112,26 +118,31 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public MasterBrief getMasterBrief(int masterId) {
-        String sql1 = String.format("select a.master_id, a.brief, a.cover_url from master a where a.master_id = %d and a.del_flag = 0", masterId);
-        String sql2 = String.format("select count(*) as count from attention a where a.master_id = %d and a.del_flag = 0", masterId);
-        Map<String, Object> results1 = jdbcTemplate.queryForMap(sql1);
-        Map<String, Object> results2 = jdbcTemplate.queryForMap(sql2);
-        MasterBrief masterBrief = new MasterBrief();
-        if(results1!=null&&results1.size()>0){
-            int id = (results1.get("master_id"))!=null?((Long) results1.get("master_id")).intValue():0;
-            String coverUrl = (String) results1.get("cover_url");
-            String brief = (String) results1.get("brief");
-            Long count = (Long) results2.get("count");
-            Double attentionCount = 0.0d;
-            if(count>10000){
-                attentionCount = count/10000d;
-                masterBrief.setAttentionCount(String.valueOf(attentionCount) + "万");
-            }else{
-                masterBrief.setAttentionCount(String.valueOf(attentionCount.intValue()));
+        MasterBrief masterBrief = null;
+        try{
+            String sql1 = String.format("select a.master_id, a.brief, a.cover_url from master a where a.master_id = %d and a.del_flag = 0", masterId);
+            String sql2 = String.format("select count(*) as count from attention a where a.master_id = %d and a.del_flag = 0", masterId);
+            Map<String, Object> results1 = jdbcTemplate.queryForMap(sql1);
+            Map<String, Object> results2 = jdbcTemplate.queryForMap(sql2);
+            masterBrief = new MasterBrief();
+            if(results1!=null&&results1.size()>0){
+                int id = (results1.get("master_id"))!=null?((Long) results1.get("master_id")).intValue():0;
+                String coverUrl = (String) results1.get("cover_url");
+                String brief = (String) results1.get("brief");
+                Long count = (Long) results2.get("count");
+                Double attentionCount = 0.0d;
+                if(count>10000){
+                    attentionCount = count/10000d;
+                    masterBrief.setAttentionCount(String.valueOf(attentionCount) + "万");
+                }else{
+                    masterBrief.setAttentionCount(String.valueOf(attentionCount.intValue()));
+                }
+                masterBrief.setBrief(brief);
+                masterBrief.setMasterId(id);
+                masterBrief.setCoverUrl(coverUrl);
             }
-            masterBrief.setBrief(brief);
-            masterBrief.setMasterId(id);
-            masterBrief.setCoverUrl(coverUrl);
+        }catch (EmptyResultDataAccessException e){
+            logger.error(Exceptions.getStackTraceAsString(e));
         }
         return masterBrief;
     }

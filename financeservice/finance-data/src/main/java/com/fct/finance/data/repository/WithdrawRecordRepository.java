@@ -14,11 +14,6 @@ import java.util.Date;
  */
 public interface WithdrawRecordRepository extends JpaRepository<WithdrawRecord, Integer> {
 
-    Page<WithdrawRecord> findAll(Specification<WithdrawRecord> spec, Pageable pageable);  //分页按条件查询
-
     int countByMemberIdAndStatus(Integer memberId, Integer status);
-
-    @Query(nativeQuery = true, value = "UPDATE WithdrawRecord SET Status=?3,remark=?4,omsOperaterId=?1,updateTime=?5 WHERE Id=?2 AND Status!=1")
-    void updateStatus(Integer omsOperaterId, Integer id, Integer status, String desc, Date upTime);
 
 }

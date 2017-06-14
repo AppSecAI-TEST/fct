@@ -47,9 +47,12 @@ public class GoodsSpecification implements Serializable{
     private String barCode;
 
     /// <summary>
-    /// 售价
+    /// 市场价
     /// </summary>
-    private BigDecimal price;
+    private BigDecimal marketPrice;
+
+    //售价
+    private BigDecimal salePrice;
 
     /// <summary>
     /// 佣金
@@ -60,6 +63,9 @@ public class GoodsSpecification implements Serializable{
     /// 库存
     /// </summary>
     private Integer stockCount;
+
+    //1为删除
+    private Integer isdel;
 
     /// <summary>
     /// 排序

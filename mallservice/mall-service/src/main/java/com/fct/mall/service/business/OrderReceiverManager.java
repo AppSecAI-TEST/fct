@@ -25,10 +25,10 @@ public class OrderReceiverManager {
         {
             throw new IllegalArgumentException("无收货地址");
         }
-        if(!StringUtils.isEmpty(or.getExpressNO()))
+        /*if(StringUtils.isEmpty(or.getExpressNO()))
         {
             throw new IllegalArgumentException("已发货订单不可修改地址");
-        }
+        }8*/
         orderReceiverRepository.save(or);
     }
 

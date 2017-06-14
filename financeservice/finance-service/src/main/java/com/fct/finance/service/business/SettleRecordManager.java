@@ -90,7 +90,15 @@ public class SettleRecordManager {
 
     public void updateStatus(Integer omsOperaterId,Integer status,String ids,String desc)
     {
-        settleRecordRepository.updateStatus(omsOperaterId,ids,status,desc,new Date());
+        String sql = "UPDATE SettleRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id IN(?) AND Status!=1";
+        List<Object> param = new ArrayList<>();
+        param.add(status);
+        param.add(desc);
+        param.add(omsOperaterId);
+        param.add(new Date());
+        param.add(ids);
+
+        jt.update(sql,param);
     }
 
     /// <summary>

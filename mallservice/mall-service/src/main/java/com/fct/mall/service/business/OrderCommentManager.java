@@ -65,7 +65,7 @@ public class OrderCommentManager {
 
         Goods g = goodsManager.findById(commnet.getGoodsId());
         g.setCommentCount(g.getCommentCount()+1);
-        g.setCommnetScore(1);//计算动态评分
+        g.setCommentScore(new Float(1));//计算动态评分
         goodsManager.save(g);
 
         commnet.setCreateTime(new Date());

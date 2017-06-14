@@ -23,11 +23,23 @@ public class GoodsSpecificationManager {
 
     public List<GoodsSpecification> findByGoodsId(Integer goodsId)
     {
-        return goodsSpecificationRepository.findByGoodsId(goodsId);
+        return goodsSpecificationRepository.findByGoodsIdAndIsdel(goodsId,0);
+    }
+
+    public GoodsSpecification findByGoodsIdAndName(Integer goodsId,String name)
+    {
+        return goodsSpecificationRepository.findByGoodsIdAndName(goodsId,name);
     }
 
     public void save(GoodsSpecification gs)
     {
         goodsSpecificationRepository.saveAndFlush(gs);
+    }
+
+    public void delete(Integer goodsId,List<Integer> ids)
+    {
+        if(ids.size()<=0)
+            ids.add(0);
+        goodsSpecificationRepository.updateDelStatus(goodsId,ids);
     }
 }

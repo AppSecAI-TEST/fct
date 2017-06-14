@@ -20,7 +20,7 @@
                     </div>
                 </form>
                 <div class="pull-right" style="padding-right:20px;">
-                    <a class="btn btn-default btn-outline btn-sm update">
+                    <a class="btn btn-default btn-outline btn-sm" href="/goods/category/create">
                         <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
                     </a>
                 </div>
@@ -39,7 +39,7 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>名称</th>
+                                <th>图片/名称</th>
                                 <th>编码</th>
                                 <th>排序</th>
                                 <th>操作</th>
@@ -48,17 +48,22 @@
                             <tbody>
                             <tr th:each="category : ${lsCategory}">
                                 <td th:text="${category.id}"></td>
-                                <td th:text="${category.name}"></td>
+                                <td>
+                                    <img th:src="${pub.thumbnailPath(category.img)}" class="loadimg" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${category.name}"></span>
+                                </td>
                                 <td th:text="${category.code}"></td>
                                 <td th:text="${category.sortIndex}"></td>
                                 <td>
-                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default update" th:attr="data-id=${category.id}" >修改</a>
+                                    <a th:href="@{/goods/category/create(id=${category.id})}" class="btn btn-xs btn-outline btn-default">修改</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-danger delete" th:attr="data-id=${category.id}" >删除</a>
                                 </td>
                             </tr>
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td colspan="12" class="footable-visible">
+                                <td colspan="5" class="footable-visible">
                                     <div class="pager pull-right">
 
                                     </div>
@@ -80,14 +85,27 @@
     $(function () {
         $(".update").click(function () {
             var id = $(this).attr("data-id");
-            if(!id){
-                id=0;
-            }
             JQbox.open({
                 title:"宝贝分类",
                 width: 500,
                 url: '/goods/category/create?id=' + id
             })
+        });
+        $(".delete").click(function () {
+            var id = $(this).attr("data-id");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: '/goods/category/del?id='+id,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
         });
     })
 </script>

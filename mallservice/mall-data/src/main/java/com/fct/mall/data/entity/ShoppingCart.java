@@ -3,10 +3,7 @@ package com.fct.mall.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -59,6 +56,6 @@ public class ShoppingCart implements Serializable{
     /// <summary>
     /// 产品信息
     /// </summary>
-    @OneToOne(cascade = CascadeType.ALL)
+    @Transient
     private Goods goods;
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
-    <title>方寸堂-泥料管理</title>
+    <title>方寸堂-材质管理</title>
     <link />
 </head>
 
@@ -48,22 +48,26 @@
                             <tbody>
                             <tr th:each="m : ${lsMaterial}">
                                 <td th:text="${m.id}"></td>
-                                <td th:text="${m.name}"></td>
                                 <td>
-                                    <a href="javascript:;" th:if="${m.status eq 0}" th:attr="data-id=${m.id}" th:class="statusClick" title="待审核"><i class="fa fa-check text-navy"></i> </a>
-                                    <a href="javascript:;" th:if="${m.status eq 1}" th:attr="data-id=${m.id}" th:class="statusClick" title="已审核"><i class="fa fa-close"></i> </a>
+                                    <img th:src="${pub.thumbnailPath(m.images)}" class="loadimg" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${m.name}"></span>
                                 </td>
-                                <td th:text="${#dates.format(m.updateTime, 'yyyy-MM-dd hh:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${m.status eq 0}" th:attr="data-id=${m.id}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> </a>
+                                    <a href="javascript:;" th:if="${m.status eq 1}" th:attr="data-id=${m.id}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                                <td th:text="${#dates.format(m.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
                                 <td>
                                     <a th:href="@{/goods/material/create(id=${m.id})}" class="btn btn-xs btn-outline btn-default update">修改</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-danger delete" th:attr="data-id=${m.id}" >删除</a>
                                 </td>
                             </tr>
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td colspan="12" class="footable-visible">
-                                    <div class="pager pull-right" th:utext="${pageHtml}">
-                                    </div>
+                                <td colspan="5" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
                                 </td>
                             </tr>
                             </tfoot>
@@ -80,13 +84,30 @@
 <script type="application/javascript" class="script">
 
     $(function () {
-        $("#statusClick").click(function () {
+        $(".statusClick").click(function () {
             var id = $(this).attr("data-id");
             JQAjax.post(this, {
                 form:"",
                 url: '/goods/material/upstatus?id='+id
             });
-        })
+        });
+
+        $(".delete").click(function () {
+            var id = $(this).attr("data-id");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: '/goods/material/delete?id='+id,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
+        });
     })
 </script>
 </body>

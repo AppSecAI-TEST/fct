@@ -9,6 +9,7 @@ import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.repository.PayOrderRepository;
 import com.fct.finance.interfaces.PageResponse;
+import com.fct.message.interfaces.MessageService;
 import com.fct.message.model.MQPayRefund;
 import com.fct.message.model.MQPaySuccess;
 import com.fct.message.model.MQPayTrade;
@@ -44,6 +45,9 @@ public class PayOrderManager  {
 
     @Autowired
     private JdbcTemplate jt;
+
+    @Autowired
+    private MessageService messageService;
 
     public void save(PayOrder pay)
     {
@@ -290,7 +294,7 @@ public class PayOrderManager  {
         mq.setRemark("支付结果通知");
         mq.setNotify_url(pay.getNotifyUrl());
 
-        APIClient.messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
+        messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
                 JsonConverter.toJson(mq),"发送支付成功通知消息");
     }
 

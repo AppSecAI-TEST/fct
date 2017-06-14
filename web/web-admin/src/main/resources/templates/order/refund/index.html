@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-退款/退换货管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'order_refund',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <div class="col-sm-5">
+                                    <select class="col-sm-4 form-control" name="selkey">
+                                        <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">订单号</option>
+                                        <option value="name" th:selected="${query.selkey eq 'name'} ? 'selected'">宝贝名称</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control inline" name="status">
+                                    <option value="">选择状态</option>
+                                    <th:block th:each="status:${cacheOrder.getRefundStatus()}">
+                                        <option th:value="${status.key}" th:text="${status.value}" th:selected="${query.status eq status.key} ? 'selected'"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div class="col-sm-5 form-inline">
+                                <div class="form-group">
+                                    <div class="col-sm-7">
+                                        <label>店铺编号：</label>
+                                        <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>订单号</th>
+                                <th class="text-center">图片/名称</th>
+                                <th>退款方式</th>
+                                <th>退款金额</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="refund : ${lsRefund}">
+                                <td th:text="${refund.id}"></td>
+                                <td th:text="${refund.orderId}"></td>
+                                <td class="text-center">
+                                    <img th:src="${pub.thumbnailPath(refund.img)}" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${refund.name}"></span>
+                                </td>
+                                <td th:text="${cacheOrder.getRefundTypeName(refund.refundMethod)}"></td>
+                                <td th:text="${refund.payAmount}"></td>
+                                <td th:text="${#dates.format(refund.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${cacheOrder.getRefundStatusName(refund.status)}"></td>
+                                <td>
+                                    <a th:href="@{/order/refund/detail(id=${refund.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-danger" th:attr="data-id=${refund.id}" >拒绝</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+    })
+</script>
+</body>
+</html>

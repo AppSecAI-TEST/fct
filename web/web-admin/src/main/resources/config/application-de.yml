@@ -34,6 +34,10 @@ spring:
     multipart:
       max-file-size: 3MB
       max-request-size: 3MB
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
   thymeleaf:
     #prefix: classpath:/templates,classpath:/static/
     #suffix: .html
@@ -49,6 +53,4 @@ aliyun:
     accesskeyId: LTAId0h3QAgdPmXT
     accesskeySecret: cLMJrTzs1APvyXehfjOQUsYq66A3Wc
     endpoint: http://oss-cn-shanghai.aliyuncs.com/
-
-
 

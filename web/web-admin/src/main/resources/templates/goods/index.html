@@ -5,25 +5,76 @@
     <link />
 </head>
 
-<body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_grade',~{::.script})">
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_index',~{::.script})">
 
 <div class="row border-bottom bodyContent">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="">
             <div class="minimalize-styl-2">
                 <form action="" method="get">
-                    <div class="input-group col-sm-3 pull-left">
-                        <input type="text" placeholder="请输入品级名称" value="" class="input-sm form-control" name="q">
-                        <span class="input-group-btn">
+                    <input type="hidden" name="catecode" id="categoryCode" th:value="${query.catecode}" />
+                <div class="row">
+                    <div class="row col-sm-3">
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline" name="parentid" id="selParentCate" data-load="selSubCate">
+                                <option value="">宝贝分类</option>
+                                <th:block th:each="cate : ${query.parentCate}">
+                                    <option th:text="${cate.name}" th:value="${cate.code}" th:selected="${#strings.contains(query.catecode,cate.code)} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline selCate" name="subid" id="selSubCate">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row col-sm-3">
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline" name="gradeid">
+                                <option value="0">选择品级</option>
+                                <th:block th:each="grade : ${query.gradeList}">
+                                    <option th:text="${grade.name}" th:value="${grade.id}" th:selected="${query.gradeid eq grade.id} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline" name="gradeid">
+                                <option value="0">选择艺人</option>
+                                <th:block th:each="grade : ${query.gradeList}">
+                                    <option th:text="${grade.name}" th:value="${grade.id}" th:selected="${query.artistid eq grade.id} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row col-sm-3">
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline" name="materialid">
+                                <option value="">选择泥料</option>
+                                <th:block th:each="m : ${cache.findGoodsMaterial()}">
+                                    <option th:text="${m.name}" th:value="${m.id}" th:selected="${query.materialid eq m.id} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 m-b-xs">
+                            <select class="input-sm form-control input-s-sm inline" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-group"> <input type="text" placeholder="请输入宝贝名称" th:value="${query.name}" class="input-sm form-control" name="name">
+                            <span class="input-group-btn">
                             <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
                         </span>
+                        </div>
                     </div>
-                </form>
-                <div class="pull-right" style="padding-right:20px;">
-                    <a class="btn btn-default btn-outline btn-sm update">
-                        <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
-                    </a>
                 </div>
+                </form>
             </div>
         </div>
     </nav>
@@ -39,27 +90,56 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>名称</th>
                                 <th>排序</th>
+                                <th class="text-center">图片/名称</th>
+                                <th>艺人</th>
+                                <th>分类</th>
+                                <th>品级</th>
+                                <th>销售价</th>
+                                <th>佣金</th>
+                                <th>库存</th>
+                                <th>统计数</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="grade : ${lsGrade}">
-                                <td th:text="${grade.id}"></td>
-                                <td th:text="${grade.name}"></td>
-                                <td th:text="${grade.sortIndex}"></td>
+                            <tr th:each="goods : ${lsGoods}">
+                                <td th:text="${goods.id}"></td>
+                                <td th:text="${goods.sortIndex}"></td>
+                                <td class="text-center">
+                                    <img th:src="${pub.thumbnailPath(goods.defaultImage)}" class="loadimg" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${goods.name}"></span>
+                                </td>
+                                <td th:text="${goods.artistIds}"></td>
+                                <td th:text="${cache.getGoodsCateName(goods.categoryCode)}"></td>
+                                <td th:text="${cache.getGoodsGradeName(goods.gradeId)}"></td>
+                                <td th:text="${goods.salePrice}"></td>
+                                <td th:text="${goods.commission}"></td>
+                                <td th:text="${goods.stockCount}"></td>
                                 <td>
-                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default update" th:attr="data-id=${grade.id}" >修改</a>
+                                    <span th:text="'销售数：' + ${goods.sellCount}"></span><br />
+                                    <span th:text="'浏览数：' + ${goods.viewCount}"></span><br />
+                                    <span th:text="'评论数：' + ${goods.commentCount}"></span><br />
+                                    <span th:text="'评论分：' + ${goods.commentScore}"></span>
+                                </td>
+                                <td th:text="${#dates.format(goods.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${goods.status eq 0}" th:attr="data-id=${goods.id}" th:class="statusClick" title="下架中"><i class="fa fa-close"></i> </a>
+                                    <a href="javascript:;" th:if="${goods.status eq 1}" th:attr="data-id=${goods.id}" th:class="statusClick" title="已上架"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/goods/create(id=${goods.id})}" class="btn btn-xs btn-outline btn-default" th:attr="data-id=${goods.id}" >修改</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-danger delete" th:attr="data-id=${goods.id}" >删除</a>
                                 </td>
                             </tr>
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td colspan="12" class="footable-visible">
-                                    <div class="pager pull-right">
-
-                                    </div>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
                                 </td>
                             </tr>
                             </tfoot>
@@ -70,22 +150,57 @@
         </div>
     </div>
 </div>
-<!--/*@thymesVar id="name" type="java.lang.String"*/-->
-
 
 <script type="application/javascript" class="script">
 
     $(function () {
         $(".update").click(function () {
             var id = $(this).attr("data-id");
-            if(!id){
-                id=0;
-            }
             JQbox.open({
                 title:"宝贝品级",
                 width: 500,
                 url: '/goods/grade/create?id=' + id
-            })
+            });
+        });
+
+        $("#selParentCate").change(function () {
+            loadCategory($(this),true);
+        });
+
+        var loadCategory = function (parentEl,upValue) {
+            var cateValue = parentEl.children('option:selected').val();
+            if(cateValue!="") {
+                var arr = cateValue.split(",");
+                var url = "/goods/category/select?parentid=" + arr[1] + "&subid=[[${query.catecode}]]";
+                JQAjax.load(parentEl, url);
+                if (upValue) {
+                    $("#categoryCode").val(cateValue);
+                }
+            }
+        };
+
+        loadCategory($("#selParentCate"));
+
+        $(".selCate").change(function () {
+            var cateCode=$(this).children('option:selected').val();//这就是selected的值
+            $("#categoryCode").val(cateCode);
+        });
+
+        $(".delete").click(function () {
+            var id = $(this).attr("data-id");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: '/goods/delete?id='+id,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
         });
     })
 </script>

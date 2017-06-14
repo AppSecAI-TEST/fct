@@ -98,8 +98,14 @@ public class Goods implements Serializable {
     /// </summary>
     private String content;
 
-    //材质--泥料介绍
-    private Integer materialId;
+    //材质--泥料介绍 多个,1,12,
+    private String materialId;
+
+    //最小容量便于显示与搜索
+    private Integer minVolume;
+
+    //最大容量
+    private Integer maxVolume;
 
     //预售时间（天为单位，正常商品默认为0）
     private Integer advanceSaleDays;
@@ -131,7 +137,7 @@ public class Goods implements Serializable {
     private Integer commentCount;
 
     //评论分数；(描述分)
-    private float commnetScore;
+    private Float commentScore;
 
     ///浏览次数
     private Integer viewCount;
@@ -149,6 +155,6 @@ public class Goods implements Serializable {
     /// <summary>
     /// 商品规格属性
     /// </summary>
-    @OneToMany(cascade = CascadeType.ALL)
+    @Transient
     private List<GoodsSpecification> specification;
 }

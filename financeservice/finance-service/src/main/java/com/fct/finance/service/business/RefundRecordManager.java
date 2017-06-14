@@ -10,6 +10,7 @@ import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.entity.RefundRecord;
 import com.fct.finance.data.repository.RefundRecordRepository;
 import com.fct.finance.interfaces.PageResponse;
+import com.fct.message.interfaces.MessageService;
 import com.fct.message.model.MQPayRefund;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -57,6 +58,9 @@ public class RefundRecordManager {
 
     @Autowired
     private JdbcTemplate jt;
+
+    @Autowired
+    private MessageService messageService;
 
     @Transactional
     public RefundRecord create(RefundRecord refund)
@@ -145,6 +149,16 @@ public class RefundRecordManager {
         payOrderManager.save(pay);
 
         return refund;
+    }
+
+    public RefundRecord findById(Integer id)
+    {
+        return  refundRecordRepository.findOne(id);
+    }
+
+    public RefundRecord findByTradeId(String tradeType,String tradeId)
+    {
+        return refundRecordRepository.findByTradeIdAndTradeType(tradeId,tradeType);
     }
 
     /// <summary>
@@ -307,7 +321,7 @@ public class RefundRecordManager {
         message.setCash_amount(refund.getCashAmount());
         message.setDesc("退款");
 
-        APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
+        messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
                 JsonConverter.toJson(message),"原路返回退款至第三方支付平台");
 
     }

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-订单详情</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'order_refund',~{::.script})">
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>退款编号：<th:block th:text="${refund.id}"></th:block> <small th:text="'订单号：'+${refund.orderId}"></small></h5>
+                    <div class="ibox-tools">
+                        <a class="close-link" th:href="@{/order/refund}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content p-xl">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <address>
+                                <strong th:text="'宝贝：'+${refund.orderGoods.name}"></strong><br>
+                                <th:block th:text="'订单号：'+${refund.orderId}"></th:block><br>
+                                <th:block th:text="'购买价格：'+${refund.orderGoods.promotionPrice}"></th:block><br>
+                                <th:block th:text="'购买数量：'+${refund.orderGoods.buyCount}"></th:block><br>
+                                <th:block th:text="'优惠券：'+${refund.orderGoods.couponAmount}"></th:block><br>
+                                <th:block th:text="'支付金额：'+${refund.orderGoods.payAmount}"></th:block>
+                            </address>
+                        </div>
+
+                        <div class="col-sm-6 text-right">
+                            <h4>退款状态：</h4>
+                            <h4 class="text-navy" th:text="${cacheOrder.getRefundStatusName(refund.status)}"></h4>
+                            <p>
+                                <span><strong>退款方式：</strong><th:block th:text="${cacheOrder.getRefundTypeName(refund.refundMethod)}"></th:block></span>
+                            </p>
+                            <p>
+                                <span><strong>服务类型：</strong><th:block th:text="${refund.serviceType eq 0} ? '退货退款'"></th:block></span>
+                            </p>
+                            <p>
+                                <span><strong>是否收到货：</strong><th:block th:text="${refund.isReceived eq 1} ? '已收到'"></th:block></span>
+                            </p>
+                            <p>
+                                <span><strong>退款原因：</strong><th:block th:text="${refund.refundReason}"></th:block></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive m-t">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>附件</th>
+                                <th>描述</th>
+                                <th>时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="msg:${refund.refundMessage}">
+                                <td>
+                                    <img th:src="${pub.thumbnailPath(msg.images)}" width="80" height="80">
+                                </td>
+                                <td th:text="${msg.description}"></td>
+                                <td th:text="${#dates.format(msg.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /table-responsive -->
+
+                    <table class="table invoice-total" th:if="${record ne null}">
+                        <tbody>
+                        <tr>
+                            <td><strong>退回积分：</strong></td>
+                            <td th:text="${record.points}"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>退回余额：</strong></td>
+                            <td th:text="'¥'+${record.accountAmount}">¥0.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>退回现金：</strong></td>
+                            <td th:text="'¥'+${record.cashAmount}">¥12.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>总计</strong></td>
+                            <td th:text="'¥'+${record.refundAmount}">¥12.00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-right m-t">
+                        <th:block th:if="${refund.status eq 0}">
+                            <button class="btn btn-primary refundStatus" type="button" data-action="accept">接受申请</button>
+                            <button class="btn btn-danger refundStatus" type="button" data-action="refuse">拒绝申请</button>
+                        </th:block>
+                        <button class="btn btn-primary refundStatus" type="button" data-action="agree" th:if="${refund.status eq 2}">同意退款</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript" class="script">
+    $(function () {
+        $(".refundStatus").click(function () {
+            var action = $(this).attr("data-action");
+            JQbox.open({
+                title:"处理退款",
+                width: 500,
+                url: "/order/refund/handle?action="+action+"&id=[[${refund.id}]]"
+            });
+        });
+    })
+</script>
+</body>
+</html>

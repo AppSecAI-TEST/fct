@@ -1,11 +1,12 @@
 package com.fct.web.admin.http.controller.goods;
 
 import com.fct.common.exceptions.Exceptions;
+import com.fct.common.utils.ConvertUtils;
 import com.fct.common.utils.StringHelper;
 import com.fct.mall.data.entity.GoodsCategory;
-import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
-import com.fct.web.admin.annotations.NoNullValue;
+import com.fct.web.admin.http.cache.CacheManager;
+import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import sun.tools.jconsole.inspector.Utils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,10 +29,13 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/goods/category")
-public class CategoryController {
+public class CategoryController extends BaseController {
 
     @Autowired
     private MallService mallService;
+
+    @Autowired
+    private CacheManager cacheManager;
     /**
      * 获取商品分类
      * @return
@@ -39,9 +43,10 @@ public class CategoryController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(@RequestParam(required=false) String name,Model model) {
 
+        name =ConvertUtils.toString(name);
         List<GoodsCategory> lsCategory = new ArrayList<>();
         try {
-            lsCategory = mallService.findGoodsCategory(-1, StringHelper.toString(name),"");
+            lsCategory = mallService.findGoodsCategory(-1, name,"");
         }
         catch (Exception exp)
         {
@@ -53,6 +58,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(@RequestParam(required=false) Integer id, Model model) {
+        id = ConvertUtils.toInteger(id);
         GoodsCategory category =null;
         if(id>0) {
             category = mallService.getGoodsCategory(id);
@@ -62,23 +68,23 @@ public class CategoryController {
             category.setId(0);
         }
 
-        List<GoodsCategory> lsCategory = mallService.findGoodsCategory(0, "","");
-        if(lsCategory ==null && lsCategory.size() <=0) {
-            lsCategory = new ArrayList<>();
-        }
+        List<GoodsCategory> lsCategory = cacheManager.findGoodsCategoryByParent();
+
         model.addAttribute("parentCate", lsCategory);
         model.addAttribute("category", category);
         return "goods/category/create";
     }
 
-    @RequestMapping(value="/save", method=RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request)
+    @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String save(Integer id,String name,Integer sortindex,Integer parentId,String img,String description)
     {
-        Integer id = StringHelper.toInteger(request.getParameter("id"),0);
-        String name = StringHelper.toString(request.getParameter("name"));
-        Integer sortindex = StringHelper.toInteger(request.getParameter("sortindex"),0);
-        Integer parentId = StringHelper.toInteger(request.getParameter("parentid"),0);
-        String img = StringHelper.toString(request.getParameter("img"));
+        id = ConvertUtils.toInteger(id);
+        name =ConvertUtils.toString(name);
+        sortindex = ConvertUtils.toInteger(sortindex);
+        parentId = ConvertUtils.toInteger(parentId);
+        img = ConvertUtils.toString(img);
+        description = ConvertUtils.toString(description);
 
         GoodsCategory category =  null;
         if(id>0) {
@@ -91,55 +97,69 @@ public class CategoryController {
         category.setName(name);
         category.setParentId(parentId);
         category.setSortIndex(sortindex);
+        category.setDescription(description);
 
         try {
             mallService.saveGoodsCategory(category);
         }
         catch (IllegalArgumentException exp)
         {
-            return AjaxUtil.remind(exp.getMessage());
+            return AjaxUtil.alert(exp.getMessage());
         }
         catch (Exception exp)
         {
             //这里没有写进文件
             Constants.logger.error(Exceptions.getStackTraceAsString(exp));
-            return AjaxUtil.remind("系统或网络错误，请稍候再试。");
+            return AjaxUtil.alert("系统或网络错误，请稍候再试。");
         }
 
-        return AjaxUtil.reload("保存宝贝分类成功");
+        return AjaxUtil.goUrl("/goods/category","保存宝贝分类成功");
     }
 
     @RequestMapping(value="/select", method=RequestMethod.GET,produces="text/html;charset=UTF-8")
     @ResponseBody
-    public String select(@RequestParam(required=false) String parentid,
+    public String select(@RequestParam(required=false) Integer parentid,
                                @RequestParam(required=false) String subid)
     {
-        Integer pid = StringHelper.toInteger(parentid,0);
-        List<GoodsCategory> lsCate =null;
-        if(pid >0 ) {
-            lsCate = mallService.findGoodsCategory(StringHelper.toInteger(parentid,0), "", "");
-        }
-        if(lsCate == null)
-            lsCate = new ArrayList<>();
+        parentid = ConvertUtils.toInteger(parentid);
+
+        List<GoodsCategory> lsCate = cacheManager.findGoodsCategoryByParentId(parentid);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<select class=\"form-control\" name=\"subid\">");
+        //sb.append("<select class=\"form-control selCate\" name=\"subid\">");
         sb.append("<option value=\"\">请选择</option>");
         for (GoodsCategory cate:lsCate
              ) {
             String selected = "";
-            if(StringHelper.toInteger(subid,0) == cate.getId())
+            if(ConvertUtils.toString(subid).equals(cate.getCode()))
             {
                 selected = " selected=\"selected\"";
             }
             sb.append("<option value=\""+ cate.getCode() +"\" "+ selected +">"+ cate.getName() +"</option>");
         }
-        sb.append("</select>");
-
-        //ModelAndView mav = new ModelAndView();//实例化一个VIew的ModelAndView实例
-
-       // mav.addObject(sb.toString());//添加一个带名的model对象
 
        return sb.toString();
+    }
+
+    @RequestMapping(value="/del", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String delete(Integer id)
+    {
+        id = ConvertUtils.toInteger(id);
+        try {
+            mallService.deleteGoodsCategory(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            return AjaxUtil.alert(exp.getMessage());
+        }
+        catch (Exception exp)
+        {
+            //这里没有写进文件
+            Constants.logger.error(Exceptions.getStackTraceAsString(exp));
+            return AjaxUtil.alert("系统或网络错误，请稍候再试。");
+        }
+
+        return AjaxUtil.reload("删除分类成功");
     }
 }

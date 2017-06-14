@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="minimalize-styl-2">
+    <div class="input-group col-sm-6 pull-left">
+        <input type="text" placeholder="请输入泥料名称" value="" class="input-sm form-control" name="q" id="input_name">
+        <span class="input-group-btn">
+                <button type="bottom" class="btn btn-sm btn-warning" id="searchClick" data-load="loadMeterial"> 搜索</button>
+            </span>
+    </div>
+</div>
+
+<div class="ibox-content">
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="loadMeterial">
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2" class="footable-visible">
+                    <div class="page">
+                        <button type="bottom" class="btn btn-sm btn-primary" id="okClick"> 确定</button>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        var loadData = function (parentEl) {
+            var name = $("#input_name").val();
+            var url = "/goods/material/ajaxload?ids=[[${materialIds}]]&q="+name;
+            JQAjax.load(parentEl, url);
+        }
+
+        $("#searchClick").click(function () {
+            loadData($(this));
+        });
+
+        loadData($("#searchClick"));
+
+        $("#okClick").click(function () {
+            var materialid="";
+            var materialname="";
+            $(".checkMaterial").each(function () {
+                if ($(this).is(':checked')) {
+                    var selValue = $(this).val().split("#");
+                    materialid += "," + selValue[0];
+                    materialname += "、"+selValue[1];
+                }
+            });
+            materialid = materialid.substring(1);
+            materialname = materialname.substring(1);
+            $("#input_materialId").val(materialid);
+            $("#input_materialName").val(materialname);
+            layer.closeAll();
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -23,9 +23,12 @@ public class GoodsMaterial implements Serializable{
 
     private String name;
 
+    ///材质类型{0:泥料,1:术语,2:..}
+    private Integer typeid;
+
     private String images;
 
-    private String desc;
+    private String description;
 
     private Integer status;
 

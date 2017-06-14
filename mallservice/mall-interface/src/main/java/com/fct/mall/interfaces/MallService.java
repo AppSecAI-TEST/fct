@@ -1,6 +1,7 @@
 package com.fct.mall.interfaces;
 
 import com.fct.mall.data.entity.*;
+import org.hibernate.criterion.Order;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
@@ -11,7 +12,8 @@ import java.util.List;
  */
 public interface MallService {
 
-    PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
+    PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId,Integer materialId,
+                                  Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
                                   Integer pageIndex, Integer pageSize);
 
     Goods getGoods(Integer id);
@@ -71,30 +73,23 @@ public interface MallService {
 
     OrderReceiver getOrderReceiver(String orderId);
 
-    void delayExpiresTime(String orderId, Integer day, Integer operatorId);
+    void delayExpiresTime(String orderId, Integer hour, Integer operatorId);
 
     void delayFinishTime(String orderId, Integer day, Integer operatorId);
 
     void orderPaySuccess(String orderId, String payOrderId, String payPlatform, Integer payStatus, String payTime);
 
-    void createOrderRefund(Integer memberId, String orderId, Integer goodsId, Integer goodsSpecId, Integer isReceive,
-                           Integer isRefundMoney, Integer refundMoneyType, String description, String images);
+    void createOrderRefund(Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
+                           Integer serviceType, Integer refundMethod, String refundReason, String description, String images);
 
-    void closeOrderRefund(Integer refundId, Integer memberId, String description, String images);
-
-    void agreeApplyRefund(Integer refundId, Integer refundMoneyType, String description, String images, Integer operatorId);
-
-    void refuseApplyRefund(Integer refundId, String description, String images, Integer operatorId);
-
-    void agreeRefund(Integer refundId, Integer refundMoneyType, String description, String images, Integer operatorId);
-
-    void refundDeliverByMember(Integer refundId, Integer memberId, String description, String images);
-
-    void refundDeliverByAdmin(Integer refundId, String description, String images,  Integer operatorId);
+    void handleOrderRefund(String action,Integer memberId,Integer refundId, Integer refundMethod,
+                      String description, String images, Integer operatorId);
 
     OrderRefund getOrderRefund(Integer refundId);
 
-    PageResponse<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
+    OrderRefund getOrderRefundByOrderGoodsId(Integer memberId,String orderId,Integer orderGoodId);
+
+    PageResponse<OrderRefundDTO> findOrderRefund(String orderId,String goodsName, Integer orderGoodsId,Integer memberId,Integer status,String beginTime,
                                       String endTime,Integer pageIndex,Integer pageSize);
 
     void refundSuccess (Integer refundId, String description);
@@ -111,5 +106,7 @@ public interface MallService {
 
     void updateMaterialStatus(Integer id);
 
-    PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize);
+    void deleteGoodsMaterial(Integer id);
+
+    PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize);
 }

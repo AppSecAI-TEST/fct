@@ -1,12 +1,11 @@
 package com.fct.mall.service;
 
-import com.fct.common.logger.LogService;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.interfaces.MallService;
+import com.fct.mall.interfaces.OrderRefundDTO;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.mall.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -48,9 +47,11 @@ public class MallServiceImpl implements MallService {
     @Autowired
     private ShoppingCartManager shoppingCartManager;
 
-    public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer status,
+    public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId,Integer materialId,
+                                         Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
                                          Integer pageIndex, Integer pageSize) {
-        return goodsManager.find(name, categoryCode, gradeId, status, pageIndex, pageSize);
+        return goodsManager.find(name, categoryCode, gradeId, materialId,artistId,minVolume,maxVolume,status,
+                pageIndex, pageSize);
     }
 
     public Goods getGoods(Integer id) {
@@ -150,7 +151,8 @@ public class MallServiceImpl implements MallService {
                             Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,
                             String endTime,Integer pageIndex, Integer pageSize)
     {
-        return null;
+        return ordersManager.findAll(memberId,cellPhone,orderId,shopId,goodsName,status,payPlatform,payOrderId,
+                timeType,beginTime,endTime,pageIndex,pageSize);
     }
 
     public Orders getOrders(String orderId)
@@ -188,9 +190,9 @@ public class MallServiceImpl implements MallService {
         return orderReceiverManager.findByOrderId(orderId);
     }
 
-    public void delayExpiresTime(String orderId, Integer day, Integer operatorId)
+    public void delayExpiresTime(String orderId, Integer hour, Integer operatorId)
     {
-        ordersManager.delayExpiresTime(orderId,day,operatorId);
+        ordersManager.delayExpiresTime(orderId,hour,operatorId);
     }
 
     public void delayFinishTime(String orderId, Integer day, Integer operatorId)
@@ -203,41 +205,35 @@ public class MallServiceImpl implements MallService {
         ordersManager.paySuccess(orderId,payOrderId,payPlatform,payStatus,payTime);
     }
 
-    public void createOrderRefund(Integer memberId, String orderId, Integer goodsId, Integer goodsSpecId, Integer isReceive,
-                                  Integer isRefundMoney, Integer refundMoneyType, String description, String images)
+    public void createOrderRefund(Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
+                                  Integer serviceType, Integer refundMethod, String refundReason, String description, String images)
     {
-        orderRefundManager.apply(memberId,orderId,goodsId,goodsSpecId,isReceive,isRefundMoney,
-                refundMoneyType,description,images);
+        orderRefundManager.apply(memberId,orderId,orderGoodsId,isReceived,serviceType,
+                refundMethod,refundReason,description,images);
     }
 
-    public void closeOrderRefund(Integer refundId, Integer memberId, String description, String images)
+    public void handleOrderRefund(String action,Integer memberId,Integer refundId, Integer refundMethod,
+                                  String description, String images, Integer operatorId)
     {
-        orderRefundManager.close(refundId,memberId,description,images);
-    }
+        switch (action)
+        {
+            case "close":
+                orderRefundManager.close(refundId,memberId,description,images);
+                break;
+            case "accept":
+                orderRefundManager.agreeApply(refundId,refundMethod,description,images,operatorId);
+                break;
+            case "agree":
+                orderRefundManager.agreeRefund(refundId,refundMethod,description,images,operatorId);
+                break;
+            case "refuse":
+                orderRefundManager.refuseApply(refundId,description,images,operatorId);
+                break;
+            case "express":
+                orderRefundManager.expressByMember(refundId,memberId,description,images);
+                break;
+        }
 
-    public void agreeApplyRefund(Integer refundId, Integer refundMoneyType, String description, String images, Integer operatorId)
-    {
-        orderRefundManager.agreeApply(refundId,refundMoneyType,description,images,operatorId);
-    }
-
-    public void refuseApplyRefund(Integer refundId, String description, String images, Integer operatorId)
-    {
-        orderRefundManager.refuseApply(refundId,description,images,operatorId);
-    }
-
-    public void agreeRefund(Integer refundId, Integer refundMoneyType, String description, String images, Integer operatorId)
-    {
-        orderRefundManager.agreeRefund(refundId,refundMoneyType,description,images,operatorId);
-    }
-
-    public void refundDeliverByMember(Integer refundId, Integer memberId, String description, String images)
-    {
-        orderRefundManager.expressByMember(refundId,memberId,description,images);
-    }
-
-    public void refundDeliverByAdmin(Integer refundId, String description, String images,  Integer operatorId)
-    {
-        orderRefundManager.expressByAdmin(refundId,description,images,operatorId);
     }
 
     public OrderRefund getOrderRefund(Integer refundId)
@@ -245,10 +241,15 @@ public class MallServiceImpl implements MallService {
         return orderRefundManager.findById(refundId);
     }
 
-    public PageResponse<OrderRefund> findOrderRefund(String orderId,Integer goodsId,Integer memberId,Integer status,String beginTime,
-                                      String endTime,Integer pageIndex,Integer pageSize)
+    public OrderRefund getOrderRefundByOrderGoodsId(Integer memberId,String orderId,Integer orderGoodId)
     {
-        return orderRefundManager.findAll(orderId,goodsId,memberId,status,beginTime,endTime,pageIndex,pageSize);
+        return orderRefundManager.findByOrderGoodsId(memberId,orderId,orderGoodId);
+    }
+
+    public PageResponse<OrderRefundDTO> findOrderRefund(String orderId, String goodsName, Integer orderGoodsId, Integer memberId,
+                                                        Integer status, String beginTime,String endTime, Integer pageIndex, Integer pageSize)
+    {
+        return orderRefundManager.findAll(orderId,goodsName,orderGoodsId,memberId,status,beginTime,endTime,pageIndex,pageSize);
     }
 
     public void refundSuccess (Integer refundId, String description)
@@ -287,8 +288,13 @@ public class MallServiceImpl implements MallService {
         goodsMaterialManager.updateStatus(id);
     }
 
-    public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer status, Integer pageIndex, Integer pageSize)
+    public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize)
     {
-        return goodsMaterialManager.findAll(goodsId,name,status,pageIndex,pageSize);
+        return goodsMaterialManager.findAll(goodsId,name,typeId,status,pageIndex,pageSize);
+    }
+
+    public  void deleteGoodsMaterial(Integer id)
+    {
+        goodsMaterialManager.delete(id);
     }
 }

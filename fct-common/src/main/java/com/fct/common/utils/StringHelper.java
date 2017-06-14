@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -57,42 +58,5 @@ public class StringHelper {
             sb.append(base.charAt(number));
         }
         return sb.toString();
-    }
-
-    public static String toString(String value)
-    {
-        if(StringUtils.isEmpty(value) || value == null)
-        {
-            return "";
-        }
-        return value;
-    }
-
-    public static Integer toInteger(String value,Integer defaultValue)
-    {
-        if(StringUtils.isEmpty(value) || value == null)
-        {
-            return defaultValue;
-        }
-        return Integer.valueOf(value);
-    }
-
-    public static Integer toPageIndex(String value)
-    {
-        if(StringUtils.isEmpty(value) || value == null)
-        {
-            return 1;
-        }
-        return Integer.valueOf(value);
-    }
-
-
-    public static String[] toStringArray(String value)
-    {
-        if(StringUtils.isEmpty(value) || value == null)
-        {
-            return new String[]{};
-        }
-        return value.split(",");
     }
 }

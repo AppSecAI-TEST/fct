@@ -298,7 +298,7 @@ jQuery.extend( {
 		var proto, Ctor;
 
 		// Detect obvious negatives
-		// Use toString instead of jQuery.type to catch host objects
+		// Use toString instead of jQuery.type to cache host objects
 		if ( !obj || toString.call( obj ) !== "[object Object]" ) {
 			return false;
 		}
@@ -3565,7 +3565,7 @@ jQuery.extend( {
 									}
 								},
 
-								// Only normal processors (resolve) catch and reject exceptions
+								// Only normal processors (resolve) cache and reject exceptions
 								process = special ?
 									mightThrow :
 									function() {
@@ -8536,7 +8536,7 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 				// Apply converter (if not an equivalence)
 				if ( conv !== true ) {
 
-					// Unless errors are allowed to bubble, catch and return them
+					// Unless errors are allowed to bubble, cache and return them
 					if ( conv && s.throws ) {
 						response = conv( response );
 					} else {

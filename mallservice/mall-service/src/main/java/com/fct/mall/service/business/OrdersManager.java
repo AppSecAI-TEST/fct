@@ -7,6 +7,7 @@ import com.fct.finance.data.entity.MemberAccount;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
 import com.fct.mall.interfaces.PageResponse;
+import com.fct.message.interfaces.MessageService;
 import com.fct.message.model.MQPayRefund;
 import com.fct.message.model.MQPayTrade;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
@@ -46,6 +47,9 @@ public class OrdersManager {
 
     @Autowired
     private OrderRefundManager orderRefundManager;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     JdbcTemplate jt;
@@ -145,7 +149,7 @@ public class OrdersManager {
                 }
 
                 //有规格的价格、佣金、库存
-                price = gs.getPrice();
+                price = gs.getSalePrice();
                 commission = gs.getCommission();
                 stockCount = gs.getStockCount();
 
@@ -178,7 +182,7 @@ public class OrdersManager {
             g.setName(goods.getName());
             if(goods.getSpecification() != null) {
                 g.setSpecName(goods.getSpecification().get(0).getName());
-                g.setImage(goods.getSpecification().get(0).getImage());
+                g.setImg(goods.getSpecification().get(0).getImage());
             }
             //单价
             g.setPrice(price);
@@ -454,7 +458,7 @@ public class OrdersManager {
         String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,payPaltform,payOrderId,
                 timeType,beginTime,endTime,param);
 
-        String sql = "SELECT Count(0) FROM OrderRefund WHERE 1=1 "+condition;
+        String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
 
         sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
@@ -556,7 +560,7 @@ public class OrdersManager {
 
         order.setStatus(Constants.enumOrderStatus.close.getValue());
         order.setUpdateTime(new Date());
-        order.setExpiresTime(null);
+        order.setExpiresTime(new Date());
         order.setOperatorId(order.getOperatorId() + "cancel:"+operatorId+",");
         ordersRepository.saveAndFlush(order);
 
@@ -605,7 +609,7 @@ public class OrdersManager {
         order.setOperatorId(order.getOperatorId() + "deliver:"+operatorId+",");
         order.setUpdateTime(new Date());
         order.setFinishTime(DateUtils.addDay(new Date(),12));
-        ordersRepository.saveAndFlush(order);
+        ordersRepository.save(order);
 
         OrderReceiver or = orderReceiverManager.findByOrderId(orderId);
         or.setExpressNO(expressNo);
@@ -613,16 +617,19 @@ public class OrdersManager {
         or.setDeliveryTime(new Date());
         orderReceiverManager.save(or);
 
+        //发送短信提醒客户。
+        //APIClient.messageService.sendSMS();
+
     }
 
     ///延长订单取消时间
-    public void delayExpiresTime(String orderId, Integer day, Integer operatorId)
+    public void delayExpiresTime(String orderId, Integer hour, Integer operatorId)
     {
         if (StringUtils.isEmpty(orderId))
         {
             throw new IllegalArgumentException("订单号不能为空");
         }
-        if (day < 1)
+        if (hour < 1)
         {
             throw new IllegalArgumentException("增加天数不能少于1");
         }
@@ -637,7 +644,7 @@ public class OrdersManager {
             throw new IllegalArgumentException("订单不能执行此操作");
         }
         //延长订单取消时间
-        order.setExpiresTime(DateUtils.addDay(order.getExpiresTime(),day));
+        order.setExpiresTime(DateUtils.addHour(order.getExpiresTime(),hour));
         order.setOperatorId(order.getOperatorId() + "delayOrderCloseTime:"+operatorId+",");
         ordersRepository.saveAndFlush(order);
     }
@@ -757,6 +764,6 @@ public class OrdersManager {
         result.setTrade_type("buy");
         result.setTrade_status(tradeState); //200:success,1000:fail
         result.setDesc("");
-        APIClient.messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
+        messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
     }
 }

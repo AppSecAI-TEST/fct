@@ -12,6 +12,7 @@ display:none}
 .page_able:hover{border-color:#aaa;background-color:#eee;color:#333;text-decoration:none}
 .page_off{color:#ccc}
 .page{float:right;padding-right:10px;}
+.top_search{padding: 4px 12px;margin: 14px 5px 5px 20px;}
 
 /* iCheck plugin Square skin, green
 ----------------------------------- */

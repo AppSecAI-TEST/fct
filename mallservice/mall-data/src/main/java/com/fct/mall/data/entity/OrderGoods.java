@@ -42,7 +42,7 @@ public class OrderGoods implements Serializable{
     /// <summary>
     /// 图片
     /// </summary>
-    private String image;
+    private String img;
 
     /// <summary>
     /// 数量

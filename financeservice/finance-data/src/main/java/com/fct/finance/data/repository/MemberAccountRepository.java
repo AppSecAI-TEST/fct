@@ -20,7 +20,6 @@ public interface MemberAccountRepository extends JpaRepository<MemberAccount, In
      */
     MemberAccount findByMemberId(Integer memberId);
 
-    Page<MemberAccount> findAll(Specification<MemberAccount> spec, Pageable pageable);  //分页按条件查询
 
 }
 

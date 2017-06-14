@@ -13,8 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface OrderRefundRepository  extends JpaRepository<OrderRefund, Integer> {
 
     @Query(nativeQuery = true,
-            value = "select * from OrderRefund where memberid=?1 and orderId=?2 and goodsId=?3 and goodsSpecId=?4")
-    OrderRefund getRefund(Integer memberId, String orderId, Integer goodsId, Integer goodsSpecId);
-
-    Page<OrderRefund> findAll(Specification<OrderRefund> spec, Pageable pageable);  //分页按条件查询
+            value = "select * from OrderRefund where memberid=?1 and orderId=?2 and orderGoodsId=?3")
+    OrderRefund getRefund(Integer memberId, String orderId, Integer orderGoodsId);
 }

@@ -46,6 +46,10 @@ public class GoodsCategoryManager {
             //设置分类code
             code = parentCategory.getCode();
         }
+        else
+        {
+            code =",";
+        }
 
         //名字不能相同
         int count = 0;
@@ -93,7 +97,7 @@ public class GoodsCategoryManager {
         if (!StringUtils.isEmpty(categoryCode))
         {
             condition += " AND code like ?";
-            param.add(","+ categoryCode +",%");
+            param.add(categoryCode);
         }
         if (parentId>-1)
         {

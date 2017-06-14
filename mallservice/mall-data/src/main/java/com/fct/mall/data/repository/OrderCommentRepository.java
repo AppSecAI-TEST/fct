@@ -13,6 +13,4 @@ public interface OrderCommentRepository extends JpaRepository<OrderComment, Inte
 
     int countByOrderIdAndGoodsId(String orderId,Integer goodsId);
 
-    Page<OrderComment> findAll(Specification<OrderComment> spec, Pageable pageable);  //分页按条件查询
-
 }

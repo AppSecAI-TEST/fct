@@ -3,10 +3,7 @@ package com.fct.mall.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -32,25 +29,21 @@ public class OrderRefund implements Serializable{
     /// </summary>
     private String orderId;
 
-    /// <summary>
-    /// 商品Id
-    /// </summary>
-    private Integer goodsId;
-
-    /// <summary>
-    ///  商品规格
-    /// </summary>
-    private Integer goodsSpecId;
+    //订单商品Id
+    private Integer orderGoodsId;
 
     /// <summary>
     /// 是否收到货
     /// </summary>
-    private Integer isReceive;
+    private Integer isReceived;
 
     /// <summary>
-    /// 是否退款
+    /// 服务类型{0:仅退款,1:退货退款}
     /// </summary>
-    private Integer isRefundMoney;
+    private Integer serviceType;
+
+    //退款原因
+    private String refundResaon;
 
     /// <summary>
     /// 状态
@@ -60,7 +53,7 @@ public class OrderRefund implements Serializable{
     /// <summary>
     /// 退款方式
     /// </summary>
-    private Integer refundMoneyType;
+    private Integer refundMethod;
 
     /// <summary>
     /// 创建时间
@@ -75,6 +68,9 @@ public class OrderRefund implements Serializable{
     /// <summary>
     /// 修改时间
     /// </summary>
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<OrderRefundMessage> refundContent;
+    @Transient
+    private List<OrderRefundMessage> refundMessage;
+
+    @Transient
+    private OrderGoods orderGoods;
 }

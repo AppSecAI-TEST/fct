@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-订单详情</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'order_index',~{::.script})">
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5 th:text="'订单编号：'+${orders.orderId}"></h5>
+                    <div class="ibox-tools">
+                        <a class="close-link" th:href="@{/order}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content p-xl">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <address>
+                                <strong th:text="${orders.orderReceiver.province + orders.orderReceiver.city + orders.orderReceiver.region}"></strong><br>
+                                <th:block th:text="${orders.orderReceiver.address}"></th:block><br>
+                                <th:block th:text="'姓名：'+${orders.orderReceiver.name}">姓名：</th:block><br>
+                                <abbr title="电话" th:text="'电话：'+${orders.orderReceiver.phone}">电话：</abbr><br>
+                                <a href="javascript:;" class="btn btn-xs btn-outline btn-primary m-t" th:if="${orders.status eq 1}" id="upAddress">修改地址</a>
+                                <th:block th:if="${!#strings.isEmpty(orders.orderReceiver.expressNO)}">
+                                <th:block th:text="'物流公司：'+${orders.orderReceiver.expressPlatform}">物流公司：</th:block><br>
+                                <th:block th:text="'物流单号：'+${orders.orderReceiver.expressNO}">物流单号：</th:block>
+                                </th:block>
+                            </address>
+                        </div>
+
+                        <div class="col-sm-6 text-right">
+                            <h4>订单状态：</h4>
+                            <h4 class="text-navy" th:text="${cacheOrder.getStatusName(orders.status)}"></h4>
+                            <p>
+                                <span><strong>支付方式：</strong> <th:block th:text="${cacheOrder.getPayPlatformName(orders.payPlatform)}"></th:block></span>
+                            </p>
+                            <p>
+                                <span><strong>创建时间：</strong> <th:block th:text="${#dates.format(orders.createTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block></span>
+                            </p>
+                            <p th:if="${orders.status eq 1}">
+                                <span><strong>付款时间：</strong> <th:block th:text="${#dates.format(orders.payTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block></span>
+                            </p>
+                            <p th:if="${orders.orderReceiver.deliveryTime ne null}">
+                                <span><strong>发货时间：</strong> <th:block th:text="${#dates.format(orders.orderReceiver.deliveryTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block></span>
+                            </p>
+                            <p th:if="${orders.status eq 3}">
+                                <span><strong>完成时间：</strong> <th:block th:text="${#dates.format(orders.finishTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block></span>
+                            </p>
+                            <p th:if="${orders.status eq 4}">
+                                <span><strong>关闭时间：</strong> <th:block th:text="${#dates.format(orders.expiresTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive m-t">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th colspan="2" class="text-center">宝贝</th>
+                                <th>数量</th>
+                                <th>佣金</th>
+                                <th>单价</th>
+                                <th>促销价</th>
+                                <th>优惠券</th>
+                                <th>实付</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="goods:${orders.orderGoods}">
+                                <td>
+                                    <img th:src="${pub.thumbnailPath(goods.img)}" width="80" height="80">
+                                </td>
+                                <td th:text="${goods.name}"></td>
+                                <td th:text="${goods.buyCount}"></td>
+                                <td th:text="'¥'+${goods.commission}"></td>
+                                <td th:text="'¥'+${goods.price}"></td>
+                                <td th:text="'¥'+${goods.promotionPrice}"></td>
+                                <td th:text="'¥'+${goods.couponAmount}"></td>
+                                <td th:text="'¥'+${goods.payAmount}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /table-responsive -->
+
+                    <table class="table invoice-total">
+                        <tbody>
+                        <tr>
+                            <td><strong>积分：</strong></td>
+                            <td th:text="${orders.points}"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>余额：</strong></td>
+                            <td th:text="'¥'+${orders.accountAmount}"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>现金：</strong></td>
+                            <td th:text="'¥'+${orders.cashAmount}"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>总计</strong></td>
+                            <td th:text="'¥'+${orders.payAmount}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-right m-t">
+                        <th:block th:if="${orders.status eq 0}">
+                            <button class="btn btn-primary orderStatus" type="button" data-action="pay">确认付款</button>
+                            <button class="btn btn-primary delaytime" type="button" data-action="close">延长关闭时间</button>
+                            <button class="btn btn-danger orderStatus" type="button" data-action="close">关闭订单</button>
+                        </th:block>
+                        <button class="btn btn-primary" th:if="${orders.status eq 1}" id="deliveryClick">发货</button>
+                    </div>
+
+                    <div class="well m-t"><strong>注意：</strong> 请在24小时内完成付款，否则订单会自动取消。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript" class="script">
+    $(function () {
+        $(".orderStatus").click(function () {
+            var action = $(this).attr("data-action");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: "/order/upstatus?orderid=[[${orders.orderId}]]&memberid=[[${orders.memberId}]]&action="+action,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
+        });
+
+        $("#deliveryClick").click(function () {
+            JQbox.open({
+                title:"订单发货",
+                width: 400,
+                url: '/order/delivery?orderid=[[${orders.orderId}]]'
+            })
+        });
+        
+        $("#upAddress").click(function () {
+            JQbox.open({
+                title:"修改收货地址",
+                width: 500,
+                url: '/order/receiver?orderid=[[${orders.orderId}]]'
+            });
+        });
+        $(".orderStatus").click(function () {
+            var action = $(this).attr("data-action");
+            JQbox.prompt(this, {
+                title: '延长关闭时间',
+                url: "/order/delaytime?action="+ action +"&orderid=[[${orders.orderId}]]&password=",
+            });
+        });
+    })
+</script>
+</body>
+</html>

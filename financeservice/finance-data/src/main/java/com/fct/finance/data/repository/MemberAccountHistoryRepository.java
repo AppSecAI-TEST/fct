@@ -11,5 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface MemberAccountHistoryRepository extends JpaRepository<MemberAccountHistory, Long> {
 
-    Page<MemberAccountHistory> findAll(Specification<MemberAccountHistory> spec, Pageable pageable);  //分页按条件查询
+
 }

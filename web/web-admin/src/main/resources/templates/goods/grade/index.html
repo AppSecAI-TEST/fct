@@ -39,7 +39,7 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>名称</th>
+                                <th>图片/名称</th>
                                 <th>排序</th>
                                 <th>操作</th>
                             </tr>
@@ -47,7 +47,11 @@
                             <tbody>
                             <tr th:each="grade : ${lsGrade}">
                                 <td th:text="${grade.id}"></td>
-                                <td th:text="${grade.name}"></td>
+                                <td>
+                                    <img th:src="${pub.thumbnailPath(grade.img)}" class="loadimg" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${grade.name}"></span>
+                                </td>
                                 <td th:text="${grade.sortIndex}"></td>
                                 <td>
                                     <a href="javascript:;" class="btn btn-xs btn-outline btn-default update" th:attr="data-id=${grade.id}" >修改</a>
@@ -56,7 +60,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td colspan="12" class="footable-visible">
+                                <td colspan="4" class="footable-visible">
                                     <div class="pager pull-right">
 
                                     </div>
@@ -78,9 +82,6 @@
     $(function () {
         $(".update").click(function () {
             var id = $(this).attr("data-id");
-            if(!id){
-                id=0;
-            }
             JQbox.open({
                 title:"宝贝品级",
                 width: 500,

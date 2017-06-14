@@ -16,8 +16,4 @@ public interface GoodsCategoryRepository  extends JpaRepository<GoodsCategory, I
     @Query(nativeQuery = true,
             value = "UPDATE GoodsCategory set SortIndex=?2 WHERE Id=?1")
     void updateSortIndex(Integer id,Integer sortIndex);
-
-    @Query(nativeQuery = true,
-            value = "select max(id) from GoodsCategory")
-    Integer getMaxId();
 }

@@ -1,10 +1,12 @@
 package com.fct.web.admin.http.controller.goods;
 
 import com.fct.common.exceptions.Exceptions;
+import com.fct.common.utils.ConvertUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.common.utils.StringHelper;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
+import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/goods/grade")
-public class GradeController {
+public class GradeController extends BaseController {
 
     @Autowired
     private MallService mallService;
@@ -42,6 +44,7 @@ public class GradeController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(@RequestParam(required = false) Integer id, Model model) {
+        id = ConvertUtils.toInteger(id);
         GoodsGrade grade =null;
         if(id>0) {
             grade = mallService.getGoodsGrade(id);
@@ -54,13 +57,14 @@ public class GradeController {
         return "goods/grade/create";
     }
 
-    @RequestMapping(value="/save", method=RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request)
+    @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String save(Integer id,String name,Integer sortindex,String img)
     {
-        Integer id = StringHelper.toInteger(request.getParameter("id"),0);
-        String name = StringHelper.toString(request.getParameter("name"));
-        Integer sortIndex = StringHelper.toInteger(request.getParameter("sortIindex"),0);
-        String img = StringHelper.toString(request.getParameter("img"));
+        id = ConvertUtils.toInteger(id);
+        name = ConvertUtils.toString(name);
+        sortindex =ConvertUtils.toInteger(sortindex);
+        img = ConvertUtils.toString(img);
 
         GoodsGrade grade =  null;
         if(id>0) {
@@ -71,7 +75,7 @@ public class GradeController {
         }
         grade.setImg(img);
         grade.setName(name);
-        grade.setSortIndex(sortIndex);
+        grade.setSortIndex(sortindex);
 
         try {
             mallService.saveGoodsGrade(grade);

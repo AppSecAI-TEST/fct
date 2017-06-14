@@ -99,7 +99,16 @@ public class WithdrawRecordManager {
 
     public void updateStatus(Integer omsOperaterId,Integer id, Integer status,String desc)
     {
-        withdrawRecordRepository.updateStatus(omsOperaterId,id,status,desc,new Date());
+        String sql ="UPDATE WithdrawRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id=? AND Status!=1";
+
+        List<Object> param = new ArrayList<>();
+        param.add(status);
+        param.add(desc);
+        param.add(omsOperaterId);
+        param.add(new Date());
+        param.add(id);
+
+        jt.update(sql,param);
     }
 
     private String getCondition(Integer memberId, String cellPhone, Integer status,

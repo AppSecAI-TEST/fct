@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.DispatcherType;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -39,7 +42,12 @@ public class WebConfig extends WebMvcConfigurerAdapter{
     @Autowired
     private Environment environment;
 
-
+    @Bean
+    public HttpMessageConverter<String> responseBodyConverter() {
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(
+                Charset.forName("UTF-8"));
+        return converter;
+    }
 //    @Bean
 //    @Order(0)
 //    public RequestMappingHandlerMapping requestMappingHandlerMapping() {

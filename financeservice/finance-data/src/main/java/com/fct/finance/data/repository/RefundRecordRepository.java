@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -20,9 +21,10 @@ public interface RefundRecordRepository extends JpaRepository<RefundRecord, Inte
     List<RefundRecord> findByIds(String ids);
 
     //更新状态为退款成功，前提必须是财务确认的状态
+    @Modifying
     @Query(nativeQuery = true, value = "UPDATE RefundRecord SET Status=?3,NotifyData=?2 WHERE Id=?1 AND Status=1")
     void updatSuccess(Integer id, String notifyData, Integer upStatus);
 
-    Page<RefundRecord> findAll(Specification<RefundRecord> spec, Pageable pageable);  //分页按条件查询
+    RefundRecord findByTradeIdAndTradeType(String tradeId,String tradeType);
 
 }

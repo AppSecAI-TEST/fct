@@ -22,6 +22,9 @@
                         </div>
                         <div class="ibox-content">
                             <form class="form-horizontal m-t" id="submitForm">
+                                <input type="hidden" name="categorycode" id="categoryCode" th:value="${goods.categoryCode}" />
+                                <input type="hidden" name="content" id="editDesc"/>
+                                <input type="hidden" name="id" th:value="${goods.id}"/>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">名称：</label>
                                     <div class="col-sm-5 m-b">
@@ -42,28 +45,41 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <select class="form-control" name="parentid" id="selParentCate" data-load="selSubCate">
-                                                    <option value="0">请选择分类</option>
-                                                    <th:block th:each="cate : ${parentCate}">
-                                                        <option th:text="${cate.name}" th:value="${cate.id}" th:selected="${parentid eq cate.id} ? 'selected'"></option>
+                                                    <option value="">请选择分类</option>
+                                                    <th:block th:each="cate : ${categoryList}">
+                                                        <option th:text="${cate.name}" th:value="${cate.code}" th:selected="${#strings.contains(goods.categoryCode,cate.code)} ? 'selected'"></option>
                                                     </th:block>
                                                 </select>
                                             </div>
-                                            <div id="selSubCate" class="col-sm-6">
-                                                <select class="form-control" name="subid">
+                                            <div class="col-sm-6">
+                                                <select class="form-control selCate" name="subid" id="selSubCate">
                                                     <option value="0">请选择</option>
                                                 </select>
                                             </div>
+
                                         </div>
 
                                     </div>
                                 </div>
 
                                 <div class="form-group">
+                                    <label class="col-sm-2 control-label">品级：</label>
+                                    <div class="col-sm-2 m-b">
+                                        <select class="form-control" name="gradeId">
+                                            <option value="0">请选择分类</option>
+                                            <th:block th:each="grade : ${gradeList}">
+                                                <option th:text="${grade.name}" th:value="${grade.id}" th:selected="${grade.id eq goods.gradeId} ? 'selected'"></option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
                                     <label class="col-sm-2 control-label">合作艺人：</label>
-                                    <div class="col-sm-8 m-b">
-                                        <th:block th:each="cate : ${parentCate}">
+                                    <div class="col-sm-9 m-b">
+                                        <th:block th:each="cate : ${categoryList}">
                                             <label class="checkbox-inline i-checks">
-                                                <input type="checkbox" th:value="${cate.id}" th:text="'&nbsp;'+${cate.name}" />
+                                                <input type="checkbox" th:value="${cate.id}" name="artistId" th:text="'&nbsp;'+${cate.name}" th:checked="${#strings.contains(goods.ArtistIds,cate.id)} ? 'selected'" />
                                             </label>
                                         </th:block>
                                     </div>
@@ -71,8 +87,8 @@
 
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">图片：</label>
-                                    <div class="col-sm-8 m-b">
-                                        <input name="defaultImage" type="hidden" id="defaultImage" class="form-control" th:value="${goods.defaultImage}"  />
+                                    <div class="col-sm-9 m-b">
+                                        <input name="defaultImage" type="hidden" id="defaultImage" class="form-control" th:value="${goods.MultiImages}"  />
                                         <div id="dropDefaultImage" class="dropzone">
                                             <div class="dropzone-previews"></div>
                                         </div>
@@ -96,48 +112,147 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">默认规格</label>
-                                    <div class="col-sm-8 m-b">
-                                        <div class="row">
-                                            <div class="col-sm-3">市场价格：
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">¥</span>
-                                                    <input name="marketPrice" th:value="${goods.marketPrice}" type="text" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3">销售价格：
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">¥</span>
-                                                    <input name="salePrice" th:value="${goods.salePrice}" type="text" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">销售佣金：
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">¥</span>
-                                                    <input name="commission" th:value="${goods.commission}" type="text" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">库存：
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">件</span>
+                                    <label class="col-sm-2 control-label">规格：</label>
+                                    <div class="col-sm-9 m-b table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>规格名称</th>
+                                                <th>宝贝编号</th>
+                                                <th>市场价格</th>
+                                                <th>销售价格</th>
+                                                <th>销售佣金</th>
+                                                <th width="10%">库存</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="extend-template">
+                                            <tr>
+                                                <td>
+                                                    <input name="default_extname" type="text" class="form-control" disabled="disabled" value="默认规格" placeholder="宝贝规格名称">
+                                                </td>
+                                                <td>
+                                                    <input name="code" th:value="${goods.code}" type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="marketPrice" class="form-control" type="text" th:value="${goods.marketPrice}">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="salePrice" th:value="${goods.salePrice}" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="commission" th:value="${goods.commission}" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
                                                     <input name="stockCount" th:value="${goods.stockCount}" type="text" class="form-control" />
-                                                </div>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:;" class="btn btn-warning" id="add-extend">添加</a>
+                                                </td>
+                                            </tr>
+                                            <tr th:each="spec : ${goods.Specification}">
+                                                <td>
+                                                    <input name="ext_id" type="hidden" th:value="${spec.id}"/>
+                                                    <input name="ext_name" type="text" class="form-control" th:value="${spec.name}" placeholder="规格名称">
+                                                </td>
+                                                <td>
+                                                    <input name="ext_code" th:value="${spec.code}" type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_marketPrice" class="form-control" type="text" th:value="${spec.marketPrice}">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_salePrice" th:value="${spec.salePrice}" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_commission" th:value="${spec.commission}" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input name="ext_stockCount" th:value="${spec.stockCount}"type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:;" class="is-remove btn btn-default">删除</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <textarea class="hide" id="extModule">
+                                            <tr>
+                                                <td>
+                                                    <input name="ext_id" type="hidden" value="0"/>
+                                                    <input name="ext_name" type="text" class="form-control" value="" placeholder="规格名称">
+                                                </td>
+                                                <td>
+                                                    <input name="ext_code" value="" type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_marketPrice" class="form-control" type="text" value="">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_salePrice" value="" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">¥</span>
+                                                        <input name="ext_commission" value="" type="text" class="form-control" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input name="ext_stockCount" value="" type="text" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:;" class="is-remove btn btn-default">删除</a>
+                                                </td>
+                                            </tr>
+                                        </textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">容量：</label>
+                                    <div class="col-sm-4 m-b">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <input type="text" placeholder="最小容量" class="form-control" name="minVolume" th:value="${goods.minVolume}">
                                             </div>
-                                            <div class="col-sm-2">编码：
-                                                <input name="code" th:value="${goods.code}" type="text" class="form-control" />
+                                            <div class="col-md-4">
+                                                <input type="text" placeholder="最大容量" class="form-control" name="maxVolume" th:value="${goods.maxVolume}">
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
-
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">泥料：</label>
-                                    <div class="col-sm-2 m-b">
+                                    <label class="col-sm-2 control-label">材质：</label>
+                                    <div class="col-sm-3 m-b">
                                         <div class="input-group">
-                                            <input name="materialId" th:value="${goods.materialId}" readonly="readonly" type="text" class="form-control" />
+                                            <input name="materialId" th:value="${goods.materialId}" type="hidden" id="input_materialId" />
+                                            <input name="materialName" th:value="${materialName}" type="text" readonly="readonly" id="input_materialName" class="form-control" placeholder="选择材质" />
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default">选择</button>
+                                                <a href="javascript:;" class="btn btn-warning" id="selMaterial">选择</a>
                                             </span>
                                         </div>
                                     </div>
@@ -154,9 +269,9 @@
 
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">允许上架：</label>
-                                    <div class="col-sm-8 m-b">
+                                    <div class="col-sm-2 m-b">
                                         <label class="checkbox-inline i-checks">
-                                            <input type="checkbox" name="status" th:value="${goods.status}" th:checked="${goods.status eq 1} ? 'checked'" />
+                                            <input type="checkbox" name="status" th:value="1" th:checked="${goods.status eq 1} ? 'checked'" />
                                         </label>
                                     </div>
                                 </div>
@@ -164,19 +279,19 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">排序值：</label>
                                     <div class="col-sm-2 m-b">
-                                        <input name="sortindex" th:value="${goods.sortIndex}" type="text" class="form-control" />
+                                        <input name="sortIndex" th:value="${goods.sortIndex}" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">简单描述：</label>
-                                    <div class="col-sm-8 m-b">
-                                        <textarea name="intro" th:value="${goods.intro}" class="form-control"></textarea>
+                                    <div class="col-sm-9 m-b">
+                                        <textarea name="intro" th:text="${goods.intro}" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">详细介绍：</label>
-                                    <div class="col-sm-8 m-b">
-                                        <div class="summernote"></div>
+                                    <div class="col-sm-9 m-b">
+                                        <div class="summernote" th:utext="${goods.content}"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -195,32 +310,85 @@
         <script type="application/javascript" th:src="@{/static/js/plugins/summernote/summernote-zh-CN.js}" class="script"></script>
         <script type="application/javascript" class="script">
 
+            var defaultImg = [];
             $(function () {
 
                 $("#selParentCate").change(function () {
-                    var parentid=$(this).children('option:selected').val();//这就是selected的值
-                    var url ="/goods/category/select?parentid="+parentid+"&subid="+[[${subid}]];
-                    JQAjax.load($(this),url);
+                    loadCategory($(this),true);
                 });
 
-                $(".summernote").summernote({lang:"zh-CN"});
+                var loadCategory = function (parentEl,upValue) {
+                    var cateValue = parentEl.children('option:selected').val();
+                    if(cateValue!="") {
+                        var arr = cateValue.split(",");
+                        var url = "/goods/category/select?parentid=" + arr[1] + "&subid=[[${goods.categoryCode}]]";
+                        JQAjax.load(parentEl, url);
+                        if (upValue) {
+                            $("#categoryCode").val(cateValue);
+                        }
+                    }
+                };
+
+                loadCategory($("#selParentCate"));
+
+                $(".selCate").change(function () {
+                    var cateCode=$(this).children('option:selected').val();//这就是selected的值
+                    $("#categoryCode").val(cateCode);
+                });
+
+                $(".summernote").summernote({
+                    lang:"zh-CN",
+                    height: 400,
+                    focus: true,
+                    // 重写图片上传
+                    onImageUpload: function(files, editor, $editable) {
+                        editorUpload(files[0],editor,$editable);
+                    }
+                });
 
                 $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
 
+                $("#btnClick").click(function () {
+                    //取值
+                    var sHTML = $('.summernote').code();
+                    $("#editDesc").val(sHTML);
+                    JQAjax.post(this, {
+                        form:"submitForm",
+                        url: '/goods/save',
+                        wait:true
+                    });
+                });
+                $("#selMaterial").click(function () {
+                    JQbox.open({
+                        title:"选择材质",
+                        width: 500,
+                        url: "/goods/material/select?ids="+$("#input_materialId").val()
+                    });
+                });
 
             });
             webUploads($('#dropDefaultImage'), {
                 url: "/upload/image",
                 input: "defaultImage",
                 max: 5
-                //default_img: [{img_url: 'aaa', img_name: 'asdas.png'}]   //默认已经上传的图片
             });
 
             webUploads($('#dropVideoImg'), {
                 url: "/upload/image",
                 input: "videoImg",
                 max: 1
-                //default_img: [{img_url: 'aaa', img_name: 'asdas.png'}]   //默认已经上传的图片
+            });
+
+            /** 添加行 */
+            $('#add-extend').click(function() {
+                $('#extend-template').append($("#extModule").val());
+                $('.is-remove').on('click', function () {
+                    $(this).parent().parent().remove();
+                });
+            });
+            /** 删除行 */
+            $('.is-remove').on('click', function () {
+                $(this).parent().parent().remove();
             });
         </script>
 </body>

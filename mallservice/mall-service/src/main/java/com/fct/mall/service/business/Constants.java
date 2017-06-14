@@ -55,28 +55,22 @@ public class Constants {
         }
     }
 
-    public enum multiRefundStatus
+    public enum enumRefundStatus
     {
-        //默认无用
-        NORMAL_REFUND(0),
         //等待处理
-        WAIT_REFUND(1),
-        //同意退款
-        ACCEPT_REFUND(2),
-        //同意退换货
-        ACCEPT_REFUND_GOODS(3),
+        wait(0),
+        //接受申请退货退款
+        accept(1),
         //用户快递回公司
-        USER_EXPRESS_GOODS(4),
-        //公司重新发出快递
-        ADMIN_EXPRESS_GOODS(5),
-        //退款
-        REFUND_MONEY(6),
-        //退款
-        REFUND_MONEY_SUCCESS(7),
+        express(2),
+        //同意退款
+        agree(3),
+        //退款成功
+        success(4),
         //拒绝处理
-        REFUSE_REFUND(8),
+        refuse(5),
         //关闭退换货
-        CLOSE_REFUND(9);
+        close(6);
 
         private Integer value;
 
@@ -88,19 +82,19 @@ public class Constants {
             this.value = value;
         }
 
-        private multiRefundStatus(Integer value) {
+        private enumRefundStatus(Integer value) {
             this.value = value;
         }
     }
 
-    public enum refundMoneyTypes
+    public enum enumRefundMethod
     {
         //默认余额
-        NORMAL(0),
+        account(0),
         //原路返回
-        ONLINE(1),
+        return_original_road(1),
         //线下转账
-        OFFLINE(2);
+        offline(2);
 
         private Integer value;
 
@@ -112,7 +106,7 @@ public class Constants {
             this.value = value;
         }
 
-        private refundMoneyTypes(Integer value) {
+        private enumRefundMethod(Integer value) {
             this.value = value;
         }
     }

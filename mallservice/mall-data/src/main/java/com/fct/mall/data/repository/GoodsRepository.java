@@ -7,6 +7,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
+
 /**
  * Created by jon on 2017/5/16.
  */
@@ -15,10 +17,6 @@ public interface GoodsRepository extends JpaRepository<Goods, Integer> {
     @Query(nativeQuery = true,
             value = "select count(0) from goods where categoryCode like ?1")
     int countByCategory(String id);
-
-    @Query(nativeQuery = true,
-            value = "update goods set categoryCode=?1 where categoryCode like ?2")
-    void updateCategory(String newCode,String oldCode);
 
     int countByGradeId(Integer gradeId);
 
@@ -31,9 +29,7 @@ public interface GoodsRepository extends JpaRepository<Goods, Integer> {
     void updateStatus(Integer id,Integer status,String updateTime);
 
     @Query(nativeQuery = true,
-            value = "UPDATE Goods set IsDel=1, Status=-1,UpdateTime=?1 WHERE Id=?2")
-    void delete(String updateTime,Integer id);
-
-    PageImpl<Goods> findAll(Specification<Goods> spec, Pageable pageable);  //分页按条件查询
+            value = "UPDATE Goods set IsDel=1, Status=-1,UpdateTime=now() WHERE Id=?2")
+    void delete(Integer id);
 
 }

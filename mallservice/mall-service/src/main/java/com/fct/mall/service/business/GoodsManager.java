@@ -1,5 +1,6 @@
 package com.fct.mall.service.business;
 
+import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
@@ -11,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,9 +45,16 @@ public class GoodsManager {
 
     public Goods findById(Integer id)
     {
-        return goodsRepository.findOne(id);
+
+        Goods goods =  goodsRepository.findOne(id);
+        List<GoodsSpecification> lsSpec = goodsSpecificationManager.findByGoodsId(id);
+        if(lsSpec!=null) {
+            goods.setSpecification(lsSpec);
+        }
+        return goods;
     }
 
+    @Transactional
     public void save(Goods goods)
     {
         if (StringUtils.isEmpty(goods.getName()))
@@ -90,15 +99,28 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("合作艺人为空");
         }
-        if(goods.getMaterialId()<=0)
+        if(StringUtils.isEmpty(goods.getMaterialId()))
         {
             throw new IllegalArgumentException("材质为空");
         }
-        if(goods.getGradeId()<=0)
+        if(goods.getMaxVolume() == null && goods.getMaxVolume()<=0)
+        {
+            throw new IllegalArgumentException("最大容量为空");
+        }
+        if(goods.getMinVolume() == null && goods.getMinVolume()<=0)
+        {
+            throw new IllegalArgumentException("最小容量为空");
+        }
+        if(goods.getMinVolume()>goods.getMaxVolume())
+        {
+            throw new IllegalArgumentException("最小容量值不能超过最大容量");
+        }
+        if(goods.getGradeId() == null || goods.getGradeId()<=0)
         {
             throw new IllegalArgumentException("品级为空");
         }
 
+        List<Integer> lsSpecId = new ArrayList<>();
         //验证多规格
         if (goods.getSpecification() != null && goods.getSpecification().size() > 0)
         {
@@ -107,11 +129,15 @@ public class GoodsManager {
                 {
                     throw new IllegalArgumentException("规格名称为空");
                 }
-                if (spec.getPrice().doubleValue() <= 0)
+                if (spec.getMarketPrice().doubleValue() <= 0)
                 {
-                    throw new IllegalArgumentException("规格价格不合法");
+                    throw new IllegalArgumentException("规格市场价不合法");
                 }
-                if (spec.getCommission().doubleValue() < 0 || spec.getCommission().doubleValue() < spec.getPrice().doubleValue())
+                if (spec.getSalePrice().doubleValue() <= 0)
+                {
+                    throw new IllegalArgumentException("规格销售价不合法");
+                }
+                if (spec.getCommission().doubleValue() < 0 || spec.getCommission().doubleValue() > spec.getSalePrice().doubleValue())
                 {
                     throw new IllegalArgumentException("规格佣金不合法");
                 }
@@ -119,27 +145,44 @@ public class GoodsManager {
                 {
                     throw new IllegalArgumentException("规格库存有误");
                 }
+                if(spec.getId() != null && spec.getId()>0) {
+                    lsSpecId.add(spec.getId());
+                }
             }
         }
         //goods.setCategoryCode("catecode+cateid,");
-        goods.setStatus(0);
-        goods.setIsDel(0);
+        //艺人存入,1,2,10,
         goods.setUpdateTime(new Date());
-        if (goods.getId() > 0)
+        Boolean newadd = false;
+        if (goods.getId() ==null || goods.getId() == 0)
         {
-            goodsRepository.saveAndFlush(goods);
-        }
-        else
-        {
+            newadd = true;
+            goods.setIsDel(0);
+            goods.setSellCount(0);
+            goods.setCommentScore(new Float(5));
+            goods.setCommentCount(0);
+            goods.setPayCount(0);
+            goods.setViewCount(100);
+
             goods.setCreateTime(new Date());
-            goodsRepository.save(goods);
+
         }
+        goodsRepository.save(goods);
+
+        //移除不必要的规格（隐藏，规避已有交易过的宝贝）。
+        if(!newadd)
+        {
+            goodsSpecificationManager.delete(goods.getId(), lsSpecId);
+        }
+
         //保存多规格
         if (goods.getSpecification() != null && goods.getSpecification().size() > 0)
         {
             for (GoodsSpecification spec:goods.getSpecification()
                     ) {
                 spec.setGoodsId(goods.getId());
+                spec.setSortIndex(0);
+                spec.setIsdel(0);
                 goodsSpecificationManager.save(spec);
             }
         }
@@ -153,7 +196,8 @@ public class GoodsManager {
     }
 
     //查询列表 categorycode= catecode+cateid,
-    public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId, Integer status,
+    public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId,Integer materialId,
+                                    Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
                                     Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
@@ -161,7 +205,7 @@ public class GoodsManager {
         String table="Goods";
         String field ="*";
         String orderBy = "sortIndex asc";
-        String condition= getContion(name,categoryCode,gradeId,status,param);
+        String condition= getContion(name,categoryCode,gradeId,materialId,artistId,minVolume,maxVolume,status,param);
 
         String sql = "SELECT Count(0) FROM Goods WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
@@ -186,10 +230,11 @@ public class GoodsManager {
         return p;
     }
 
-    private String getContion(String name, String categoryCode, Integer gradeId, Integer status,
-                              List<Object> param)
+    private String getContion(String name, String categoryCode, Integer gradeId, Integer materialId,
+                              Integer artistId,Integer minVolume,Integer maxVolume,
+                              Integer status,List<Object> param)
     {
-        String condition="";
+        String condition=" AND isDel=0 ";
         if (!StringUtils.isEmpty(name)) {
             condition += " AND name like ?";
             param.add("%"+ name +"%");
@@ -197,7 +242,7 @@ public class GoodsManager {
         if(!StringUtils.isEmpty(categoryCode))
         {
             condition += " AND categoryCode like ?";
-            param.add(","+ categoryCode +",%");
+            param.add(categoryCode);
         }
         if(status>-1)
         {
@@ -206,6 +251,20 @@ public class GoodsManager {
 
         if (gradeId>0) {
             condition += " AND gradeId="+gradeId;
+        }
+        if (materialId>0) {
+            condition += " AND materialId like ?";
+            param.add(","+ materialId +",");
+        }
+        if (minVolume>0) {
+            condition += " AND minVolume="+minVolume;
+        }
+        if (maxVolume>0) {
+            condition += " AND maxVolume="+maxVolume;
+        }
+        if (artistId>0) {
+            condition += " AND artistId like ?";
+            param.add(","+artistId +",");
         }
         return condition;
     }
@@ -287,6 +346,9 @@ public class GoodsManager {
             throw new IllegalArgumentException("商品不存在");
         }
 
-        goodsRepository.delete(new Date().toString(),id);
+        Goods g = goodsRepository.findOne(id);
+        g.setIsDel(1);
+        g.setUpdateTime(new Date());
+        goodsRepository.save(g);
     }
 }

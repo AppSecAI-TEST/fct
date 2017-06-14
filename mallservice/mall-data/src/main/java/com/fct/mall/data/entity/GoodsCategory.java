@@ -38,6 +38,8 @@ public class GoodsCategory implements Serializable{
     /// </summary>
     private String Code;
 
+    private String description;
+
     /// <summary>
     /// 排序值
     /// </summary>

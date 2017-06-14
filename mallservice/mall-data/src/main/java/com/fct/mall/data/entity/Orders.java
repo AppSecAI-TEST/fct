@@ -89,13 +89,13 @@ public class Orders implements Serializable{
     /// <summary>
     /// 订单产品
     /// </summary>
-    @OneToMany(cascade = CascadeType.ALL)
+    @Transient
     private List<OrderGoods> orderGoods;
 
     /// <summary>
     /// 订单收货信息
     /// </summary>
-    @OneToOne(cascade = CascadeType.ALL)
+    @Transient
     private OrderReceiver orderReceiver;
 
     //结算Id

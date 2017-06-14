@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-订单管理管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},${tabname},~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+        <div class="row">
+            <div class="col-sm-12">
+                <form action="" class="form-horizontal" method="get">
+                    <div class="form-group">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <select class="col-sm-4 form-control" name="selkey">
+                                        <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">订单号</option>
+                                        <option value="cellphone" th:selected="${query.selkey eq 'cellphone'} ? 'selected'">手机号码</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>宝贝名称：</label>
+                                    <input type="text" name="goodsname" class="form-control" th:value="${query.goodsname}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>店铺编号：</label>
+                                    <input type="text" name="shopid" class="form-control" th:value="${query.shopid}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <select class="form-control inline" name="status">
+                                        <option value="">选择状态</option>
+                                        <th:block th:each="status:${cacheOrder.getStatus()}">
+                                            <option th:value="${status.key}" th:text="${status.value}" th:selected="${query.status eq status.key} ? 'selected'"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0px;">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <select class="col-sm-4 form-control" name="payplatform">
+                                        <option value="">支付平台</option>
+                                        <th:block th:each="pay:${cacheOrder.getPayPlatform()}">
+                                            <option th:value="${pay.code}" th:text="${pay.name}" th:selected="${query.payplatform eq pay.code} ? 'selected'"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input name="payorderid" type="text" th:value="${query.payorderid}" class="form-control" placeholder="支付单号"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <select class="form-control" name="timetype">
+                                        <option value="0">创建时间</option>
+                                        <option th:value="1">支付时间</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th class="text-center" colspan="2">宝贝</th>
+                                <th>单价</th>
+                                <th>促销价</th>
+                                <th>优惠券</th>
+                                <th>数量</th>
+                                <th>实付款</th>
+                                <th>交易状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <th:block th:each="order : ${lsOrder}">
+                                <tr>
+                                    <td colspan="7">
+                                        <th:block th:if="${order.shopId gt 0}">
+                                            <span></span>
+                                            <span th:text="'店铺编号：'+${order.shopId}+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'"></span>
+                                        </th:block>
+                                        <span></span>
+                                        <span th:text="'订单号：'+${order.orderId}"></span>
+                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <span th:text="'下单时间：'+${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                        <th:block th:if="${!#strings.isEmpty(order.expiresTime)}">
+                                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <span th:text="'过期时间：'+${#dates.format(order.expiresTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                        </th:block>
+                                    </td>
+                                    <td colspan="2">&nbsp;</td>
+                                </tr>
+                                <tr th:each="goods:${cacheOrder.findOrderGoods(order.orderId)}" style="background-color: #FFFFFF;">
+                                        <td>
+                                            <a href="javascript:;">
+                                                <img th:src="${pub.thumbnailPath(goods.img)}" width="80" height="80">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:;" th:text="${goods.name}"></a>
+                                            <br/>
+                                            <span th:text="${goods.specName}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="'¥'+${goods.price}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="'¥'+${goods.promotionPrice}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="'¥'+${goods.couponAmount}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="'¥'+${goods.buyCount}"></span>
+                                        </td>
+                                    <th:block th:if="${goodsStat.index eq 0}">
+                                        <td>
+                                            <span th:text="'¥'+${order.payAmount}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:text="${cacheOrder.getStatusName(order.status)}"></span><br>
+                                        </td>
+                                        <td rowspan="0">
+                                            <a th:href="@{/order/detail(orderid=${order.orderId})}" class="btn btn-xs btn-outline btn-default" >查看</a>
+                                            <th:block th:if="${order.status eq 0}">
+                                                <a href="javascript:;" class="btn btn-xs btn-outline btn-default delaytime" th:attr="data-id=${order.orderId}">延长关闭时间</a>
+                                                <a href="javascript:;" class="btn btn-xs btn-outline btn-default orderStatus" th:attr="data-id=${order.orderId},data-memberid=${order.memberId}" data-action="pay">确认付款</a>
+                                                <a href="javascript:;" class="btn btn-xs btn-outline btn-danger orderStatus" th:attr="data-id=${order.orderId},data-memberid=${order.memberId}"  data-action="close">关闭</a>
+                                            </th:block>
+                                            <a href="javascript:;" class="btn btn-xs btn-outline btn-default delivery" th:if="${order.status eq 1}" th:attr="data-id=${order.orderId}">发货</a>
+                                        </td>
+                                    </th:block>
+                                    <th:block th:if="${goodsStat.index gt 0}">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </th:block>
+                                </tr>
+                            </th:block>
+
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="9" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".orderStatus").click(function () {
+            var action = $(this).attr("data-action");
+            var id = $(this).attr("data-id");
+            var memberid = $(this).attr("data-memberid");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: "/order/upstatus?orderid="+id+"&mebmerid="+ memberid +"&action="+action,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
+        });
+
+        $(".delivery").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.open({
+                title:"订单发货",
+                width: 400,
+                url: '/order/delivery?orderid='+id
+            });
+        });
+        
+        $(".delaytime").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.prompt(this, {
+                title: '延长关闭时间',
+                url: '/order/delaytime?action=close&orderid=' + id + '&password=',
+            });
+        })
+    })
+</script>
+</body>
+</html>

@@ -26,13 +26,8 @@ public class OrderGoodsManager {
         return orderGoodsRepository.findByOrderId(orderId);
     }
 
-    public OrderGoods findByOrderIdAndGoods(String orderId, Integer goodsId, Integer goodsSpecId)
+    public OrderGoods findById(Integer id)
     {
-        return orderGoodsRepository.findByOrderIdAndGoodsIdAndGoodsSpecId(orderId,goodsId,goodsSpecId);
-    }
-
-    public List<String> getOrderId(String name)
-    {
-        return orderGoodsRepository.findByLikeName(name);
+        return orderGoodsRepository.findOne(id);
     }
 }

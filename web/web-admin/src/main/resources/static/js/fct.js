@@ -225,17 +225,19 @@ var JQbox = {
             height: options.height || 'auto'
         });
     },
-    confirm: function (message, surecall, cancelcall) {
+    confirm: function (ele,options) {
         //询问框
-        layer.confirm(message, {
+        layer.confirm(options.msg, {
             btn: ['确定', '取消'], //按钮
             title:'提示'
-        }, function (index) {
-            layer.close(index);
-            surecall.call(this);
-        }, function (index) {
-            layer.close(index);
-            cancelcall.call(this);
+        }, function () {
+            layer.close();
+            JQAjax.post(ele, {
+                url: options.url,
+            });
+        }, function () {
+            layer.close();
+            //cancelcall.call(this);
         });
     },
     prompt:function(ele,options){
@@ -255,6 +257,7 @@ var JQbox = {
       init: function (ele,options) {
           var input = options.input;
           var url = options.url;
+          var path = options.path;
           var max = options.max || 1;
           var default_img = options.default_img || '';
           var imgs = [];
@@ -269,6 +272,7 @@ var JQbox = {
               '<div class=\"dz-error-mark\"><span>✘</span></div>\n ' +
               ' <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n' +
               '</div>';
+          var imgwidth = "@300w.jpg";
           $(ele).dropzone({
               url:url,
               autoProcessQueue:true,
@@ -276,11 +280,24 @@ var JQbox = {
               maxFiles:max,
               init:function(){
                   var myDropzone=this;
-
+                  //如果为单个图片的展现，1.jpg,2.jpg
+                  if(!default_img || default_img==''){
+                      default_img =[];
+                      var inputValue = $("#"+input).val();
+                      if(inputValue!="") {
+                          imgs = inputValue.split(",");
+                          for (var i = 0; i < imgs.length; i++) {
+                              var json = {img_url: "" + path + imgs[i] + "", img_name: ""};
+                              default_img.push(json);
+                          }
+                      }
+                  }
                   for(var i=0;i<default_img.length;i++){
                       //{img_url:,img_name:}
-                    myDropzone.emit("addedfile", default_img[i]);
-                    myDropzone.emit("thumbnail", default_img[i], default_img[i].img_url);
+                      if(default_img[i].img_url !=''){
+                          myDropzone.emit("addedfile", default_img[i]);
+                          myDropzone.emit("thumbnail", default_img[i], default_img[i].img_url+imgwidth);
+                      }
                   }
 
                   myDropzone.on("maxfilesexceeded", function(file) {
@@ -299,7 +316,7 @@ var JQbox = {
                         imgs.push(response.data.url);
                         $("#"+input).val(imgs.join());
                         // If the image is already a thumbnail:
-                        this.emit('thumbnail', file, response.data.url);
+                        this.emit('thumbnail', file, path+response.data.url+imgwidth);
                     }
               },
               error: function(file, errorMessage, xhr) {
@@ -317,7 +334,8 @@ var JQbox = {
             url: '',
             input: '',
             max: 1,
-            default_img: ''
+            default_img: '',
+            path:'http://fct-nick.img-cn-shanghai.aliyuncs.com',
 
         };
         var options = $.extend({}, defaults, opt);
@@ -331,4 +349,41 @@ var JQbox = {
         });
     };
 
+//图片上传
+var editorUpload = function(file, editor, $editable){
+
+    var filename = false;
+    try{
+        filename = file['name'];
+    } catch(e){
+        filename = false;
+    }
+    if(!filename){
+        $(".note-alarm").remove();
+    }
+
+    //以上防止在图片在编辑器内拖拽引发第二次上传导致的提示错误
+    data = new FormData();
+    data.append("file", file);
+    data.append("key",filename); //唯一性参数
+
+    $.ajax({
+        data: data,
+        type: "POST",
+        url: "/upload/image?action=editor",
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(result) {
+            if(result.code !=200){
+                JQbox.alert("上传失败");
+            }
+            editor.insertImage($editable, result.data.url);
+        },
+        error:function(){
+            JQbox.alert("上传失败");
+            return;
+        }
+    });
+}
 

@@ -1,6 +1,7 @@
 package com.fct.finance.interfaces;
 
 import com.fct.finance.data.entity.*;
+import jdk.nashorn.internal.ir.ReturnNode;
 
 import java.util.List;
 
@@ -39,6 +40,10 @@ public interface FinanceService {
                                                         Integer pageIndex, Integer pageSize);
     //创建退款记录
     RefundRecord createRefundRecord(RefundRecord refund);
+
+    RefundRecord getRefundRecord(Integer id);
+
+    RefundRecord getRefundRecordByTrade(String tradeType,String tradeId);
 
     //财务确认退款
     void refundConfirm(Integer omsOperaterId, String ids);

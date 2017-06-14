@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
-    <title>方寸堂-退款/退换货管理</title>
+    <title>方寸堂-限时折扣管理</title>
     <link />
 </head>
 
-<body th:replace="fragment/layout::body(~{ :: .bodyContent},'order_refund',~{::.script})">
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'promotion_discount',~{::.script})">
 
 <div class="row border-bottom bodyContent">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -17,8 +17,8 @@
                             <div class="col-sm-3">
                                 <div class="col-sm-5">
                                     <select class="col-sm-4 form-control" name="selkey">
-                                        <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">订单号</option>
-                                        <option value="name" th:selected="${query.selkey eq 'name'} ? 'selected'">宝贝名称</option>
+                                        <option value="name" th:selected="${query.selkey eq 'name'} ? 'selected'">活动名称</option>
+                                        <option value="goodsname" th:selected="${query.selkey eq 'goodsname'} ? 'selected'">宝贝名称</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-7">
@@ -28,15 +28,14 @@
                             <div class="col-sm-2">
                                 <select class="form-control inline" name="status">
                                     <option value="">选择状态</option>
-                                    <th:block th:each="status:${cacheOrder.getRefundStatus()}">
-                                        <option th:value="${status.key}" th:text="${status.value}" th:selected="${query.status eq status.key} ? 'selected'"></option>
-                                    </th:block>
+                                    <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                    <option value="-1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
                                 </select>
                             </div>
                             <div class="col-sm-5 form-inline">
                                 <div class="form-group">
                                     <div class="col-sm-7">
-                                        <label>申请时间：</label>
+                                        <label>活动时间：</label>
                                         <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
                                     </div>
                                     <div class="col-sm-5">
@@ -64,31 +63,35 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>订单号</th>
-                                <th class="text-center">图片/名称</th>
-                                <th>退款方式</th>
-                                <th>退款金额</th>
+                                <th>活动名称</th>
+                                <th>活动时间</th>
+                                <th>宝贝数量</th>
+                                <th>是否秒杀</th>
+                                <th>关闭时长</th>
+                                <th>购买资格</th>
                                 <th>更新时间</th>
                                 <th>状态</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="refund : ${lsRefund}">
-                                <td th:text="${refund.id}"></td>
-                                <td th:text="${refund.orderId}"></td>
-                                <td class="text-center">
-                                    <img th:src="${pub.thumbnailPath(refund.img)}" width="80" height="80" />
-                                    <br>
-                                    <span th:text="${refund.name}"></span>
-                                </td>
-                                <td th:text="${cacheOrder.getRefundTypeName(refund.refundMethod)}"></td>
-                                <td th:text="${refund.payAmount}"></td>
-                                <td th:text="${#dates.format(refund.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
-                                <td th:text="${cacheOrder.getRefundStatusName(refund.status)}"></td>
+                            <tr th:each="discount : ${lsDiscount}">
+                                <td th:text="${discount.name}"></td>
                                 <td>
-                                    <a th:href="@{/order/refund/detail(id=${refund.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
+                                    <th:block th:text="${#dates.format(discount.startTime, 'yyyy-MM-dd HH:mm')}"></th:block> <br>
+                                    <th:block th:text="${#dates.format(discount.endTime, 'yyyy-MM-dd HH:mm')}"></th:block>
+                                </td>
+                                <td th:text="${discount.productCount}"></td>
+                                <td th:text="${discount.notStartCanNotBuy eq 1} ? '是' :'否'"></td>
+                                <td th:text="${discount.orderCloseTime}+'分钟'"></td>
+                                <td th:text="'等级>='+${discount.memberGradeId}"></td>
+                                <td th:text="${#dates.format(refund.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${discount.status eq 1}" th:attr="data-id=${discount.id}" class="statusClick" data-action="pass"><i class="fa fa-check text-navy"></i> 通过</a>
+                                    <a href="javascript:;" th:if="${discount.status eq 0}" th:attr="data-id=${discount.id}" class="statusClick" data-actio="refuse"><i class="fa fa-close text-navy"></i> 拒绝</a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/promotion/discount/detail(id=${discount.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
                                 </td>
                             </tr>
                             </tbody>

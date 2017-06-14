@@ -5,7 +5,7 @@
     <link />
 </head>
 
-<body th:replace="fragment/layout::body(~{ :: .bodyContent},'order_refund',~{::.script})">
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_comment',~{::.script})">
 
 <div class="row border-bottom bodyContent">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -18,7 +18,7 @@
                                 <div class="col-sm-5">
                                     <select class="col-sm-4 form-control" name="selkey">
                                         <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">订单号</option>
-                                        <option value="name" th:selected="${query.selkey eq 'name'} ? 'selected'">宝贝名称</option>
+                                        <option value="cellphone" th:selected="${query.selkey eq 'name'} ? 'selected'">手机号码</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-7">
@@ -28,15 +28,14 @@
                             <div class="col-sm-2">
                                 <select class="form-control inline" name="status">
                                     <option value="">选择状态</option>
-                                    <th:block th:each="status:${cacheOrder.getRefundStatus()}">
-                                        <option th:value="${status.key}" th:text="${status.value}" th:selected="${query.status eq status.key} ? 'selected'"></option>
-                                    </th:block>
+                                    <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                    <option value="-1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
                                 </select>
                             </div>
                             <div class="col-sm-5 form-inline">
                                 <div class="form-group">
                                     <div class="col-sm-7">
-                                        <label>申请时间：</label>
+                                        <label>评论时间：</label>
                                         <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
                                     </div>
                                     <div class="col-sm-5">
@@ -64,31 +63,38 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>订单号</th>
                                 <th class="text-center">图片/名称</th>
-                                <th>退款方式</th>
-                                <th>退款金额</th>
+                                <th>订单号</th>
+                                <th>用户</th>
+                                <th>图文内容</th>
+                                <th>评分</th>
                                 <th>更新时间</th>
                                 <th>状态</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="refund : ${lsRefund}">
-                                <td th:text="${refund.id}"></td>
-                                <td th:text="${refund.orderId}"></td>
+                            <tr th:each="comment : ${lsComment}">
                                 <td class="text-center">
-                                    <img th:src="${pub.thumbnailPath(refund.img)}" width="80" height="80" />
-                                    <br>
-                                    <span th:text="${refund.name}"></span>
+                                <img th:src="${pub.thumbnailPath('')}" width="80" height="80" />
+                                <br>
+                                <span th:text="${commnet.cellphone}"></span>
                                 </td>
-                                <td th:text="${cacheOrder.getRefundTypeName(refund.refundMethod)}"></td>
-                                <td th:text="${refund.payAmount}"></td>
-                                <td th:text="${#dates.format(refund.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
-                                <td th:text="${cacheOrder.getRefundStatusName(refund.status)}"></td>
+                                <td th:text="${commnet.orderId}"></td>
+                                <td th:text="${commnet.cellPhone}"></td>
+                                <td th:text="${comment.content}"></td>
                                 <td>
-                                    <a th:href="@{/order/refund/detail(id=${refund.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
+                                    <span th:text="'描述分：' + ${goods.descScore}"></span><br />
+                                    <span th:text="'服务分：' + ${goods.saleScore}"></span><br />
+                                    <span th:text="'物流分：' + ${goods.logisticsScore}"></span>
+                                </td>
+                                <td th:text="${#dates.format(comment.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${comment.status eq 1}" th:attr="data-id=${comment.id}" class="statusClick" data-action="pass"><i class="fa fa-check text-navy"></i> 通过</a>
+                                    <a href="javascript:;" th:if="${comment.status eq 0}" th:attr="data-id=${comment.id}" class="statusClick" data-actio="refuse"><i class="fa fa-close text-navy"></i> 拒绝</a>
+                                </td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default statusClick" th:attr="data-id=${m.id}" data-actio="delete">删除</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -113,6 +119,24 @@
     $(function () {
         laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
         laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".statusClick").click(function () {
+            var action = $(this).attr("data-action");
+            var id = $(this).attr("data-id");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: "/goods/comment/upstatus?id="+ id +"&action="+action,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
+        });
 
     })
 </script>

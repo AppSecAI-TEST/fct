@@ -17,6 +17,7 @@ import java.util.List;
 public class OrderRefund implements Serializable{
 
     @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
     /// <summary>
@@ -43,7 +44,7 @@ public class OrderRefund implements Serializable{
     private Integer serviceType;
 
     //退款原因
-    private String refundResaon;
+    private String refundReason;
 
     /// <summary>
     /// 状态

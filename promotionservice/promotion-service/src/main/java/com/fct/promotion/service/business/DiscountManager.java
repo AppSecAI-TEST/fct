@@ -50,16 +50,12 @@ public class DiscountManager {
     private Discount save(Discount obj)
     {
         obj.setLastUpdateTime(new Date());
-        if (obj.getId() > 0)
-        {
-            discountRepository.saveAndFlush(obj);
-        }
-        else
+        if (obj.getId() == null || obj.getId() == 0)
         {
             obj.setCreateTime(new Date());
             obj.setAuditStatus(1);//默认审核通过
-            discountRepository.save(obj);
         }
+        discountRepository.save(obj);
         return obj;
     }
 
@@ -154,12 +150,22 @@ public class DiscountManager {
         this.save(obj);
     }
 
-    private String getCondition(Integer status, String startTime, String endTime,List<Object> param)
+    private String getCondition(String name,String goodsName,Integer status, String startTime, String endTime,List<Object> param)
     {
         String condition ="";
         if(status>0)
         {
             condition += " AND AuditStatus="+status;
+        }
+        if(!StringUtils.isEmpty(goodsName))
+        {
+            condition +=" AND Id IN(select discountid from DiscountProduct where productname like ?)";
+            param.add("%"+ goodsName +"%");
+        }
+        if(!StringUtils.isEmpty(name))
+        {
+            condition +=" AND name like ?";
+            param.add("%"+ name +"%");
         }
 
         if (!StringUtils.isEmpty(startTime)) {
@@ -173,14 +179,14 @@ public class DiscountManager {
         return condition;
     }
 
-    public PageResponse<Discount> findAll(Integer status, String startTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<Discount> findAll(String name,String goodsName,Integer status, String startTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="Discount";
         String field ="*";
         String orderBy = "Id Desc";
-        String condition= getCondition(status,startTime,endTime,param);
+        String condition= getCondition(name,goodsName,status,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM Discount WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

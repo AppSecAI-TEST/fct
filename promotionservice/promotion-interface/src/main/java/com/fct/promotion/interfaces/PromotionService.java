@@ -7,7 +7,6 @@ import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DisCountDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public interface PromotionService {
 
     void auditDiscount(Integer discount,Boolean pass,Integer userId);
 
-    PageResponse<Discount> findDiscount(Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize);
+    PageResponse<Discount> findDiscount(String name,String goodsName,Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize);
 
     List<DiscountProduct> findDiscountProduct(Integer discountId);
 

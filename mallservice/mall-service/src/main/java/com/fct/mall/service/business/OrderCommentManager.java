@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -63,10 +64,10 @@ public class OrderCommentManager {
             throw new IllegalArgumentException("已评论");
         }
 
-        Goods g = goodsManager.findById(commnet.getGoodsId());
+        /*Goods g = goodsManager.findById(commnet.getGoodsId());
         g.setCommentCount(g.getCommentCount()+1);
         g.setCommentScore(new Float(1));//计算动态评分
-        goodsManager.save(g);
+        goodsManager.save(g);*/
 
         commnet.setCreateTime(new Date());
         commnet.setUpdateTime(new Date());
@@ -78,6 +79,36 @@ public class OrderCommentManager {
         ordersManager.save(orders);
     }
 
+    private Float getGoodsScore(Integer goodsId,Integer newScore)
+    {
+        List<OrderComment> ls = orderCommentRepository.findByGoodsId(goodsId);
+        Integer totalScore = newScore;
+        for (OrderComment oc:ls
+             ) {
+            totalScore += oc.getDescScore();
+        }
+        Integer count = ls.size()+1;
+        Float score =  new Float(count/totalScore);
+
+        return score*5;
+    }
+
+    @Transactional
+    public void updateStatus(Integer id,Integer status)
+    {
+        OrderComment commnet = orderCommentRepository.findOne(id);
+        if(status ==1)
+        {
+            Goods g = goodsManager.findById(commnet.getGoodsId());
+            g.setCommentCount(g.getCommentCount()+1);
+            g.setCommentScore(getGoodsScore(g.getId(),commnet.getDescScore()));//计算动态评分
+            goodsManager.save(g);
+        }
+        commnet.setStatus(status);
+        commnet.setUpdateTime(new Date());
+        orderCommentRepository.save(commnet);
+    }
+
     public void reply(Integer id,String replyContent)
     {
         OrderComment comment = orderCommentRepository.findOne(id);
@@ -86,9 +117,10 @@ public class OrderCommentManager {
         orderCommentRepository.save(comment);
     }
 
-    private String getContion(Integer goodsId, Integer memberId, String orderId,List<Object> param)
+    private String getContion(Integer goodsId, Integer memberId,String cellphone,String orderId,
+                              Integer status,String beginTime,String endTime,List<Object> param)
     {
-        String condition ="";
+        String condition =" AND status!=2";
         if(goodsId>0)
         {
             condition += " AND goodsId="+goodsId;
@@ -102,17 +134,37 @@ public class OrderCommentManager {
             condition += " AND orderId=?";
             param.add(orderId);
         }
+
+        if (!StringUtils.isEmpty(cellphone)) {
+            condition += " AND cellphone=?";
+            param.add(cellphone);
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
+        if(!StringUtils.isEmpty(beginTime))
+        {
+            condition += " AND createTime >=?";
+            param.add(beginTime);
+        }
+        if(!StringUtils.isEmpty(endTime))
+        {
+            condition += " AND createTime <=?";
+            param.add(endTime);
+        }
         return condition;
     }
 
-    public PageResponse<OrderComment> findAll(Integer goodsId, Integer memberId, String orderId, Integer pageIndex, Integer pageSize)
+    public PageResponse<OrderComment> findAll(Integer goodsId, Integer memberId,String cellphone, String orderId,
+                                              Integer status,String beginTime,String endTime,Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="OrderComment";
         String field ="*";
         String orderBy = "Id Desc";
-        String condition= getContion(goodsId,memberId,orderId,param);
+        String condition= getContion(goodsId,memberId,cellphone,orderId,status,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM OrderComment WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

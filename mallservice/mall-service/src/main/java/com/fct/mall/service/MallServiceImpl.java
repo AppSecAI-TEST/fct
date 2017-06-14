@@ -224,7 +224,7 @@ public class MallServiceImpl implements MallService {
                 orderRefundManager.agreeApply(refundId,refundMethod,description,images,operatorId);
                 break;
             case "agree":
-                orderRefundManager.agreeRefund(refundId,refundMethod,description,images,operatorId);
+                orderRefundManager.agreeRefund(refundId,description,images,operatorId);
                 break;
             case "refuse":
                 orderRefundManager.refuseApply(refundId,description,images,operatorId);
@@ -267,10 +267,15 @@ public class MallServiceImpl implements MallService {
         orderCommentManager.reply(id,replyContent);
     }
 
-    public PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,
-                                               Integer pageSize)
+    public void updateOrderCommentStatus(Integer id,Integer status)
     {
-        return orderCommentManager.findAll(goodsId,memberId,orderId,pageIndex,pageSize);
+        orderCommentManager.updateStatus(id,status);
+    }
+
+    public PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String cellphone,String orderId,
+                                                       Integer status,String beinTime,String endTime,Integer pageIndex,Integer pageSize)
+    {
+        return orderCommentManager.findAll(goodsId,memberId,cellphone,orderId,status,beinTime,endTime,pageIndex,pageSize);
     }
 
     public void saveMaterial(GoodsMaterial goodsMaterial)

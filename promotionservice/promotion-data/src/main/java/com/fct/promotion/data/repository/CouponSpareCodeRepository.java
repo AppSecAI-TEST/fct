@@ -2,6 +2,7 @@ package com.fct.promotion.data.repository;
 
 import com.fct.promotion.data.entity.CouponSpareCode;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 /**
@@ -12,6 +13,7 @@ public interface CouponSpareCodeRepository extends JpaRepository<CouponSpareCode
     @Query(nativeQuery = true, value = "select * from CouponSpareCode where Status =0 order by Id limit 1")
     CouponSpareCode getTopOne();
 
+    @Modifying
     @Query(nativeQuery = true, value = "update CouponSpareCode set Status =1 where code='?1'")
     void updateByCode(String code);
 

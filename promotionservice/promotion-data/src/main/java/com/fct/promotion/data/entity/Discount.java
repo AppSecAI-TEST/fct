@@ -3,10 +3,8 @@ package com.fct.promotion.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +14,7 @@ import java.util.List;
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Discount {
+public class Discount implements Serializable {
     /// <summary>
     /// 主键
     /// </summary>
@@ -28,6 +26,12 @@ public class Discount {
     /// 促销名称
     /// </summary>
     private String name;
+
+    //广告图
+    private String banner;
+
+    //活动内容
+    private String content;
 
     /// <summary>
     /// 审核状态  0：待审核， 1：已审核，2：已拒绝
@@ -84,5 +88,6 @@ public class Discount {
     /// </summary>
     private Date lastUpdateTime;
 
+    @Transient
     private List<DiscountProduct> productList;
 }

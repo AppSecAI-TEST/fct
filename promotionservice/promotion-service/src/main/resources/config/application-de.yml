@@ -1,6 +1,6 @@
 server:
-  port: 8081
-  contextPath: /member
+  port: 8085
+  contextPath: /promotion
   tomcat:
     uri-encoding: UTF-8
 

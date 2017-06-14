@@ -39,10 +39,7 @@
                                 <span><strong>退款方式：</strong><th:block th:text="${cacheOrder.getRefundTypeName(refund.refundMethod)}"></th:block></span>
                             </p>
                             <p>
-                                <span><strong>服务类型：</strong><th:block th:text="${refund.serviceType eq 0} ? '退货退款'"></th:block></span>
-                            </p>
-                            <p>
-                                <span><strong>是否收到货：</strong><th:block th:text="${refund.isReceived eq 1} ? '已收到'"></th:block></span>
+                                <span><strong>服务类型：</strong><th:block th:text="${refund.serviceType eq 0} ? '退货退款' : '仅退款'"></th:block></span>
                             </p>
                             <p>
                                 <span><strong>退款原因：</strong><th:block th:text="${refund.refundReason}"></th:block></span>
@@ -97,7 +94,7 @@
                             <button class="btn btn-primary refundStatus" type="button" data-action="accept">接受申请</button>
                             <button class="btn btn-danger refundStatus" type="button" data-action="refuse">拒绝申请</button>
                         </th:block>
-                        <button class="btn btn-primary refundStatus" type="button" data-action="agree" th:if="${refund.status eq 2}">同意退款</button>
+                        <button class="btn btn-primary refundStatus" type="button" data-action="agree" th:if="${refund.status eq 2 || refund.status eq 1}">同意退款</button>
                     </div>
                 </div>
             </div>

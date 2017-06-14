@@ -8,7 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <packaging>war</packaging>
     <artifactId>promotion-service</artifactId>
     <dependencies>
         <!--dubbo -->
@@ -123,7 +123,7 @@
                     <server>tomcat-jenkins</server>
                     <username>jenkins</username>
                     <password>jenkins_password</password>
-                    <path>/fct-services</path>
+                    <path>/promotion-service</path>
                 </configuration>
             </plugin>
             <plugin>
@@ -131,7 +131,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <warName>fct-services</warName>
+                    <warName>promotion-service</warName>
                 </configuration>
             </plugin>
         </plugins>

@@ -2,6 +2,7 @@ package com.fct.mall.data.repository;
 
 import com.fct.mall.data.entity.GoodsCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 /**
@@ -13,6 +14,7 @@ public interface GoodsCategoryRepository  extends JpaRepository<GoodsCategory, I
             value = "select count(0) from GoodsCategory where name=?1 and parentId=?2 and id!=?3")
     int exitSameName(String name, Integer parentId, Integer categoryId);
 
+    @Modifying
     @Query(nativeQuery = true,
             value = "UPDATE GoodsCategory set SortIndex=?2 WHERE Id=?1")
     void updateSortIndex(Integer id,Integer sortIndex);

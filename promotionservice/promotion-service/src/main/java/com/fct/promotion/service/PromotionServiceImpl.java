@@ -12,12 +12,14 @@ import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import com.fct.promotion.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by jon on 2017/5/9.
  */
+@Service("promotionService")
 public class PromotionServiceImpl implements PromotionService {
 
     @Autowired
@@ -131,10 +133,10 @@ public class PromotionServiceImpl implements PromotionService {
         discountManager.audit(discountId,pass,userId);
     }
 
-    public PageResponse<Discount> findDiscount(Integer status, String startTime, String endTime, Integer pageIndex,
+    public PageResponse<Discount> findDiscount(String name,String goodsName,Integer status, String startTime, String endTime, Integer pageIndex,
                                                Integer pageSize)
     {
-        return discountManager.findAll(status,startTime,endTime,pageIndex,pageSize);
+        return discountManager.findAll(name,goodsName,status,startTime,endTime,pageIndex,pageSize);
     }
 
     public List<DiscountProduct> findDiscountProduct(Integer discountId)

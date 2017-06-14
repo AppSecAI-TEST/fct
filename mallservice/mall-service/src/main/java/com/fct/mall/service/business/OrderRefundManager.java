@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,9 +42,6 @@ public class OrderRefundManager {
 
     @Autowired
     private JdbcTemplate jt;
-
-    @Autowired
-    private MessageService messageService;
 
     private void agreeRefund(OrderRefund refund)
     {
@@ -95,7 +93,7 @@ public class OrderRefundManager {
         mqRefund.setPoints(mqPoint);
         mqRefund.setTrade_id(refund.getId().toString());
         mqRefund.setTrade_type("buy");
-        messageService.send("mq_payrefund","MQPayRefund","com.fct.mallservice", JsonConverter.toJson(mqRefund),"购买商品申请退款");
+        APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.mallservice", JsonConverter.toJson(mqRefund),"购买商品申请退款");
     }
 
     public List<MQPayRefund> payException(Integer memberId, Orders orders, String payOrderId, List<OrderGoods> lsOrderGoods)
@@ -117,7 +115,7 @@ public class OrderRefundManager {
             refund.setServiceType(1);//仅退款
             refund.setStatus(Constants.enumRefundStatus.agree.getValue());  //支付异常直接到达退款中状态
             refund.setRefundMethod(Constants.enumRefundMethod.return_original_road.getValue());    //原路返回
-            refund.setRefundResaon("支付异常，系统自动退款。");
+            refund.setRefundReason("支付异常，系统自动退款。");
             refund.setCreateTime(new Date());
             refund.setUpdateTime(new Date());
             orderRefundRepository.save(refund);
@@ -174,6 +172,7 @@ public class OrderRefundManager {
     }
 
     //保存退换货
+    @Transactional
     private void save(OrderRefund refund, Integer status, Integer operatorId, String description, String images)
     {
         if (refund.getMemberId() < 1) {
@@ -183,7 +182,7 @@ public class OrderRefundManager {
         //处理退换货状态
         refund.setStatus(status);
         refund.setUpdateTime(new Date());
-        orderRefundRepository.saveAndFlush(refund);
+        orderRefundRepository.save(refund);
 
         if(!StringUtils.isEmpty(description)) {
             //处理退换货信息
@@ -221,12 +220,16 @@ public class OrderRefundManager {
         //规格ID
         //goodsSpecId = goodsSpecId > 0 ? goodsSpecId : 0;
         //是否已收货
-        isReceived = isReceived > 0 ? 1 : 0;
+        //isReceived = isReceived > 0 ? 1 : 0;
         //是否需退款
         serviceType = serviceType > 0 ? 1 : 0;
         //如果申请服务为退货退款，则为已收到货
         if(serviceType == 0)
-            isReceived =1;
+            isReceived =1; //退货退款，肯定是收到货
+        else
+        {
+            isReceived=0;
+        }
         //refundMethod = isReceived == 0 && serviceType == 1 ? refundMethod : Constants.enumRefundMethod.NORMAL.getValue();
 
         //查询是否曾经申请过，如果申请过，修改原记录，没有就重新申请
@@ -241,7 +244,7 @@ public class OrderRefundManager {
             refund.setServiceType(serviceType);
             refund.setStatus(Constants.enumRefundStatus.wait.getValue());
             refund.setRefundMethod(refundMethod);
-            refund.setRefundResaon(refundReason);
+            refund.setRefundReason(refundReason);
             refund.setCreateTime(new Date());
             refund.setUpdateTime(new Date());
             orderRefundRepository.save(refund);
@@ -250,7 +253,7 @@ public class OrderRefundManager {
             refund.setServiceType(serviceType);
             refund.setStatus(Constants.enumRefundStatus.wait.getValue());
             refund.setRefundMethod(refundMethod);
-            refund.setRefundResaon(refundReason);
+            refund.setRefundReason(refundReason);
             refund.setUpdateTime(new Date());
             orderRefundRepository.saveAndFlush(refund);
         }
@@ -305,11 +308,13 @@ public class OrderRefundManager {
         Integer status = refund.getIsReceived() > 0 ? Constants.enumRefundStatus.accept.getValue() :
                 Constants.enumRefundStatus.agree.getValue();
 
+        refund.setRefundMethod(refundMethod);
+
         this.save(refund, status, operatorId, description, images);
     }
 
     //管理员同意退款
-    public void agreeRefund (Integer refundId, Integer refundMethod, String description, String images, Integer operatorId)
+    public void agreeRefund (Integer refundId, String description, String images, Integer operatorId)
     {
         if (refundId < 1) {
             throw new IllegalArgumentException ("非法操作");
@@ -324,7 +329,8 @@ public class OrderRefundManager {
         if (refund == null) {
             throw new IllegalArgumentException ("非法操作");
         }
-        if(refund.getStatus() != Constants.enumRefundStatus.express.getValue())
+        if(refund.getStatus() != Constants.enumRefundStatus.express.getValue() &&
+                refund.getStatus() != Constants.enumRefundStatus.accept.getValue())
         {
             throw new IllegalArgumentException ("非法操作");
         }

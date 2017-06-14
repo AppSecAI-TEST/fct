@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface DiscountRepository extends JpaRepository<Discount, Integer> {
 
-    Page<Discount> findAll(Specification<Discount> spec, Pageable pageable);  //分页按条件查询
+
 }

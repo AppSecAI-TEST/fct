@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -122,15 +123,16 @@ public class RefundController extends BaseController{
         try
         {
             orderRefund = mallService.getOrderRefund(id);
-            if(orderRefund.getStatus() ==5 || orderRefund.getStatus()==6) {
+            if(orderRefund.getStatus() ==3 || orderRefund.getStatus()==4) {
                 refundRecord = financeService.getRefundRecordByTrade("buy", id.toString());
             }
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-            orderRefund = new OrderRefund();
         }
+        if(orderRefund == null)
+            orderRefund = new OrderRefund();
 
         model.addAttribute("cacheOrder",cacheOrderManager);
         model.addAttribute("refund",orderRefund);
@@ -162,13 +164,15 @@ public class RefundController extends BaseController{
         return "/order/refund/handle";
     }
 
-    @RequestMapping(value = "/handle", method = RequestMethod.POST)
-    public String savehandle(Integer id,String action,String img,String description,Integer refundmethod)
+    @RequestMapping(value = "/savehandle", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveHandle(Integer id,String action,String img,String description,Integer refundmethod)
     {
         id = ConvertUtils.toInteger(id);
         action = ConvertUtils.toString(action);
         description = ConvertUtils.toString(description);
         refundmethod = ConvertUtils.toInteger(refundmethod);
+        img = ConvertUtils.toString(img);
 
         try {
             mallService.handleOrderRefund(action,0,id,refundmethod,description,img,1);

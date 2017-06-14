@@ -23,6 +23,8 @@ public class OrderComment implements Serializable{
 
     private Integer memberId;
 
+    private String cellPhone;
+
     //商品+订单号=唯一
     private Integer goodsId;
 
@@ -44,6 +46,9 @@ public class OrderComment implements Serializable{
 
     //物流服务
     private Integer logisticsScore;
+
+    //状态{0:待审核,1:已审核,2:删除}
+    private Integer status;
 
     private Date createTime;
 

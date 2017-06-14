@@ -89,8 +89,8 @@ public interface MallService {
 
     OrderRefund getOrderRefundByOrderGoodsId(Integer memberId,String orderId,Integer orderGoodId);
 
-    PageResponse<OrderRefundDTO> findOrderRefund(String orderId,String goodsName, Integer orderGoodsId,Integer memberId,Integer status,String beginTime,
-                                      String endTime,Integer pageIndex,Integer pageSize);
+    PageResponse<OrderRefundDTO> findOrderRefund(String orderId,String goodsName, Integer orderGoodsId,Integer memberId,Integer status,
+                                                 String beginTime,String endTime,Integer pageIndex,Integer pageSize);
 
     void refundSuccess (Integer refundId, String description);
 
@@ -98,7 +98,10 @@ public interface MallService {
 
     void replyOrderComment(Integer id,String replyContent);
 
-    PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String orderId,Integer pageIndex,Integer pageSize);
+    void updateOrderCommentStatus(Integer id,Integer status);
+
+    PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String cellphone,String orderId,
+                                                Integer status,String beinTime,String endTime,Integer pageIndex,Integer pageSize);
 
     void saveMaterial(GoodsMaterial goodsMaterial);
 

@@ -16,6 +16,7 @@ import java.util.Date;
 public class ShoppingCart implements Serializable{
 
     @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
     /// <summary>

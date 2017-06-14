@@ -1,6 +1,5 @@
 package com.fct.web.admin.http.controller;
 
-<<<<<<< e8e00e3330c51533692c7a5704990977d5a6be4a
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.GoodsGrade;
@@ -9,9 +8,7 @@ import com.alibaba.dubbo.common.URL;
 import com.fct.common.exceptions.Exceptions;
 import com.fct.common.utils.ConvertUtils;
 import com.fct.common.utils.PageUtil;
-import com.fct.common.utils.StringHelper;
 import com.fct.mall.data.entity.*;
-import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.web.admin.http.cache.CacheManager;
 import com.fct.web.admin.utils.AjaxUtil;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;

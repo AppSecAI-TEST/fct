@@ -57,9 +57,9 @@ public final class RequestAccessTokenInterceptor extends AbstractHeaderIntercept
             if (session == null) {
                 return buildGuestResponseBody(response, 12, "登录凭证过期, 请重新登录");
             }
-//            else if (!session.getIsValid()) {
-//                return buildGuestResponseBody(response, 13, "账户在其他设备登录, 请重新登录");
-//            }
+            else if (!session.getIsValid()) {
+                return buildGuestResponseBody(response, 13, "账户在其他设备登录, 请重新登录");
+            }
         }
         return true;
     }

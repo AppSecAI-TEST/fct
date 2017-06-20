@@ -24,6 +24,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -90,15 +91,19 @@ public class SettleRecordManager {
 
     public void updateStatus(Integer omsOperaterId,Integer status,String ids,String desc)
     {
-        String sql = "UPDATE SettleRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id IN(?) AND Status!=1";
+        if(status ==2)
+        {
+            throw  new IllegalArgumentException("非法操作！");
+        }
+
+        String sql = "UPDATE SettleRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id IN ("+ ids +") AND Status!=1";
         List<Object> param = new ArrayList<>();
         param.add(status);
         param.add(desc);
         param.add(omsOperaterId);
         param.add(new Date());
-        param.add(ids);
 
-        jt.update(sql,param);
+        jt.update(sql,param.toArray());
     }
 
     /// <summary>
@@ -106,7 +111,6 @@ public class SettleRecordManager {
     /// </summary>
     public void task()
     {
-
         List<SettleRecord> ls = settleRecordRepository.findByStatus(1);
         for (SettleRecord sr:ls
              ) {
@@ -149,6 +153,7 @@ public class SettleRecordManager {
         history.setTradeId(settleId.toString());
         history.setTradeType(Constants.enumTradeType.settle.toString());
         history.setMemberId(memberId);
+        history.setCellPhone(cellPhone);
         history.setAmount(commission);
         history.setBalanceAmount(account.getAvailableAmount());
         history.setPoints(0);

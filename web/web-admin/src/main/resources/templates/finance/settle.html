@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-结算管理管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_settle',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="row col-sm-3 form-inline">
+                            <select class="col-sm-4 form-control" name="selkey">
+                                <option value="trade" th:selected="${query.selkey eq 'trade'} ? 'selected'">交易单号</option>
+                                <option value="cellphone" th:selected="${query.selkey eq 'cellphone'} ? 'selected'">手机号码</option>
+                            </select>
+                            <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" placeholder="手机号或单号" />
+                        </div>
+                        <div class="col-sm-5 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-7">
+                                    <label>发生时间：</label>
+                                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                </div>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 form-inline">
+                            <select class="form-control inline" name="status">
+                                <option value="">选择状态</option>
+                                <th:block th:each="type:${cacheFinance.getSettleStatus()}">
+                                    <option th:value="${type.key}" th:text="${type.value}" th:selected="${query.status eq type.key} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <form action="" id="submitForm">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" value="0" class="checkall" name="checkall" /></th>
+                                <th>店铺编号</th>
+                                <th>用户手机</th>
+                                <th>交易Id</th>
+                                <th>销售金额</th>
+                                <th>获得佣金</th>
+                                <th>邀请者</th>
+                                <th>邀请奖励</th>
+                                <th>备注</th>
+                                <th>状态</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="settle : ${lsSettle}">
+                                <td> <input type="checkbox" th:value="${settle.id}" name="checkbox" class="checkbox" th:if="${settle.status eq 0}" /></td>
+                                <td th:text="${settle.shopId}"></td>
+                                <td th:text="${settle.cellPhone}"></td>
+                                <td th:text="${settle.tradeId}"></td>
+                                <td th:text="'¥'+${settle.saleAmount}"></td>
+                                <td th:text="'¥'+${settle.commission}"></td>
+                                <td th:text="${settle.inviterCellPhone}"></td>
+                                <td th:text="'¥'+${settle.inviterCommission}"></td>
+                                <td th:text="${settle.remark}"></td>
+                                <td th:text="${cacheFinance.getSettleStatusName(settle.status)}"></td>
+                                <td th:text="${#dates.format(settle.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <th:block th:if="${settle.status eq 0}">
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-default passClick" th:attr="data-id=${settle.id}">通过</a>
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-danger refuseClick" th:attr="data-id=${settle.id}">拒绝</a>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-left">
+                                        <input type="checkbox" value="0" class="checkall" name="checkall" />全选&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-primary" id="mutilClick">批量确认</a>
+                                    </div>
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        JQCheck.load();
+
+        $(".passClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/finance/settle/upstatus?action=pass&ids="+id,
+                wait:true,
+                confirm:true
+            });
+        });
+
+        $(".refuseClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.prompt(this, {
+                title: '拒绝审核',
+                type:2,
+                url: "/finance/settle/upstatus?action=refuse&ids="+id+"&remark=",
+            });
+        });
+
+        $("#mutilClick").click(function () {
+            if(!JQCheck.valid())
+            {
+                JQbox.alert("请选择结算记录");
+                return;
+            }
+            JQAjax.post(this, {
+                form:"submitForm",
+                url: "/finance/settle/upstatus?action=pass",
+                wait:true,
+                confirm:true
+            });
+        })
+    })
+</script>
+</body>
+</html>

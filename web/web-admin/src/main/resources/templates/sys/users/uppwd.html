@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="ibox float-e-margins">
+    <div class="ibox-content" style="border-style:none;">
+        <div class="alert alert-danger alert-dismissable dn" id="valid_remind"></div>
+        <form class="form-horizontal m-t" id="submitForm">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">用户名：</label>
+                <div class="col-sm-8">
+                    <span th:text="" class="form-control"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">旧密码：</label>
+                <div class="col-sm-8">
+                    <input name="oldpassword" type="password" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">新密码：</label>
+                <div class="col-sm-8">
+                    <input name="newpassword" type="password" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">重复密码：</label>
+                <div class="col-sm-8">
+                    <input name="repassword" type="password" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-3">
+                    <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    $("#btnClick").click(function () {
+        JQAjax.post(this, {
+            form:"submitForm",
+            url: '/sys/users/savepassword',
+            wait:true
+        });
+    });
+
+</script>
+
+</html>

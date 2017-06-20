@@ -11,7 +11,7 @@ public class PageResponse<T> implements Serializable {
     private List<T> elements;
     private int current;
     private boolean hasMore;
-    private long totalCount;
+    private int totalCount;
 
     public List<T> getElements() {
         return elements;
@@ -37,11 +37,11 @@ public class PageResponse<T> implements Serializable {
         this.hasMore = hasMore;
     }
 
-    public long getTotalCount() {
+    public int getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(long totalCount) {
+    public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
     }
 }

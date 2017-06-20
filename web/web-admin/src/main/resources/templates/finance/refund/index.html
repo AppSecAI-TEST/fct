@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-支付订单管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_refund',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="row col-sm-5 form-inline">
+                            <label>申请时间：</label>
+                            <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            <label>--</label>
+                            <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                        </div>
+                        <div class="row col-sm-4 form-inline">
+                            <select class="form-control" name="payplatform">
+                                <option value="">支付平台</option>
+                                <th:block th:each="pay:${cacheFinance.getPayPlatform()}">
+                                    <option th:value="${pay.code}" th:text="${pay.name}" th:selected="${query.payplatform eq pay.code} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <th:block th:each="type:${cacheFinance.getRefundStatus()}">
+                                    <option th:value="${type.key}" th:text="${type.value}" th:selected="${query.status eq type.key} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <select class="form-control" name="method">
+                                <option value="">选择退款方式</option>
+                                <option value="0" th:selected="${query.method eq 0} ? 'selected'">退回余额</option>
+                                <option value="1" th:selected="${query.method eq 1} ? 'selected'">原路返回</option>
+                                <option value="2" th:selected="${query.method eq 2} ? 'selected'">线下处理</option>
+                            </select>
+                        </div>
+
+                        <div class="row col-sm-3 form-inline">
+                            <select class="form-control" name="selkey">
+                                <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">支付订单</option>
+                                <option value="cellphone" th:selected="${query.selkey eq 'cellphone'} ? 'selected'">手机号码</option>
+                                <option value="tradeid" th:selected="${query.selkey eq 'tradeid'} ? 'selected'">业务单号</option>
+                            </select>
+                            <input name="selvalue" type="text" th:value="${query.selvalue}" class="form-control" placeholder="支付单号或手机号码"/>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary pull-right"> 搜索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <form action="" id="submitForm">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" value="0" class="checkall" name="checkall" /></th>
+                                <th>退款编号</th>
+                                <th>用户手机</th>
+                                <th>业务单号</th>
+                                <th>支付平台</th>
+                                <th>支付单号</th>
+                                <th>退款金额</th>
+                                <th>退款方式</th>
+                                <th>状态</th>
+                                <th>更新时间</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="refund : ${lsRefund}">
+                                <td> <input type="checkbox" th:value="${refund.id}" name="checkbox" class="checkbox" th:if="${refund.status eq 0}" /></td>
+                                <td th:text="${refund.id}"></td>
+                                <td th:text="${refund.cellPhone}"></td>
+                                <td th:text="${refund.tradeId}"></td>
+                                <td th:text="${cacheFinance.getPayPlatformName(refund.payPlatform)}"></td>
+                                <td th:text="${refund.payOrderId}"></td>
+                                <td>
+                                    <span class="text-danger" th:text="'退款金额：¥'+${refund.refundAmount}"></span><br>
+                                    支付金额：<th:block th:text="'¥'+${refund.payAmount}"></th:block><br>
+                                    退回余额：<th:block th:text="'¥'+${refund.accountAmount}"></th:block><br>
+                                    退款现金：<th:block th:text="'¥'+${refund.cashAmount}"></th:block><br>
+                                    退款积分：<th:block th:text="'¥'+${refund.points}"></th:block><br>
+                                </td>
+                                <td th:text="${cacheFinance.getRefundTypeName(refund.method)}"></td>
+                                <td th:text="${cacheFinance.getRefundStatusName(refund.status)}"></td>
+                                <td th:text="${#dates.format(refund.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${refund.remark}"></td>
+                                <td>
+                                    <th:block th:if="${refund.status eq 0}">
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-default refundClick" data-action="agree" th:attr="data-id=${refund.id}">同意</a>
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-danger refundClick" data-action="close" th:attr="data-id=${refund.id}">关闭</a>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-left">
+                                        <input type="checkbox" value="0" class="checkall" name="checkall" />全选&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-primary" id="mutilClick">批量确认</a>
+                                    </div>
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        JQCheck.load();
+
+        $(".refundClick").click(function () {
+            var id = $(this).attr("data-id");
+            var action = $(this).attr("data-action");
+
+            if(action == "agree") {
+                JQAjax.post(this, {
+                    form: "",
+                    url: "/finance/refund/upstatus?action=agree&ids=" + id,
+                    wait: true,
+                    confirm: true
+                });
+            }else{
+                JQbox.prompt(this, {
+                    title: '关闭退款',
+                    type:2,
+                    url: "/finance/refund/upstatus?action=close&ids="+id+"&remark=",
+                });
+            }
+
+        });
+
+        $("#mutilClick").click(function () {
+            if(!JQCheck.valid())
+            {
+                JQbox.alert("请选择退款记录");
+                return;
+            }
+            JQAjax.post(this, {
+                form:"submitForm",
+                url: "/finance/refund/upstatus?action=agree",
+                wait:true,
+                confirm:true
+            });
+        })
+    })
+</script>
+</body>
+</html>

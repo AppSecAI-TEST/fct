@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-用户管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'member_index',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-5 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-7">
+                                    <label>注册时间：</label>
+                                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                </div>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-sm-3">
+                            <div class="input-group">
+                                <input type="text" placeholder="请输入用户名或手机" th:value="${query.q}" class="input-sm form-control" name="q"> <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                            </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>手机</th>
+                                <th>认证</th>
+                                <th>邀请数</th>
+                                <th>推荐人</th>
+                                <th>锁定</th>
+                                <th>登陆次数</th>
+                                <th>等级</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="member:${lsMember}">
+                                <td th:text="${member.userName}"></td>
+                                <td th:text="${member.cellPhone}"></td>
+                                <td>
+                                    <a href="javascript:;" class="authClick" th:attr="data-id=${member.id}"><i class="fa fa-check text-navy" th:class="${member.authStatus eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i> </a>
+                                </td>
+                                <td><th:block th:text="${member.canInviteCount}"></th:block>&nbsp;<a href="javascript:;" class="add_inviter" th:attr="data-id=${member.id}"><i class="fa fa-plus text-navy"></i></a></td>
+                                <td th:text="${member.inviterMemberId}"></td>
+                                <td>
+                                    <a href = "javascript:;" class="lock" th:attr="data-id=${member.id}"><i class="fa fa-lock" th:class="${member.locked eq 1}?'fa fa-lock':'fa fa-unlock text-navy'"></i></a>
+                                </td>
+                                <td th:text="${member.loginCount}"></td>
+                                <td th:text="${member.gradeId}"></td>
+                                <td th:text="${#dates.format(member.registerTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default m_info" th:attr="data-id=${member.id},data-auth=${member.authStatus}">身份信息</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-danger m_password" th:attr="data-id=${member.id}">重置密码</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="10" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".lock").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                url: "/member/update?action=lock&id=" + id,
+                form:''
+            });
+        });
+
+        $(".authClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:'',
+                url: "/member/update?action=auth&id=" + id,
+            });
+        });
+
+        $(".m_info").click(function () {
+            var id = $(this).attr("data-id");
+            var auth = $(this).attr("data-auth");
+            JQbox.open({
+                title: '身份信息',
+                width: 500,
+                url:'/member/detail?id='+id
+            })
+        });
+        $(".m_password").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.prompt(this, {
+                title: '重置密码',
+                type: 1,
+                url: '/member/update?action=password&id=' + id + '&value=',
+            });
+        });
+        $(".add_inviter").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.prompt(this,{
+                title: '输入邀请数量',
+                url: '/member/update?action=add_inviter&id=' + id + '&value=',
+            });
+        });
+    })
+</script>
+</body>
+</html>

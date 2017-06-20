@@ -1,10 +1,12 @@
 package com.fct.member.service.business;
 
 import com.fct.common.utils.DateUtils;
+import com.fct.common.utils.PageUtil;
 import com.fct.member.data.entity.InviteCode;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberStore;
 import com.fct.member.data.repository.MemberStoreRepository;
+import com.fct.member.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.jws.Oneway;
@@ -39,24 +43,23 @@ public class MemberStoreManager {
     @Autowired
     private MemberManager memberManager;
 
-    public MemberStore findByMemberId(Integer memberId)
-    {
+    @Autowired
+    private JdbcTemplate jt;
+
+    public MemberStore findByMemberId(Integer memberId) {
         return memberStoreRepository.findByMemberId(memberId);
     }
 
     @Transient
-    public  MemberStore apply(Integer memberId,String inviteCode)
-    {
+    public MemberStore apply(Integer memberId, String inviteCode) {
         InviteCode code = inviteCodeManager.findByCode(inviteCode);
 
-        if(DateUtils.compareDate(new Date(),code.getExpireTime())>0 || code.getStatus() !=0)
-        {
+        if (DateUtils.compareDate(new Date(), code.getExpireTime()) > 0 || code.getStatus() != 0) {
             throw new IllegalArgumentException("邀请码无效。");
         }
         Member member = memberManager.findById(memberId);
 
-        if(memberStoreRepository.findByMemberId(memberId) !=null)
-        {
+        if (memberStoreRepository.findByMemberId(memberId) != null) {
             throw new IllegalArgumentException("已有店铺存在。");
         }
 
@@ -76,29 +79,55 @@ public class MemberStoreManager {
         return ms;
     }
 
-    public Page<MemberStore> findAll(String cellPhone, Integer status, Integer pageIndex, Integer pageSize)
+    public void updateStatus(Integer id)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        memberStoreRepository.updateStatus(id);
+    }
 
-        Specification<MemberStore> spec = new Specification<MemberStore>() {
-            @Override
-            public Predicate toPredicate(Root<MemberStore> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("status"),status));
-                }
+    private String getCondition(String cellPhone, Integer status, List<Object> param)
+    {
+        String condition ="";
+        if(!StringUtils.isEmpty(cellPhone))
+        {
+            condition+=" AND cellPhone=? OR id="+cellPhone;
+            param.add(cellPhone);
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
+        return condition;
+    }
 
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+    public PageResponse<MemberStore> findAll(String cellPhone, Integer status, Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-        return memberStoreRepository.findAll(spec,pageable);
+        String table="MemberStore";
+        String field ="*";
+        String orderBy = "Id asc";
+        String condition= getCondition(cellPhone,status,param);
+
+        String sql = "SELECT Count(0) FROM MemberStore WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<MemberStore> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MemberStore>(MemberStore.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<MemberStore> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+
+        return p;
     }
 }

@@ -1,9 +1,11 @@
 package com.fct.member.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.common.utils.StringHelper;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.SystemUser;
 import com.fct.member.data.repository.SystemUserRepository;
+import com.fct.member.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,13 +35,18 @@ public class SystemUserManager {
     @Autowired
     private SystemUserRepository systemUserRepository;
 
+    @Autowired
+    private JdbcTemplate jt;
+
     public void create(SystemUser user)
     {
         if(systemUserRepository.countByUserName(user.getUserName())>0)
         {
             throw new IllegalArgumentException("用户名存在。");
         }
+        user.setPassword(StringHelper.md5(user.getPassword()));
         user.setCreateTime(new Date());
+        user.setLocked(0);
         systemUserRepository.save(user);
     }
 
@@ -72,25 +81,47 @@ public class SystemUserManager {
         systemUserRepository.lock(userId);
     }
 
-    public Page<SystemUser> findAll(String userName, Integer pageIndex, Integer pageSize)
+    private String getCondition(String username,List<Object> param) {
+
+        String condition = "";
+        if (!StringUtils.isEmpty(username))
+        {
+            condition += " AND UserName=?";
+            param.add(username);
+        }
+        return condition;
+    }
+
+    public PageResponse<SystemUser> findAll(String userName, Integer pageIndex, Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<SystemUser> spec = new Specification<SystemUser>() {
-            @Override
-            public Predicate toPredicate(Root<SystemUser> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(userName)) {
-                    predicates.add(cb.equal(root.get("userName"), userName));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="SystemUser";
+        String field ="*";
+        String orderBy = "ID asc";
+        String condition= getCondition(userName,param);
 
-        return systemUserRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM SystemUser WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<SystemUser> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<SystemUser>(SystemUser.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<SystemUser> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+
+        return p;
 
     }
 }

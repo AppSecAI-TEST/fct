@@ -40,9 +40,9 @@ public class GoodsController {
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public JsonResponseEntity<PageResponse<Goods>> findGoods(String name, String categorycode, Integer gradeid,
                                                       Integer pageindex, Integer pagesize){
-        PageResponse<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
+        //PageResponse<Goods> ls = mallService.findGoods(name,categorycode,gradeid,1,pageindex,pagesize);
         JsonResponseEntity<PageResponse<Goods>> responseEntity = new JsonResponseEntity<>();
-        responseEntity.setData(ls);
+        responseEntity.setData(null);
         return responseEntity;
     }
 }

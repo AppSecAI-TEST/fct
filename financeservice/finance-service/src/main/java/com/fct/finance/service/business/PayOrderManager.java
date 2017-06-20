@@ -46,9 +46,6 @@ public class PayOrderManager  {
     @Autowired
     private JdbcTemplate jt;
 
-    @Autowired
-    private MessageService messageService;
-
     public void save(PayOrder pay)
     {
         payOrderRepository.save(pay);
@@ -109,6 +106,7 @@ public class PayOrderManager  {
 
             MemberAccountHistory history = new MemberAccountHistory();
             history.setTradeType(pay.getTradeType());
+            history.setCellPhone(pay.getCellPhone());
             history.setTradeId(pay.getTradeId());
             history.setMemberId(account.getMemberId());
             history.setAmount(pay.getAccountAmount());
@@ -256,6 +254,7 @@ public class PayOrderManager  {
                 history.setTradeType(pay.getTradeType());
                 history.setTradeId(pay.getTradeId());
                 history.setMemberId(account.getMemberId());
+                history.setCellPhone(account.getCellPhone());
                 history.setAmount(pay.getAccountAmount());
                 history.setBalanceAmount(account.getAvailableAmount());
                 history.setPoints(pay.getPoints());
@@ -294,7 +293,7 @@ public class PayOrderManager  {
         mq.setRemark("支付结果通知");
         mq.setNotify_url(pay.getNotifyUrl());
 
-        messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
+        APIClient.messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
                 JsonConverter.toJson(mq),"发送支付成功通知消息");
     }
 
@@ -326,6 +325,7 @@ public class PayOrderManager  {
             history.setTradeId(pay.getTradeId());
             history.setTradeType(pay.getTradeType());
             history.setMemberId(pay.getMemberId());
+            history.setCellPhone(pay.getCellPhone());
             history.setAmount(new BigDecimal(0));
             history.setBalanceAmount(account.getAvailableAmount());
             history.setPoints(points);
@@ -352,8 +352,9 @@ public class PayOrderManager  {
         }
     }
 
-    private String getCondition(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                Integer status, String beginTime, String endTime,List<Object> param)
+    private String getCondition(Integer memberId, String cellPhone, String orderId, String platform,String payOrderId,
+                                String tradeId, String tradeType,Integer status,  Integer timeType,String beginTime,
+                                String endTime,List<Object> param)
     {
         String condition ="";
         if (!StringUtils.isEmpty(cellPhone)) {
@@ -372,6 +373,16 @@ public class PayOrderManager  {
         {
             condition += " AND status="+status;
         }
+        if(!StringUtils.isEmpty(orderId))
+        {
+            condition +=" AND orderId=?";
+            param.add(orderId);
+        }
+        if(!StringUtils.isEmpty(payOrderId))
+        {
+            condition +=" AND notifyData like ?";
+            param.add("%"+ payOrderId +"%");
+        }
 
         if (!StringUtils.isEmpty(tradeId)) {
             condition += " AND tradeId=?";
@@ -382,26 +393,32 @@ public class PayOrderManager  {
             condition += " AND tradeType=?";
             param.add(tradeType);
         }
+        String time = "createTime";
+        if(timeType ==1){
+            time = "payTime";
+        }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition += " AND beginTime=?";
+            condition +=" AND "+time+">=?";
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition += " AND endTime?";
+            condition +=" AND "+time+"<?";
             param.add(endTime);
         }
         return condition;
     }
 
-    public PageResponse<PayOrder> findAll(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                          Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<PayOrder> findAll(Integer memberId, String cellPhone, String orderId, String platform,String payOrderId,
+                                          String tradeId, String tradeType,Integer status,  Integer timeType,String beginTime,
+                                          String endTime, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="PayOrder";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,platform,tradeId,tradeType,status,beginTime,endTime,param);
+        String condition= getCondition(memberId,cellPhone,orderId,platform,payOrderId,tradeId,
+                tradeType,status,timeType,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM PayOrder WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

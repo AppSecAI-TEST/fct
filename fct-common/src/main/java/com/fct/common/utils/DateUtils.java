@@ -261,6 +261,15 @@ public class DateUtils {
         }
         return null;
     }
+
+    public static Date parseStringtoHour(String str){
+        try {
+            return sdf_day_hour.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public static Date parseString(String str,String format){
         try {
             return new SimpleDateFormat(format).parse(str);
@@ -276,6 +285,14 @@ public class DateUtils {
 
     public static String format2day(Date date){
         return sdf_day.format(date);
+    }
+
+    public static String formatToHour(Date date){
+        return sdf_day_hour.format(date);
+    }
+
+    public static String format(Date date){
+        return sdf.format(date);
     }
 
     /**

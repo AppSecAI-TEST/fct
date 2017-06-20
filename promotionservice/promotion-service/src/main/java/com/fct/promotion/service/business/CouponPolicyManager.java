@@ -1,6 +1,5 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
@@ -36,16 +35,14 @@ public class CouponPolicyManager {
     private CouponPolicy save(CouponPolicy policy)
     {
         policy.setLastUpdateTime(new Date());
-        if (policy.getId() > 0)
-        {
-            couponPolicyRepository.saveAndFlush(policy);
-        }
-        else
+        if (policy.getId() == null || policy.getId() <= 0)
         {
             policy.setCreateTime(new Date());
             policy.setAuditStatus(1); //默认审核通过
-            couponPolicyRepository.save(policy);
+            policy.setLastUpdateUserId(policy.getCreateUserId());
+            policy.setGenerateStatus(0);
         }
+        couponPolicyRepository.save(policy);
         return policy;
     }
 
@@ -108,28 +105,28 @@ public class CouponPolicyManager {
         CouponPolicy policy = findById(policyId);
         if (policy.getAuditStatus() == 1)
         {
-            throw new BaseException("优惠券状态已是最终状态，不能修改");
+            throw new IllegalArgumentException("优惠券状态已是最终状态，不能修改");
         }
         policy.setAuditStatus(pass ? 1 : 2);
         policy.setLastUpdateUserId(userId);
         this.save(policy);
     }
 
-    private String getCondition(Integer status, Integer fetchType, Integer generateStatus, String startTime,
+    private String getCondition(Integer typeId,Integer fetchType,Integer status, String startTime,
                                 String endTime,List<Object> param)
     {
         String condition ="";
-        if(status>0)
+        if(status>-1)
         {
             condition += " AND AuditStatus="+status;
         }
-        if(fetchType>0)
+        if(fetchType>-1)
         {
             condition += " AND FetchType="+fetchType;
         }
-        if(generateStatus>0)
+        if(typeId>-1)
         {
-            condition += " AND GenerateStatus="+generateStatus;
+            condition += " AND typeId="+typeId;
         }
         if (!StringUtils.isEmpty(startTime)) {
             condition += " AND startTime>=?";
@@ -142,7 +139,7 @@ public class CouponPolicyManager {
         return condition;
     }
 
-    public PageResponse<CouponPolicy> findAll(Integer status, Integer fetchType, Integer generateStatus, String startTime,
+    public PageResponse<CouponPolicy> findAll(Integer typeId,Integer fetchType,Integer status, String startTime,
                                               String endTime, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
@@ -150,7 +147,7 @@ public class CouponPolicyManager {
         String table="CouponPolicy";
         String field ="*";
         String orderBy = "Id Desc";
-        String condition= getCondition(status,fetchType,generateStatus,startTime,endTime,param);
+        String condition= getCondition(typeId,fetchType,status,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM CouponPolicy WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
@@ -208,31 +205,31 @@ public class CouponPolicyManager {
         //面额
         if (policy.getAmount().doubleValue() <= 0)
         {
-            throw new BaseException("优惠券面额不合法");
+            throw new IllegalArgumentException("优惠券面额不合法");
         }
         if (policy.getUsingType() == 1)
         {
             if (policy.getFullAmount().doubleValue() <= 0)
             {
-                throw new BaseException("优惠券满XX不合法");
+                throw new IllegalArgumentException("优惠券满XX不合法");
             }
             if (policy.getAmount().doubleValue() > policy.getFullAmount().doubleValue())
             {
-                throw new BaseException("优惠券面额不能大于满额");
+                throw new IllegalArgumentException("优惠券面额不能大于满额");
             }
         }
         if (DateUtils.compareDate(policy.getStartTime(),policy.getEndTime())>=0)
         {
-            throw new BaseException("优惠券开始时间不能大于结束时间");
+            throw new IllegalArgumentException("优惠券开始时间不能大于结束时间");
         }
         if (policy.getTotalCount() < 1 || policy.getSingleCount() < 1)
         {
-            throw new BaseException("优惠券总发行量/每人领取券不合法");
+            throw new IllegalArgumentException("优惠券总发行量/每人领取券不合法");
         }
 
         if (policy.getTypeId() == 1 && StringUtils.isEmpty(policy.getProductIds()))
         {
-            throw new BaseException("请选择享受优惠的商品");
+            throw new IllegalArgumentException("请选择享受优惠的商品");
         }
 
         if (!StringUtils.isEmpty(policy.getProductIds()))
@@ -240,7 +237,7 @@ public class CouponPolicyManager {
             String[] arr = policy.getProductIds().split(",");
             if (arr.length > 100)
             {
-                throw new BaseException("商品数量不能大于100");
+                throw new IllegalArgumentException("商品数量不能大于100");
             }
         }
 
@@ -257,30 +254,30 @@ public class CouponPolicyManager {
 
             if ( DateUtils.compareDate(policy.getEndTime(),new Date())<0)
             {
-                throw new BaseException("优惠券已结束，不能修改");
+                throw new IllegalArgumentException("优惠券已结束，不能修改");
             }
 
             if (DateUtils.compareDate(policy.getStartTime(),oldPolicy.getStartTime())>0)
             {
-                throw new BaseException("开始时间不能延后");
+                throw new IllegalArgumentException("开始时间不能延后");
             }
             if (DateUtils.compareDate(policy.getEndTime(),oldPolicy.getEndTime())<0)
             {
-                throw new BaseException("结束时间不能提前结束");
+                throw new IllegalArgumentException("结束时间不能提前结束");
             }
             if (DateUtils.compareDate(policy.getEndTime(),oldPolicy.getEndTime())>0)
             {
                 //已过期的优惠券无法再重新激活
-                throw new BaseException("结束时间不能延后");
+                throw new IllegalArgumentException("结束时间不能延后");
             }
 
             if (policy.getTotalCount() < oldPolicy.getTotalCount())
             {
-                throw new BaseException("发行量不能减少");
+                throw new IllegalArgumentException("发行量不能减少");
             }
             if (policy.getSingleCount() < oldPolicy.getSingleCount())
             {
-                throw new BaseException("每人领取量不能减少");
+                throw new IllegalArgumentException("每人领取量不能减少");
             }
 
             if (!StringUtils.isEmpty(oldPolicy.getProductIds()))
@@ -291,7 +288,7 @@ public class CouponPolicyManager {
                      ) {
                     if (!temp.contains("," + productId + ","))
                     {
-                        throw new BaseException("不能删除原享受优惠的产品：" + productId);
+                        throw new IllegalArgumentException("不能删除原享受优惠的产品：" + productId);
                     }
                 }
             }

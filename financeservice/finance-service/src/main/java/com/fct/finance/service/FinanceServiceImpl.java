@@ -63,11 +63,11 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
         payOrderManager.tradeNotify(jsonMQPayTrade);
     }
 
-    public PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                                Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String orderId, String platform,String payOrderId, String tradeId,
+                                                String tradeType,Integer status, Integer timeType,String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return  payOrderManager.findAll(memberId,cellPhone,platform,tradeId,tradeType,status,
-                beginTime,endTime,pageIndex,pageSize);
+        return  payOrderManager.findAll(memberId,cellPhone,orderId,platform,payOrderId,tradeId,tradeType,status,
+                timeType,beginTime,endTime,pageIndex,pageSize);
     }
 
     public MemberAccount getMemberAccount(Integer memberId)
@@ -81,9 +81,9 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
     public PageResponse<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
-                                                               Integer pageIndex, Integer pageSize)
+                                                                       String startTime,String endTime,Integer pageIndex, Integer pageSize)
     {
-        return memberAccountHistoryManager.findAll(memberId,cellPhone,tradeId,tradeType,pageIndex,pageSize);
+        return memberAccountHistoryManager.findAll(memberId,cellPhone,tradeId,tradeType,startTime,endTime,pageIndex,pageSize);
     }
 
     public RefundRecord createRefundRecord(RefundRecord refund)
@@ -106,16 +106,22 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
         refundRecordManager.confirm(omsOperaterId,ids);
     }
 
+    public void refundClose(Integer omsOperaterId,Integer refundId,String remark)
+    {
+        refundRecordManager.close(omsOperaterId,refundId,remark);
+    }
+
     public void refundSuccess(Integer refundId,String notifyData)
     {
         refundRecordManager.success(refundId,notifyData);
     }
 
-    public PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
-                                               Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType,
+                                                       String payPlatform, Integer method,Integer status, String beginTime, String endTime,
+                                                       Integer pageIndex, Integer pageSize)
     {
-        return  refundRecordManager.findAll(memberId,cellPhone,tradeId,tradeType,payPlatform,status,beginTime,endTime,
-                pageIndex,pageSize);
+        return  refundRecordManager.findAll(memberId,cellPhone,payOrderId,tradeId,tradeType,payPlatform,method,
+                status,beginTime,endTime, pageIndex,pageSize);
     }
     public void applyWithdraw(WithdrawRecord withdrawRecord)
     {
@@ -201,10 +207,12 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
     }
 
 
-    public PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
-                                                   String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
+                                                           Integer status,Integer timeType,String beginTime, String endTime,
+                                                           Integer pageIndex, Integer pageSize)
     {
-        return rechargeRecordManager.findAll(memberId,cellPhone,status,beginTime,endTime,pageIndex,pageSize);
+        return rechargeRecordManager.findAll(memberId,cellPhone,payPlayform,payOrderId,status,timeType,beginTime,
+                endTime,pageIndex,pageSize);
     }
 
 }

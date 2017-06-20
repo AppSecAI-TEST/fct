@@ -40,8 +40,17 @@ public class MaterialController extends BaseController {
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
+        PageResponse<GoodsMaterial> pageResponse =null;
 
-        PageResponse<GoodsMaterial> pageResponse = mallService.findMaterial(0,q,-1,status,page,pageSize);
+        try {
+            pageResponse = mallService.findMaterial(0, q, -1, status, page, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        if(pageResponse == null)
+            pageResponse = new PageResponse<GoodsMaterial>();
 
         model.addAttribute("pageHtml",PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,"?page=%d"));
@@ -78,11 +87,12 @@ public class MaterialController extends BaseController {
             {
                 checked = " checked=\"checked\"";
             }
+            String json = "{id:'"+ m.getId()+"',name:'"+ m.getName() +"'}";
 
             sb.append("<tr>");
             sb.append("<td>"+ m.getName() +"</td>");
             sb.append("<td>");
-            sb.append("<input type=\"checkbox\" class=\"checkMaterial\" value=\""+ m.getId() +"#"+m.getName()+"\" name=\"materialId\" "+checked+"/>");
+            sb.append("<input type=\"checkbox\" class=\"checkMaterial\" value=\""+ m.getId() +"\" data-json=\""+ json +"\" name=\"materialId\" "+checked+"/>");
             sb.append("</td>");
             sb.append("</tr>");
         }

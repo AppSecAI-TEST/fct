@@ -4,34 +4,19 @@ import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.logger.LogService;
 import com.fct.common.utils.PageUtil;
-import com.fct.finance.data.entity.MemberAccount;
-import com.fct.finance.data.entity.MemberAccountHistory;
-import com.fct.finance.data.entity.PayOrder;
-import com.fct.finance.data.entity.RefundRecord;
+import com.fct.finance.data.entity.*;
 import com.fct.finance.data.repository.RefundRecordRepository;
 import com.fct.finance.interfaces.PageResponse;
-import com.fct.message.interfaces.MessageService;
 import com.fct.message.model.MQPayRefund;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,9 +43,6 @@ public class RefundRecordManager {
 
     @Autowired
     private JdbcTemplate jt;
-
-    @Autowired
-    private MessageService messageService;
 
     @Transactional
     public RefundRecord create(RefundRecord refund)
@@ -259,7 +241,12 @@ public class RefundRecordManager {
         {
             throw new IllegalArgumentException("退款Id为空。");
         }
-        List<RefundRecord> ls = refundRecordRepository.findByIds(ids);
+        List<Integer> lsId = new ArrayList<>();
+        for (String id:ids.split(",")
+             ) {
+            lsId.add(Integer.valueOf(id));
+        }
+        List<RefundRecord> ls = refundRecordRepository.findByIds(lsId);
         for (RefundRecord refund:ls
              ) {
 
@@ -284,6 +271,7 @@ public class RefundRecordManager {
                 history.setTradeId(refund.getId().toString());
                 history.setTradeType(Constants.enumTradeType.refund.toString());
                 history.setMemberId(refund.getMemberId());
+                history.setCellPhone(refund.getCellPhone());
                 history.setAmount(refund.getAccountAmount());
                 history.setBalanceAmount(account.getAvailableAmount());
                 history.setPoints(refund.getPoints());
@@ -300,12 +288,27 @@ public class RefundRecordManager {
                 //如果原路返回支付平台，则更新退款状态为部份退款成功(余额退款成功)。
                 refund.setStatus(Constants.enumRefundStatus.confirmed.getValue());
                 //写入原路返回消息体，支付服务进行处理。
-                sendMessageQ(refund);
+                //sendMessageQ(refund);
             }
 
-            refundRecordRepository.saveAndFlush(refund);
+            refundRecordRepository.save(refund);
         }
 
+    }
+
+    public void close(Integer omsOperaterId,Integer id,String remark)
+    {
+        RefundRecord record = refundRecordRepository.findOne(id);
+        if(record.getStatus()>0)
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+        record.setStatus(3);//关闭
+        record.setRemark(remark);
+        record.setOmsOperatorId(omsOperaterId);
+        record.setUpdateTime(new Date());
+
+        refundRecordRepository.save(record);
     }
 
     private void sendMessageQ(RefundRecord refund)
@@ -321,7 +324,7 @@ public class RefundRecordManager {
         message.setCash_amount(refund.getCashAmount());
         message.setDesc("退款");
 
-        messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
+        APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
                 JsonConverter.toJson(message),"原路返回退款至第三方支付平台");
 
     }
@@ -339,8 +342,9 @@ public class RefundRecordManager {
         refundRecordRepository.updatSuccess(refundId,notifyData, Constants.enumRefundStatus.success.getValue());
     }
 
-    private String getCondition(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
-                                Integer status, String beginTime, String endTime, List<Object> param)
+    private String getCondition(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType,
+                                String payPlatform, Integer method,Integer status, String beginTime, String endTime,
+                                List<Object> param)
     {
         String condition = "";
         if (!StringUtils.isEmpty(cellPhone)) {
@@ -367,6 +371,15 @@ public class RefundRecordManager {
         {
             condition += " AND status="+status;
         }
+        if(method>-1)
+        {
+            condition += " AND method="+method;
+        }
+        if(!StringUtils.isEmpty(payOrderId))
+        {
+            condition +=" AND payOrderId=?";
+            param.add(payOrderId);
+        }
         if (!StringUtils.isEmpty(beginTime)) {
             condition +=" AND createTime>=?";
             param.add(beginTime);
@@ -378,15 +391,16 @@ public class RefundRecordManager {
         return condition;
     }
 
-    public PageResponse<RefundRecord> findAll(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
-                                      Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
+    public PageResponse<RefundRecord> findAll(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType, String payPlatform,
+                                      Integer method,Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="RefundRecord";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,tradeId,tradeType,payPlatform,status,beginTime,endTime,param);
+        String condition= getCondition(memberId,cellPhone,payOrderId,tradeId,tradeType,payPlatform,method,
+                status,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM RefundRecord WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

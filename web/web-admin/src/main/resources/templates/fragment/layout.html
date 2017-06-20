@@ -64,6 +64,14 @@
                 }
             }
         );
+
+        $(".upPassword").click(function () {
+            JQbox.open({
+                title:"更新密码",
+                width: 500,
+                url: '/sys/users/uppwd'
+            });
+        });
     })
 </script>
 

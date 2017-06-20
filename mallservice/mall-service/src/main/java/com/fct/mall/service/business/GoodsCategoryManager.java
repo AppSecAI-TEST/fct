@@ -97,7 +97,7 @@ public class GoodsCategoryManager {
         if (!StringUtils.isEmpty(categoryCode))
         {
             condition += " AND code like ?";
-            param.add(categoryCode);
+            param.add(categoryCode+"%");
         }
         if (parentId>-1)
         {

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="top_search">
+    <div class="row">
+        <div class="col-sm-12">
+    <div class="row pull-left form-inline">
+        <input type="hidden" name="cateid" id="categoryCode" />
+        <select class="form-control" name="parentid" id="selParentCate" data-load="selSubCate">
+            <option value="">宝贝分类</option>
+            <th:block th:each="cate : ${category}">
+                <option th:text="${cate.name}" th:value="${cate.code}"></option>
+            </th:block>
+        </select>
+        <select class="form-control selCate" name="subid" id="selSubCate">
+            <option value="0">请选择</option>
+        </select>
+        <input type="text" placeholder="请输入宝贝名称" value="" class="form-control" name="q" id="input_name">
+        <button type="bottom" class="btn btn-sm btn-warning" id="searchClick" data-load="loadGoods"> 搜索</button>
+    </div>
+        </div>
+    </div>
+</div>
+
+<div class="ibox-content">
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>编号</th>
+                <th>价格</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="loadGoods">
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4" class="footable-visible">
+                    <div class="page">
+                        <button type="bottom" class="btn btn-sm btn-primary" id="okClick"> 确定</button>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        var loadData = function (parentEl) {
+            var name = $("#input_name").val();
+            var cateid = $("#categoryCode").val();
+            var url = "/goods/ajaxload?disabled=[[${disabled}]]&ids=[[${ids}]]&cateid="+cateid+"&q="+name;
+            JQAjax.load(parentEl, url);
+        }
+
+        $("#searchClick").click(function () {
+            loadData($(this));
+        });
+
+        loadData($("#searchClick"));
+
+
+        $("#selParentCate").change(function () {
+            loadCategory($(this),true);
+        });
+
+        var loadCategory = function (parentEl,upValue) {
+            var cateValue = parentEl.children('option:selected').val();
+            if(cateValue!="") {
+                var arr = cateValue.split(",");
+                var url = "/goods/category/select?parentid=" + arr[1];
+                JQAjax.load(parentEl, url);
+                if (upValue) {
+                    $("#categoryCode").val(cateValue);
+                }
+
+                loadData($("#searchClick"));
+            }
+        };
+
+        loadCategory($("#selParentCate"));
+
+        $(".selCate").change(function () {
+            var cateCode=$(this).children('option:selected').val();//这就是selected的值
+            $("#categoryCode").val(cateCode);
+
+            loadData($("#searchClick"));
+        });
+
+        var arrData=[];
+
+        //当checkbox为可以取消模式的时候，则初始化绑定数据。
+        var loadGoodsData = function () {
+            var disabled = "[[${disabled}]]";
+            if(disabled!="") {
+                var arrId = "[[${ids}]]".split(',');
+                var arrName ="[[${names}]]".split('、');
+                for (var i = 0; i < arrId.length; i++) {
+                    var json = "{id:'" + arrId[i] + "',name:'"+ arrName[i] +"'}";
+                    arrData.push(json);
+                }
+            }
+        };
+
+        loadGoodsData();
+
+        $(document).on('change','.goodsCheck',function () {
+            var id = $(this).val();
+            var data = $(this).attr("data-json");
+            if ($(this).is(':checked')) {
+                arrData.push(data);
+            }
+            else
+            {
+                for (var i = 0 ; i< arrData.length; i ++) {
+                    var json = eval('(' + arrData[i] + ')');
+                    if(json.id == id){
+                        arrData.splice(i,1);
+                    }
+                }
+            }
+        });
+
+        $("#okClick").click(function () {
+           insertGoods(arrData);
+           layer.closeAll();
+        });
+
+    })
+</script>
+</body>
+</html>

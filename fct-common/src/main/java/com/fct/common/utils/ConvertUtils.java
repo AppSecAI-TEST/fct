@@ -3,6 +3,7 @@ package com.fct.common.utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by jon on 2017/6/9.
@@ -85,5 +86,14 @@ public class ConvertUtils {
             return new String[]{};
         }
         return value.toString().split(",");
+    }
+
+    public static Date toDate(Object value)
+    {
+        if(value == null ||StringUtils.isEmpty(value.toString()))
+        {
+            return new Date();
+        }
+        return DateUtils.parseStringtoHour(value.toString());
     }
 }

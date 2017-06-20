@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8088
   contextPath: /member
   tomcat:
     uri-encoding: UTF-8

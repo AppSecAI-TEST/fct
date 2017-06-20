@@ -5,7 +5,7 @@ var JQCheck = {
         $(".checkbox").click(function () {
             var checkall = true;
             $(".checkbox").each(function () {
-                if (!$(this).attr('checked')) {
+                if (!$(this).is(':checked')) {
                     checkall = false;
                 }
             });
@@ -16,7 +16,7 @@ var JQCheck = {
             }
         });
         $(".checkall").click(function () {
-            if ($(this).attr("checked")) {
+            if ($(this).is(":checked")) {
                 $(".checkbox").attr("checked", "checked");
             } else {
                 $(".checkbox").removeAttr("checked");
@@ -29,7 +29,7 @@ var JQCheck = {
     valid: function () {
         var bool = false;
         $(".checkbox").each(function () {
-            if ($(this).attr('checked')) {
+            if ($(this).is(':checked')) {
                 bool = true;
                 return;
             }
@@ -73,6 +73,7 @@ var Ajax = function (element, options) {
         $.ajax({
             url: options.url,
             type: 'POST',
+            contentType:"application/x-www-form-urlencoded; charset=UTF-8",
             data: data,
             cache: false,
             timeout: 3000000,
@@ -246,7 +247,7 @@ var JQbox = {
             formType: options.type || 0 //prompt风格，支持0-2
         }, function (text) {
             JQAjax.post(ele, {
-                url: options.url + text,
+                url: options.url + encodeURI(encodeURI(text)),
             });
         });
     }

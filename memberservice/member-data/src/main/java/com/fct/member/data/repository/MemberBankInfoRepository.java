@@ -18,6 +18,4 @@ public interface MemberBankInfoRepository extends JpaRepository<MemberBankInfo, 
 
     @Query(nativeQuery = true, value = "SELECT * FROM MemberBankInfo WHERE MemberId=?1 limit 1")
     MemberBankInfo findOneByMemberId(Integer memberId);
-
-    Page<MemberBankInfo> findAll(Specification<MemberBankInfo> spec, Pageable pageable);  //分页按条件查询
 }

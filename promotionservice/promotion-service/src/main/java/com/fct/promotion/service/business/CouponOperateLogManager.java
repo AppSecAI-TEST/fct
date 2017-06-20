@@ -14,7 +14,7 @@ import java.util.Date;
 public class CouponOperateLogManager {
 
     @Autowired
-    CouponOperateLogRepository couponOperateLogRepository;
+    private CouponOperateLogRepository couponOperateLogRepository;
 
     void add(CouponOperateLog log)
     {

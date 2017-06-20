@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div class="minimalize-styl-2">
-    <div class="input-group col-sm-6 pull-left">
+    <div class="row input-group col-sm-6 pull-left">
         <input type="text" placeholder="请输入泥料名称" value="" class="input-sm form-control" name="q" id="input_name">
         <span class="input-group-btn">
                 <button type="bottom" class="btn btn-sm btn-warning" id="searchClick" data-load="loadMeterial"> 搜索</button>
@@ -51,20 +51,36 @@
 
         loadData($("#searchClick"));
 
-        $("#okClick").click(function () {
-            var materialid="";
-            var materialname="";
-            $(".checkMaterial").each(function () {
-                if ($(this).is(':checked')) {
-                    var selValue = $(this).val().split("#");
-                    materialid += "," + selValue[0];
-                    materialname += "、"+selValue[1];
+        var arrData=[];
+
+        $(document).on('change','.checkMaterial',function () {
+            var id = $(this).val();
+            var data = $(this).attr("data-json");
+            if ($(this).is(':checked')) {
+                arrData.push(data);
+            }
+            else
+            {
+                for (var i = 0 ; i< arrData.length; i ++) {
+                    var json = eval('(' + arrData[i] + ')');
+                    if(json.id == id){
+                        arrData.splice(i,1);
+                    }
                 }
-            });
-            materialid = materialid.substring(1);
-            materialname = materialname.substring(1);
-            $("#input_materialId").val(materialid);
-            $("#input_materialName").val(materialname);
+            }
+        });
+
+        $("#okClick").click(function () {
+            var arrId =[];
+            var arrName=[];
+            for(var key in arrJson) {
+                var json = eval('(' + arrJson[key] + ')');
+                arrId.push(json.id);
+                arrName.push(name);
+
+            }
+            $("#input_materialId").val(arrId.join());
+            $("#input_materialName").val(arrName.join());
             layer.closeAll();
         });
 

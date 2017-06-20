@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-充值管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_recharge',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="form-group">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待付款</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">充值成功</option>
+                                <option value="2" th:selected="${query.status eq 2} ? 'selected'">充值失败</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 form-inline">
+                            <div class="col-sm-12">
+                                <label>手机号码：</label>
+                                <input type="text" name="cellphone" class="form-control" th:value="${query.cellphone}" placeholder="">
+                            </div>
+                        </div>
+                        <div class="col-sm-4 form-inline">
+                            <select class="col-sm-4 form-control" name="payplatform">
+                                <option value="">支付平台</option>
+                                <th:block th:each="pay:${cacheFinance.getPayPlatform()}">
+                                    <option th:value="${pay.code}" th:text="${pay.name}" th:selected="${query.payplatform eq pay.code} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <input name="payorderid" type="text" th:value="${query.payorderid}" class="form-control" placeholder="支付单号"/>
+
+                        </div>
+                        </div>
+                        <div class="row col-sm-2">
+                            <select class="form-control" name="timetype">
+                                <option value="0">创建时间</option>
+                                <option th:value="1">支付时间</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class=" col-sm-6">
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            </div>
+                            <div class=" col-sm-6">
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>用户手机</th>
+                                <th>支付平台</th>
+                                <th>支付单号</th>
+                                <th>支付时间</th>
+                                <th>获得金额</th>
+                                <th>赠送金额</th>
+                                <th>支付金额</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="recharge : ${lsRecharge}">
+                                <td th:text="${recharge.id}"></td>
+                                <td th:text="${recharge.cellPhone}"></td>
+                                <td th:text="${cacheFinance.getPayPlatformName(recharge.payPlatform)}"></td>
+                                <td th:text="${recharge.payOrderId}"></td>
+                                <td th:text="${#dates.format(recharge.payTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="'¥'+${recharge.amount}"></td>
+                                <td th:text="'¥'+${recharge.giftAmount}"></td>
+                                <td th:text="'¥'+${recharge.payAmount}"></td>
+                                <td>
+                                    <th:block th:if="${recharge.status eq 0}">待付款</th:block>
+                                    <th:block th:if="${recharge.status eq 1}">充值成功</th:block>
+                                    <th:block th:if="${recharge.status eq 2}">充值失败</th:block>
+                                </td>
+                                <td th:text="${#dates.format(recharge.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+    })
+</script>
+</body>
+</html>

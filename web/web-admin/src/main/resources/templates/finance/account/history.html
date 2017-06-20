@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-退款/退换货管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_history',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="row col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-3  form-inline">
+                            <select class="col-sm-4 form-control" name="tradetype">
+                                <option value="">交易类型</option>
+                                <th:block th:each="type:${cacheFinance.getTradeType()}">
+                                    <option th:value="${type.key}" th:text="${type.value}" th:selected="${query.tradetype eq type.key} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <input name="tradeid" th:value="${query.tradeid}" type="text" class="form-control" placeholder="请输入交易Id" />
+
+                        </div>
+                        <div class="row col-sm-3 form-inline">
+                            <div class="col-sm-12">
+                                <label>手机号码：</label>
+                                <input type="text" name="cellphone" class="form-control" th:value="${query.cellphone}" placeholder="">
+                            </div>
+                        </div>
+                        <div class="row col-sm-5 form-inline">
+                            <div class="col-sm-7">
+                                <label>发生时间：</label>
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            </div>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>用户手机</th>
+                                <th>交易类型</th>
+                                <th>交易Id</th>
+                                <th>变动金额</th>
+                                <th>变动积分</th>
+                                <th>当前余额</th>
+                                <th>当前积分</th>
+                                <th>行为</th>
+                                <th>更新时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="history : ${lsHistory}">
+                                <td th:text="${history.cellPhone}"></td>
+                                <td th:text="${cacheFinance.getTradeTypeName(history.tradeType)}"></td>
+                                <td th:text="${history.tradeId}"></td>
+                                <td th:text="'¥'+${history.amount}"></td>
+                                <td th:text="${history.points}"></td>
+                                <td th:text="'¥'+${history.balanceAmount}"></td>
+                                <td th:text="${history.balancePoints}"></td>
+                                <td th:text="${history.behaviorType eq 0}?'支出':'收入'"></td>
+                                <td th:text="${#dates.format(history.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+    })
+</script>
+</body>
+</html>

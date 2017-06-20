@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-会员账户管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_withdraw',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="row col-sm-2">
+                            <select class="form-control inline" name="status">
+                                <option value="">状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待处理</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">提现成功</option>
+                                <option value="2" th:selected="${query.status eq 2} ? 'selected'">提现失败</option>
+                            </select>
+                        </div>
+                        <div class="row col-sm-3 form-inline">
+                            <div class="col-sm-12">
+                                <label>手机号码：</label>
+                                <input type="text" name="cellphone" class="form-control" th:value="${query.cellphone}" placeholder="">
+                            </div>
+                        </div>
+                        <div class="row col-sm-5 form-inline">
+                            <div class="col-sm-7">
+                                <label>发生时间：</label>
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            </div>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>手机号码</th>
+                                <th>姓名</th>
+                                <th>提现平台</th>
+                                <th>提现账号</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>备注</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="withdraw : ${lsWithdraw}">
+                                <td th:text="${withdraw.id}"></td>
+                                <td th:text="${withdraw.cellPhone}"></td>
+                                <td th:text="${withdraw.name}"></td>
+                                <td th:text="${withdraw.bankName}"></td>
+                                <td th:text="${withdraw.bankAccount}"></td>
+                                <td th:text="'¥'+${withdraw.amount}"> </td>
+                                <td>
+                                    <th:block th:if="${withdraw.status eq 0}">待处理</th:block>
+                                    <th:block th:if="${withdraw.status eq 1}">提现成功</th:block>
+                                    <th:block th:if="${withdraw.status eq 2}">提现失败</th:block>
+                                </td>
+                                <td th:text="${withdraw.remark}"></td>
+                                <td th:text="${#dates.format(withdraw.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <th:block th:if="${withdraw.status eq 0}">
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-default successClick" th:attr="data-id=${withdraw.id}">提现成功</a>
+                                        <a href="javascript:;" class="btn btn-xs btn-outline btn-danger failClick" th:attr="data-id=${withdraw.id}">提现失败</a>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+        $(".successClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/finance/withdraw/upstatus?action=success&id="+id,
+                wait:true,
+                confirm:true
+            });
+        });
+
+        $(".failClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.prompt(this, {
+                title: '提现失败',
+                type:2,
+                url: "/finance/withdraw/upstatus?action=fail&id="+id+"&remark=",
+            });
+        });
+    })
+</script>
+</body>
+</html>

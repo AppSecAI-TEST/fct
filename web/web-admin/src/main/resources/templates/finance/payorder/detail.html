@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="ibox float-e-margins">
+    <div class="ibox-content" style="border-style:none;">
+        <form class="form-horizontal m-t" id="submitForm">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">订单编号：</label>
+            <div class="col-sm-8">
+                <span class="form-control">
+                    <th:block th:text="${pay.orderId}"></th:block>
+                    <th:block th:text="'（'+${cacheFinance.getPayStatusName(pay.status)}+'）'"></th:block>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">描述：</label>
+            <div class="col-sm-8">
+                <span th:text="${pay.desc}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用户手机：</label>
+            <div class="col-sm-8">
+                <span th:text="${pay.cellPhone}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">业务类型：</label>
+            <div class="col-sm-8">
+                 <span class="form-control">
+                    <th:block th:text="${cacheFinance.getTradeTypeName(pay.tradeType)}"></th:block>
+                    <th:block th:text="'（'+${pay.tradeId}+'）'"></th:block>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">支付平台：</label>
+            <div class="col-sm-8">
+                <span th:text="${cacheFinance.getPayPlatformName(pay.payPlatform)}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group form-inline">
+            <label class="col-sm-3 control-label">使用余额：</label>
+            <div class="col-sm-3">
+                <span th:text="'¥'+${pay.accountAmount}" class="col-sm-3 form-control"></span>
+            </div>
+            <label class="row col-sm-3 control-label">使用积分：</label>
+            <div class="col-sm-3">
+                <span th:text="${pay.points}" class="form-control"></span>
+            </div>
+        </div>
+
+        <div class="form-group form-inline">
+            <label class="col-sm-3 control-label">总金额：</label>
+            <div class="col-sm-3">
+                <span th:text="'¥'+${pay.totalAmount}" class="form-control"></span>
+            </div>
+            <label class="row col-sm-3 control-label">折扣金额：</label>
+            <div class="col-sm-3">
+                <span th:text="'¥'+${pay.discountAmount}" class="col-sm-3 form-control"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">支付现金：</label>
+            <div class="col-sm-8">
+                <span th:text="${pay.payAmount}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group form-inline">
+            <label class="col-sm-3 control-label">退款金额：</label>
+            <div class="col-sm-3">
+                <span th:text="'¥'+${pay.refundAmount}" class="form-control"></span>
+            </div>
+            <label class="row col-sm-3 control-label">退回积分：</label>
+            <div class="col-sm-3">
+                <span th:text="${pay.refundPoints}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">支付时间：</label>
+            <div class="col-sm-8">
+                <span th:text="${#dates.format(pay.payTime, 'yyyy-MM-dd HH:mm')}" class="form-control"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">创建时间：</label>
+            <div class="col-sm-8">
+                <span th:text="${#dates.format(pay.createTime, 'yyyy-MM-dd HH:mm')}" class="form-control"></span>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+</html>

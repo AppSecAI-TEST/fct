@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-邀请码管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'member_invite',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-3  form-inline">
+                            <select class="col-sm-4 form-control" name="selkey">
+                                <option value="1">邀请码</option>
+                                <option value ="2" th:selected="${query.selkey eq 1} ? 'selected'">邀请者手机</option>
+                                <option value =3 th:selected="${query.selkey eq 2} ? 'selected'">使用者手机</option>
+                            </select>
+                            <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" placeholder="请输入相关数据" />
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>邀请码</th>
+                                <th>邀请者</th>
+                                <th>状态</th>
+                                <th>使用者</th>
+                                <th>使用时间</th>
+                                <th>生成时间</th>
+                                <th>过期时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="code:${lsCode}">
+                                <td th:text="${code.code}"></td>
+                                <td th:text="${code.ownerCellPhone}"></td>
+                                <td th:text="${code.status eq 0 }?'未使用','已使用'"></td>
+                                <td th:text="${code.toCellPhone}"></td>
+                                <td th:text="${#dates.format(code.useTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${#dates.format(code.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${#dates.format(code.expireTime, 'yyyy-MM-dd HH:mm')}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="10" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+    })
+</script>
+</body>
+</html>

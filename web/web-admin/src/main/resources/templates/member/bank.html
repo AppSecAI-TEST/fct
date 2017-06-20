@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-银行账户管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'member_bank',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-3  form-inline">
+                            <select class="col-sm-4 form-control" name="selkey">
+                                <option value="1">手机号码</option>
+                                <option value ="2" th:selected="${query.selkey eq 1} ? 'selected'">银行名称</option>
+                            </select>
+                            <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" placeholder="请输入相关数据" />
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control inline" name="status">
+                                <option value="">选择状态</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">待审核</option>
+                                <option value="2" th:selected="${query.status eq 2} ? 'selected'">已审核</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>用户手机</th>
+                                <th>姓名</th>
+                                <th>银行名称</th>
+                                <th>银行账号</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="bank:${lsBank}">
+                                <td th:text="${bank.cellPhone}"></td>
+                                <td th:text="${bank.name}"></td>
+                                <td th:text="${bank.bankName}"></td>
+                                <td th:text="${bank.bankAccount}"></td>
+                                <td>
+                                    <a href="javascript:;" class="statusClick" th:attr="data-id=${bank.id}">
+                                        <i class="fa fa-check text-navy" th:class="${member.status eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i>
+                                    </a>
+                                </td>
+                                <td th:text="${#dates.format(code.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default m_info" th:attr="data-id=${bank.memberId}">查看信息</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="10" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:'',
+                url: "/member/update?action=audi&id=" + id,
+            });
+        });
+
+        $(".m_info").click(function () {
+            var id = $(this).attr("data-id");
+            var auth = $(this).attr("data-auth");
+            JQbox.open({
+                title: '身份信息',
+                width: 500,
+                url:'/member/detail?id='+id
+            })
+        });
+    })
+</script>
+</body>
+</html>

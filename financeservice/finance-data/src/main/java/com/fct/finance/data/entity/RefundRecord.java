@@ -93,7 +93,7 @@ public class RefundRecord implements Serializable {
     private String remark;
 
     /// <summary>
-    /// 退款状态(0:待处理,1:财务已确认,2:退款中,3:退款成功)
+    /// 退款状态(0:待处理,1:财务已确认,2:退款成功，3：关闭退款)
     /// </summary>
     private Integer status;
 

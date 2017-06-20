@@ -63,6 +63,11 @@ public class SettleRecord implements Serializable {
     private Integer inviterId;
 
     /// <summary>
+    /// 邀请者会员Id
+    /// </summary>
+    private Integer inviterCellPhone;
+
+    /// <summary>
     /// 邀请者获得佣金
     /// </summary>
     private BigDecimal inviterCommission;
@@ -75,7 +80,7 @@ public class SettleRecord implements Serializable {
     /// <summary>
     /// 结算状态（0:待确认,1:财务已确认,2:结算成功,3:拒绝）
     /// </summary>
-    private Integer status;;
+    private Integer status;
 
     /// <summary>
     /// 拒绝结算时的备注

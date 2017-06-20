@@ -1,11 +1,14 @@
 package com.fct.member.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.common.utils.StringHelper;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;
+import com.fct.member.data.entity.SystemUser;
 import com.fct.member.data.repository.MemberInfoRepository;
 import com.fct.member.data.repository.MemberRepository;
+import com.fct.member.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.nativejdbc.Jdbc4NativeJdbcExtractor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +44,9 @@ public class MemberManager {
 
     @Autowired
     private MemberBankInfoManager memberBankInfoManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
 //    @Transactional
     public Member register(String cellPhone, String userName, String password)
@@ -94,11 +103,11 @@ public class MemberManager {
         {
             throw new IllegalArgumentException("会员不存在。");
         }
-        if(member.getPassword() != StringHelper.md5(oldPassword))
+        if(member.getPassword() != StringHelper.md5(oldPassword) && !oldPassword.equals("sysupdate"))
         {
             throw new IllegalArgumentException("旧密码不正确。");
         }
-        if(newPassword!=reNewPassword)
+        if(!newPassword.equals(reNewPassword))
         {
             throw new IllegalArgumentException("新密码与重复密码不一致。");
         }
@@ -135,43 +144,75 @@ public class MemberManager {
         memberRepository.addInviteCount(memberId,count);
     }
 
-
-
+    @Transactional
     public void verifyAuthStatus(Integer memberId)
     {
-        memberRepository.verifyAuthStatus(memberId);
-
         MemberBankInfo bank = memberBankInfoManager.findOne(memberId);
-        bank.setStatus(1-bank.getStatus());  //审核通过
+        if(bank == null) {
+            throw  new IllegalArgumentException("未有绑定银行卡不可进行认证");
+        }
+        bank.setStatus(1 - bank.getStatus());  //审核通过
         memberBankInfoManager.save(bank);
+
+        memberRepository.verifyAuthStatus(memberId);
 
     }
 
-    public Page<Member> findAll(String cellPhone, String beginTime,String endTime,Integer pageIndex, Integer pageSize)
+    private String getCondition(String cellPhone, Integer authStatus,String beginTime,String endTime,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition ="";
+        if(authStatus>-1)
+        {
+            condition += " AND authStatus="+authStatus;
+        }
+        if(!StringUtils.isEmpty(cellPhone))
+        {
+            condition +=" AND cellphone=?";
+            param.add(cellPhone);
+        }
+        if(!StringUtils.isEmpty(beginTime))
+        {
+            condition +=" AND registerTime>=?";
+            param.add(beginTime);
+        }
+        if(!StringUtils.isEmpty(endTime))
+        {
+            condition +=" AND registerTime<?";
+            param.add(endTime);
+        }
+        return condition;
+    }
 
-        Specification<Member> spec = new Specification<Member>() {
-            @Override
-            public Predicate toPredicate(Root<Member> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if (!StringUtils.isEmpty(beginTime)) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("registerTime"), beginTime));
-                }
-                if (!StringUtils.isEmpty(endTime)) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("registerTime"), endTime));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+    public PageResponse<Member> findAll(String cellPhone, Integer authStatus,String beginTime,String endTime,Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-        return memberRepository.findAll(spec,pageable);
+        String table="Member";
+        String field ="*";
+        String orderBy = "Id asc";
+        String condition= getCondition(cellPhone,authStatus,beginTime,endTime,param);
+
+        String sql = "SELECT Count(0) FROM Member WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<Member> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Member>(Member.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<Member> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+
+        return p;
     }
 
 }

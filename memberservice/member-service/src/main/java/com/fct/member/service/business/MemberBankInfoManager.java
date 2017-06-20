@@ -1,7 +1,10 @@
 package com.fct.member.service.business;
 
+import com.fct.common.utils.PageUtil;
 import com.fct.member.data.entity.MemberBankInfo;
+import com.fct.member.data.entity.SystemUser;
 import com.fct.member.data.repository.MemberBankInfoRepository;
+import com.fct.member.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,9 +32,12 @@ public class MemberBankInfoManager {
     @Autowired
     private MemberBankInfoRepository memberBankInfoRepository;
 
+    @Autowired
+    private JdbcTemplate jt;
+
     public void save(MemberBankInfo info)
     {
-        memberBankInfoRepository.saveAndFlush(info);
+        memberBankInfoRepository.save(info);
     }
 
     public MemberBankInfo findById(Integer id)
@@ -42,32 +50,56 @@ public class MemberBankInfoManager {
         return memberBankInfoRepository.findOne(memberId);
     }
 
-    public Page<MemberBankInfo> findAll(String cellPhone,String name,Integer status,Integer pageIndex,
+    public String getCondition(String cellPhone,String bankName,Integer status,List<Object> param)
+    {
+        String condition="";
+        if(!StringUtils.isEmpty(cellPhone))
+        {
+            condition += " AND cellphone=?";
+            param.add(cellPhone);
+        }
+        if(!StringUtils.isEmpty(bankName))
+        {
+            condition += " AND bankName like ?";
+            param.add("%"+ bankName +"%");
+        }
+        if(status>-1)
+        {
+            condition += " AND status="+status;
+        }
+        return condition;
+    }
+
+    public PageResponse<MemberBankInfo> findAll(String cellPhone,String bankName,Integer status,Integer pageIndex,
                                         Integer pageSize)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        List<Object> param = new ArrayList<>();
 
-        Specification<MemberBankInfo> spec = new Specification<MemberBankInfo>() {
-            @Override
-            public Predicate toPredicate(Root<MemberBankInfo> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(cellPhone)) {
-                    predicates.add(cb.equal(root.get("cellPhone"), cellPhone));
-                }
-                if (!StringUtils.isEmpty(name)) {
-                    predicates.add(cb.like(root.get("name"), name));
-                }
-                if(status>-1)
-                {
-                    predicates.add(cb.equal(root.get("Status"),status));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+        String table="MemberBankInfo";
+        String field ="*";
+        String orderBy = "Id asc";
+        String condition= getCondition(cellPhone,bankName,status,param);
 
-        return memberBankInfoRepository.findAll(spec,pageable);
+        String sql = "SELECT Count(0) FROM MemberBankInfo WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<MemberBankInfo> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MemberBankInfo>(MemberBankInfo.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<MemberBankInfo> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+
+        return p;
     }
 }

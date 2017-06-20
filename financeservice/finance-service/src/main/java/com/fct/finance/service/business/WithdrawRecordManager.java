@@ -84,8 +84,9 @@ public class WithdrawRecordManager {
 
         MemberAccountHistory history = new MemberAccountHistory();
         history.setTradeId(record.getId().toString());
-        history.setTradeType(Constants.enumTradeType.withdrawal.toString());
+        history.setTradeType(Constants.enumTradeType.withdraw.toString());
         history.setMemberId(record.getMemberId());
+        history.setCellPhone(record.getCellPhone());
         history.setAmount(record.getAmount());
         history.setBalanceAmount(account.getAvailableAmount());
         history.setPoints(0);
@@ -99,16 +100,42 @@ public class WithdrawRecordManager {
 
     public void updateStatus(Integer omsOperaterId,Integer id, Integer status,String desc)
     {
-        String sql ="UPDATE WithdrawRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id=? AND Status!=1";
+        WithdrawRecord record = withdrawRecordRepository.findOne(id);
+        if(record.getStatus()>0)
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+        record.setStatus(status);
+        record.setRemark(desc);
+        record.setOmsOperaterId(omsOperaterId);
+        record.setUpdateTime(new Date());
 
-        List<Object> param = new ArrayList<>();
-        param.add(status);
-        param.add(desc);
-        param.add(omsOperaterId);
-        param.add(new Date());
-        param.add(id);
+        withdrawRecordRepository.save(record);
 
-        jt.update(sql,param);
+        //如果为拒绝退款，提现金额则返回
+        if(status ==2)
+        {
+            MemberAccount account = memberAccountManager.findById(record.getMemberId());
+
+
+            account.setAvailableAmount(account.getAvailableAmount().add(record.getAmount()));
+            account.setWithdrawAmount(account.getWithdrawAmount().add(record.getAmount()));
+
+            memberAccountManager.save(account);    //恢复退回提现金额
+
+            MemberAccountHistory history = new MemberAccountHistory();
+            history.setTradeId(record.getId().toString());
+            history.setTradeType(Constants.enumTradeType.withdraw_refund.toString());
+            history.setMemberId(record.getMemberId());
+            history.setCellPhone(record.getCellPhone());
+            history.setAmount(record.getAmount());
+            history.setBalanceAmount(account.getAvailableAmount());
+            history.setPoints(0);
+            history.setBalancePoints(account.getPoints());
+            history.setRemark("提现失败退回金额");
+            history.setBehaviorType(1); //支出
+            memberAccountHistoryManager.Create(history);
+        }
     }
 
     private String getCondition(Integer memberId, String cellPhone, Integer status,

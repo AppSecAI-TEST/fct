@@ -58,6 +58,11 @@ public class MallServiceImpl implements MallService {
         return goodsManager.findById(id);
     }
 
+    public List<Goods> findGoodsByIds(String ids)
+    {
+        return goodsManager.findByIds(ids);
+    }
+
     public void saveGoods(Goods goods) {
         goodsManager.save(goods);
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fct.promotion.data.entity.CouponCode;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CouponCodeDTO extends CouponCode {
+public class CouponCodeDTO extends CouponCode implements Serializable {
 
     private String couponName;
 

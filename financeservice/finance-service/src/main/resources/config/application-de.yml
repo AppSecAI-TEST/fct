@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8087
   contextPath: /finance
   tomcat:
     uri-encoding: UTF-8

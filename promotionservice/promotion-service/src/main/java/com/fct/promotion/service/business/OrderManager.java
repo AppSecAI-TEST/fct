@@ -1,6 +1,5 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.logger.LogService;
 import com.fct.common.utils.DateUtils;
 import com.fct.promotion.data.entity.*;
@@ -18,22 +17,22 @@ import java.util.*;
 public class OrderManager {
 
     @Autowired
-    CouponUseLogManager couponUseLogManager;
+    private CouponUseLogManager couponUseLogManager;
 
     @Autowired
-    DiscountUseLogManager discountUseLogManager;
+    private DiscountUseLogManager discountUseLogManager;
 
     @Autowired
-    CouponCodeManager couponCodeManager;
+    private CouponCodeManager couponCodeManager;
 
     @Autowired
-    CouponPolicyManager couponPolicyManager;
+    private CouponPolicyManager couponPolicyManager;
 
     @Autowired
-    DiscountProductManager discountProductManager;
+    private DiscountProductManager discountProductManager;
 
     @Autowired
-    DiscountManager discountManager;
+    private DiscountManager discountManager;
 
     public Integer use(String orderId, Integer memberId, List<OrderProductDTO> products, String couponCode, Integer memberGradeId)
     {
@@ -67,11 +66,11 @@ public class OrderManager {
         }
         if (memberId < 1)
         {
-            throw new BaseException("您还没有登录呢");
+            throw new IllegalArgumentException("您还没有登录呢");
         }
         if (products == null || products.size() < 1)
         {
-            throw new BaseException("您还没有选择产品呢");
+            throw new IllegalArgumentException("您还没有选择产品呢");
         }
     }
 
@@ -170,15 +169,15 @@ public class OrderManager {
             }
             if (DateUtils.compareDate(discount.getEndTime(),new Date())<0)
             {
-                throw new BaseException("该促销折扣已过期");
+                throw new IllegalArgumentException("该促销折扣已过期");
             }
             if (DateUtils.compareDate(discount.getStartTime(),new Date()) >0)
             {
-                throw new BaseException("该促销折扣已过期或未开始");
+                throw new IllegalArgumentException("该促销折扣已过期或未开始");
             }
             if (!mapDiscountProduct.containsKey(obj.getProductId()))
             {
-                throw new BaseException("该产品暂无促销折扣信息：" + obj.getProductId());
+                throw new IllegalArgumentException("该产品暂无促销折扣信息：" + obj.getProductId());
             }
             DiscountProduct discountProduct = mapDiscountProduct.get(obj.getProductId());
 
@@ -197,14 +196,14 @@ public class OrderManager {
             {
                 if (discountProduct.getSingleCount() < dicProductSizeCount.get(obj.getProductId()).get(obj.getSizeId()))
                 {
-                    throw new BaseException("超过购买的件数限制");
+                    throw new IllegalArgumentException("超过购买的件数限制");
                 }
             }
             else
             {
                 if (discountProduct.getSingleCount() < dicProductCount.get(obj.getProductId()))
                 {
-                    throw new BaseException("超过购买的件数限制");
+                    throw new IllegalArgumentException("超过购买的件数限制");
                 }
             }
             if (discount.getOrderCloseTime() > 0)
@@ -227,7 +226,7 @@ public class OrderManager {
         CouponCode coupon = couponCodeManager.findByCode(couponCode);
         if (coupon == null)
         {
-            throw new BaseException("优惠券不存在");
+            throw new IllegalArgumentException("优惠券不存在");
         }
         if (coupon.getMemberId() == 0 && coupon.getStatus() == 0)
         {
@@ -236,22 +235,22 @@ public class OrderManager {
         }
         if (coupon.getMemberId() != memberId)
         {
-            throw new BaseException("你没有使用该优惠券的权限");
+            throw new IllegalArgumentException("你没有使用该优惠券的权限");
         }
         if (coupon.getStatus() != 0)
         {
-            throw new BaseException("优惠券已使用或已失效");
+            throw new IllegalArgumentException("优惠券已使用或已失效");
         }
 
         CouponPolicy policy = couponPolicyManager.findById(coupon.getPolicyId());
         if (policy.getAuditStatus() != 1)
         {
-            throw new BaseException("优惠券已失效");
+            throw new IllegalArgumentException("优惠券已失效");
         }
         if (DateUtils.compareDate(policy.getStartTime(),new Date())>0 ||
                 DateUtils.compareDate(policy.getEndTime(),new Date())<0)
         {
-            throw new BaseException("优惠券已过期");
+            throw new IllegalArgumentException("优惠券已过期");
         }
 
         BigDecimal orderTotalPrice = new BigDecimal(0);
@@ -276,14 +275,14 @@ public class OrderManager {
             {
                 if (price.doubleValue() < policy.getFullAmount().doubleValue()) //小于满额
                 {
-                    throw new BaseException("订单总额小于优惠券满额要求");
+                    throw new IllegalArgumentException("订单总额小于优惠券满额要求");
                 }
             }
             else
             {
                 if (price.doubleValue() < policy.getAmount().doubleValue()) //小于面额
                 {
-                    throw new BaseException("订单总额小于优惠券面值，不能使用");
+                    throw new IllegalArgumentException("订单总额小于优惠券面值，不能使用");
                 }
             }
         }
@@ -291,14 +290,14 @@ public class OrderManager {
         {
             if (orderTotalPrice.doubleValue() < policy.getFullAmount().doubleValue()) //小于满额
             {
-                throw new BaseException("订单总额小于优惠券满额要求");
+                throw new IllegalArgumentException("订单总额小于优惠券满额要求");
             }
         }
         else//针对全场
         {
             if (orderTotalPrice.doubleValue() < policy.getAmount().doubleValue()) //小于面额
             {
-                throw new BaseException("订单总额小于优惠券面值，不能使用");
+                throw new IllegalArgumentException("订单总额小于优惠券面值，不能使用");
             }
         }
         return coupon;

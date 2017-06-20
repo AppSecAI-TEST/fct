@@ -13,7 +13,7 @@ public class Constants {
 
         waitpay("waitpay",0),success("success",1),
         close("close",2),exception("exception",3),
-        partrefund("partrefund",5),fullrefund("fullrefund",6);
+        partrefund("partrefund",4),fullrefund("fullrefund",5);
 
         private Integer value;
         private String key;
@@ -58,7 +58,7 @@ public class Constants {
         /// <summary>
         /// 提现
         /// </summary>
-        withdrawal,
+        withdraw,
 
         /// <summary>
         /// 结算
@@ -68,7 +68,10 @@ public class Constants {
         /// <summary>
         /// 退款
         /// </summary>
-        refund
+        refund,
+
+        //提现退款
+        withdraw_refund
     }
 
     /// <summary>

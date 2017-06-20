@@ -1,10 +1,8 @@
 package com.fct.web.admin.http.cache;
 
 import com.fct.finance.data.entity.PayPlatform;
-import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.OrderGoods;
 import com.fct.mall.interfaces.MallService;
-import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,7 +22,7 @@ public class CacheOrderManager {
     private MallService mallService;
 
     @Autowired
-    private FinanceService financeService;
+    private  CacheFinanceManager cacheFinanceManager;
 
     public List<OrderGoods> findOrderGoods(String orderId)
     {
@@ -82,24 +80,11 @@ public class CacheOrderManager {
 
     public List<PayPlatform> getPayPlatform()
     {
-        try {
-            return financeService.findPayPlatform();
-        }
-        catch (Exception exp)
-        {
-            Constants.logger.error(exp.toString());
-        }
-        return new ArrayList<>();
+        return cacheFinanceManager.getPayPlatform();
     }
 
     public String getPayPlatformName(String code)
     {
-        List<PayPlatform> list = getPayPlatform();
-        for (PayPlatform pay: list
-             ) {
-            if(pay.getCode() == code)
-                return pay.getName();
-        }
-        return "";
+        return cacheFinanceManager.getPayPlatformName(code);
     }
 }

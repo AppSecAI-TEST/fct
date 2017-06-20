@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-系统用户管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'sys_users',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="">
+            <div class="minimalize-styl-2">
+                <form action="" method="get">
+                    <div class="input-group col-sm-3 pull-left">
+                        <input type="text" placeholder="请输入用户名称" value="" class="input-sm form-control" name="q">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </span>
+                    </div>
+                </form>
+                <div class="pull-right" style="padding-right:20px;">
+                    <a class="btn btn-default btn-outline btn-sm" href="javascript:;" id="createClick">
+                        <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>用户名</th>
+                                <th>手机号码</th>
+                                <th>角色</th>
+                                <th>状态</th>
+                                <th>登陆时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="m : ${lsUser}">
+                                <td th:text="${m.id}"></td>
+                                <td th:text="${m.userName}"></td>
+                                <td th:text="${m.cellPhone}"></td>
+                                <td th:text="${m.roleId}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${m.locked eq 0}" th:attr="data-id=${m.id}" class="statusClick" title="已锁定"><i class="fa fa-close"></i> </a>
+                                    <a href="javascript:;" th:if="${m.locked eq 1}" th:attr="data-id=${m.id}" class="statusClick" title="正常"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                                <td th:text="${#dates.format(m.loginTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default update">修改</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="7" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/*@thymesVar id="name" type="java.lang.String"*/-->
+
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: '/sys/users/lock?id='+id
+            });
+        });
+
+        $("#createClick").click(function () {
+            JQbox.open({
+                title:"创建管理员",
+                width: 500,
+                url: '/sys/users/create'
+            })
+        });
+    })
+</script>
+</body>
+</html>

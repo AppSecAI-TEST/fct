@@ -1,6 +1,5 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.utils.DateUtils;
 import com.fct.promotion.data.entity.CouponCode;
 import com.fct.promotion.data.entity.CouponPolicy;
@@ -20,16 +19,16 @@ import java.util.List;
 public class CouponCodeManager {
 
     @Autowired
-    CouponCodeRepository couponCodeRepository;
+    private CouponCodeRepository couponCodeRepository;
 
     @Autowired
-    CouponPolicyManager couponPolicyManager;
+    private CouponPolicyManager couponPolicyManager;
 
     @Autowired
-    CouponSpareCodeManager couponSpareCodeManager;
+    private CouponSpareCodeManager couponSpareCodeManager;
 
     @Autowired
-    JdbcTemplate jt;
+    private JdbcTemplate jt;
 
     static Object syncObj = new Object();
 
@@ -39,21 +38,21 @@ public class CouponCodeManager {
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {
-            throw new BaseException("该优惠券不存在");
+            throw new IllegalArgumentException("该优惠券不存在");
         }
         if (DateUtils.compareDate(new Date(),policy.getEndTime())>0 || policy.getAuditStatus() != 1)
         {
-            throw new BaseException("优惠券活动已过期");
+            throw new IllegalArgumentException("优惠券活动已过期");
         }
 
         if (policy.getFetchType() != 0)
         {
-            throw new BaseException("该优惠券不支持领取");
+            throw new IllegalArgumentException("该优惠券不支持领取");
         }
 
         if (memberId < 1)
         {
-            throw new BaseException("该会员无效");
+            throw new IllegalArgumentException("该会员无效");
         }
         String code = "";
         synchronized (syncObj)
@@ -61,12 +60,12 @@ public class CouponCodeManager {
             int totalSendCount = getSendCount(policyId, 0);
             if (totalSendCount >= policy.getTotalCount())
             {
-                throw new BaseException("优惠券已发放完");
+                throw new IllegalArgumentException("优惠券已发放完");
             }
             int memberSendCount = this.getSendCount(policyId, memberId);
             if (memberSendCount >= policy.getSingleCount())
             {
-                throw new BaseException("您已领用该优惠券");
+                throw new IllegalArgumentException("您已领用该优惠券");
             }
             code = couponSpareCodeManager.getValidCode();
             CouponCode obj = new CouponCode();
@@ -155,11 +154,11 @@ public class CouponCodeManager {
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {
-            throw new BaseException("该优惠券活动不存在");
+            throw new IllegalArgumentException("该优惠券活动不存在");
         }
         if (DateUtils.compareDate(new Date(),policy.getEndTime())>0 || policy.getAuditStatus() != 1)
         {
-            throw new BaseException("优惠券活动已过期");
+            throw new IllegalArgumentException("优惠券活动已过期");
         }
 
         synchronized (syncObj)
@@ -167,18 +166,18 @@ public class CouponCodeManager {
             CouponCode coupon = findByCode(code);
             if (coupon == null)
             {
-                throw new BaseException("该优惠券不存在");
+                throw new IllegalArgumentException("该优惠券不存在");
             }
 
             int memberSendCount = this.getSendCount(policyId, memberId);
             if (memberSendCount >= policy.getSingleCount())
             {
-                throw new BaseException("该优惠活动您已领用过，超过次数限制");
+                throw new IllegalArgumentException("该优惠活动您已领用过，超过次数限制");
             }
 
             if (coupon.getMemberId() > 0)
             {
-                throw new BaseException("优惠券异常，重复领取!!!");
+                throw new IllegalArgumentException("优惠券异常，重复领取!!!");
             }
 
             coupon.setStatus(0);
@@ -200,12 +199,12 @@ public class CouponCodeManager {
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {
-            throw new BaseException("该优惠券不存在");
+            throw new IllegalArgumentException("该优惠券不存在");
         }
 
         if (policy.getFetchType() != 1)
         {
-            throw new BaseException("该优惠券不支持系统发放");
+            throw new IllegalArgumentException("该优惠券不支持系统发放");
         }
 
         String code = "";
@@ -214,7 +213,7 @@ public class CouponCodeManager {
             Integer totalSendCount = this.getSendCount(policyId, 0);
             if (totalSendCount >= policy.getTotalCount())
             {
-                throw new BaseException("优惠券已发放完");
+                throw new IllegalArgumentException("优惠券已发放完");
             }
             code = couponSpareCodeManager.getValidCode();
             CouponCode obj = new CouponCode();

@@ -26,7 +26,7 @@ public interface MemberService {
 
     void lockMember(Integer memberId);
 
-    Page<Member> findMember(String cellPhone,String beginTime,String endTime,Integer pageIndex,Integer pageSize);  //分页按条件查询
+    PageResponse<Member> findMember(String cellPhone,Integer authStatus,String beginTime,String endTime,Integer pageIndex,Integer pageSize);  //分页按条件查询
 
     void updateMemberInfo(MemberInfo info);
 
@@ -47,13 +47,14 @@ public interface MemberService {
 
     MemberBankInfo getMemberBankInfo(Integer id);
 
-    Page<MemberBankInfo> findMemberBankInfo(String cellPhone,String name,Integer status,Integer pageIndex,Integer pageSize);
+    PageResponse<MemberBankInfo> findMemberBankInfo(String cellPhone,String bankName,Integer status,Integer pageIndex,Integer pageSize);
 
     void createInviteCode(Integer memberId);
 
     void addInviteCodeCount(Integer memberId,Integer count);
 
-    Page<InviteCode>  findInviteCode(Integer ownerId, String ownerCellPhone, int pageIndex, int pageSize);
+    PageResponse<InviteCode>  findInviteCode(String code,Integer ownerId, String ownerCellPhone, String toCellphone,
+                                             int pageIndex, int pageSize);
 
     MemberAuth saveMemberAuth(MemberAuth auth);
 
@@ -61,16 +62,20 @@ public interface MemberService {
 
     MemberStore applyStore(Integer memberId,String inviteCode);
 
-    Page<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize);
+    void updateStoreStatus(Integer id);
+
+    PageResponse<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize);
 
     void createSystemUser(SystemUser user);
 
-    SystemUser loginSystemUser(String userName,String password);
+    SysUserLogin loginSystemUser(String userName,String password,String ip,Integer expireHour);
+
+    SysUserLogin getSysUserLogin(String token);
 
     void lockSystemUser(Integer userId);
 
     void updateSystemUserPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword);
 
-    Page<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize);
+    PageResponse<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize);
 
 }

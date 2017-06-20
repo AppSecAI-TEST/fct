@@ -26,8 +26,8 @@ public interface FinanceService {
     void payTradeNotify(String jsonMQPayTrade);
 
     //根据条件获取支付记录
-    PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String platform, String tradeId, String tradeType,
-                                 Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize);
+    PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone,String orderId, String platform,String payOrderId, String tradeId, String tradeType,
+                                 Integer status,  Integer timeType,String beginTime, String endTime, Integer pageIndex, Integer pageSize);
 
     //根据用户id获取账户
     MemberAccount getMemberAccount(Integer memberId);
@@ -37,7 +37,7 @@ public interface FinanceService {
 
     //获取账户变更记录
     PageResponse<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
-                                                        Integer pageIndex, Integer pageSize);
+                                                                String startTime,String endTime,Integer pageIndex, Integer pageSize);
     //创建退款记录
     RefundRecord createRefundRecord(RefundRecord refund);
 
@@ -51,9 +51,12 @@ public interface FinanceService {
     //第三方支付平台同步通知退款成功
     void refundSuccess(Integer refundId, String notifyData);
 
+    void refundClose(Integer omsOperaterId,Integer refundId,String remark);
+
     //根据条件获取退款数据
-    PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String tradeId, String tradeType, String payPlatform,
-                                        Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize);
+    PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType,
+                                                String payPlatform, Integer method,Integer status, String beginTime, String endTime,
+                                                Integer pageIndex, Integer pageSize);
     //用户申请提现
     void applyWithdraw(WithdrawRecord withdrawRecord);
 
@@ -92,6 +95,7 @@ public interface FinanceService {
 
     void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, String payStatus);
 
-    PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, Integer status,
-                                            String beginTime, String endTime, Integer pageIndex, Integer pageSize);
+    PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
+                                                    Integer status,Integer timeType,String beginTime, String endTime,
+                                                    Integer pageIndex, Integer pageSize);
 }

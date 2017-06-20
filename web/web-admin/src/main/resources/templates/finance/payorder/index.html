@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-支付订单管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_payorder',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="form-group">
+                            <div class="col-sm-3 form-inline">
+                                <select class="form-control" name="selkey">
+                                    <option value="orderid" th:selected="${query.selkey eq 'orderid'} ? 'selected'">支付订单</option>
+                                    <option value="cellphone" th:selected="${query.selkey eq 'cellphone'} ? 'selected'">手机号码</option>
+                                </select>
+                                <input name="selvalue" type="text" th:value="${query.selvalue}" class="form-control" placeholder="支付单号或手机号码"/>
+
+                            </div>
+                            <div class="col-sm-3 form-inline">
+                                <select class="col-sm-4 form-control" name="tradetype">
+                                    <option value="">交易类型</option>
+                                    <th:block th:each="type:${cacheFinance.getTradeType()}">
+                                        <option th:value="${type.key}" th:text="${type.value}" th:selected="${query.tradetype eq type.key} ? 'selected'"></option>
+                                    </th:block>
+                                </select>
+                                <input name="tradeid" th:value="${query.tradeid}" type="text" class="form-control" placeholder="请输入交易Id" />
+
+                            </div>
+                            <div class="col-sm-3 form-inline">
+                                <select class="col-sm-4 form-control" name="payplatform">
+                                    <option value="">支付平台</option>
+                                    <th:block th:each="pay:${cacheFinance.getPayPlatform()}">
+                                        <option th:value="${pay.code}" th:text="${pay.name}" th:selected="${query.payplatform eq pay.code} ? 'selected'"></option>
+                                    </th:block>
+                                </select>
+                                <input name="payorderid" type="text" th:value="${query.payorderid}" class="form-control" placeholder="支付单号"/>
+
+                            </div>
+                        </div>
+                        <div class="row col-sm-5 form-inline">
+                            <select class="form-control" name="timetype">
+                                <option value="0">创建时间</option>
+                                <option th:value="1">支付时间</option>
+                            </select>
+                            <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            <label>--</label>
+                            <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                        </div>
+                        <div class="col-sm-2 form-inline">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <th:block th:each="type:${cacheFinance.getPayStatus()}">
+                                    <option th:value="${type.key}" th:text="${type.value}" th:selected="${query.status eq type.key} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary pull-right"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>订单ID</th>
+                                <th>用户手机</th>
+                                <th>业务类型</th>
+                                <th>业务单号</th>
+                                <th>支付平台</th>
+                                <th>使用余额</th>
+                                <th>使用积分</th>
+                                <th>总金额</th>
+                                <th>支付现金</th>
+                                <th>状态</th>
+                                <th>支付时间</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="pay : ${lsPayOrder}">
+                                <td th:text="${pay.orderId}"></td>
+                                <td th:text="${pay.cellPhone}"></td>
+                                <td th:text="${cacheFinance.getTradeTypeName(pay.tradeType)}"></td>
+                                <td th:text="${pay.tradeId}"></td>
+                                <td th:text="${cacheFinance.getPayPlatformName(pay.payPlatform)}"></td>
+                                <td th:text="'¥'+${pay.accountAmount}"></td>
+                                <td th:text="${pay.points}"></td>
+                                <td th:text="'¥'+${pay.totalAmount}"></td>
+                                <td th:text="'¥'+${pay.payAmount}"></td>
+                                <td th:text="${cacheFinance.getPayStatusName(pay.status)}"></td>
+                                <td th:text="${#dates.format(pay.payTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${#dates.format(pay.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default detailClick" th:attr="data-id=${pay.orderId}">查看</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".detailClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.open({
+                title:"支付订单明细",
+                width: 500,
+                url: '/finance/payorder/detail?orderid=' + id
+            })
+        });
+    })
+</script>
+</body>
+</html>

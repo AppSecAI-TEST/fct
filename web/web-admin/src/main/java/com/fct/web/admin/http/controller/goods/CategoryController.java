@@ -2,10 +2,9 @@ package com.fct.web.admin.http.controller.goods;
 
 import com.fct.common.exceptions.Exceptions;
 import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.StringHelper;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.interfaces.MallService;
-import com.fct.web.admin.http.cache.CacheManager;
+import com.fct.web.admin.http.cache.CacheGoodsManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -16,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import sun.tools.jconsole.inspector.Utils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +30,7 @@ public class CategoryController extends BaseController {
     private MallService mallService;
 
     @Autowired
-    private CacheManager cacheManager;
+    private CacheGoodsManager cacheGoodsManager;
     /**
      * 获取商品分类
      * @return
@@ -68,7 +63,7 @@ public class CategoryController extends BaseController {
             category.setId(0);
         }
 
-        List<GoodsCategory> lsCategory = cacheManager.findGoodsCategoryByParent();
+        List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();
 
         model.addAttribute("parentCate", lsCategory);
         model.addAttribute("category", category);
@@ -123,7 +118,7 @@ public class CategoryController extends BaseController {
     {
         parentid = ConvertUtils.toInteger(parentid);
 
-        List<GoodsCategory> lsCate = cacheManager.findGoodsCategoryByParentId(parentid);
+        List<GoodsCategory> lsCate = cacheGoodsManager.findGoodsCategoryByParentId(parentid);
 
         StringBuilder sb = new StringBuilder();
         //sb.append("<select class=\"form-control selCate\" name=\"subid\">");

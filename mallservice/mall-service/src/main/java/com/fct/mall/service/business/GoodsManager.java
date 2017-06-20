@@ -3,6 +3,7 @@ package com.fct.mall.service.business;
 import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
+import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.repository.GoodsRepository;
 import com.fct.mall.interfaces.PageResponse;
@@ -35,7 +36,7 @@ public class GoodsManager {
     public Integer countByCategory(Integer categoryId)
     {
 
-        return goodsRepository.countByCategory(","+ categoryId +",%");
+        return goodsRepository.countByCategory(categoryId +",%");
     }
 
     public Integer countByGrade(Integer gradeId)
@@ -52,6 +53,14 @@ public class GoodsManager {
             goods.setSpecification(lsSpec);
         }
         return goods;
+    }
+
+    public List<Goods> findByIds(String ids)
+    {
+        String sql = "SELECT * FROM Goods Where status=1 AND Id IN("+ ids +")";
+
+        List<Goods> ls = jt.query(sql,new Object[]{},new BeanPropertyRowMapper<Goods>(Goods.class));
+        return ls;
     }
 
     @Transactional
@@ -242,7 +251,7 @@ public class GoodsManager {
         if(!StringUtils.isEmpty(categoryCode))
         {
             condition += " AND categoryCode like ?";
-            param.add(categoryCode);
+            param.add(categoryCode+"%");
         }
         if(status>-1)
         {

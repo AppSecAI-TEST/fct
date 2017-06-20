@@ -13,26 +13,17 @@
                 <div class="dropdown profile-element">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <span class="clear">
-                            <span class="block m-t-xs"><strong class="font-bold">admin</strong></span>
-                            <span class="text-muted text-xs block">超级管理员<b class="caret"></b></span>
+                            <span class="block m-t-xs"><strong class="font-bold" id="showCurrentUser">admin</strong></span>
+                            <span class="text-muted text-xs block"><b class="caret"></b></span>
                         </span>
                     </a>
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
                         <li>
-                            <a class="J_menuItem" href="form_avatar.html">修改头像</a>
-                        </li>
-                        <li>
-                            <a class="J_menuItem" href="profile.html">个人资料</a>
-                        </li>
-                        <li>
-                            <a class="J_menuItem" href="contacts.html">联系我们</a>
-                        </li>
-                        <li>
-                            <a class="J_menuItem" href="mailbox.html">信箱</a>
+                            <a class="J_menuItem upPassword" href="javascript:;">修改密码</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="login.html">安全退出</a>
+                            <a href="/logout.html">安全退出</a>
                         </li>
                     </ul>
                 </div>
@@ -120,30 +111,42 @@
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">会员</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li data-view="index">
-                        <a class="J_menuItem" href="/member/">用户</a>
+                        <a class="J_menuItem" href="/member">用户</a>
                     </li>
-                    <li data-view="shop">
-                        <a class="J_menuItem" href="/shop/">店铺</a>
+                    <li data-view="bank">
+                        <a class="J_menuItem" href="/member/bank">银行账户</a>
                     </li>
-                    <li data-view="inviter">
-                        <a class="J_menuItem" href="/member/inviter">邀请码</a>
+                    <li data-view="store">
+                        <a class="J_menuItem" href="/member/store">店铺</a>
+                    </li>
+                    <li data-view="invite">
+                        <a class="J_menuItem" href="/member/invite">邀请码</a>
                     </li>
                 </ul>
             </li>
-            <li>
+            <li id="slide_finance">
                 <a href="#"><i class="fa fa-dollar"></i> <span class="nav-label">财务</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li>
-                        <a class="J_menuItem" href="typography.html">销售结算</a>
+                    <li data-view="account">
+                        <a class="J_menuItem" href="/finance/account">会员账户</a>
                     </li>
-                    <li>
-                        <a class="J_menuItem" href="tabs_panels.html">提现</a>
+                    <li data-view="history">
+                        <a class="J_menuItem" href="/finance/account/history">账户行为</a>
                     </li>
-                    <li>
-                        <a class="J_menuItem" href="diff.html">退款</a>
+                    <li data-view="payorder">
+                        <a class="J_menuItem" href="/finance/payorder">支付订单</a>
                     </li>
-                    <li>
-                        <a class="J_menuItem" href="toastr_notifications.html">支付日志</a>
+                    <li data-view="refund">
+                        <a class="J_menuItem" href="/finance/refund">退款管理</a>
+                    </li>
+                    <li data-view="settle">
+                        <a class="J_menuItem" href="/finance/settle">结算管理</a>
+                    </li>
+                    <li data-view="withdraw">
+                        <a class="J_menuItem" href="/finance/withdraw">提现管理</a>
+                    </li>
+                    <li data-view="recharge">
+                        <a class="J_menuItem" href="/finance/recharge">充值管理</a>
                     </li>
                 </ul>
             </li>
@@ -170,20 +173,17 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li id="slide_sys">
                 <a href="#"><i class="fa fa-wrench"></i> <span class="nav-label">系统</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li>
-                        <a class="J_menuItem" href="basic_gallery.html">基本图库</a>
+                    <li data-view="users">
+                        <a class="J_menuItem" href="/sys/users">管理员</a>
                     </li>
-                    <li>
-                        <a class="J_menuItem" href="carousel.html">图片切换</a>
+                    <li data-view="role">
+                        <a class="J_menuItem" href="/sys/role">角色管理</a>
                     </li>
-                    <li>
-                        <a class="J_menuItem" href="layerphotos.html">layer相册</a>
-                    </li>
-                    <li>
-                        <a class="J_menuItem" href="blueimp.html">Blueimp相册</a>
+                    <li data-view="config">
+                        <a class="J_menuItem" href="/sys/config">权限配置</a>
                     </li>
                 </ul>
             </li>

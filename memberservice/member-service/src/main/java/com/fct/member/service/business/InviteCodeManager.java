@@ -1,11 +1,14 @@
 package com.fct.member.service.business;
 
 import com.fct.common.utils.DateUtils;
+import com.fct.common.utils.PageUtil;
 import com.fct.common.utils.StringHelper;
 import com.fct.member.data.entity.InviteCode;
 import com.fct.member.data.entity.Member;
+import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberStore;
 import com.fct.member.data.repository.InviteCodeRepository;
+import com.fct.member.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +41,9 @@ public class InviteCodeManager {
     @Autowired
     private MemberManager memberManager;
 
+    @Autowired
+    private JdbcTemplate jt;
+
     @Transactional
     public void create(Integer memberId)
     {
@@ -58,29 +66,62 @@ public class InviteCodeManager {
         memberManager.save(member);
     }
 
-    public Page<InviteCode> findAll(Integer ownerId, String ownerCellPhone, int pageIndex, int pageSize)
+    public String getCondition(String code,Integer ownerId, String ownerCellPhone, String toCellphone,List<Object> param)
     {
-        Sort sort = new Sort(Sort.Direction.DESC, "Id");
-        Pageable pageable = new PageRequest(pageIndex - 1, pageSize, sort);
+        String condition ="";
+        if(ownerId>0)
+        {
+            condition +=" AND ownerId="+ownerId;
+        }
+        if(!StringUtils.isEmpty(ownerCellPhone))
+        {
+            condition += " AND ownerCellPhone=?";
+            param.add(ownerCellPhone);
+        }
+        if(!StringUtils.isEmpty(code))
+        {
+            condition += " AND code=?";
+            param.add(code);
+        }
+        if(!StringUtils.isEmpty(toCellphone))
+        {
+            condition +=" AND toCellPhone=?";
+            param.add(toCellphone);
+        }
+        return condition;
+    }
 
-        Specification<InviteCode> spec = new Specification<InviteCode>() {
-            @Override
-            public Predicate toPredicate(Root<InviteCode> root,
-                                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                if (!StringUtils.isEmpty(ownerCellPhone)) {
-                    predicates.add(cb.equal(root.get("ownerCellPhone"), ownerCellPhone));
-                }
-                if(ownerId>0)
-                {
-                    predicates.add(cb.equal(root.get("ownerId"),ownerId));
-                }
-                query.where(predicates.toArray(new Predicate[predicates.size()]));
-                return null;
-            }
-        };
+    public PageResponse<InviteCode> findAll(String code,Integer ownerId, String ownerCellPhone, String toCellphone,
+                                            int pageIndex,int pageSize)
+    {
+        List<Object> param = new ArrayList<>();
 
-        return inviteCodeRepository.findAll(spec,pageable);
+        String table="InviteCode";
+        String field ="*";
+        String orderBy = "Id asc";
+        String condition= getCondition(code,ownerId,ownerCellPhone,toCellphone,param);
+
+        String sql = "SELECT Count(0) FROM InviteCode WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<InviteCode> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<InviteCode>(InviteCode.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+        PageResponse<InviteCode> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+        
+        return p;
     }
 
     public InviteCode findByCode(String code)

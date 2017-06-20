@@ -1,6 +1,5 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.promotion.data.entity.CouponSpareCode;
 import com.fct.promotion.data.repository.CouponSpareCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class CouponSpareCodeManager {
     static Object syncObj = new Object();
 
     @Autowired
-    CouponSpareCodeRepository couponSpareCodeRepository;
+    private CouponSpareCodeRepository couponSpareCodeRepository;
 
     public String getValidCode()
     {
@@ -33,7 +32,7 @@ public class CouponSpareCodeManager {
 
         if (obj == null)
         {
-            throw new BaseException("券码无效");
+            throw new IllegalArgumentException("券码无效");
         }
 
         obj.setStatus(2);

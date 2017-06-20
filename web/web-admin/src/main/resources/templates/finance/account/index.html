@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-会员账户管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'finance_account',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-1">
+                            <select class="form-control inline" name="orderby">
+                                <option value="0">排序</option>
+                                <option value="1" th:selected="${query.orderby eq 1} ? 'selected'">余额&nbsp;↓</option>
+                                <option value="2" th:selected="${query.orderby eq 2} ? 'selected'">积分&nbsp;↓</option>
+                                <option value="3" th:selected="${query.orderby eq 3} ? 'selected'">收入&nbsp;↓</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2 input-group form-inline">
+                            <input type="text" placeholder="请输入手机号码" th:value="${query.cellphone}" class="input-sm form-control" name="cellphone">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>用户Id</th>
+                                <th>手机号码</th>
+                                <th>当前积分</th>
+                                <th>累计积分</th>
+                                <th>累计收入</th>
+                                <th>冻结金额</th>
+                                <th>可用金额</th>
+                                <th>可提现额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="account : ${lsAccount}">
+                                <td th:text="${account.memberId}"></td>
+                                <td th:text="${account.cellPhone}"></td>
+                                <td th:text="${account.points}"></td>
+                                <td th:text="${account.accumulatePoints}"></td>
+                                <td th:text="'¥'+${account.accumulateIncome}"> </td>
+                                <td th:text="'¥'+${account.frozenAmount}"></td>
+                                <td th:text="'¥'+${account.availableAmount}"></td>
+                                <td th:text="'¥'+${account.withdrawAmount}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+    })
+</script>
+</body>
+</html>

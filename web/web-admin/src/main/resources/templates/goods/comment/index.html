@@ -29,7 +29,7 @@
                                 <select class="form-control inline" name="status">
                                     <option value="">选择状态</option>
                                     <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
-                                    <option value="-1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                                    <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
                                 </select>
                             </div>
                             <div class="col-sm-5 form-inline">

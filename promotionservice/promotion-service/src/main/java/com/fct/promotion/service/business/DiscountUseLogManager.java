@@ -16,7 +16,7 @@ import java.util.List;
 public class DiscountUseLogManager {
 
     @Autowired
-    DiscountUseLogRepository discountUseLogRepository;
+    private DiscountUseLogRepository discountUseLogRepository;
 
     @Transactional
     public void add(List<DiscountUseLog> lst)

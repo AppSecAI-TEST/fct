@@ -1,10 +1,263 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-促销折扣添加/修改</title>
+    <link href="//static/js/plugins/summernote/summernote.css" rel="stylesheet" th:href="@{/static/js/plugins/summernote/summernote.css}" />
+    <link href="//static/js/plugins/summernote/summernote-bs3.css" rel="stylesheet" th:href="@{/static/js/plugins/summernote/summernote-bs3.css}" />
 </head>
-<body>
 
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'promotion_discountcreate',~{::.script})">
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>促销活动添加/修改 <small>包括分类图片、详细百科描述</small></h5>
+                    <div class="ibox-tools">
+                        <a class="close-link" th:href="@{/promotion/discount}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="submitForm" class="form-horizontal" action="" method="post">
+                        <input type="hidden" name="content" id="editorContent">
+                        <input type="hidden" name="id" th:value="${discount.id}">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">活动名称：</label>
+                            <div class="col-sm-3 m-b">
+                                <input type="text" name="name" class="form-control" th:value="${discount.name}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Banner：</label>
+                            <div class="col-sm-2 m-b">
+                                <input name="banner" type="hidden" id="banner" class="form-control" th:value="${discount.banner}"  />
+                                <div id="dropBanner" class="dropzone">
+                                    <div class="dropzone-previews"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">订单关闭时间：</label>
+                            <div class="col-sm-2 m-b">
+                                <div class="input-group">
+                                    <input name="closetime" th:value="${discount.orderCloseTime}" type="text" class="form-control" /> <span class="input-group-addon">分钟</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label class="col-sm-2 control-label">促销时间：</label>
+                            <div class="col-sm-4 m-b form-inline">
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${#dates.format(discount.startTime, 'yyyy-MM-dd HH:mm')}" >
+                                <label>--</label>
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${#dates.format(discount.endTime, 'yyyy-MM-dd HH:mm')}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">是否秒杀：</label>
+                            <div class="col-sm-2 m-b">
+                                <label class="checkbox-inline i-checks">
+                                    <input type="checkbox" name="seckill" th:value="1" th:checked="${discount.notStartCanNotBuy eq 1} ? 'checked'" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <a href="javascript:;" class="btn btn-xs btn-outline btn-danger" id="addGoods">添加宝贝</a>
+                            </label>
+                            <div class="col-sm-9 m-b table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">宝贝</th>
+                                        <th class="text-center" width="18%">价格</th>
+                                        <th class="text-center" width="12%">折扣</th>
+                                        <th class="text-center" width="18%">折后价</th>
+                                        <th class="text-center" width="10%">限购数</th>
+                                        <th class="text-center" width="10%">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="extend-template">
+                                    <tr th:each="p:${discount.productList}" th:with="g=${cacheGoods.getGoods(p.productId)}">
+                                        <td>
+                                            <input name="p_id" type="hidden" th:value="${p.id}"/>
+                                            <input name="g_id" type="hidden" th:value="${p.productId}"/>
+                                            <input name="g_name" type="text" class="form-control" th:value="${p.productName}" readonly="readonly">
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">¥</span>
+                                                <input name="g_price" th:attr="id='g_price_'+${p.id}" class="form-control" type="text" th:value="${g.salePrice}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input name="g_discount" th:value="${p.discountRate*10}" type="number" th:attr="data-id=${p.id}" class="form-control g_discount" />
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">¥</span>
+                                                <input name="g_discountprice" th:attr="id='g_discountprice_'+${p.id}" th:value="${#numbers.formatDecimal(g.salePrice*p.discountRate,3,2)}" type="text" class="form-control" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select name="g_singlecount" class="form-control">
+                                                <th:block th:each="sc:${lsSignleCount}">
+                                                    <option th:value="${sc}" th:text="${sc}" th:selected="${sc eq p.singleCount} ? 'selected'"></option>
+                                                </th:block>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:;" class="is-remove btn btn-default" th:attr="data-id=${p.productId}">删除</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">详细介绍：</label>
+                            <div class="col-sm-9 m-b">
+                                <div class="summernote" th:utext="${discount.content}"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript" th:src="@{/static/js/plugins/summernote/summernote.min.js}" class="script"></script>
+<script type="application/javascript" th:src="@{/static/js/plugins/summernote/summernote-zh-CN.js}" class="script"></script>
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+
+<script type="application/javascript" class="script">
+    var goodsIds = []; //促销宝贝
+
+    var bindGoodsId = function () {
+        $("input[name=g_id]").each(function(a,b){
+            goodsIds.push($(b).val());
+        });
+    }
+    $(function () {
+
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
+
+        $(".summernote").summernote({
+            lang:"zh-CN",
+            height: 300,
+            focus: true,
+            // 重写图片上传
+            onImageUpload: function(files, editor, $editable) {
+                editorUpload(files[0],editor,$editable);
+            }
+        });
+
+        $("#btnClick").click(function () {
+            //取值
+            var sHTML = $('.summernote').code();
+            $("#editorContent").val(sHTML);
+            JQAjax.post(this, {
+                form:"submitForm",
+                url: '/promotion/discount/save',
+                wait:true
+            });
+        });
+
+        $("#addGoods").click(function () {
+            JQbox.open({
+                title:"添加活动宝贝",
+                width: 500,
+                url: "/goods/select?ids="+goodsIds.join()
+            });
+        });
+        bindGoodsId();//初始化宝贝id
+        goodsChange();
+    });
+
+    var insertGoods = function (arrJson) {
+        var html = "";
+        for(var key in arrJson){
+            var json = eval('(' + arrJson[key] + ')');
+            if(goodsIds.indexOf(json.id)>-1){
+                continue;
+            }
+            html+= '<tr id="goodsModule_'+json.id+'">';
+            html+= '<td>';
+            html+= '<input name="g_id" type="hidden" value="'+json.id+'">';
+            html+= '<input name="p_id" type="hidden" value="0">';
+            html+= '<input name="g_name" type="text" class="form-control" readonly="readonly" value="'+ json.name +'">';
+            html+= '</td>';
+            html+= '<td>';
+            html+= '<div class="input-group">';
+            html+= '<span class="input-group-addon">¥</span>';
+            html+= '<input name="g_price" id="g_price_'+ json.id +'" class="form-control" value="'+ json.price +'" type="text" readonly="readonly">';
+            html+= '</div>';
+            html+= '</td>';
+            html+= '<td>';
+            html+= '<input name="g_discount" class="form-control g_discount" data-id="'+ json.id +'" value="" type="number" >';
+            html+= '</td>';
+            html+= '<td>';
+            html+= '<div class="input-group">';
+            html+= '<span class="input-group-addon">¥</span>';
+            html+= '<input name="g_discountprice" id="g_discountprice_'+ json.id +'" type="text" value="" class="form-control" readonly="readonly" />';
+            html+= '</div>';
+            html+= '</td>';
+            html+= '<td>';
+            html+= '<select name="g_singlecount" class="form-control">';
+            html+= '<option value="0">0</option>';
+            html+= '<option value="1">1</option>';
+            html+= '<option value="3">3</option>';
+            html+= '<option value="5">5</option>';
+            html+= '</select>';
+            html+= '</td>';
+            html+= '<td>';
+            html+= '<a href="javascript:;" class="is-remove btn btn-default" data-id="'+ json.id +'">移除</a>';
+            html+= '</td>';
+            html+= '</tr>';
+            goodsIds.push(json.id);
+        }
+        $('#extend-template').append(html);
+        goodsChange();
+    };
+
+
+    var goodsChange = function () {
+        /** 删除行 */
+        $('.is-remove').on('click', function () {
+            $(this).parent().parent().remove();
+            var id = $(this).attr("data-id");
+            for (var i = 0 ; i< goodsIds.length; i ++) {
+                if(goodsIds[i] == id){
+                    goodsIds.splice(i,1);
+                }
+            };
+        });
+
+        $(".g_discount").on('change',function () {
+            var id= $(this).attr("data-id");
+            var price = $("#g_price_"+id).val();
+            var discountprice = $(this).val() * price/10;
+            $("#g_discountprice_"+id).val(discountprice.toFixed(2));
+        });
+    }
+
+
+    webUploads($('#dropBanner'), {
+        url: '/upload/image',
+        input: 'banner',
+        max: 1
+    });
+</script>
 </body>
 </html>
+

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="ibox float-e-margins">
+    <div class="ibox-content" style="border-style:none;">
+        <div class="alert alert-danger alert-dismissable dn" id="valid_remind"></div>
+        <form class="form-horizontal m-t" id="authForm">
+            <input type="hidden" name="id" th:value="${member.id}">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">手机号码：</label>
+                <div class="col-sm-8">
+                    <span th:text="${member.cellPhone}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <span th:text="${info.realName}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">性别：</label>
+                <div class="col-sm-8">
+                    <span th:text="${info.sex eq 1}?'男':'女'" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">身份证号：</label>
+                <div class="col-sm-8">
+                    <span th:text="${info.identityCardNo}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">身份照片：</label>
+                <div class="col-sm-8">
+                    <a th:href="${pub.uploadPath(info.identityCardImg)}" target="_blank"><img th:src="${pub.thumbnailPath(info.identityCardImg)}" class="loadimg" />
+                    </a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">微信号：</label>
+                <div class="col-sm-8">
+                    <span th:text="${info.weixin}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">银行名称：</label>
+                <div class="col-sm-8">
+                    <span th:text="${bank.bankName}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">银行账号：</label>
+                <div class="col-sm-8">
+                    <span th:text="${bank.bankAccount}" class="form-control"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-3">
+                    <button class="btn btn-default passClick" type="button" th:if="${member.authStatus eq 1}">取消认证</button>
+                    <button class="btn btn-primary passClick" type="button" th:if="${member.authStatus eq 0}">认证通过</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(".passClick").click(function () {
+        JQAjax.post(this, {
+            form: "authForm",
+            url: '/member/update?action=auth',
+            wait: true
+        });
+    });
+
+</script>
+
+</html>

@@ -79,7 +79,7 @@
                                     <div class="col-sm-9 m-b">
                                         <th:block th:each="cate : ${categoryList}">
                                             <label class="checkbox-inline i-checks">
-                                                <input type="checkbox" th:value="${cate.id}" name="artistId" th:text="'&nbsp;'+${cate.name}" th:checked="${#strings.contains(goods.ArtistIds,cate.id)} ? 'selected'" />
+                                                <input type="checkbox" th:value="${cate.id}" name="artistId" th:text="'&nbsp;'+${cate.name}" th:checked="${#strings.contains(goods.ArtistIds,cate.id)} ? 'checked'" />
                                             </label>
                                         </th:block>
                                     </div>

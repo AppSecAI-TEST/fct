@@ -18,6 +18,8 @@ public interface MallService {
 
     Goods getGoods(Integer id);
 
+    List<Goods> findGoodsByIds(String ids);
+
     void saveGoods(Goods goods);
 
     void setGoodsSortIndex(Integer id, Integer sortIndex);

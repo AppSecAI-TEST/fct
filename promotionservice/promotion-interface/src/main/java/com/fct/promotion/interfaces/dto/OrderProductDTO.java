@@ -3,6 +3,7 @@ package com.fct.promotion.interfaces.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderProductDTO {
+public class OrderProductDTO implements Serializable {
 
     private Integer productId;
 

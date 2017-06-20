@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,17 @@ public class GradeController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Model model) {
 
-        List<GoodsGrade> lsGrade = mallService.findGoodsGrade();
+        List<GoodsGrade> lsGrade = null;
+        try {
+           lsGrade = mallService.findGoodsGrade();
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        if(lsGrade == null)
+            lsGrade = new ArrayList<>();
+
         model.addAttribute("lsGrade", lsGrade);
         return "goods/grade/index";
     }

@@ -30,6 +30,8 @@ public class DiscountProduct implements Serializable {
 
     private Integer productId;
 
+    private String productName;
+
     private BigDecimal discountRate;
 
     private Integer singleCount;

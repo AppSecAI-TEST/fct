@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface RefundRecordRepository extends JpaRepository<RefundRecord, Inte
     Integer countByTradeIdAndTradeType(String tradeId, String tradeType);
 
     @Query(nativeQuery = true, value = "select * from RefundRecord where status=0 and Id in(?1)")
-    List<RefundRecord> findByIds(String ids);
+    List<RefundRecord> findByIds(List<Integer> lsIds);
 
     //更新状态为退款成功，前提必须是财务确认的状态
     @Modifying

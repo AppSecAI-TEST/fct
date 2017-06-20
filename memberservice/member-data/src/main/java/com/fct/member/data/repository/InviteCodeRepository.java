@@ -12,6 +12,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface InviteCodeRepository extends JpaRepository<InviteCode, Integer> {
 
     InviteCode findByCode(String code);
-
-    Page<InviteCode> findAll(Specification<InviteCode> spec, Pageable pageable);  //分页按条件查询
 }

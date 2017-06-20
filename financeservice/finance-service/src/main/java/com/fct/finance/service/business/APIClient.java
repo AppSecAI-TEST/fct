@@ -8,4 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class APIClient {
 
+    @Autowired
+    public static MessageService messageService;
 }

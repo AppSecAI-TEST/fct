@@ -1,6 +1,6 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
+import com.fct.common.utils.DateUtils;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.data.repository.DiscountProductRepository;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -18,41 +19,45 @@ import java.util.List;
 public class DiscountProductManager {
 
     @Autowired
-    DiscountProductRepository discountProductRepository;
+    private DiscountProductRepository discountProductRepository;
 
     @Autowired
-    JdbcTemplate jt;
+    private JdbcTemplate jt;
 
-    private DiscountProduct save(DiscountProduct obj)
+    public DiscountProduct save(DiscountProduct obj)
     {
         obj.setLastUpdateTime(new Date());
-        if (obj.getId() > 0)
-        {
-            discountProductRepository.saveAndFlush(obj);
-        }
-        else
+        if (obj.getId()== null || obj.getId() ==  0)
         {
             obj.setCreateTime(new Date());
-            discountProductRepository.save(obj);
+            obj.setIsValidForSize(false);
         }
+        discountProductRepository.save(obj);
         return obj;
     }
 
     public void add(Discount discount, List<DiscountProduct> lst)
     {
-        checkValid(discount, lst);
+        //checkValid(discount, lst);
         for (DiscountProduct obj:lst
              ) {
             save(obj);
         }
     }
 
+    @Transactional
     public void deleteByDiscountId(Integer discountId)
     {
-        String query = "insert into DiscountProductHistory select Id,DiscountId,ProductId,DiscountRate,SingleCount,IsValidForSize,CreateUserId,CreateTime,LastUpdateUserId,LastUpdateTime,GETDATE() from DiscountProduct where DiscountId="+discountId;
+        String query = "insert into DiscountProductHistory(id,DiscountId,ProductId,DiscountRate," +
+                "SingleCount,IsValidForSize,CreateUserId,CreateTime,LastUpdateUserId,LastUpdateTime,deleteTime)" +
+                " select Id,DiscountId,ProductId,DiscountRate,SingleCount,IsValidForSize," +
+                "CreateUserId,CreateTime,LastUpdateUserId,LastUpdateTime,now()" +
+                " from DiscountProduct where DiscountId="+discountId;
+
         jt.execute(query);
 
         query = "delete from DiscountProduct where DiscountId="+discountId;
+
         jt.execute(query);
     }
 
@@ -79,13 +84,13 @@ public class DiscountProductManager {
         String sql = String.format("select p.* from discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",new Date());
         if (filterNoBegin == 1)
         {
-            sql += " AND (d.StartTime<='" + new Date() + "' OR d.NotStartCanNotBuy=1)";
+            sql += " AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)";
         }
         return jt.queryForList(sql,DiscountProduct.class);
     }
 
 
-    void checkValid(Discount discount, List<DiscountProduct> lst)
+    public void checkValid(Discount discount, List<DiscountProduct> lst)
     {
         for (DiscountProduct obj:lst
              ) {
@@ -97,32 +102,41 @@ public class DiscountProductManager {
     {
         if (obj.getProductId() < 1)
         {
-            throw new BaseException("产品不能为空");
+            throw new IllegalArgumentException("产品不能为空");
         }
         if (obj.getDiscountRate().doubleValue() > 1 || obj.getDiscountRate().doubleValue() <= 0)
         {
-            throw new BaseException("请输入正确的折扣信息");
+            throw new IllegalArgumentException("请输入正确的折扣信息");
         }
-        if (obj.getSingleCount() < 1)
+        if (obj.getSingleCount() < 0)
         {
-            throw new BaseException("请输入正确的限购数量");
+            throw new IllegalArgumentException("请输入正确的限购数量");
         }
         if (hasConflict(discount, obj))
         {
-            throw new BaseException("该商品存在冲突的促销：" + obj.getProductId());
+            throw new IllegalArgumentException("该商品存在冲突的促销：" + obj.getProductId());
         }
+
     }
 
     private Boolean hasConflict(Discount discount, DiscountProduct obj)
     {
         //检查有无冲突的产品促销
-        String query = "select count(1) from Discount d inner join DiscountProduct p on d.Id=p.DiscountId where ((startTime >= ?1 AND startTime < ?2) OR (startTime < ?1 AND endTime > ?2) OR (endTime > ?1 AND endTime <= ?2)) and p.ProductId=?3";
+        String starttime = DateUtils.format(discount.getStartTime());
+        String endtime =DateUtils.format(discount.getEndTime());
+
+        String query = "select count(0) from Discount d inner join DiscountProduct p on d.Id=p.DiscountId where ";
+        query += String.format("((d.startTime >= '%s' AND d.startTime < '%s') ",starttime,endtime);
+        query += String.format(" OR (d.startTime < '%s' AND d.endTime > '%s') ",starttime,endtime);
+        query += String.format(" OR (d.endTime > '%s' AND d.endTime <= '%s'))",starttime,endtime);
+        query += " and p.ProductId="+obj.getProductId();
+
         if (discount.getId() > 0)
         {
             query += " and d.Id!="+discount.getId();
         }
 
-        Integer exeCount  =jt.queryForObject(query,new Object[] {discount.getStartTime(),discount.getEndTime(),obj.getProductId()},Integer.class);
+        Integer exeCount  =jt.queryForObject(query,Integer.class);
 
         return  exeCount>0;
     }

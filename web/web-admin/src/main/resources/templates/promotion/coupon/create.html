@@ -1,10 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-促销优惠券添加/修改</title>
+    <link />
 </head>
-<body>
 
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'promotion_couponcreate',~{::.script})">
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>促销优惠券添加/修改 <small>包括分类图片、详细百科描述</small></h5>
+                    <div class="ibox-tools">
+                        <a class="close-link" th:href="@{/promotion/coupon}">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="submitForm" class="form-horizontal" action="" method="post">
+                        <input type="hidden" name="productids" id="productIds" th:value="${coupon.productIds}">
+                        <input type="hidden" name="id" th:value="${coupon.id}">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称：</label>
+                            <div class="col-sm-3 m-b">
+                                <input type="text" name="name" class="form-control" th:value="${coupon.name}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">面额：</label>
+                            <div class="col-sm-3 m-b">
+                                <div class="input-group">
+                                    <span class="input-group-addon">¥</span>
+                                    <input name="amount" class="form-control" type="text" th:value="${coupon.amount}" th:readonly="${coupon.id >0} ?'readonly'">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label class="col-sm-2 control-label">有效时间：</label>
+                            <div class="col-sm-4 m-b form-inline">
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${#dates.format(coupon.startTime, 'yyyy-MM-dd HH:mm')}" >
+                                <label>--</label>
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${#dates.format(coupon.endTime, 'yyyy-MM-dd HH:mm')}">
+                            </div>
+                        </div>
+                        <div class="form-group form-inline">
+                            <label class="col-sm-2 control-label">使用类型：</label>
+                            <div class="col-sm-6 m-b form-inline">
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="usingtype" class="form-control" value="0" th:checked="${coupon.usingType eq 0} ?'checked'"/>&nbsp;&nbsp;无条件
+                                </label>
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="usingtype" class="form-control" value="1" th:checked="${coupon.usingType eq 1} ?'checked'"/>&nbsp;&nbsp;满
+                                </label>
+                                <input name="fullamount" th:value="${coupon.fullAmount}" type="number" class="form-control" />&nbsp;&nbsp;&nbsp;元使用
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">领取方式：</label>
+                            <div class="col-sm-3 m-b form-inline">
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="fetchtype" class="form-control" value="0" th:checked="${coupon.fetchType eq 0} ?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;用户领取
+                                </label>
+
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="fetchtype" class="form-control" value="1" th:checked="${coupon.fetchType eq 1 } ?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;线下发放
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">发行量：</label>
+                            <div class="col-sm-3 m-b">
+                                <input type="text" name="totalcount" class="form-control" th:value="${coupon.totalCount}" placeholder="最大数量不超过1万" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">限领数量：</label>
+                            <div class="col-sm-1 m-b">
+                                <select name="singlecount" class="form-control">
+                                    <th:block th:each="sc:${lsSignleCount}">
+                                        <option th:value="${sc}" th:text="${sc}" th:selected="${sc eq coupon.singleCount} ? 'selected'"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">审核状态：</label>
+                            <div class="col-sm-2 m-b">
+                                <label class="checkbox-inline i-checks">
+                                    <input type="checkbox" name="status" th:value="1" th:checked="${coupon.auditStatus eq 1} ? 'checked'" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">类型：</label>
+                            <div class="col-sm-3 m-b form-inline">
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="typeid" class="form-control" value="0" th:checked="${coupon.typeId eq 0} ?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;全场通用
+                                </label>
+                                <label class="checkbox-inline i-checks">
+                                <input type="radio" name="typeid" class="form-control" value="1" th:checked="${coupon.typeId eq 1}?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;部份商品
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <a href="javascript:;" class="btn btn-xs btn-outline btn-danger" id="addGoods">添加宝贝</a>
+                            </label>
+                            <div class="col-sm-9 m-b">
+                                <textarea id="txtGoods" name="txtgoods" class="form-control" th:text="${goodsName}" readonly="readonly"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
+
+        $("#btnClick").click(function () {
+            JQAjax.post(this, {
+                form:"submitForm",
+                url: '/promotion/coupon/save',
+                wait:true
+            });
+        });
+
+        $("#addGoods").click(function () {
+            var text = $("#txtGoods").val();
+            var ids = $("#productIds").val();
+            JQbox.open({
+                title:"添加活动宝贝",
+                width: 500,
+                url: "/goods/select?disabled=false&ids="+ids+"&names="+encodeURI(encodeURI(text))
+            });
+        });
+    });
+
+    var insertGoods = function (arrJson) {
+
+        var goodname = "";
+        var gid = "";
+
+        for(var key in arrJson){
+            var json = eval('(' + arrJson[key] + ')');
+            if(gid !=""){
+                gid +=",";
+            }
+            gid += json.id;
+
+            if(goodname!=""){
+                goodname += "、";
+            }
+            goodname += json.name;
+        }
+
+        $("#productIds").val(gid);
+        $("#txtGoods").val(goodname);
+    };
+</script>
 </body>
 </html>
+

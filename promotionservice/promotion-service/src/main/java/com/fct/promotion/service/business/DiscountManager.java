@@ -1,30 +1,20 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.exceptions.BaseException;
 import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.promotion.data.entity.CouponOperateLog;
-import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.data.repository.DiscountRepository;
 import com.fct.promotion.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,52 +26,48 @@ import java.util.List;
 @Service
 public class DiscountManager {
     @Autowired
-    DiscountRepository discountRepository;
+    private DiscountRepository discountRepository;
 
     @Autowired
-    DiscountProductManager discountProductManager;
+    private DiscountProductManager discountProductManager;
 
     @Autowired
-    CouponOperateLogManager couponOperateLogManager;
+    private CouponOperateLogManager couponOperateLogManager;
 
     @Autowired
-    JdbcTemplate jt;
-
-    private Discount save(Discount obj)
-    {
-        obj.setLastUpdateTime(new Date());
-        if (obj.getId() == null || obj.getId() == 0)
-        {
-            obj.setCreateTime(new Date());
-            obj.setAuditStatus(1);//默认审核通过
-        }
-        discountRepository.save(obj);
-        return obj;
-    }
+    private JdbcTemplate jt;
 
     public Discount findById(int id)
     {
         return discountRepository.findOne(id);
     }
 
-    public void add(Discount obj, List<DiscountProduct> lst)
+    @Transactional
+    public void add(Discount discount)
     {
-        checkValid(obj, null);
-        discountProductManager.checkValid(obj,lst);
-        obj.setProductCount(lst.size()); //更新折扣宝贝数量
+        List<DiscountProduct> lst = discount.getProductList();
+        checkValid(discount, null);
+        discountProductManager.checkValid(discount,lst);
+        discount.setProductCount(lst.size()); //更新折扣宝贝数量
 
-        //以后事务操作
-        save(obj);
+        discount.setLastUpdateTime(new Date());
+        discount.setCreateTime(new Date());
+        discount.setLastUpdateUserId(discount.getCreateUserId());
+        discount.setAuditStatus(1);//默认审核通过
+
+        discountRepository.save(discount);
 
         for (DiscountProduct p:lst
              ) {
-            p.setDiscountId(obj.getId());
-            p.setCreateUserId(obj.getCreateUserId());
-            p.setLastUpdateUserId(obj.getCreateUserId());
+            p.setDiscountId(discount.getId());
+            p.setCreateUserId(discount.getCreateUserId());
+            p.setLastUpdateUserId(discount.getCreateUserId());
             p.setLastUpdateTime(new Date());
             p.setCreateTime(new Date());
+
+            discountProductManager.save(p);
         }
-        discountProductManager.add(obj,lst);
+        //discountProductManager.add(obj,lsGoods);
     }
 
     public List<Discount> findByDiscountId(List<Integer> discountIds)
@@ -98,8 +84,9 @@ public class DiscountManager {
         return jt.queryForList(sql,Discount.class);
     }
 
-    public void update(Discount obj, List<DiscountProduct> lst)
+    public void update(Discount obj)
     {
+        List<DiscountProduct> lst = obj.getProductList();
         Discount oldPromotion = findById(obj.getId());
         checkValid(obj, oldPromotion);
 
@@ -113,7 +100,11 @@ public class DiscountManager {
         }
 
         obj.setProductCount(lst.size());   //更新折扣宝贝数量
-        save(obj);
+
+        obj.setLastUpdateTime(new Date());
+        discountRepository.save(obj);
+
+        discountProductManager.deleteByDiscountId(obj.getId());
 
         for (DiscountProduct p:lst
                 ) {
@@ -122,10 +113,8 @@ public class DiscountManager {
             p.setLastUpdateUserId(obj.getCreateUserId());
             p.setLastUpdateTime(new Date());
             p.setCreateTime(new Date());
+            discountProductManager.save(p);
         }
-        discountProductManager.deleteByDiscountId(obj.getId());
-        discountProductManager.add(obj,lst);
-
 
         //记录操作日志
         CouponOperateLog log = new CouponOperateLog();
@@ -143,17 +132,18 @@ public class DiscountManager {
         Discount obj = findById(discountId);
         if (obj.getAuditStatus() == 1)
         {
-            throw new BaseException("促销状态已是最终状态，不能修改");
+            throw new IllegalArgumentException("促销状态已是最终状态，不能修改");
         }
         obj.setAuditStatus(pass ? 1 : 2);
         obj.setLastUpdateUserId(userId);
-        this.save(obj);
+        obj.setLastUpdateTime(new Date());
+        discountRepository.save(obj);
     }
 
     private String getCondition(String name,String goodsName,Integer status, String startTime, String endTime,List<Object> param)
     {
         String condition ="";
-        if(status>0)
+        if(status>-1)
         {
             condition += " AND AuditStatus="+status;
         }
@@ -222,7 +212,7 @@ public class DiscountManager {
 
         if (DateUtils.compareDate(obj.getStartTime(),obj.getEndTime())>=0)
         {
-            throw new BaseException("促销开始时间不能大于结束时间");
+            throw new IllegalArgumentException("促销开始时间不能大于结束时间");
         }
 
         if (obj.getId() > 0 && obj.getAuditStatus() == 1)
@@ -238,30 +228,17 @@ public class DiscountManager {
 
             if (DateUtils.compareDate(obj.getEndTime(),new Date())<0)
             {
-                throw new BaseException("促销已结束，不能修改");
+                throw new IllegalArgumentException("促销已结束，不能修改");
             }
 
             if (DateUtils.compareDate(obj.getStartTime(),oldDiscount.getStartTime())>0)
             {
-                throw new BaseException("开始时间不能延后");
+                throw new IllegalArgumentException("开始时间不能延后");
             }
             if (DateUtils.compareDate(obj.getEndTime(),oldDiscount.getEndTime())<0)
             {
-                throw new BaseException("结束时间不能提前结束");
+                throw new IllegalArgumentException("结束时间不能提前结束");
             }
         }
-    }
-
-    private Boolean hasConflict(Discount obj)
-    {
-        //检查有无冲突的促销
-        String sql = "select count(0) from Discount where ((startTime >= '"+ obj.getStartTime() +"' AND ";
-        sql += "startTime < '"+ obj.getEndTime() +"') OR (startTime < '"+ obj.getStartTime() +"' AND endTime > '";
-        sql += obj.getEndTime() +"') OR (endTime > '"+ obj.getStartTime() +"' AND endTime <= '"+ obj.getEndTime() +"'))";
-        if (obj.getId() > 0)
-        {
-            sql += " and Id!=" + obj.getId();
-        }
-        return jt.queryForObject(sql,Integer.class)<0;
     }
 }

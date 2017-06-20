@@ -10,7 +10,7 @@ import com.fct.common.utils.ConvertUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.interfaces.PageResponse;
-import com.fct.web.admin.http.cache.CacheManager;
+import com.fct.web.admin.http.cache.CacheGoodsManager;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.net.URLDecoder;
+import java.util.*;
 
 
 /**
@@ -42,7 +40,7 @@ public class GoodsController extends BaseController{
     private MallService mallService;
 
     @Autowired
-    private CacheManager cacheManager;
+    private CacheGoodsManager cacheGoodsManager;
 
     /**
      * 获取商品品级
@@ -60,8 +58,8 @@ public class GoodsController extends BaseController{
         materialid =ConvertUtils.toInteger(materialid);
         page =ConvertUtils.toPageIndex(page);
 
-        List<GoodsCategory> lsCategory = cacheManager.findGoodsCategoryByParent();//这样引用出错
-        List<GoodsGrade> lsGrade = mallService.findGoodsGrade();
+        List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();//这样引用出错
+        List<GoodsGrade> lsGrade = cacheGoodsManager.findGoodsGrade();
         Integer pageSize = 30;
         String pageUrl = "?page=%d";
         if(!StringUtils.isEmpty(name))
@@ -84,9 +82,18 @@ public class GoodsController extends BaseController{
         {
             pageUrl +="&materialid="+ materialid;
         }
+        PageResponse<Goods> pageResponse = null;
 
-        PageResponse<Goods> pageResponse = mallService.findGoods(name,catecode,gradeid,materialid,artistid,
-                0,0,status,page,pageSize);
+        try {
+
+            pageResponse = mallService.findGoods(name, catecode, gradeid, materialid, artistid,
+                    0, 0, status, page, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+            pageResponse = new PageResponse<Goods>();
+        }
 
         Map<String,Object> query = new HashMap<>();
         query.put("name", name);
@@ -102,7 +109,7 @@ public class GoodsController extends BaseController{
         model.addAttribute("lsGoods", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
-        model.addAttribute("cache",cacheManager);
+        model.addAttribute("cache", cacheGoodsManager);
 
         return "goods/index";
     }
@@ -116,7 +123,7 @@ public class GoodsController extends BaseController{
             goods = mallService.getGoods(id);
             if(!StringUtils.isEmpty(goods.getMaterialId())) {
                 String materialid = goods.getMaterialId();
-                materialName = cacheManager.getMaterialName(goods.getMaterialId());
+                materialName = cacheGoodsManager.getMaterialName(goods.getMaterialId());
                 materialid = materialid.substring(1, materialid.length() - 1);
                 goods.setMaterialId(materialid); //为了去掉前后各一个, 避免添加的时候重复。
             }
@@ -129,8 +136,8 @@ public class GoodsController extends BaseController{
             goods.setCategoryCode("");
             goods.setMaterialId("");
         }
-        List<GoodsCategory> categoryList = cacheManager.findGoodsCategoryByParent();
-        List<GoodsGrade> gradeList = cacheManager.findGoodsGrade();
+        List<GoodsCategory> categoryList = cacheGoodsManager.findGoodsCategoryByParent();
+        List<GoodsGrade> gradeList = cacheGoodsManager.findGoodsGrade();
 
         model.addAttribute("materialName",materialName);
         model.addAttribute("gradeList", gradeList);
@@ -280,5 +287,70 @@ public class GoodsController extends BaseController{
             return AjaxUtil.alert("系统或网络错误，请稍候再试。");
         }
         return AjaxUtil.reload("删除宝贝成功。");
+    }
+
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
+    public String select(String ids,@RequestParam(required = false)String disabled,
+                         @RequestParam(required = false)String names,Model model) {
+
+        ids = ConvertUtils.toString(ids);
+        disabled = ConvertUtils.toString(disabled);
+        names = ConvertUtils.toString(names);
+        List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();//这样引用出错
+        try
+        {
+            names = URLDecoder.decode(names, "UTF-8");
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+
+        model.addAttribute("category",lsCategory);
+        model.addAttribute("ids", ids);
+        model.addAttribute("names", names);
+        model.addAttribute("disabled", disabled);
+        return "goods/select";
+    }
+    @ResponseBody
+    @RequestMapping(value = "/ajaxload", method = RequestMethod.GET,produces="text/html;charset=UTF-8")
+    public String ajaxLoad(String q,String cateid,String ids,@RequestParam(required = false)String disabled)
+    {
+        q = ConvertUtils.toString(q);
+        cateid = ConvertUtils.toString(cateid);
+        ids = ConvertUtils.toString(ids);
+        disabled = ConvertUtils.toString(disabled);
+
+        PageResponse<Goods> pageResponse = mallService.findGoods(q, cateid, 0, 0, 0,
+                0, 0, 1, 1, 25);
+
+        StringBuilder sb = new StringBuilder();
+
+        String[] arrId = ids.split(",");
+        List<String> idList = Arrays.asList(arrId);
+
+        for (Goods g:pageResponse.getElements()
+                ) {
+            String checked = "";
+            if(idList.contains(g.getId().toString()))
+            {
+                checked = " checked=\"checked\"";
+                if(StringUtils.isEmpty(disabled)){
+                    checked += "disabled=\"disabled\"";
+                }
+            }
+
+            String json = "{id:'"+ g.getId()+"',name:'"+ g.getName() +"',price:'"+ g.getSalePrice() +"'}";
+
+            sb.append("<tr>");
+            sb.append("<td>"+ g.getName() +"</td>");
+            sb.append("<td>"+ g.getCode() +"</td>");
+            sb.append("<td>¥"+ g.getSalePrice() +"</td>");
+            sb.append("<td>");
+            sb.append("<input type=\"checkbox\" class=\"goodsCheck\" value=\""+g.getId()+"\" data-json=\""+ json +"\" name=\"goodscheck\" "+checked+"/>");
+            sb.append("</td>");
+            sb.append("</tr>");
+        }
+        return sb.toString();
     }
 }

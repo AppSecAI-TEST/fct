@@ -29,6 +29,8 @@ public class MemberAccountHistory implements Serializable {
     /// </summary>
     private Integer memberId;
 
+    private String cellPhone;
+
     /// <summary>
     /// 变动金额
     /// </summary>

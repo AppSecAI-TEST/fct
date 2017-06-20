@@ -1,7 +1,6 @@
 package com.fct.promotion.service.business;
 
 import com.fct.common.utils.ListUtils;
-import com.fct.common.utils.QueryResult;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.List;
 public class CouponCodeDTOManager {
 
     @Autowired
-    JdbcTemplate jt;
+    private JdbcTemplate jt;
 
     public List<CouponCodeDTO> findMemberCouponCode(Integer policyId,Integer memberId,String code,Integer status,
                                                            Boolean isValid,Integer startIndex, Integer count)

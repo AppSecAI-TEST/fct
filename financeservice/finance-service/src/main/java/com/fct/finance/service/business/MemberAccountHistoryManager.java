@@ -34,7 +34,7 @@ public class MemberAccountHistoryManager {
     }
 
     private String getCondition(Integer memberId, String cellPhone, String tradeId, String tradeType,
-                                List<Object> param)
+                                String startTime,String endTime,List<Object> param)
     {
         String condition = "";
         if (!StringUtils.isEmpty(cellPhone)) {
@@ -52,18 +52,27 @@ public class MemberAccountHistoryManager {
             condition += " AND tradeType=?";
             param.add(tradeType);
         }
+        if (!StringUtils.isEmpty(startTime)) {
+            condition += " AND createtime >=?";
+            param.add(startTime);
+        }
+        if (!StringUtils.isEmpty(endTime)) {
+            condition += " AND createtime <?";
+            param.add(endTime);
+        }
+
         return condition;
     }
 
     public PageResponse<MemberAccountHistory> findAll(Integer memberId, String cellPhone, String tradeId, String tradeType,
-                                              Integer pageIndex, Integer pageSize)
+                                              String startTime,String endTime,Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="MemberAccountHistory";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,tradeId,tradeType,param);
+        String condition= getCondition(memberId,cellPhone,tradeId,tradeType,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM MemberAccountHistory WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

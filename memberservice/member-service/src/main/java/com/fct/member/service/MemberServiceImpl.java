@@ -2,6 +2,7 @@ package com.fct.member.service;
 
 
 import com.fct.member.data.entity.*;
+import com.fct.member.interfaces.PageResponse;
 import com.fct.member.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,9 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     @Autowired
     private SystemUserManager systemUserManager;
 
+    @Autowired
+    private SysUserLoginManager sysUserLoginManager;
+
     /*注册会员*/
 //    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
@@ -59,7 +63,6 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public Member getMember(Integer memberId)
     {
-        System.out.println("getMember in");
         return memberManager.findById(memberId);
     }
 
@@ -79,9 +82,9 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         memberManager.lock(memberId);
     }
 
-    public Page<Member> findMember(String cellPhone,String beginTime,String endTime, Integer pageIndex,Integer pageSize)
+    public PageResponse<Member> findMember(String cellPhone,Integer authStatus, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return memberManager.findAll(cellPhone,beginTime,endTime,pageIndex,pageSize);
+        return memberManager.findAll(cellPhone,authStatus,beginTime,endTime,pageIndex,pageSize);
     }
 
     public void updateMemberInfo(MemberInfo info)
@@ -130,10 +133,10 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return memberBankInfoManager.findById(id);
     }
 
-    public Page<MemberBankInfo> findMemberBankInfo(String cellPhone,String name,Integer status,Integer pageIndex,
+    public PageResponse<MemberBankInfo> findMemberBankInfo(String cellPhone,String bankName,Integer status,Integer pageIndex,
                                                    Integer pageSize)
     {
-        return memberBankInfoManager.findAll(cellPhone,name,status,pageIndex,pageSize);
+        return memberBankInfoManager.findAll(cellPhone,bankName,status,pageIndex,pageSize);
     }
 
     public void createInviteCode(Integer memberId)
@@ -146,9 +149,10 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         memberManager.addInviteCount(memberId,count);
     }
 
-    public Page<InviteCode> findInviteCode(Integer ownerId, String ownerCellPhone, int pageIndex, int pageSize)
+    public PageResponse<InviteCode> findInviteCode(String code,Integer ownerId, String ownerCellPhone,String toCellphone,
+                                                   int pageIndex, int pageSize)
     {
-        return inviteCodeManager.findAll(ownerId,ownerCellPhone,pageIndex,pageSize);
+        return inviteCodeManager.findAll(code,ownerId,ownerCellPhone,toCellphone,pageIndex,pageSize);
     }
 
     public MemberStore applyStore(Integer memberId,String inviteCode)
@@ -156,7 +160,12 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return memberStoreManager.apply(memberId,inviteCode);
     }
 
-    public Page<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize)
+    public void updateStoreStatus(Integer id)
+    {
+        memberStoreManager.updateStatus(id);
+    }
+
+    public PageResponse<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize)
     {
         return memberStoreManager.findAll(cellPhone,status,pageIndex,pageSize);
     }
@@ -176,9 +185,14 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         systemUserManager.create(user);
     }
 
-    public SystemUser loginSystemUser(String userName,String password)
+    public SysUserLogin loginSystemUser(String userName,String password,String ip,Integer expireHour)
     {
-        return systemUserManager.login(userName,password);
+        return sysUserLoginManager.login(userName,password,ip,expireHour);
+    }
+
+    public SysUserLogin getSysUserLogin(String token)
+    {
+        return sysUserLoginManager.findByToken(token);
     }
 
     public void lockSystemUser(Integer userId)
@@ -191,7 +205,7 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         systemUserManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
     }
 
-    public Page<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize)
+    public PageResponse<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize)
     {
         return systemUserManager.findAll(userName,pageIndex,pageSize);
     }

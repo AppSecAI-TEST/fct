@@ -23,25 +23,25 @@ import java.util.List;
 public class PromotionServiceImpl implements PromotionService {
 
     @Autowired
-    CouponPolicyManager couponPolicyManager;
+    private CouponPolicyManager couponPolicyManager;
 
     @Autowired
-    CouponCodeManager couponCodeManager;
+    private CouponCodeManager couponCodeManager;
 
     @Autowired
-    CouponCodeDTOManager couponCodeDTOManager;
+    private CouponCodeDTOManager couponCodeDTOManager;
 
     @Autowired
-    DiscountManager discountManager;
+    private DiscountManager discountManager;
 
     @Autowired
-    OrderManager orderManager;
+    private OrderManager orderManager;
 
     @Autowired
-    DiscountProductManager discountProductManager;
+    private DiscountProductManager discountProductManager;
 
     @Autowired
-    DiscountProductDTOManager discountProductDTOManager;
+    private DiscountProductDTOManager discountProductDTOManager;
 
     public CouponPolicy saveCouponPolicy(CouponPolicy policy) {
         return couponPolicyManager.add(policy);
@@ -58,10 +58,10 @@ public class PromotionServiceImpl implements PromotionService {
         return couponPolicyManager.findById(policyId);
     }
 
-    public PageResponse<CouponPolicy> findCouponPolicy(Integer status,Integer fetchType,Integer generateStatus, String startTime,
+    public PageResponse<CouponPolicy> findCouponPolicy(Integer typeId,Integer fetchType,Integer status,String startTime,
                                                String endTime,Integer pageIndex, Integer pageSize)
     {
-        return couponPolicyManager.findAll(status,fetchType,generateStatus,startTime,endTime,pageIndex,pageSize);
+        return couponPolicyManager.findAll(typeId,fetchType,status,startTime,endTime,pageIndex,pageSize);
     }
 
     public List<CouponPolicy> findCanReceiveCouponPolicy()
@@ -118,9 +118,16 @@ public class PromotionServiceImpl implements PromotionService {
         couponCodeManager.cancelCodeUsed(code);
     }
 
-    public void saveDiscount(Discount discount, List<DiscountProduct> lsProduct)
+    public void saveDiscount(Discount discount)
     {
-        discountManager.add(discount,lsProduct);
+        //无法进入
+        if(discount.getId() != null && discount.getId()>0)
+        {
+            discountManager.update(discount);
+        }
+        else {
+            discountManager.add(discount);
+        }
     }
 
     public Discount getDiscountById(Integer discountId)

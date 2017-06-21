@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.controller;
 
-import com.fct.common.data.entity.ImageSource;
-import com.fct.common.interfaces.CommonService;
+import com.fct.source.data.entity.ImageSource;
+import com.fct.source.interfaces.SourceService;
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
@@ -33,7 +33,7 @@ public class UploadController {
     private FileOperatorHelper fileOperatorHelper;
 
     @Autowired
-    private CommonService commonService;
+    private SourceService sourceService;
 
     /**
      * 批量上传文件
@@ -71,7 +71,7 @@ public class UploadController {
 
                     BufferedImage sourceImg = ImageIO.read(new FileInputStream(f));
 
-                    Double length = f.length() / 1024.0; // 源图大小
+                    Float length = new Float(f.length() / 1024.0); // 源图大小
 
                     imageSource = new ImageSource();
                     imageSource.setCategoryId(0);
@@ -91,27 +91,33 @@ public class UploadController {
             //responseEntity.setContent(imgUrls);
             if(responses != null) {
                 UploadResponse response =responses.get(0);
-                if(StringUtils.isEmpty(action))
-                {
-                    //非编辑器模式，上传的图片
-                    try {
-                        URL url = new URL(response.getUrl()); //只返回相对路径
-
-                        response.setUrl(url.getFile());
-                    }
-                    catch (IOException exp)
-                    {
-                        Constants.logger.error(exp.toString());
-                    }
+                String imgUrl = "";
+                //非编辑器模式，上传的图片
+                try {
+                    URL url = new URL(response.getUrl()); //只返回相对路径
+                    imgUrl = url.getFile();
+                    imgUrl = imgUrl.substring(0,imgUrl.indexOf("@"));
                 }
-                response.setUrl(response.getUrl().substring(0,response.getUrl().indexOf("@")));
+                catch (IOException exp)
+                {
+                    Constants.logger.error(exp.toString());
+                }
 
                 //imageSource.setName(response.getKey());
-                imageSource.setUrl(response.getUrl());
+                String guid = imgUrl.substring(imgUrl.lastIndexOf('/')+1);
+                guid = guid.substring(0,guid.indexOf('.'));
+                imageSource.setUrl(imgUrl);
+                imageSource.setGuid(guid);
+                sourceService.saveImageSource(imageSource);
 
-                imageSource.setGuid(response.getKey());
-                commonService.saveImageSource(imageSource);
-                response.setUrl(response.getUrl());
+                if(StringUtils.isEmpty(action))
+                {
+                    response.setUrl(imgUrl);
+                }
+                else {
+                    response.setUrl(response.getUrl());
+                }
+
                 responseEntity.setData(response);
             }
 

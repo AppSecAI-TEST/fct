@@ -1,10 +1,10 @@
-package com.fct.web.admin.http.controller.goods;
+package com.fct.web.admin.http.controller.source.article;
 
+import com.fct.source.data.entity.ArticleCategory;
 import com.fct.common.exceptions.Exceptions;
+import com.fct.source.interfaces.SourceService;
 import com.fct.common.utils.ConvertUtils;
-import com.fct.mall.data.entity.GoodsCategory;
-import com.fct.mall.interfaces.MallService;
-import com.fct.web.admin.http.cache.CacheGoodsManager;
+import com.fct.web.admin.http.cache.CacheSourceManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -19,83 +19,76 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by jon on 2017/6/4.
- */
-@Controller("goodsCategory")
-@RequestMapping(value = "/goods/category")
+@RequestMapping(value = "/source/article/category")
+@Controller("articleCategory")
 public class CategoryController extends BaseController {
 
     @Autowired
-    private MallService mallService;
+    private SourceService sourceService;
 
     @Autowired
-    private CacheGoodsManager cacheGoodsManager;
+    private CacheSourceManager cacheSourceManager;
     /**
-     * 获取商品分类
+     * 获取分类
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(@RequestParam(required=false) String name,Model model) {
+    public String index(@RequestParam(required=false) String name, Model model) {
 
-        name =ConvertUtils.toString(name);
-        List<GoodsCategory> lsCategory = new ArrayList<>();
+        name = ConvertUtils.toString(name);
+        List<ArticleCategory> lsCategory = new ArrayList<>();
         try {
-            lsCategory = mallService.findGoodsCategory(-1, name,"");
+            lsCategory = sourceService.findArticleCategory(-1, name,"");
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
         }
         model.addAttribute("lsCategory", lsCategory);
-        return "goods/category/index";
+        return "source/article/category/index";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(@RequestParam(required=false) Integer id, Model model) {
         id = ConvertUtils.toInteger(id);
-        GoodsCategory category =null;
+        ArticleCategory category =null;
         if(id>0) {
-            category = mallService.getGoodsCategory(id);
+            category = sourceService.getArticleCategory(id);
         }
         if (category == null) {
-            category = new GoodsCategory();
+            category = new ArticleCategory();
             category.setId(0);
         }
 
-        List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();
+        List<ArticleCategory> lsCategory = cacheSourceManager.findArticleCategoryByParent();
 
         model.addAttribute("parentCate", lsCategory);
         model.addAttribute("category", category);
-        return "goods/category/create";
+        return "source/article/category/create";
     }
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(Integer id,String name,Integer sortindex,Integer parentId,String img,String description)
+    public String save(Integer id,String name,Integer sortindex,Integer parentId)
     {
         id = ConvertUtils.toInteger(id);
         name =ConvertUtils.toString(name);
         sortindex = ConvertUtils.toInteger(sortindex);
         parentId = ConvertUtils.toInteger(parentId);
-        img = ConvertUtils.toString(img);
-        description = ConvertUtils.toString(description);
 
-        GoodsCategory category =  null;
+        ArticleCategory category =  null;
         if(id>0) {
-            category = mallService.getGoodsCategory(id);
+            category = sourceService.getArticleCategory(id);
         }
         if (category == null) {
-            category = new GoodsCategory();
+            category = new ArticleCategory();
         }
-        category.setImg(img);
         category.setName(name);
         category.setParentId(parentId);
         category.setSortIndex(sortindex);
-        category.setDescription(description);
 
         try {
-            mallService.saveGoodsCategory(category);
+            sourceService.saveArticleCategory(category);
         }
         catch (IllegalArgumentException exp)
         {
@@ -108,23 +101,23 @@ public class CategoryController extends BaseController {
             return AjaxUtil.alert("系统或网络错误，请稍候再试。");
         }
 
-        return AjaxUtil.goUrl("/goods/category","保存宝贝分类成功");
+        return AjaxUtil.goUrl("/source/article/category","保存分类成功");
     }
 
     @RequestMapping(value="/select", method=RequestMethod.GET,produces="text/html;charset=UTF-8")
     @ResponseBody
     public String select(@RequestParam(required=false) Integer parentid,
-                               @RequestParam(required=false) String subid)
+                         @RequestParam(required=false) String subid)
     {
         parentid = ConvertUtils.toInteger(parentid);
 
-        List<GoodsCategory> lsCate = cacheGoodsManager.findGoodsCategoryByParentId(parentid);
+        List<ArticleCategory> lsCate = cacheSourceManager.findArticleCategoryByParentId(parentid);
 
         StringBuilder sb = new StringBuilder();
         //sb.append("<select class=\"form-control selCate\" name=\"subid\">");
         sb.append("<option value=\"\">请选择</option>");
-        for (GoodsCategory cate:lsCate
-             ) {
+        for (ArticleCategory cate:lsCate
+                ) {
             String selected = "";
             if(ConvertUtils.toString(subid).equals(cate.getCode()))
             {
@@ -133,16 +126,16 @@ public class CategoryController extends BaseController {
             sb.append("<option value=\""+ cate.getCode() +"\" "+ selected +">"+ cate.getName() +"</option>");
         }
 
-       return sb.toString();
+        return sb.toString();
     }
 
-    @RequestMapping(value="/del", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/delete", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
     public String delete(Integer id)
     {
         id = ConvertUtils.toInteger(id);
         try {
-            mallService.deleteGoodsCategory(id);
+            sourceService.deleteArticleCategory(id);
         }
         catch (IllegalArgumentException exp)
         {

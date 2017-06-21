@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-文章管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'source_article',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                <form action="" method="get">
+                    <input type="hidden" name="catecode" id="categoryCode" th:value="${query.catecode}" />
+                        <div class="row col-sm-2 form-inline">
+                            <select class="form-control" name="parentid" id="selParentCate" data-load="selSubCate">
+                                <option value="">分类</option>
+                                <th:block th:each="cate : ${query.parentCate}">
+                                    <option th:text="${cate.name}" th:value="${cate.code}" th:selected="${#strings.contains(query.catecode,cate.code)} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <select class="form-control selCate" name="subid" id="selSubCate">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                        <div class="row col-sm-5 form-inline">
+                            <div class="col-sm-7">
+                                <label>有效时间：</label>
+                                <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                            </div>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 form-inline">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+
+                            <div class="input-group"> <input type="text" placeholder="请输入标题" th:value="${query.title}" class="input-sm form-control" name="title">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+
+                    <div class="pull-right" style="padding-right:20px;">
+                        <a class="btn btn-default btn-outline btn-sm update" href="/source/article/create">
+                            <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建文章</span>
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>排序</th>
+                                <th>标题</th>
+                                <th>来源</th>
+                                <th>分类</th>
+                                <th>浏览数</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="article : ${lsArticle}">
+                                <td th:text="${article.id}"></td>
+                                <td th:text="${article.sortIndex}"></td>
+                                <td th:text="${article.title}"></td>
+                                <td th:text="${article.source}"></td>
+                                <td th:text="${cache.getArticleCateName(article.categoryCode)}"></td>
+                                <td th:text="${article.viewCount}"></td>
+                                <td th:text="${#dates.format(article.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${article.status eq 0}" th:attr="data-id=${article.id}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> </a>
+                                    <a href="javascript:;" th:if="${article.status eq 1}" th:attr="data-id=${article.id}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/source/article/create(id=${article.id})}" class="btn btn-xs btn-outline btn-default" th:attr="data-id=${article.id}" >修改</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $("#selParentCate").change(function () {
+            loadCategory($(this),true);
+        });
+
+        var loadCategory = function (parentEl,upValue) {
+            var cateValue = parentEl.children('option:selected').val();
+            if(cateValue!="") {
+                var arr = cateValue.split(",");
+                var url = "/source/article/category/select?parentid=" + arr[1] + "&subid=[[${query.catecode}]]";
+                JQAjax.load(parentEl, url);
+                if (upValue) {
+                    $("#categoryCode").val(cateValue);
+                }
+            }
+        };
+
+        loadCategory($("#selParentCate"));
+
+        $(".selCate").change(function () {
+            var cateCode=$(this).children('option:selected').val();//这就是selected的值
+            $("#categoryCode").val(cateCode);
+        });
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/source/article/upstatus?action=audi&id="+ id,
+                wait:true
+            });
+        });
+    })
+</script>
+</body>
+</html>

@@ -21,15 +21,12 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="web-admin"/>
+    <dubbo:application name="sourceService"/>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
-    <dubbo:protocol name="dubbo"/>
-    
-    <!-- 引入财务服务-->
-    <dubbo:reference id="promotionService" interface="com.fct.promotion.interfaces.PromotionService" timeout="5000" check="false"/>
-    <dubbo:reference id="financeService" interface="com.fct.finance.interfaces.FinanceService" timeout="5000" check="false"/>
-    <dubbo:reference id="memberService" interface="com.fct.member.interfaces.MemberService" timeout="5000" check="false"/>
-    <dubbo:reference id="mallService" interface="com.fct.mall.interfaces.MallService" timeout="5000" check="false"/>
-    <dubbo:reference id="sourceService" interface="com.fct.source.interfaces.SourceService" timeout="5000" check="false"/>
+
+    <dubbo:protocol name="dubbo" port="20889" />
+
+    <dubbo:service interface="com.fct.source.interfaces.SourceService" ref="sourceService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>
+

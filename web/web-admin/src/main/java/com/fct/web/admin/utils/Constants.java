@@ -1,9 +1,7 @@
 package com.fct.web.admin.utils;
 
-import com.fct.mall.interfaces.MallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 /**

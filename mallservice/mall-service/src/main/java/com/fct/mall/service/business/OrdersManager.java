@@ -4,12 +4,14 @@ import com.fct.common.json.JsonConverter;
 import com.fct.common.utils.DateUtils;
 import com.fct.common.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
+import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.message.interfaces.MessageService;
 import com.fct.message.model.MQPayRefund;
 import com.fct.message.model.MQPayTrade;
+import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
@@ -50,6 +52,12 @@ public class OrdersManager {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private PromotionService promotionService;
+
+    @Autowired
+    private FinanceService financeService;
 
     @Autowired
     JdbcTemplate jt;
@@ -202,7 +210,7 @@ public class OrdersManager {
         }
 
         //查询用户是否折扣信息
-        DiscountCouponDTO dc = APIClient.promotionService.getPromotion(memberId,lsOrderProduct,couponCode);
+        DiscountCouponDTO dc = promotionService.getPromotion(memberId,lsOrderProduct,couponCode);
         //当前购买商品中可参与享受优惠的总单价
         BigDecimal couponTotalPrice = new BigDecimal(0);
         CouponCodeDTO cc = null;
@@ -269,7 +277,7 @@ public class OrdersManager {
         Orders order = new Orders();
         //生成订单号
         order.setOrderId("");
-        Integer closeTime = APIClient.promotionService.useCouponCodeDiscount(order.getOrderId(),order.getMemberId(),
+        Integer closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(),order.getMemberId(),
                 0,lsOrderProduct,couponCode);
 
         //关闭时间
@@ -283,7 +291,7 @@ public class OrdersManager {
         }
 
         //验证
-        MemberAccount memberAccount = APIClient.financeService.getMemberAccount(memberId);
+        MemberAccount memberAccount = financeService.getMemberAccount(memberId);
 
         if (memberAccount == null)
         {
@@ -702,7 +710,7 @@ public class OrdersManager {
         if (payStatus == 1000 || order.getStatus() == Constants.enumOrderStatus.close.getValue())
         {
             //如果是支付异常就退优惠券
-            APIClient.promotionService.cancelUseCouponCode(order.getCouponCode());
+            promotionService.cancelUseCouponCode(order.getCouponCode());
 
             //设置取消时间
             order.setStatus(Constants.enumOrderStatus.close.getValue());
@@ -764,6 +772,6 @@ public class OrdersManager {
         result.setTrade_type("buy");
         result.setTrade_status(tradeState); //200:success,1000:fail
         result.setDesc("");
-        APIClient.messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
+        messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
     }
 }

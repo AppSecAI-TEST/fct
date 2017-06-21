@@ -73,7 +73,7 @@ var Ajax = function (element, options) {
         $.ajax({
             url: options.url,
             type: 'POST',
-            contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+            //contentType:"application/x-www-form-urlencoded; charset=UTF-8",
             data: data,
             cache: false,
             timeout: 3000000,

@@ -57,8 +57,14 @@ public class GradeController extends BaseController {
     public String create(@RequestParam(required = false) Integer id, Model model) {
         id = ConvertUtils.toInteger(id);
         GoodsGrade grade =null;
-        if(id>0) {
-            grade = mallService.getGoodsGrade(id);
+        try {
+            if (id > 0) {
+                grade = mallService.getGoodsGrade(id);
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
         }
         if (grade == null) {
             grade = new GoodsGrade();

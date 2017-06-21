@@ -46,9 +46,9 @@ public interface MallService {
 
     void setGoodsGradeSortIndex(Integer id, Integer sortIndex);
 
-    void DeleteGoodsGrade(Integer id);
+    void deleteGoodsGrade(Integer id);
 
-    void SaveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount);
+    void saveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount);
 
     List<ShoppingCart> findShoppingCart(Integer memberId,Integer shopId);
 

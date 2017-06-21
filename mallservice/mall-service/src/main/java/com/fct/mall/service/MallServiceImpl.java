@@ -125,12 +125,12 @@ public class MallServiceImpl implements MallService {
         goodsGradeManager.saveSortIndex(id,sortIndex);
     }
 
-    public void DeleteGoodsGrade(Integer id)
+    public void deleteGoodsGrade(Integer id)
     {
         goodsGradeManager.delete(id);
     }
 
-    public void SaveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount)
+    public void saveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount)
     {
         shoppingCartManager.add(memberId,shopId,goodsId,goodsSpecId,buyCount);
     }

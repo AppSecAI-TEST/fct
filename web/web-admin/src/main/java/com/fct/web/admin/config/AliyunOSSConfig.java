@@ -1,6 +1,5 @@
 package com.fct.web.admin.config;
 
-
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

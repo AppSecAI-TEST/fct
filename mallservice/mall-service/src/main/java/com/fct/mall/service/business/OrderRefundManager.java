@@ -41,6 +41,9 @@ public class OrderRefundManager {
     private OrdersManager ordersManager;
 
     @Autowired
+    private MessageService messageService;
+
+    @Autowired
     private JdbcTemplate jt;
 
     private void agreeRefund(OrderRefund refund)
@@ -93,7 +96,7 @@ public class OrderRefundManager {
         mqRefund.setPoints(mqPoint);
         mqRefund.setTrade_id(refund.getId().toString());
         mqRefund.setTrade_type("buy");
-        APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.mallservice", JsonConverter.toJson(mqRefund),"购买商品申请退款");
+        messageService.send("mq_payrefund","MQPayRefund","com.fct.mallservice", JsonConverter.toJson(mqRefund),"购买商品申请退款");
     }
 
     public List<MQPayRefund> payException(Integer memberId, Orders orders, String payOrderId, List<OrderGoods> lsOrderGoods)

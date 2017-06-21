@@ -10,12 +10,5 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class APIClient {
 
-    @Autowired
-    public  static PromotionService promotionService;
 
-    @Autowired
-    public  static FinanceService financeService;
-
-    @Autowired
-    public  static MessageService messageService;
 }

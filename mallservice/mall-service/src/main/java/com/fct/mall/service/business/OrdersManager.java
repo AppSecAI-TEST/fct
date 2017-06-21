@@ -766,9 +766,4 @@ public class OrdersManager {
         result.setDesc("");
         APIClient.messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
     }
-
-    public void add(){
-        messageService.send("hello", "hello", "hello", "hello", "hello");
-        System.out.println("print hello");
-    }
 }

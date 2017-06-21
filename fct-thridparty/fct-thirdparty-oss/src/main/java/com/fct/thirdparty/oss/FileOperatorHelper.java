@@ -137,15 +137,10 @@ public class FileOperatorHelper {
                 throw new IllegalArgumentException("上传图片大小不能大于5M");
             }
 
-//            if(!files.get(i).getName().equalsIgnoreCase(keys.get(i))){
-//                throw new IllegalArgumentException("上传文件和所给名称不一致");
-//            }
-
             if(!isImage(files.get(i))){
                 throw new IllegalArgumentException("上传文件不是一个图片");
             }
         }
-
     }
 
     /**

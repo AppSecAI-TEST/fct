@@ -21,9 +21,9 @@ public class OSSTest {
 
     @Test
     public void uploadFileTest(){
-        String path = "/Users/ningyang/Documents/haha.png";
-        String path1 = "/Users/ningyang/Documents/haha1.png";
-        String path2 = "/Users/ningyang/Documents/haha2.png";
+        String path = "/Users/nick/Documents/haha.png";
+        String path1 = "/Users/nick/Documents/haha1.png";
+        String path2 = "/Users/nick/Documents/haha2.png";
         File file = new File(path);
         File file1 = new File(path1);
         File file2 = new File(path2);

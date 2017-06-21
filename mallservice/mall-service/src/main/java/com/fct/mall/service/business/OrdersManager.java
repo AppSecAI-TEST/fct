@@ -49,6 +49,9 @@ public class OrdersManager {
     private OrderRefundManager orderRefundManager;
 
     @Autowired
+    private MessageService messageService;
+
+    @Autowired
     JdbcTemplate jt;
 
     public void save(Orders orders)
@@ -762,5 +765,10 @@ public class OrdersManager {
         result.setTrade_status(tradeState); //200:success,1000:fail
         result.setDesc("");
         APIClient.messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
+    }
+
+    public void add(){
+        messageService.send("hello", "hello", "hello", "hello", "hello");
+        System.out.println("print hello");
     }
 }

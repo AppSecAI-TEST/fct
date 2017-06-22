@@ -1,8 +1,6 @@
 package com.fct.mall.interfaces;
 
 import com.fct.mall.data.entity.*;
-import org.hibernate.criterion.Order;
-import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;

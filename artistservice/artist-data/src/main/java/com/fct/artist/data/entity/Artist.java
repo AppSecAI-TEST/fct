@@ -49,7 +49,7 @@ public class Artist implements Serializable {
     /**
      * 详细描述
      * */
-    private String Description;
+    private String description;
 
     /**
      * 状态{0:待审核,1:已审核}
@@ -72,9 +72,19 @@ public class Artist implements Serializable {
     private Integer goodsCount;
 
     /**
+     * 排序
+     * */
+    private Integer sortIndex;
+
+    /**
      * 更新时间
      * */
     private Date updateTime;
+
+    /**
+     * 创建时间
+     * **/
+    private Date createTime;
 
     /**
      * 作品

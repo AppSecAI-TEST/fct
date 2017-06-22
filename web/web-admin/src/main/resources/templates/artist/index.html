@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-艺人管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'artist_index',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" method="get">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group"> <input type="text" placeholder="请输入名称" th:value="${query.name}" class="input-sm form-control" name="name">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right" style="padding-right:20px;">
+                        <a class="btn btn-default btn-outline btn-sm update" href="/artist/create">
+                            <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>图片/姓名</th>
+                                <th>头衔</th>
+                                <th>浏览数</th>
+                                <th>关注数</th>
+                                <th>作品数</th>
+                                <th>排序</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="artist : ${lsArtist}">
+                                <td th:text="${artist.id}"></td>
+                                <td class="text-center">
+                                    <img th:src="${pub.thumbnailPath(artist.headPortrait)}" class="loadimg" width="80" height="80" />
+                                    <br>
+                                    <span th:text="${artist.name}"></span>
+                                </td>
+                                <td th:text="${artist.title}"></td>
+                                <td th:text="${artist.viewCount}"></td>
+                                <td th:text="${artist.followCount}"></td>
+                                <td th:text="${artist.goodsCount}"></td>
+                                <td th:text="${artist.sortIndex}"></td>
+                                <td th:text="${#dates.format(artist.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${artist.status eq 0}" th:attr="data-id=${artist.id}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> 待审核</a>
+                                    <a href="javascript:;" th:if="${artist.status eq 1}" th:attr="data-id=${artist.id}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> 已审核</a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/artist/comment(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" >查看留言</a>
+                                    <a href="javascript:;" th:attr="data-id=${artist.id}" class="btn btn-xs btn-outline btn-default setlive" >直播设置</a>
+                                    <a th:href="@{/artist/dynamic(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" >查看动态</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="10" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/artist/upstatus?action=audi&id="+ id,
+                wait:true
+            });
+        });
+
+        $(".setlive").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.open({
+                title:"艺人直播设置",
+                width: 600,
+                url: '/artist/live/create?artistid='+id
+            })
+        });
+    })
+</script>
+</body>
+</html>

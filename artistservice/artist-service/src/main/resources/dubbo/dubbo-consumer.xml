@@ -25,7 +25,7 @@
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
 
-    <dubbo:protocol name="dubbo" port="20889" />
+    <dubbo:protocol name="dubbo" port="20808" />
 
     <dubbo:service interface="com.fct.artist.interfaces.ArtistService" ref="artistService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>

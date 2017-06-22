@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="ibox float-e-margins">
+    <div class="ibox-content" style="border-style:none;">
+        <div class="alert alert-danger alert-dismissable dn" id="valid_remind"></div>
+        <form class="form-horizontal m-t" id="submitForm">
+            <input type="hidden" name="id" th:value="${live.artistId}">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">艺人：</label>
+                <div class="col-sm-4">
+                    <span th:text="${cache.getArtist(live.artistId).name}" class="form-control"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:value="${live.title}" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">图片：</label>
+                <div class="col-sm-5">
+                    <input name="banner" th:value="${live.banner}" type="hidden" id="liveBanner" class="form-control" />
+                    <div id="dropBanner" class="dropzone">
+                        <div class="dropzone-previews"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">直播地址：</label>
+                <div class="col-sm-8">
+                    <input name="liveid" th:value="${live.liveId}" type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label class="col-sm-3 control-label">直播时间：</label>
+                <div class="col-sm-9 form-inline">
+                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="liveStartTime" name="starttime" th:value="${#dates.format(live.startTime, 'yyyy-MM-dd HH:mm')}" >
+                    <label>-</label>
+                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="liveEndTime" name="endtime" th:value="${#dates.format(live.endTime, 'yyyy-MM-dd HH:mm')}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">审核状态：</label>
+                <div class="col-sm-4 m-b">
+                    <input type="checkbox" name="status" th:value="1" th:checked="${live.status eq 1} ? 'checked'" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-3">
+                    <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    laydate({elem:"#liveStartTime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+    laydate({elem:"#liveEndTime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+    $("#btnClick").click(function () {
+        JQAjax.post(this, {
+            form:"submitForm",
+            url: '/artist/live/save',
+            wait:true
+        });
+    });
+
+    webUploads($('#dropBanner'), {
+        url: '/upload/image',
+        input: 'liveBanner',
+        max: 1
+    });
+
+</script>
+
+</html>

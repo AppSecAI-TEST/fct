@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-留言管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'artist_comment',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" method="get">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group"> <input type="text" placeholder="请输入用户名" th:value="${query.name}" class="input-sm form-control" name="name">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>用户名</th>
+                                <th>艺人</th>
+                                <th>内容</th>
+                                <th>回复Id</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="comment : ${lsComment}">
+                                <td th:text="${commnet.id}"></td>
+                                <td th:text="${comment.userName}">
+                                <td th:text="${comment.artistId}"></td>
+                                <td th:text="${comment.content}"></td>
+                                <td th:text="${comment.replyId}"></td>
+                                <td th:text="${#dates.format(comment.updateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${comment.status eq 0}" th:attr="data-id=${comment.id}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> 待审核</a>
+                                    <a href="javascript:;" th:if="${comment.status eq 1}" th:attr="data-id=${comment.id}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> 已审核</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="7" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/artist/comment/upstatus?action=audi&id="+ id,
+                wait:true
+            });
+        });
+    })
+</script>
+</body>
+</html>

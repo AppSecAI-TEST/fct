@@ -27,6 +27,9 @@
 
     <dubbo:protocol name="dubbo" port="20889" />
 
-    <dubbo:service interface="com.fct.common.interfaces.CommonService" ref="commonService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:protocol name="hessian" port="20888"/>
+
+    <!-- 需要指定hessian协议,否则会在上面设置的协议中随机调用,就会一会成功一会失败 -->
+    <dubbo:service protocol="hessian" interface="com.fct.common.interfaces.CommonService" ref="commonService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>
 

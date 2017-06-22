@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-艺人直播管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'artist_dynamic',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="row col-sm-2">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-7">
+                                    <label>时间：</label>
+                                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                </div>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group"> <input type="text" placeholder="请输入内容" th:value="${query.q}" class="input-sm form-control" name="q">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right" style="padding-right:20px;">
+                        <a class="btn btn-default btn-outline btn-sm update" href="javascript:;" data-id="0">
+                            <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>艺人</th>
+                                <th>内容</th>
+                                <th>图片</th>
+                                <th>视频Id/图片</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="dyn : ${lsDynamic}">
+                                <td th:text="${dyn.id}"></td>
+                                <td th:text="${dyn.artistId}"></td>
+                                <td th:text="${dyn.content}"></td>
+                                <td>
+                                    <th:block th:each="img:${#strings.listSplit(dyn.images,',')}">
+                                        <img th:src="${pub.thumbnailPath(img)}" class="loadimg" width="80" />
+                                    </th:block>
+                                </td>
+                                <td class="text-center">
+                                    <th:block th:if="${!#strings.isEmpty(dyn.videoId)}">
+                                        <img th:src="${pub.thumbnailPath(dyn.videoImg)}" class="loadimg" width="80" />
+                                        <br>
+                                        <span th:text="${dyn.videoId}"></span>
+                                    </th:block>
+                                </td>
+                                <td th:text="${#dates.format(dyn.updateTime, 'yyyy-MM-dd HH:mm')}">
+                                <td>
+                                    <a href="javascript:;" th:if="${dyn.status eq 1}" th:attr="data-id=${dyn.id}" class="statusClick" data-action="pass"><i class="fa fa-check text-navy"></i> 已审核</a>
+                                    <a href="javascript:;" th:if="${dyn.status eq 0}" th:attr="data-id=${dyn.id}" class="statusClick" data-actio="refuse"><i class="fa fa-close text-navy"></i> 待审核</a>
+                                </td>
+                                <td>
+                                    <a href="javascript:;" th:attr="data-id=${dyn.id}" class="btn btn-xs btn-outline btn-default update" >查看修改</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="8" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="/static/js/plugins/layer/laydate/laydate.js" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            var mythis = this;
+            layer.confirm("确认要执行此操作？", {
+                btn: ['确定', '取消'], //按钮
+                title:'提示'
+            }, function () {
+                JQAjax.post(mythis, {
+                    form:"",
+                    url: "/artist/dynamic/upstatus?action=audi&id="+ id,
+                    wait:true
+                });
+            }, function () {
+                layer.close();
+            });
+        });
+
+        $(".update").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.open({
+                title:"艺人动态添加/修改",
+                width: 800,
+                url: '/artist/dynamic/create?id='+id
+            })
+        });
+
+    })
+</script>
+</body>
+</html>

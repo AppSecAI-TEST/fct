@@ -104,10 +104,11 @@ public class UploadController {
                 }
 
                 //imageSource.setName(response.getKey());
-                String guid = imgUrl.substring(imgUrl.lastIndexOf('/')+1);
-                guid = guid.substring(0,guid.indexOf('.'));
+                /*String guid = imgUrl.substring(imgUrl.lastIndexOf('/')+1);
+                guid = guid.substring(0,guid.indexOf('.'));*/
+
                 imageSource.setUrl(imgUrl);
-                imageSource.setGuid(guid);
+                imageSource.setGuid(response.getReturnKey());
                 commonService.saveImageSource(imageSource);
 
                 if(StringUtils.isEmpty(action))

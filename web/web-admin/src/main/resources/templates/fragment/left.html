@@ -46,6 +46,24 @@
             <!--<li>
                 <a class="J_menuItem" href="layouts.html"><i class="fa fa-columns"></i> <span class="nav-label">布局</span></a>
             </li>-->
+
+            <li id="slide_order">
+                <a href="javascript:;"><i class="fa fa-shopping-cart"></i> <span class="nav-label">订单 </span><span class="label label-warning pull-right">16</span></a>
+                <ul class="nav nav-second-level">
+                    <li data-view="index">
+                        <a class="J_menuItem" href="/order">管理订单</a>
+                    </li>
+                    <li data-view="waitpay">
+                        <a class="J_menuItem" href="/order/?status=0">待付款</a>
+                    </li>
+                    <li data-view="paysuccess">
+                        <a class="J_menuItem" href="/order/?status=1">待发货</a>
+                    </li>
+                    <li data-view="refund">
+                        <a class="J_menuItem" href="/order/refund">退款/退货</a>
+                    </li>
+                </ul>
+            </li>
             <li id="slide_goods">
                 <a href="javascript:;">
                     <i class="fa fa fa-bars"></i>
@@ -73,23 +91,7 @@
                     </li>
                 </ul>
             </li>
-            <li id="slide_order">
-                <a href="javascript:;"><i class="fa fa-shopping-cart"></i> <span class="nav-label">订单 </span><span class="label label-warning pull-right">16</span></a>
-                <ul class="nav nav-second-level">
-                    <li data-view="index">
-                        <a class="J_menuItem" href="/order">管理订单</a>
-                    </li>
-                    <li data-view="waitpay">
-                        <a class="J_menuItem" href="/order/?status=0">待付款</a>
-                    </li>
-                    <li data-view="paysuccess">
-                        <a class="J_menuItem" href="/order/?status=1">待发货</a>
-                    </li>
-                    <li data-view="refund">
-                        <a class="J_menuItem" href="/order/refund">退款/退货</a>
-                    </li>
-                </ul>
-            </li>
+
             <li id="slide_promotion">
                 <a href="#"><i class="fa fa-bolt"></i> <span class="nav-label">促销</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
@@ -107,6 +109,47 @@
                     </li>
                 </ul>
             </li>
+            <li id="slide_artist">
+                <a href="#"><i class="fa fa-thumbs-up"></i> <span class="nav-label">艺人管理</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li data-view="index">
+                        <a class="J_menuItem" href="/artist">艺人管理</a>
+                    </li>
+                    <li data-view="comment">
+                        <a class="J_menuItem" href="/artist/comment">留言管理</a>
+                    </li>
+                    <li data-view="dynamic">
+                        <a class="J_menuItem" href="/artist/dynamic">动态管理</a>
+                    </li>
+                    <li data-view="live">
+                        <a class="J_menuItem" href="/artist/live">直播管理</a>
+                    </li>
+                </ul>
+            </li>
+            <li id="slide_source">
+                <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源管理</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li data-view="article">
+                        <a class="J_menuItem" href="/source/article">文章管理</a>
+                    </li>
+                    <li data-view="articlecate">
+                        <a class="J_menuItem" href="/source/article/category">文章分类</a>
+                    </li>
+                    <li data-view="image">
+                        <a class="J_menuItem" href="/source/image">图片管理</a>
+                    </li>
+                    <li data-view="imagecate">
+                        <a class="J_menuItem" href="/source/image/category">图片分类</a>
+                    </li>
+                    <li data-view="video">
+                        <a class="J_menuItem" href="/source/video">视频管理</a>
+                    </li>
+                    <li data-view="videocate">
+                        <a class="J_menuItem" href="/source/vidoe/category">视频分类</a>
+                    </li>
+                </ul>
+            </li>
+
             <li id="slide_member">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">会员</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
@@ -147,29 +190,6 @@
                     </li>
                     <li data-view="recharge">
                         <a class="J_menuItem" href="/finance/recharge">充值管理</a>
-                    </li>
-                </ul>
-            </li>
-            <li id="slide_source">
-                <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">资源管理</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li data-view="article">
-                        <a class="J_menuItem" href="/source/article">文章管理</a>
-                    </li>
-                    <li data-view="articlecate">
-                        <a class="J_menuItem" href="/source/article/category">文章分类</a>
-                    </li>
-                    <li data-view="image">
-                        <a class="J_menuItem" href="/source/image">图片管理</a>
-                    </li>
-                    <li data-view="imagecate">
-                        <a class="J_menuItem" href="/source/image/category">图片分类</a>
-                    </li>
-                    <li data-view="video">
-                        <a class="J_menuItem" href="/source/video">视频管理</a>
-                    </li>
-                    <li data-view="videocate">
-                        <a class="J_menuItem" href="/source/vidoe/category">视频分类</a>
                     </li>
                 </ul>
             </li>

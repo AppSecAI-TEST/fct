@@ -7,12 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ArtistDynamic {
+public class ArtistDynamic implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -52,5 +53,10 @@ public class ArtistDynamic {
      * 创建时间
      * */
     private Date createTime;
+
+    /**
+     * 更新时间
+     * **/
+    private Date updateTime;
 
 }

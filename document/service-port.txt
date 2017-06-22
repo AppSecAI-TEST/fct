@@ -1,0 +1,10 @@
+
+messageservice      8081    20801
+payservice          8082    20802
+memberservice       8083    20803
+mallservice         8084    20804
+financeservice      8085    20805
+promotionservice    8086    20806
+commonservice       8087    20807
+artistservice       8088    20808
+

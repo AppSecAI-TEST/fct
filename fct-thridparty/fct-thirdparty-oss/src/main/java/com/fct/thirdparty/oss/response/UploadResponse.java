@@ -25,9 +25,14 @@ public class UploadResponse extends Response{
      */
     private PutObjectResult result;
     /**
-     * 文件名称
+     * 请求文件路径和名称
      */
     private String key;
+
+    /**
+     * 返回文件uuid
+     */
+    private String returnKey;
 
     private Map<String, String> userMetaData;
 }

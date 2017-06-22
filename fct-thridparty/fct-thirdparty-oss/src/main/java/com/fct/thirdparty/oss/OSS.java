@@ -40,6 +40,8 @@ public final class OSS implements Callable<UploadResponse>{
             response.setCode(0);
             response.setKey(request.getKey());
             response.setUrl(imgUrl);
+            response.setReturnKey(buildReturnKey(request.getKey()));
+            response.setUserMetaData(request.getUserMetaData());
             response.setMsg("上传成功");
             if(request.getCallback()!=null){
                 request.getCallback().onSuccess(response);
@@ -68,5 +70,14 @@ public final class OSS implements Callable<UploadResponse>{
                 append(key).
                 append("@50p");
         return sb.toString();
+    }
+
+    private static String buildReturnKey(String key){
+        return key.substring(key.lastIndexOf("/") + 1, key.length()).split("\\.")[0];
+    }
+
+    public static void main(String[] args) {
+        String key = "http://img-cn-shanghai.aliyuncs.com/upload/2017-06-22/f3a857fa540b11e7b3dfacbc32939815.jpg";
+        System.out.println(buildReturnKey(key));
     }
 }

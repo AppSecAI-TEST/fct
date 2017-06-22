@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 import lombok.Data;
 
 

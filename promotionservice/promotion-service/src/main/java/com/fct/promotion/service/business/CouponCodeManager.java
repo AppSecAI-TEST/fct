@@ -1,6 +1,6 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.utils.DateUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.promotion.data.entity.CouponCode;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.repository.CouponCodeRepository;

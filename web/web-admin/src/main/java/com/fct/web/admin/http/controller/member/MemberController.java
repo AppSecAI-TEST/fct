@@ -1,9 +1,9 @@
 package com.fct.web.admin.http.controller.member;
 
 import com.alibaba.dubbo.common.URL;
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;

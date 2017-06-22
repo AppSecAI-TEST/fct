@@ -1,9 +1,10 @@
 package com.fct.pay.service.wxpay;
 
-import com.fct.common.converter.DateFormatter;
-import com.fct.common.json.JsonConverter;
-import com.fct.common.logger.LogService;
+import com.fct.core.converter.DateFormatter;
+import com.fct.core.json.JsonConverter;
+import com.fct.core.logger.LogService;
 import com.fct.pay.model.PayNotify;
+import com.fct.pay.service.Constants;
 import com.fct.pay.service.PayConfig;
 import com.fct.pay.service.wxpay.business.DownloadBillBusiness;
 import com.fct.pay.service.wxpay.business.RefundBusiness;
@@ -167,7 +168,7 @@ public class WXPay {
 
                 notify.setErrorMessage(XMLParser.getXmltoMap(map));
 
-                LogService.info("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
+                Constants.logger.info("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
 
             }
         }
@@ -235,7 +236,7 @@ public class WXPay {
 
         PayNotify notify = new PayNotify();
 
-        LogService.info("wxpay:" + reqdata);
+        Constants.logger.info("wxpay:" + reqdata);
 
         if (result.get("return_code").toString().toLowerCase() == "success" &&
                 result.get("result_code").toString().toLowerCase() == "success" &&

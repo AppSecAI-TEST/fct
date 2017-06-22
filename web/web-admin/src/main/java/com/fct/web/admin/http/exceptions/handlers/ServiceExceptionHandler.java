@@ -2,7 +2,7 @@ package com.fct.web.admin.http.exceptions.handlers;
 
 import com.fct.web.admin.http.exceptions.ErrorMessage;
 import com.fct.web.admin.utils.JsonModelAndViewBuilder;
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 

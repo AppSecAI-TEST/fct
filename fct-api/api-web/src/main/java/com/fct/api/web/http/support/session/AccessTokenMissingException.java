@@ -1,7 +1,7 @@
 package com.fct.api.web.http.support.session;
 
 
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 
 /**
  * @author ningyang

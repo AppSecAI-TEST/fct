@@ -1,10 +1,9 @@
 package com.fct.web.admin.http.controller.promotion;
 
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.DateUtils;
-import com.fct.common.utils.PageUtil;
-import com.fct.mall.data.entity.GoodsSpecification;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.DateUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.interfaces.PageResponse;
@@ -23,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.persistence.Convert;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

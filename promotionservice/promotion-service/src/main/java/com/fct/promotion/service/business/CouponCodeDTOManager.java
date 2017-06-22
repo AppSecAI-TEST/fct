@@ -1,6 +1,6 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.utils.ListUtils;
+import com.fct.core.utils.ListUtils;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,7 +10,7 @@ import com.fct.web.admin.session.Session;
 import com.fct.web.admin.utils.SessionUtil;
 import com.fct.web.admin.utils.servlet.ServletAttributeCacheUtil;
 import com.fct.web.admin.utils.servlet.ServletRequestIPAddressUtil;
-import com.fct.common.json.JsonConverter;
+import com.fct.core.json.JsonConverter;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import okio.Okio;

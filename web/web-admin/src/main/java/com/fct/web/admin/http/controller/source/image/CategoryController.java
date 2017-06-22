@@ -1,9 +1,9 @@
 package com.fct.web.admin.http.controller.source.image;
 
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.source.data.entity.ImageCategory;
-import com.fct.source.interfaces.SourceService;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.common.data.entity.ImageCategory;
+import com.fct.common.interfaces.CommonService;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CategoryController  extends BaseController{
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     /**
      * 获取图片分类
@@ -34,7 +34,7 @@ public class CategoryController  extends BaseController{
 
         List<ImageCategory> lsCate = null;
         try {
-            lsCate = sourceService.findImageCategory();
+            lsCate = commonService.findImageCategory();
         }
         catch (Exception exp)
         {
@@ -53,7 +53,7 @@ public class CategoryController  extends BaseController{
         ImageCategory category =null;
         try {
             if (id > 0) {
-                category = sourceService.getImageCategory(id);
+                category = commonService.getImageCategory(id);
             }
         }
         catch (Exception exp)
@@ -78,7 +78,7 @@ public class CategoryController  extends BaseController{
 
         ImageCategory category =  null;
         if(id>0) {
-            category = sourceService.getImageCategory(id);
+            category = commonService.getImageCategory(id);
         }
         if (category == null) {
             category = new ImageCategory();
@@ -87,7 +87,7 @@ public class CategoryController  extends BaseController{
         category.setSortIndex(sortindex);
 
         try {
-            sourceService.saveImageCategory(category);
+            commonService.saveImageCategory(category);
         }
         catch (IllegalArgumentException exp)
         {

@@ -1,13 +1,13 @@
 package com.fct.web.admin.http.controller.source.image;
 
 import com.alibaba.dubbo.common.URL;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
-import com.fct.source.data.entity.ImageCategory;
-import com.fct.source.data.entity.ImageSource;
-import com.fct.source.interfaces.PageResponse;
-import com.fct.source.interfaces.SourceService;
-import com.fct.web.admin.http.cache.CacheSourceManager;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
+import com.fct.common.data.entity.ImageCategory;
+import com.fct.common.data.entity.ImageSource;
+import com.fct.common.interfaces.PageResponse;
+import com.fct.common.interfaces.CommonService;
+import com.fct.web.admin.http.cache.CacheCommonManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,10 @@ import java.util.Map;
 public class ImageController extends BaseController{
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     @Autowired
-    private CacheSourceManager cacheSourceManager;
+    private CacheCommonManager cacheCommonManager;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(String name,Integer categoryid,Integer status,String starttime,String endtime,
@@ -42,7 +42,7 @@ public class ImageController extends BaseController{
         starttime = ConvertUtils.toString(starttime);
         endtime = ConvertUtils.toString(endtime);
 
-        List<ImageCategory> lsCategory = cacheSourceManager.findImageCategory();//这样引用出错
+        List<ImageCategory> lsCategory = cacheCommonManager.findImageCategory();//这样引用出错
 
         Integer pageSize = 30;
         String pageUrl = "?page=%d";
@@ -66,7 +66,7 @@ public class ImageController extends BaseController{
 
         try {
 
-            pageResponse = sourceService.findImageSource(name,categoryid,status,"",starttime,endtime,
+            pageResponse = commonService.findImageSource(name,categoryid,status,"",starttime,endtime,
                     page, pageSize);
         }
         catch (Exception exp)
@@ -87,7 +87,7 @@ public class ImageController extends BaseController{
         model.addAttribute("lsImage", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
-        model.addAttribute("cache", cacheSourceManager);
+        model.addAttribute("cache", cacheCommonManager);
 
         return "source/image/index";
     }

@@ -27,7 +27,7 @@
 
     <dubbo:protocol name="dubbo" port="20887" />
 
-    <dubbo:reference interface="com.fct.message.interfaces.MessageService" timeout="5000" check="false" />
+    <dubbo:reference id="messageService" interface="com.fct.message.interfaces.MessageService" timeout="5000" check="false" />
 
     <dubbo:service interface="com.fct.finance.interfaces.FinanceService" ref="financeService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>

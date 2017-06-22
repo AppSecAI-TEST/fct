@@ -1,18 +1,18 @@
 package com.fct.finance.service.business;
 
-import com.fct.common.exceptions.BaseException;
-import com.fct.common.json.JsonConverter;
-import com.fct.common.logger.LogService;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.exceptions.BaseException;
+import com.fct.core.json.JsonConverter;
+import com.fct.core.logger.LogService;
+import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.repository.PayOrderRepository;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.message.interfaces.MessageService;
-import com.fct.message.model.MQPayRefund;
-import com.fct.message.model.MQPaySuccess;
-import com.fct.message.model.MQPayTrade;
+import com.fct.message.interfaces.model.MQPayRefund;
+import com.fct.message.interfaces.model.MQPaySuccess;
+import com.fct.message.interfaces.model.MQPayTrade;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -42,6 +42,9 @@ public class PayOrderManager  {
 
     @Autowired
     private RefundRecordManager refundRecordManager;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private JdbcTemplate jt;
@@ -293,7 +296,7 @@ public class PayOrderManager  {
         mq.setRemark("支付结果通知");
         mq.setNotify_url(pay.getNotifyUrl());
 
-        APIClient.messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
+        messageService.send("mq_paysuccess","MQPaySuccess","com.fct.finance",
                 JsonConverter.toJson(mq),"发送支付成功通知消息");
     }
 

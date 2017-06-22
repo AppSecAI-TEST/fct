@@ -1,14 +1,14 @@
 package com.fct.web.admin.http.controller.source.article;
 
 import com.alibaba.dubbo.common.URL;
-import com.fct.source.data.entity.Article;
-import com.fct.source.data.entity.ArticleCategory;
-import com.fct.common.exceptions.Exceptions;
-import com.fct.source.interfaces.SourceService;
-import com.fct.source.interfaces.PageResponse;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
-import com.fct.web.admin.http.cache.CacheSourceManager;
+import com.fct.common.data.entity.Article;
+import com.fct.common.data.entity.ArticleCategory;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.common.interfaces.CommonService;
+import com.fct.common.interfaces.PageResponse;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
+import com.fct.web.admin.http.cache.CacheCommonManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -30,10 +30,10 @@ import java.util.Map;
 public class ArticleController extends BaseController{
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     @Autowired
-    private CacheSourceManager cacheSourceManager;
+    private CacheCommonManager cacheCommonManager;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(String title,String catecode,Integer status,String starttime,String endtime,
@@ -46,7 +46,7 @@ public class ArticleController extends BaseController{
         starttime = ConvertUtils.toString(starttime);
         endtime = ConvertUtils.toString(endtime);
 
-        List<ArticleCategory> lsCategory = cacheSourceManager.findArticleCategoryByParent();//这样引用出错
+        List<ArticleCategory> lsCategory = cacheCommonManager.findArticleCategoryByParent();//这样引用出错
 
         Integer pageSize = 30;
         String pageUrl = "?page=%d";
@@ -74,7 +74,7 @@ public class ArticleController extends BaseController{
 
         try {
 
-            pageResponse = sourceService.findArticle(title,catecode,status,starttime,endtime,
+            pageResponse = commonService.findArticle(title,catecode,status,starttime,endtime,
                     page, pageSize);
         }
         catch (Exception exp)
@@ -95,7 +95,7 @@ public class ArticleController extends BaseController{
         model.addAttribute("lsArticle", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
-        model.addAttribute("cache", cacheSourceManager);
+        model.addAttribute("cache", cacheCommonManager);
 
         return "source/article/index";
     }
@@ -105,7 +105,7 @@ public class ArticleController extends BaseController{
         id = ConvertUtils.toInteger(id);
         Article article =null;
         if(id>0) {
-            article = sourceService.getArticle(id);
+            article = commonService.getArticle(id);
         }
         if (article == null) {
             article = new Article();
@@ -113,7 +113,7 @@ public class ArticleController extends BaseController{
             article.setCategoryCode("");
         }
 
-        List<ArticleCategory> lsCategory = cacheSourceManager.findArticleCategoryByParent();
+        List<ArticleCategory> lsCategory = cacheCommonManager.findArticleCategoryByParent();
 
         model.addAttribute("lsCategory", lsCategory);
         model.addAttribute("article", article);
@@ -137,7 +137,7 @@ public class ArticleController extends BaseController{
 
         Article article = null;
         if(id>0) {
-            article = sourceService.getArticle(id);
+            article = commonService.getArticle(id);
         }
         if (article == null) {
             article = new Article();
@@ -153,7 +153,7 @@ public class ArticleController extends BaseController{
         article.setSource(source);
 
         try {
-            sourceService.saveArticle(article);
+            commonService.saveArticle(article);
         }
         catch (IllegalArgumentException exp)
         {

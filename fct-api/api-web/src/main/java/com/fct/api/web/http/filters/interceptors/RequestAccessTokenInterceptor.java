@@ -6,7 +6,7 @@ import com.fct.api.web.http.support.version.APIScanner;
 import com.fct.api.web.session.Session;
 import com.fct.api.web.utils.ErrorMessageSelector;
 import com.fct.api.web.utils.SessionUtil;
-import com.fct.common.json.JsonConverter;
+import com.fct.core.json.JsonConverter;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.ModelAndView;

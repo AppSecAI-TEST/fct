@@ -1,7 +1,7 @@
 package com.fct.api.web.utils;
 
 import com.fct.api.web.session.Session;
-import com.fct.common.utils.UUIDUtil;
+import com.fct.core.utils.UUIDUtil;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

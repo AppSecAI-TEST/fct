@@ -1,6 +1,6 @@
 package com.fct.mall.service.business;
 
-import com.fct.common.utils.PageUtil;
+import com.fct.core.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.OrderComment;
 import com.fct.mall.data.entity.Orders;

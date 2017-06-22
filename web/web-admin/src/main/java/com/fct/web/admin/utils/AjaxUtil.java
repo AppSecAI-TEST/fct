@@ -1,6 +1,6 @@
 package com.fct.web.admin.utils;
 
-import com.fct.common.json.JsonConverter;
+import com.fct.core.json.JsonConverter;
 import com.fct.web.admin.http.exceptions.ErrorMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

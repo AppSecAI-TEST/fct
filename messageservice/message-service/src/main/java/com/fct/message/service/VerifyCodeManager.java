@@ -1,6 +1,6 @@
 package com.fct.message.service;
 
-import com.fct.common.utils.DateUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.message.data.entity.VerifyCode;
 import com.fct.message.data.repository.VerifyCodeRepository;
 import org.apache.commons.lang3.StringUtils;

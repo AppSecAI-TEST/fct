@@ -1,6 +1,6 @@
 package com.fct.member.service.business;
 
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;

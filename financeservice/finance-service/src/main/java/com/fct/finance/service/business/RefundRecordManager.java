@@ -1,13 +1,14 @@
 package com.fct.finance.service.business;
 
-import com.fct.common.exceptions.BaseException;
-import com.fct.common.json.JsonConverter;
-import com.fct.common.logger.LogService;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.exceptions.BaseException;
+import com.fct.core.json.JsonConverter;
+import com.fct.core.logger.LogService;
+import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.*;
 import com.fct.finance.data.repository.RefundRecordRepository;
 import com.fct.finance.interfaces.PageResponse;
-import com.fct.message.model.MQPayRefund;
+import com.fct.message.interfaces.MessageService;
+import com.fct.message.interfaces.model.MQPayRefund;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,9 @@ public class RefundRecordManager {
 
     @Autowired
     private MemberAccountManager memberAccountManager;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private JdbcTemplate jt;
@@ -324,7 +329,7 @@ public class RefundRecordManager {
         message.setCash_amount(refund.getCashAmount());
         message.setDesc("退款");
 
-        APIClient.messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
+        messageService.send("mq_payrefund","MQPayRefund","com.fct.finance",
                 JsonConverter.toJson(message),"原路返回退款至第三方支付平台");
 
     }

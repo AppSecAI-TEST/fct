@@ -26,7 +26,5 @@ public interface MessageQueueRepository extends JpaRepository<MessageQueue, Inte
     @Query(nativeQuery = true, value = "UPDATE MessageQueue SET Status=0,RequestCount=0 WHERE Id=?1")
     void resume(Integer id);
 
-    Page<MessageQueue> findAll(Specification<MessageQueue> spec, Pageable pageable);  //分页按条件查询
-
 }
 

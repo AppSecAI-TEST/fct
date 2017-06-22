@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.controller.member;
 
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.member.data.entity.InviteCode;
 import com.fct.member.interfaces.MemberService;
 import com.fct.member.interfaces.PageResponse;

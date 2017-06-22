@@ -1,6 +1,6 @@
 package com.fct.pay.service.wxpay.common;
 
-import com.fct.common.logger.LogService;
+import com.fct.pay.service.Constants;
 import com.fct.pay.service.wxpay.protocol.refund_query_protocol.RefundOrderData;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -91,7 +91,7 @@ public class XMLParser {
         //数据为空时不能转化为xml格式
         if (0 == map.size())
         {
-            LogService.warning("WxPayData数据为空!");
+            Constants.logger.warn("WxPayData数据为空!");
             throw new IllegalArgumentException("WxPayData数据为空!");
         }
 
@@ -104,7 +104,7 @@ public class XMLParser {
             String value = (String) map.get(key);
             if(StringUtils.isEmpty(value))
             {
-                LogService.warning("WxPayData内部含有值为null的字段!");
+                Constants.logger.warn("WxPayData内部含有值为null的字段!");
                 throw new IllegalArgumentException("WxPayData内部含有值为null的字段!");
             }
             if(map.get(key).getClass() == Integer.class)
@@ -117,7 +117,7 @@ public class XMLParser {
             }
             else //除了string和int类型不能含有其他数据类型
             {
-                LogService.warning("WxPayData字段数据类型错误!");
+                Constants.logger.warn("WxPayData字段数据类型错误!");
                 throw new IllegalArgumentException("WxPayData字段数据类型错误!");
             }
 

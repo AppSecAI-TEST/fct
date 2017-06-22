@@ -1,10 +1,10 @@
 package com.fct.web.admin.http.controller.source.article;
 
-import com.fct.source.data.entity.ArticleCategory;
-import com.fct.common.exceptions.Exceptions;
-import com.fct.source.interfaces.SourceService;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.web.admin.http.cache.CacheSourceManager;
+import com.fct.common.data.entity.ArticleCategory;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.common.interfaces.CommonService;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.web.admin.http.cache.CacheCommonManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -24,10 +24,10 @@ import java.util.List;
 public class CategoryController extends BaseController {
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     @Autowired
-    private CacheSourceManager cacheSourceManager;
+    private CacheCommonManager cacheCommonManager;
     /**
      * 获取分类
      * @return
@@ -38,7 +38,7 @@ public class CategoryController extends BaseController {
         name = ConvertUtils.toString(name);
         List<ArticleCategory> lsCategory = new ArrayList<>();
         try {
-            lsCategory = sourceService.findArticleCategory(-1, name,"");
+            lsCategory = commonService.findArticleCategory(-1, name,"");
         }
         catch (Exception exp)
         {
@@ -53,14 +53,14 @@ public class CategoryController extends BaseController {
         id = ConvertUtils.toInteger(id);
         ArticleCategory category =null;
         if(id>0) {
-            category = sourceService.getArticleCategory(id);
+            category = commonService.getArticleCategory(id);
         }
         if (category == null) {
             category = new ArticleCategory();
             category.setId(0);
         }
 
-        List<ArticleCategory> lsCategory = cacheSourceManager.findArticleCategoryByParent();
+        List<ArticleCategory> lsCategory = cacheCommonManager.findArticleCategoryByParent();
 
         model.addAttribute("parentCate", lsCategory);
         model.addAttribute("category", category);
@@ -78,7 +78,7 @@ public class CategoryController extends BaseController {
 
         ArticleCategory category =  null;
         if(id>0) {
-            category = sourceService.getArticleCategory(id);
+            category = commonService.getArticleCategory(id);
         }
         if (category == null) {
             category = new ArticleCategory();
@@ -88,7 +88,7 @@ public class CategoryController extends BaseController {
         category.setSortIndex(sortindex);
 
         try {
-            sourceService.saveArticleCategory(category);
+            commonService.saveArticleCategory(category);
         }
         catch (IllegalArgumentException exp)
         {
@@ -111,7 +111,7 @@ public class CategoryController extends BaseController {
     {
         parentid = ConvertUtils.toInteger(parentid);
 
-        List<ArticleCategory> lsCate = cacheSourceManager.findArticleCategoryByParentId(parentid);
+        List<ArticleCategory> lsCate = cacheCommonManager.findArticleCategoryByParentId(parentid);
 
         StringBuilder sb = new StringBuilder();
         //sb.append("<select class=\"form-control selCate\" name=\"subid\">");
@@ -135,7 +135,7 @@ public class CategoryController extends BaseController {
     {
         id = ConvertUtils.toInteger(id);
         try {
-            sourceService.deleteArticleCategory(id);
+            commonService.deleteArticleCategory(id);
         }
         catch (IllegalArgumentException exp)
         {

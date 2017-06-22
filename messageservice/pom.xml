@@ -11,14 +11,13 @@
     <modules>
         <module>message-data</module>
         <module>message-interface</module>
-        <module>message-model</module>
         <module>message-service</module>
     </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.3.RELEASE</version>
+        <version>1.4.2.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -61,11 +60,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fct.common</groupId>
-            <artifactId>fct-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 package com.fct.api.web.http.exceptions;
 
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 import org.reflections.Reflections;
 
 import java.util.Set;

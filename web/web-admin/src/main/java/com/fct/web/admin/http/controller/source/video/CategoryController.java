@@ -1,10 +1,10 @@
 package com.fct.web.admin.http.controller.source.video;
 
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.source.data.entity.ImageCategory;
-import com.fct.source.data.entity.VideoCategory;
-import com.fct.source.interfaces.SourceService;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.common.data.entity.ImageCategory;
+import com.fct.common.data.entity.VideoCategory;
+import com.fct.common.interfaces.CommonService;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -24,7 +24,7 @@ import java.util.List;
 public class CategoryController extends BaseController{
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     /**
      * 获取图片分类
@@ -35,7 +35,7 @@ public class CategoryController extends BaseController{
 
         List<VideoCategory> lsCate = null;
         try {
-            lsCate = sourceService.findVideoCategory();
+            lsCate = commonService.findVideoCategory();
         }
         catch (Exception exp)
         {
@@ -54,7 +54,7 @@ public class CategoryController extends BaseController{
         VideoCategory category =null;
         try {
             if (id > 0) {
-                category = sourceService.getVideoCategory(id);
+                category = commonService.getVideoCategory(id);
             }
         }
         catch (Exception exp)
@@ -79,7 +79,7 @@ public class CategoryController extends BaseController{
 
         VideoCategory category =  null;
         if(id>0) {
-            category = sourceService.getVideoCategory(id);
+            category = commonService.getVideoCategory(id);
         }
         if (category == null) {
             category = new VideoCategory();
@@ -88,7 +88,7 @@ public class CategoryController extends BaseController{
         category.setSortIndex(sortindex);
 
         try {
-            sourceService.saveVideoCategory(category);
+            commonService.saveVideoCategory(category);
         }
         catch (IllegalArgumentException exp)
         {

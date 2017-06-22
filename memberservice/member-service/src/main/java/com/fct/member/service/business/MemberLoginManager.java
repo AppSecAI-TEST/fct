@@ -1,6 +1,6 @@
 package com.fct.member.service.business;
 
-import com.fct.common.utils.DateUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;

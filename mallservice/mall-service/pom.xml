@@ -88,8 +88,8 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fct.common</groupId>
-            <artifactId>fct-common</artifactId>
+            <groupId>com.fct.core</groupId>
+            <artifactId>fct-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -1,6 +1,6 @@
 package com.fct.message.service;
 
-import com.fct.common.utils.PageUtil;
+import com.fct.core.utils.PageUtil;
 import com.fct.message.data.entity.MessageQueue;
 import com.fct.message.data.repository.MessageQueueRepository;
 import com.fct.message.interfaces.MessageService;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 /**
  * Created by jon on 2017/4/11.

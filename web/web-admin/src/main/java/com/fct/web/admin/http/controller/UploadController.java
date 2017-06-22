@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.controller;
 
-import com.fct.source.data.entity.ImageSource;
-import com.fct.source.interfaces.SourceService;
+import com.fct.common.data.entity.ImageSource;
+import com.fct.common.interfaces.CommonService;
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
@@ -33,7 +33,7 @@ public class UploadController {
     private FileOperatorHelper fileOperatorHelper;
 
     @Autowired
-    private SourceService sourceService;
+    private CommonService commonService;
 
     /**
      * 批量上传文件
@@ -108,7 +108,7 @@ public class UploadController {
                 guid = guid.substring(0,guid.indexOf('.'));
                 imageSource.setUrl(imgUrl);
                 imageSource.setGuid(guid);
-                sourceService.saveImageSource(imageSource);
+                commonService.saveImageSource(imageSource);
 
                 if(StringUtils.isEmpty(action))
                 {

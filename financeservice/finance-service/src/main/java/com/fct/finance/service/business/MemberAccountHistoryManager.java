@@ -1,6 +1,6 @@
 package com.fct.finance.service.business;
 
-import com.fct.common.utils.PageUtil;
+import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.repository.MemberAccountHistoryRepository;
 import com.fct.finance.interfaces.PageResponse;

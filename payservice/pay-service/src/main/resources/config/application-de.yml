@@ -1,6 +1,6 @@
 server:
   port: 8088
-  contextPath: /fct-service
+  contextPath: /payservice
   tomcat:
     uri-encoding: UTF-8
 

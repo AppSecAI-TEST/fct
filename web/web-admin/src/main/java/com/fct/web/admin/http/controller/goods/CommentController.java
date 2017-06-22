@@ -1,8 +1,8 @@
 package com.fct.web.admin.http.controller.goods;
 
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.data.entity.OrderComment;
 import com.fct.mall.interfaces.MallService;

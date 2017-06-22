@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.controller.goods;
 
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.interfaces.MallService;
 import com.fct.web.admin.http.cache.CacheGoodsManager;

@@ -1,9 +1,9 @@
 package com.fct.web.admin.http.controller.sys;
 
 import com.alibaba.dubbo.common.URL;
-import com.fct.common.exceptions.Exceptions;
-import com.fct.common.utils.ConvertUtils;
-import com.fct.common.utils.PageUtil;
+import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.data.entity.SystemUser;
 import com.fct.member.interfaces.MemberService;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 

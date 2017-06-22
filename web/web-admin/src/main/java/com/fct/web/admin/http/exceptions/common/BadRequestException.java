@@ -1,7 +1,7 @@
 package com.fct.web.admin.http.exceptions.common;
 
 
-import com.fct.common.exceptions.BaseException;
+import com.fct.core.exceptions.BaseException;
 
 /**
  * @author ningyang

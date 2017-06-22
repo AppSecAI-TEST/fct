@@ -1,7 +1,7 @@
 package com.fct.promotion.service.business;
 
-import com.fct.common.logger.LogService;
-import com.fct.common.utils.DateUtils;
+import com.fct.core.logger.LogService;
+import com.fct.core.utils.DateUtils;
 import com.fct.promotion.data.entity.*;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;

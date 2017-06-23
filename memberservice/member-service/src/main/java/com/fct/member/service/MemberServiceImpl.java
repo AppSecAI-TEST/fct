@@ -6,6 +6,7 @@ import com.fct.member.interfaces.PageResponse;
 import com.fct.member.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -49,14 +50,25 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 //    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
     {
-        System.out.println("in method>>");
         return memberManager.register(cellPhone,userName,password);
     }
-
+    public void logoutMember(String token)
+    {
+        memberLoginManager.logOut(token);
+    }
     /*普通登录和快捷登录*/
     public MemberLogin loginMember(String cellPhone, String password, String ip,Integer expireDay)
     {
+        if(StringUtils.isEmpty(password))
+        {
+            return memberLoginManager.quickLogin(cellPhone,ip,expireDay);
+        }
         return memberLoginManager.login(cellPhone,password,ip,expireDay);
+    }
+
+    public MemberLogin getMemberLogin(String token)
+    {
+        return memberLoginManager.findByToken(token);
     }
 
     public Member getMember(Integer memberId)
@@ -186,6 +198,11 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     public SysUserLogin loginSystemUser(String userName,String password,String ip,Integer expireHour)
     {
         return sysUserLoginManager.login(userName,password,ip,expireHour);
+    }
+
+    public void logoutSysUser(String token)
+    {
+
     }
 
     public SysUserLogin getSysUserLogin(String token)

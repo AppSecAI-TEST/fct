@@ -2,6 +2,8 @@ package com.fct.common.service;
 
 import com.fct.common.data.entity.*;
 import com.fct.common.interfaces.CommonService;
+import com.fct.common.interfaces.FileRequest;
+import com.fct.common.interfaces.ImageResponse;
 import com.fct.common.interfaces.PageResponse;
 import com.fct.common.service.business.ArticleCategoryManager;
 import com.fct.common.service.business.ArticleManager;
@@ -89,6 +91,11 @@ public class CommonServiceImpl implements CommonService {
     public String saveImageSource(ImageSource imageSource)
     {
         return imageSourceManager.save(imageSource);
+    }
+
+    public List<ImageResponse> uploadImage(FileRequest fileRequest)
+    {
+        return imageSourceManager.upload(fileRequest);
     }
 
     public List<ImageSource> findImageSourceByGuid(String guids)

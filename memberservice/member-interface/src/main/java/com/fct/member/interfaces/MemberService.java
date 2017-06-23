@@ -17,7 +17,11 @@ public interface MemberService {
     /*普通登录和快捷登录*/
     MemberLogin loginMember(String cellPhone,String password,String ip,Integer expireDay);
 
+    void logoutMember(String token);
+
     Member getMember(Integer memberId);
+
+    MemberLogin getMemberLogin(String token);
 
     /*修改密码*/
     void updateMemberPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword);
@@ -71,6 +75,8 @@ public interface MemberService {
     SysUserLogin loginSystemUser(String userName,String password,String ip,Integer expireHour);
 
     SysUserLogin getSysUserLogin(String token);
+
+    void logoutSysUser(String token);
 
     void lockSystemUser(Integer userId);
 

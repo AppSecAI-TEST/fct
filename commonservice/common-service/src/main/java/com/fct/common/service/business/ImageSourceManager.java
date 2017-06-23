@@ -3,6 +3,7 @@ package com.fct.common.service.business;
 import com.fct.common.data.entity.ImageSource;
 import com.fct.common.data.repository.ImageSourceRepository;
 import com.fct.common.interfaces.FileRequest;
+import com.fct.common.interfaces.ImageResponse;
 import com.fct.common.interfaces.PageResponse;
 import com.fct.common.service.oss.*;
 import com.fct.core.utils.PageUtil;
@@ -45,16 +46,18 @@ public class ImageSourceManager {
         return imageSource.getGuid();
     }
 
-    public void upload(FileRequest fileRequest)
+    public List<ImageResponse> upload(FileRequest fileRequest)
     {
         if(fileRequest.getFiles().size() != fileRequest.getKeys().size())
         {
             throw new IllegalArgumentException("上传文件地址与名称不一致。");
         }
+        List<ImageResponse> lsResponse = new ArrayList<>();
+
         try {
             for(int i = 0; i< fileRequest.getFiles().size(); i++){
 
-                String name = fileRequest.getKeys().get(i);
+                String originalName = fileRequest.getKeys().get(i);
                 byte[] fileByte = fileRequest.getFiles().get(i);
 
                 //将byte[]转为file
@@ -64,11 +67,8 @@ public class ImageSourceManager {
                 BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
                 bufferedOutput.write(fileByte);
 
-                String originalName = file.getName();
+                UploadResponse response =  fileOperatorHelper.uploadFile(file,originalName);
 
-                UploadResponse response =  fileOperatorHelper.uploadFile(file,name);
-
-                ImageSource imageSource = new ImageSource();
                 String suffix = originalName.split("\\.")[1];
 
                 BufferedImage sourceImg = ImageIO.read(new FileInputStream(file));
@@ -79,6 +79,7 @@ public class ImageSourceManager {
                 String imgUrl = url.getFile();
                 imgUrl = imgUrl.substring(0,imgUrl.indexOf("@"));
 
+                ImageSource imageSource = new ImageSource();
                 imageSource.setCategoryId(0);
                 imageSource.setWidth(sourceImg.getWidth());// 源图宽度
                 imageSource.setHeight(sourceImg.getHeight());// 源图高度
@@ -93,12 +94,21 @@ public class ImageSourceManager {
 
                 imagesSourceRepository.save(imageSource);
 
+                ImageResponse ir = new ImageResponse();
+                ir.setGuid(imageSource.getGuid());
+                ir.setUrl(imageSource.getUrl());
+                ir.setName(imageSource.getOriginalName());
+
+                lsResponse.add(ir);
+
             }
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
         }
+
+        return lsResponse;
     }
 
     public ImageSource findById(String guid)

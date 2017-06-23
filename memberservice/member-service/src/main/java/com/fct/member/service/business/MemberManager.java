@@ -82,6 +82,11 @@ public class MemberManager {
         return memberRepository.findOne(id);
     }
 
+    public Member findByCellPhone(String cellphone)
+    {
+        return memberRepository.findByCellPhone(cellphone);
+    }
+
     public void updatePassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword)
     {
 

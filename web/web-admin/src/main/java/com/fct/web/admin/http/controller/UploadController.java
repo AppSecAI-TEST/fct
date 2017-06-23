@@ -2,6 +2,8 @@ package com.fct.web.admin.http.controller;
 
 import com.fct.common.data.entity.ImageSource;
 import com.fct.common.interfaces.CommonService;
+import com.fct.common.interfaces.FileRequest;
+import com.fct.common.interfaces.ImageResponse;
 import com.fct.thirdparty.oss.FileOperatorHelper;
 import com.fct.thirdparty.oss.entity.FileServiceRequest;
 import com.fct.thirdparty.oss.response.UploadResponse;
@@ -116,6 +118,53 @@ public class UploadController {
                     response.setUrl(imgUrl);
                 }
                 else {
+                    response.setUrl(response.getUrl());
+                }
+
+                responseEntity.setData(response);
+            }
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return responseEntity;
+    }
+
+
+    @RequestMapping(value = "/newimage", method = RequestMethod.POST)
+    public JsonResponseEntity<Object> uploadImages(HttpServletRequest request){
+        JsonResponseEntity<Object> responseEntity =  new JsonResponseEntity<>();
+        List<byte[]> fileList = Lists.newArrayList();
+        FileRequest fileRequest = new FileRequest();
+        List<String> keys = Lists.newArrayList();
+        List<MultipartFile> files = ((MultipartHttpServletRequest) request)
+                .getFiles("file");
+        String action = request.getParameter("action");
+
+        List<ImageResponse> responses = null;
+
+        try{
+            if(files!=null&&files.size()>0){
+                for(MultipartFile multipartFile: files){
+                    byte[] bytes = multipartFile.getBytes();
+                    String originalName = multipartFile.getOriginalFilename();
+                    keys.add(originalName);
+                    fileList.add(bytes);
+                }
+            }
+            fileRequest.setFiles(fileList);
+            fileRequest.setKeys(keys);
+            fileRequest.setUserMetaData(new HashedMap());
+            responses = commonService.uploadImage(fileRequest);
+
+            if(responses != null) {
+                ImageResponse response =responses.get(0);
+                String imgUrl = "";
+                //非编辑器模式，上传的图片
+
+                if(!StringUtils.isEmpty(action))
+                {
                     response.setUrl(response.getUrl());
                 }
 

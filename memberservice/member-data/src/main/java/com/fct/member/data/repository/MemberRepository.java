@@ -22,6 +22,8 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     @Query(nativeQuery = true, value = "SELECT * FROM Member WHERE CellPhone=?1 AND Password=?2 AND locked=0")
     Member login(String cellPhone,String password);
 
+    Member findByCellPhone(String cellphone);
+
     @Transactional
     @Modifying
     @Query("UPDATE Member SET password=?2 WHERE cellPhone=?1")

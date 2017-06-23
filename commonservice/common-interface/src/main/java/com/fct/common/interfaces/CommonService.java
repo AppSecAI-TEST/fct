@@ -29,6 +29,8 @@ public interface CommonService {
 
     String saveImageSource(ImageSource imageSource);
 
+    List<ImageResponse> uploadImage(FileRequest fileRequest);
+
     List<ImageSource> findImageSourceByGuid(String guids);
 
     void updateImageSourceStatus(String guid);

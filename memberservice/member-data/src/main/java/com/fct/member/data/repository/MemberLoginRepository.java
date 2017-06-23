@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by jon on 2017/5/6.
  */
-public interface MemberLoginRepository extends JpaRepository<MemberLogin, Integer> {
+public interface MemberLoginRepository extends JpaRepository<MemberLogin, String> {
 
 
 }

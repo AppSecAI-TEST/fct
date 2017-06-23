@@ -49,11 +49,26 @@ public class SysUserLoginManager {
 
     public SysUserLogin findByToken(String token)
     {
+        if(StringUtils.isEmpty(token))
+        {
+            throw new IllegalArgumentException("token为空。");
+        }
         SysUserLogin login =  sysUserLoginRepository.findOne(token);
         if(DateUtils.compareDate(login.getExpiredTime(),new Date())<0)
         {
             return  null;
         }
         return login;
+    }
+
+    public void logOut(String token)
+    {
+        if(StringUtils.isEmpty(token))
+        {
+            throw new IllegalArgumentException("token为空。");
+        }
+        SysUserLogin login = sysUserLoginRepository.findOne(token);
+        login.setExpiredTime(DateUtils.addDay(new Date(),-1));
+        sysUserLoginRepository.save(login);
     }
 }

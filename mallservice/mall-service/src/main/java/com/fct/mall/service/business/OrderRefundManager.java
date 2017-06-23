@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -164,7 +163,10 @@ public class OrderRefundManager {
 
     public OrderRefund findById(Integer refundId)
     {
-
+        if(refundId<=0)
+        {
+            throw new IllegalArgumentException("退款id");
+        }
         OrderRefund refund = orderRefundRepository.findOne(refundId);
         OrderGoods goods = orderGoodsManager.findById(refund.getOrderGoodsId());
         List<OrderRefundMessage> lsMessage = orderRefundMessageManager.findByRefund(refundId);
@@ -205,7 +207,8 @@ public class OrderRefundManager {
 
     //用户申请
     public void apply (Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
-                       Integer serviceType, Integer refundMethod, String refundReason, String description, String images)
+                       Integer serviceType, Integer refundMethod, String refundReason, String description,
+                       String images)
     {
         if (memberId < 1) {
             throw new IllegalArgumentException ("非法操作");
@@ -218,6 +221,14 @@ public class OrderRefundManager {
         }
         if (StringUtils.isEmpty(description)) {
             throw new IllegalArgumentException ("说明不能为空");
+        }
+        if(StringUtils.isEmpty(refundReason))
+        {
+            throw new IllegalArgumentException ("退款原因为空");
+        }
+        if(StringUtils.isEmpty(description))
+        {
+            throw new IllegalArgumentException ("退款描述为空");
         }
 
         //规格ID
@@ -493,6 +504,18 @@ public class OrderRefundManager {
 
     public OrderRefund findByOrderGoodsId(Integer memberId,String orderId, Integer orderGoodsId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员为空");
+        }
+        if(StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("订单id为空");
+        }
+        if(orderGoodsId<=0)
+        {
+            throw new IllegalArgumentException("订单宝贝为空");
+        }
         return orderRefundRepository.getRefund(memberId,orderId,orderGoodsId);
     }
 

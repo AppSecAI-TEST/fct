@@ -140,4 +140,15 @@ public class ArtistManager {
         }
         return condition;
     }
+
+    public List<Artist> findByGoodsId(Integer goodId) {
+
+        if(StringUtils.isEmpty(goodId))
+        {
+            throw new IllegalArgumentException("商口为空");
+        }
+        String sql = "SELECT * FROM Artist WHERE status=1 and  Id IN(select artistId from ArtistGoods where goodsid="+ goodId +")";
+        List<Artist> ls = jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<>(Artist.class));
+        return ls;
+    }
 }

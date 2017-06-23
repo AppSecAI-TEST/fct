@@ -47,10 +47,10 @@ public class MallServiceImpl implements MallService {
     @Autowired
     private ShoppingCartManager shoppingCartManager;
 
-    public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId,Integer materialId,
-                                         Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
+    public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer materialId,
+                                         Integer artistId, Integer minVolume, Integer maxVolume, Integer status,
                                          Integer pageIndex, Integer pageSize) {
-        return goodsManager.find(name, categoryCode, gradeId, materialId,artistId,minVolume,maxVolume,status,
+        return goodsManager.find(name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
                 pageIndex, pageSize);
     }
 
@@ -58,8 +58,7 @@ public class MallServiceImpl implements MallService {
         return goodsManager.findById(id);
     }
 
-    public List<Goods> findGoodsByIds(String ids)
-    {
+    public List<Goods> findGoodsByIds(String ids) {
         return goodsManager.findByIds(ids);
     }
 
@@ -75,232 +74,196 @@ public class MallServiceImpl implements MallService {
         goodsManager.updateStatus(id, status);
     }
 
-    public void deleteGoods(Integer id)
-    {
+    public void deleteGoods(Integer id) {
         goodsManager.delete(id);
     }
 
-    public List<GoodsCategory> findGoodsCategory(Integer parentId, String name, String code)
-    {
-        return goodsCategoryManager.findAll(name,code,parentId);
+    public List<GoodsCategory> findGoodsCategory(Integer parentId, String name, String code) {
+        return goodsCategoryManager.findAll(name, code, parentId);
     }
 
-    public GoodsCategory getGoodsCategory(Integer id)
-    {
+    public GoodsCategory getGoodsCategory(Integer id) {
         return goodsCategoryManager.findById(id);
     }
 
-    public void saveGoodsCategory (GoodsCategory category)
-    {
+    public void saveGoodsCategory(GoodsCategory category) {
         goodsCategoryManager.save(category);
     }
 
-    public void setGoodsCategorySortIndex(Integer id, Integer sortIndex)
-    {
-        goodsCategoryManager.saveSortIndex(id,sortIndex);
+    public void setGoodsCategorySortIndex(Integer id, Integer sortIndex) {
+        goodsCategoryManager.saveSortIndex(id, sortIndex);
     }
 
-    public void deleteGoodsCategory(Integer id)
-    {
+    public void deleteGoodsCategory(Integer id) {
         goodsCategoryManager.delete(id);
     }
 
-    public List<GoodsGrade> findGoodsGrade()
-    {
+    public List<GoodsGrade> findGoodsGrade() {
         return goodsGradeManager.findAll("");
     }
 
-    public GoodsGrade getGoodsGrade(Integer id)
-    {
+    public GoodsGrade getGoodsGrade(Integer id) {
         return goodsGradeManager.findById(id);
     }
 
-    public void saveGoodsGrade (GoodsGrade grade)
-    {
+    public void saveGoodsGrade(GoodsGrade grade) {
         goodsGradeManager.save(grade);
     }
 
-    public void setGoodsGradeSortIndex(Integer id, Integer sortIndex)
-    {
-        goodsGradeManager.saveSortIndex(id,sortIndex);
+    public void setGoodsGradeSortIndex(Integer id, Integer sortIndex) {
+        goodsGradeManager.saveSortIndex(id, sortIndex);
     }
 
-    public void deleteGoodsGrade(Integer id)
-    {
+    public void deleteGoodsGrade(Integer id) {
         goodsGradeManager.delete(id);
     }
 
-    public void saveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount)
-    {
-        shoppingCartManager.add(memberId,shopId,goodsId,goodsSpecId,buyCount);
+    public void saveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount) {
+        shoppingCartManager.add(memberId, shopId, goodsId, goodsSpecId, buyCount);
     }
 
-    public List<ShoppingCart> findShoppingCart(Integer memberId,Integer shopId)
-    {
-        return shoppingCartManager.find(memberId,shopId);
+    public List<ShoppingCart> findShoppingCart(Integer memberId, Integer shopId) {
+        return shoppingCartManager.find(memberId, shopId);
     }
 
-    public void deleteShoppingCart(Integer memberId,Integer shopId,Integer cartId)
-    {
-        shoppingCartManager.delete(memberId,shopId,cartId);
+    public void deleteShoppingCart(Integer memberId, Integer shopId, Integer cartId) {
+        shoppingCartManager.delete(memberId, shopId, cartId);
     }
 
     public String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
-                              List<OrderGoods> lsOrderGoods, String couponCode, String remark,OrderReceiver orderReceiver)
-    {
-        return ordersManager.create(memberId,userName,shopId,points,accountAmount,
-                lsOrderGoods,couponCode,remark,orderReceiver);
+                              List<OrderGoods> lsOrderGoods, String couponCode, String remark, OrderReceiver orderReceiver) {
+        return ordersManager.create(memberId, userName, shopId, points, accountAmount,
+                lsOrderGoods, couponCode, remark, orderReceiver);
     }
 
-    public PageResponse<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
-                            Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,
-                            String endTime,Integer pageIndex, Integer pageSize)
-    {
-        return ordersManager.findAll(memberId,cellPhone,orderId,shopId,goodsName,status,payPlatform,payOrderId,
-                timeType,beginTime,endTime,pageIndex,pageSize);
+    public PageResponse<Orders> findOrders(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
+                                           Integer status, String payPlatform, String payOrderId, Integer timeType, String beginTime,
+                                           String endTime, Integer pageIndex, Integer pageSize) {
+        return ordersManager.findAll(memberId, cellPhone, orderId, shopId, goodsName, status, payPlatform, payOrderId,
+                timeType, beginTime, endTime, pageIndex, pageSize);
     }
 
-    public Orders getOrders(String orderId)
-    {
+    public Orders getOrders(String orderId) {
         return ordersManager.findById(orderId);
     }
 
-    public void offPaySuccess(String orderId, String payPlatform, Integer operatorId)
-    {
-        ordersManager.offPaySuccess(orderId,payPlatform,operatorId);
+    public void offPaySuccess(String orderId, String payPlatform, Integer operatorId) {
+        ordersManager.offPaySuccess(orderId, payPlatform, operatorId);
     }
 
-    public void cancelOrders(String orderId,Integer memberId,Integer operatorId)
-    {
-        ordersManager.cancel(orderId,memberId,operatorId);
+    public void cancelOrders(String orderId, Integer memberId, Integer operatorId) {
+        ordersManager.cancel(orderId, memberId, operatorId);
     }
 
-    public void orderDeliver(String orderId, String expressPlatform, String expressNo, Integer operatorId)
-    {
-        ordersManager.saveDeliver(orderId,expressPlatform,expressNo,operatorId);
+    public void orderDeliver(String orderId, String expressPlatform, String expressNo, Integer operatorId) {
+        ordersManager.saveDeliver(orderId, expressPlatform, expressNo, operatorId);
     }
 
-    public List<OrderGoods> findOrderGoods(String orderId)
-    {
+    public List<OrderGoods> findOrderGoods(String orderId) {
         return orderGoodsManager.findByOrderId(orderId);
     }
 
-    public void saveOrderReciver(OrderReceiver or)
-    {
+    public void saveOrderReciver(OrderReceiver or) {
         orderReceiverManager.save(or);
     }
 
-    public OrderReceiver getOrderReceiver(String orderId)
-    {
+    public OrderReceiver getOrderReceiver(String orderId) {
         return orderReceiverManager.findByOrderId(orderId);
     }
 
-    public void delayExpiresTime(String orderId, Integer hour, Integer operatorId)
-    {
-        ordersManager.delayExpiresTime(orderId,hour,operatorId);
+    public void delayExpiresTime(String orderId, Integer hour, Integer operatorId) {
+        ordersManager.delayExpiresTime(orderId, hour, operatorId);
     }
 
-    public void delayFinishTime(String orderId, Integer day, Integer operatorId)
-    {
-        ordersManager.delayFinishTime(orderId,day,operatorId);
+    public void delayFinishTime(String orderId, Integer day, Integer operatorId) {
+        ordersManager.delayFinishTime(orderId, day, operatorId);
     }
 
-    public void orderPaySuccess(String orderId, String payOrderId, String payPlatform, Integer payStatus, String payTime)
-    {
-        ordersManager.paySuccess(orderId,payOrderId,payPlatform,payStatus,payTime);
+    public void orderPaySuccess(String orderId, String payOrderId, String payPlatform, Integer payStatus, String payTime) {
+        ordersManager.paySuccess(orderId, payOrderId, payPlatform, payStatus, payTime);
     }
 
     public void createOrderRefund(Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
-                                  Integer serviceType, Integer refundMethod, String refundReason, String description, String images)
-    {
-        orderRefundManager.apply(memberId,orderId,orderGoodsId,isReceived,serviceType,
-                refundMethod,refundReason,description,images);
+                                  Integer serviceType, Integer refundMethod, String refundReason, String description, String images) {
+        orderRefundManager.apply(memberId, orderId, orderGoodsId, isReceived, serviceType,
+                refundMethod, refundReason, description, images);
     }
 
-    public void handleOrderRefund(String action,Integer memberId,Integer refundId, Integer refundMethod,
-                                  String description, String images, Integer operatorId)
-    {
-        switch (action)
-        {
+    public void handleOrderRefund(String action, Integer memberId, Integer refundId, Integer refundMethod,
+                                  String description, String images, Integer operatorId) {
+        switch (action) {
             case "close":
-                orderRefundManager.close(refundId,memberId,description,images);
+                orderRefundManager.close(refundId, memberId, description, images);
                 break;
             case "accept":
-                orderRefundManager.agreeApply(refundId,refundMethod,description,images,operatorId);
+                orderRefundManager.agreeApply(refundId, refundMethod, description, images, operatorId);
                 break;
             case "agree":
-                orderRefundManager.agreeRefund(refundId,description,images,operatorId);
+                orderRefundManager.agreeRefund(refundId, description, images, operatorId);
                 break;
             case "refuse":
-                orderRefundManager.refuseApply(refundId,description,images,operatorId);
+                orderRefundManager.refuseApply(refundId, description, images, operatorId);
                 break;
             case "express":
-                orderRefundManager.expressByMember(refundId,memberId,description,images);
+                orderRefundManager.expressByMember(refundId, memberId, description, images);
                 break;
         }
 
     }
 
-    public OrderRefund getOrderRefund(Integer refundId)
-    {
+    public OrderRefund getOrderRefund(Integer refundId) {
         return orderRefundManager.findById(refundId);
     }
 
-    public OrderRefund getOrderRefundByOrderGoodsId(Integer memberId,String orderId,Integer orderGoodId)
-    {
-        return orderRefundManager.findByOrderGoodsId(memberId,orderId,orderGoodId);
+    public OrderRefund getOrderRefundByOrderGoodsId(Integer memberId, String orderId, Integer orderGoodId) {
+        return orderRefundManager.findByOrderGoodsId(memberId, orderId, orderGoodId);
     }
 
     public PageResponse<OrderRefundDTO> findOrderRefund(String orderId, String goodsName, Integer orderGoodsId, Integer memberId,
-                                                        Integer status, String beginTime,String endTime, Integer pageIndex, Integer pageSize)
-    {
-        return orderRefundManager.findAll(orderId,goodsName,orderGoodsId,memberId,status,beginTime,endTime,pageIndex,pageSize);
+                                                        Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize) {
+        return orderRefundManager.findAll(orderId, goodsName, orderGoodsId, memberId, status, beginTime, endTime, pageIndex, pageSize);
     }
 
-    public void refundSuccess (Integer refundId, String description)
-    {
-        orderRefundManager.refundSuccess(refundId,description);
+    public void refundSuccess(Integer refundId, String description) {
+        orderRefundManager.refundSuccess(refundId, description);
     }
 
-    public void createOrderCommment(OrderComment comment)
-    {
+    public void createOrderCommment(OrderComment comment) {
         orderCommentManager.create(comment);
     }
 
-    public void replyOrderComment(Integer id,String replyContent)
-    {
-        orderCommentManager.reply(id,replyContent);
+    public void replyOrderComment(Integer id, String replyContent) {
+        orderCommentManager.reply(id, replyContent);
     }
 
-    public void updateOrderCommentStatus(Integer id,Integer status)
-    {
-        orderCommentManager.updateStatus(id,status);
+    public void updateOrderCommentStatus(Integer id, Integer status) {
+        orderCommentManager.updateStatus(id, status);
     }
 
-    public PageResponse<OrderComment> findOrderComment(Integer goodsId,Integer memberId,String cellphone,String orderId,
-                                                       Integer status,String beinTime,String endTime,Integer pageIndex,Integer pageSize)
-    {
-        return orderCommentManager.findAll(goodsId,memberId,cellphone,orderId,status,beinTime,endTime,pageIndex,pageSize);
+    public PageResponse<OrderComment> findOrderComment(Integer goodsId, Integer memberId, String cellphone, String orderId,
+                                                       Integer status, String beinTime, String endTime, Integer pageIndex, Integer pageSize) {
+        return orderCommentManager.findAll(goodsId, memberId, cellphone, orderId, status, beinTime, endTime, pageIndex, pageSize);
     }
 
-    public void saveMaterial(GoodsMaterial goodsMaterial)
-    {
+    public void saveMaterial(GoodsMaterial goodsMaterial) {
         goodsMaterialManager.save(goodsMaterial);
     }
 
-    public GoodsMaterial getMaterial(Integer id)
-    {
+    public GoodsMaterial getMaterial(Integer id) {
         return goodsMaterialManager.findById(id);
     }
 
-    public void updateMaterialStatus(Integer id)
-    {
+    public void updateMaterialStatus(Integer id) {
         goodsMaterialManager.updateStatus(id);
     }
 
-    public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize)
+    public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId, Integer status, Integer pageIndex, Integer pageSize) {
+        return goodsMaterialManager.findAll(goodsId, name, typeId, status, pageIndex, pageSize);
+    }
+
+    public List<GoodsMaterial> findMaterialByGoods(String materialIds)
     {
-        return goodsMaterialManager.findAll(goodsId,name,typeId,status,pageIndex,pageSize);
+        return goodsMaterialManager.findByGoods(materialIds);
     }
 
     public  void deleteGoodsMaterial(Integer id)

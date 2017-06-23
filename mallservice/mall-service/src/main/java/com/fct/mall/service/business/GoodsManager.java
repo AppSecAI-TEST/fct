@@ -1,5 +1,6 @@
 package com.fct.mall.service.business;
 
+import com.fct.artist.interfaces.ArtistService;
 import com.fct.core.utils.PageUtil;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
@@ -29,22 +30,35 @@ public class GoodsManager {
     private GoodsSpecificationManager goodsSpecificationManager;
 
     @Autowired
+    private ArtistService artistService;
+
+    @Autowired
     private JdbcTemplate jt;
 
     public Integer countByCategory(Integer categoryId)
     {
-
+        if(categoryId<=0)
+        {
+            throw new IllegalArgumentException ("分类id为空");
+        }
         return goodsRepository.countByCategory(categoryId +",%");
     }
 
     public Integer countByGrade(Integer gradeId)
     {
+        if(gradeId<=0)
+        {
+            throw new IllegalArgumentException ("等级id为空");
+        }
         return goodsRepository.countByGradeId(gradeId);
     }
 
     public Goods findById(Integer id)
     {
-
+        if(id<=0)
+        {
+            throw new IllegalArgumentException ("id为空");
+        }
         Goods goods =  goodsRepository.findOne(id);
         List<GoodsSpecification> lsSpec = goodsSpecificationManager.findByGoodsId(id);
         if(lsSpec!=null) {
@@ -55,6 +69,10 @@ public class GoodsManager {
 
     public List<Goods> findByIds(String ids)
     {
+        if(StringUtils.isEmpty(ids))
+        {
+            throw new IllegalArgumentException ("id为空");
+        }
         String sql = "SELECT * FROM Goods Where status=1 AND Id IN("+ ids +")";
 
         List<Goods> ls = jt.query(sql,new Object[]{},new BeanPropertyRowMapper<Goods>(Goods.class));
@@ -158,7 +176,7 @@ public class GoodsManager {
             }
         }
         //goods.setCategoryCode("catecode+cateid,");
-        //艺人存入,1,2,10,
+
         goods.setUpdateTime(new Date());
         Boolean newadd = false;
         if (goods.getId() ==null || goods.getId() == 0)
@@ -172,9 +190,17 @@ public class GoodsManager {
             goods.setViewCount(100);
 
             goods.setCreateTime(new Date());
-
         }
+
         goodsRepository.save(goods);
+
+        //艺人存入,1,2,10,
+        List<Integer> lsArtistId = new ArrayList<>();
+        for (String arid: goods.getArtistIds().split(",")
+             ) {
+            lsArtistId.add(Integer.valueOf(arid));
+        }
+        artistService.saveArtistGoods(lsArtistId,goods.getId());
 
         //移除不必要的规格（隐藏，规避已有交易过的宝贝）。
         if(!newadd)
@@ -197,6 +223,14 @@ public class GoodsManager {
 
     public void updateCategory(String newCode,Integer cagetoryId)
     {
+        if(StringUtils.isEmpty(newCode))
+        {
+            throw new IllegalArgumentException("分类code为空");
+        }
+        if(cagetoryId<=0)
+        {
+            throw new IllegalArgumentException("分类id为空");
+        }
         String sql = "update goods set categoryCode='"+ newCode +"' where categoryCode like ',"+ cagetoryId +",%'";
 
         jt.update(sql);
@@ -279,9 +313,13 @@ public class GoodsManager {
     //修改排序
     public void updateSortIndex(Integer id, Integer sortIndex)
     {
-        if (id < 1)
+        if (id == null || id < 1)
         {
             throw new IllegalArgumentException("商品不存在");
+        }
+        if(sortIndex == null)
+        {
+            throw new IllegalArgumentException("排序为空");
         }
 
         goodsRepository.updateSortIndex(id,sortIndex,new Date().toString());

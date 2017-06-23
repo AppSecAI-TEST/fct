@@ -30,6 +30,7 @@
     <dubbo:reference id="messageService" interface="com.fct.message.interfaces.MessageService" timeout="5000" check="false" />
     <dubbo:reference id="financeService" interface="com.fct.finance.interfaces.FinanceService" timeout="5000" check="false" />
     <dubbo:reference id="promotionService" interface="com.fct.promotion.interfaces.PromotionService" timeout="5000" check="false" />
+    <dubbo:reference id="artistService" interface="com.fct.artist.interfaces.ArtistService" timeout="5000" check="false" />
 
     <dubbo:service interface="com.fct.mall.interfaces.MallService" ref="mallService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>

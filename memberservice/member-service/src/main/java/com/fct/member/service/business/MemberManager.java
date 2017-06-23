@@ -42,10 +42,10 @@ public class MemberManager {
         {
             throw new IllegalArgumentException("手机号码为空。");
         }
-        /*if(StringUtils.isEmpty(userName))
+        if(StringUtils.isEmpty(userName))
         {
             throw new IllegalArgumentException("用户名为空。");
-        }*/
+        }
         if(StringUtils.isEmpty(password))
         {
             throw new IllegalArgumentException("密码为空。");
@@ -68,6 +68,12 @@ public class MemberManager {
         member.setCellPhone(cellPhone);
         member.setPassword(StringHelper.md5(password));
         member.setRegisterTime(new Date());
+        member.setAuthStatus(0);
+        member.setCanInviteCount(0);
+        member.setFailLoginCount(0);
+        member.setGradeId(0);
+        member.setLocked(0);
+        member.setLoginCount(0);
         memberRepository.save(member);
 
         //同步注册memberInfo
@@ -79,17 +85,28 @@ public class MemberManager {
 
     public Member findById(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
         return memberRepository.findOne(id);
     }
 
     public Member findByCellPhone(String cellphone)
     {
+        if(StringUtils.isEmpty(cellphone))
+        {
+            throw new IllegalArgumentException("手机号码为空");
+        }
         return memberRepository.findByCellPhone(cellphone);
     }
 
     public void updatePassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword)
     {
-
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
         Member member = memberRepository.findOne(memberId);
         if(member == null)
         {
@@ -110,22 +127,50 @@ public class MemberManager {
 
     public void forgetPassword(String cellPhone,String password)
     {
+        if(StringUtils.isEmpty(cellPhone))
+        {
+            throw new IllegalArgumentException("手机号码为空");
+        }
+        if(StringUtils.isEmpty(password))
+        {
+            throw new IllegalArgumentException("密码为空。");
+        }
         memberRepository.updatePassword(cellPhone,password);
     }
 
     public void lock(Integer memberId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
         memberRepository.lock(memberId);
     }
 
     public Member login(String cellPhone,String password)
     {
+        if(StringUtils.isEmpty(cellPhone))
+        {
+            throw new IllegalArgumentException("手机号码为空");
+        }
+        if(StringUtils.isEmpty(password))
+        {
+            throw new IllegalArgumentException("密码为空。");
+        }
         return  memberRepository.login(cellPhone, StringHelper.md5(password));
     }
 
+    /***
+     *
+     * 此方法供内部使用，更新会员，不新增
+     * */
     public Member save(Member member)
     {
-        return memberRepository.saveAndFlush(member);
+        if(member.getId()<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
+        return memberRepository.save(member);
     }
 
     /// <summary>
@@ -133,12 +178,24 @@ public class MemberManager {
     /// </summary>
     public void addInviteCount(Integer memberId, Integer count)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
+        if(count<=0)
+        {
+            throw new IllegalArgumentException("数量为空");
+        }
         memberRepository.addInviteCount(memberId,count);
     }
 
     @Transactional
     public void verifyAuthStatus(Integer memberId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
         MemberBankInfo bank = memberBankInfoManager.findOne(memberId);
         if(bank == null) {
             throw  new IllegalArgumentException("未有绑定银行卡不可进行认证");

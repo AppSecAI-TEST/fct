@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,6 +95,10 @@ public class OrderCommentManager {
     @Transactional
     public void updateStatus(Integer id,Integer status)
     {
+        if(id<=0)
+        {
+            throw  new IllegalArgumentException("id不存在");
+        }
         OrderComment commnet = orderCommentRepository.findOne(id);
         if(status ==1)
         {
@@ -111,6 +114,14 @@ public class OrderCommentManager {
 
     public void reply(Integer id,String replyContent)
     {
+        if(id<=0)
+        {
+            throw  new IllegalArgumentException("id不存在");
+        }
+        if(StringUtils.isEmpty(replyContent))
+        {
+            throw new IllegalArgumentException("回复内容为空");
+        }
         OrderComment comment = orderCommentRepository.findOne(id);
         comment.setReplyContent(replyContent);
         comment.setUpdateTime(new Date());

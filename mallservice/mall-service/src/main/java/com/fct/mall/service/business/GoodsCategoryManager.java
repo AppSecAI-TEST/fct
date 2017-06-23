@@ -35,6 +35,14 @@ public class GoodsCategoryManager {
         if (StringUtils.isEmpty (category.getName())) {
             throw new IllegalArgumentException ("商品分类名称不能为空");
         }
+        if(StringUtils.isEmpty(category.getImg()))
+        {
+            throw new IllegalArgumentException("图片为空");
+        }
+        if(category.getSortIndex() == null)
+        {
+            throw new IllegalArgumentException ("排序值为空");
+        }
 
         String code = "";
         if (category.getParentId() > 0) {
@@ -120,6 +128,10 @@ public class GoodsCategoryManager {
     {
         if (id < 1) {
             throw new IllegalArgumentException ("ID不存在");
+        }
+        if(sortIndex==null)
+        {
+            throw new IllegalArgumentException ("排序值为空");
         }
         goodsCategoryRepository.updateSortIndex(id,sortIndex);
 

@@ -42,6 +42,15 @@ public class MemberStoreManager {
 
     @Transient
     public MemberStore apply(Integer memberId, String inviteCode) {
+
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("用户id为空");
+        }
+        if(StringUtils.isEmpty(inviteCode))
+        {
+            throw new IllegalArgumentException("邀请码为空");
+        }
         InviteCode code = inviteCodeManager.findByCode(inviteCode);
 
         if (DateUtils.compareDate(new Date(), code.getExpireTime()) > 0 || code.getStatus() != 0) {
@@ -71,6 +80,10 @@ public class MemberStoreManager {
 
     public void updateStatus(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("店铺id为空");
+        }
         memberStoreRepository.updateStatus(id);
     }
 

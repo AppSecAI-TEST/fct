@@ -64,7 +64,7 @@ public class OrdersManager {
 
     public void save(Orders orders)
     {
-        ordersRepository.saveAndFlush(orders);
+        ordersRepository.save(orders);
     }
 
     private OrderProductDTO getSingleProduct(List<OrderProductDTO> lsProduct, Integer pid)
@@ -100,6 +100,14 @@ public class OrdersManager {
         if (lsOrderGoods == null || lsOrderGoods.size() <= 0)
         {
             throw new IllegalArgumentException("没有订单商品");
+        }
+        if(points<0)
+        {
+            throw new IllegalArgumentException("积分不正确。");
+        }
+        if(accountAmount.doubleValue()<0)
+        {
+            throw new IllegalArgumentException("账户余额为空。");
         }
 
         //如有优惠券校验是否有效。异步通知支付结果，如业务正常再次校验优惠券的有效性

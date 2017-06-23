@@ -111,5 +111,7 @@ public interface MallService {
 
     void deleteGoodsMaterial(Integer id);
 
+    List<GoodsMaterial> findMaterialByGoods(String materialIds);
+
     PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize);
 }

@@ -31,6 +31,14 @@ public class GoodsGradeManager {
         if (StringUtils.isEmpty(grade.getName())) {
             throw new IllegalArgumentException("品级分类名称不能为空");
         }
+        if(StringUtils.isEmpty(grade.getImg()))
+        {
+            throw new IllegalArgumentException ("图片为空");
+        }
+        if(grade.getSortIndex() == null)
+        {
+            throw new IllegalArgumentException ("排序值为空");
+        }
         int count = goodsGradeRepository.exitSameName(grade.getName(), grade.getId() == null ? 0 : grade.getId());
 
         if (count > 0) {
@@ -66,6 +74,10 @@ public class GoodsGradeManager {
     {
         if (id < 1) {
             throw new IllegalArgumentException ("ID不存在");
+        }
+        if(sortIndex ==null)
+        {
+            throw new IllegalArgumentException ("排序值为空");
         }
         goodsGradeRepository.updateSortIndex(id,sortIndex);
 

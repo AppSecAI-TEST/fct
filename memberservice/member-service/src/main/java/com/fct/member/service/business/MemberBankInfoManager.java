@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,16 +28,49 @@ public class MemberBankInfoManager {
 
     public void save(MemberBankInfo info)
     {
+        if(info.getMemberId()<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if(StringUtils.isEmpty(info.getCellPhone()))
+        {
+            throw new IllegalArgumentException("电话为空。");
+        }
+        if(StringUtils.isEmpty(info.getName()))
+        {
+            throw new IllegalArgumentException("姓名为空");
+        }
+        if(StringUtils.isEmpty(info.getBankName()))
+        {
+            throw new IllegalArgumentException("银行名称为空");
+        }
+        if(StringUtils.isEmpty(info.getBankAccount()))
+        {
+            throw new IllegalArgumentException("银行账号为空");
+        }
+        if(info.getId() ==null || info.getId()<=0)
+        {
+            info.setStatus(0);
+            info.setCreateTime(new Date());
+        }
         memberBankInfoRepository.save(info);
     }
 
     public MemberBankInfo findById(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id为空。");
+        }
         return memberBankInfoRepository.findOne(id);
     }
 
     public MemberBankInfo findOne(Integer memberId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员为空。");
+        }
         return memberBankInfoRepository.findOne(memberId);
     }
 

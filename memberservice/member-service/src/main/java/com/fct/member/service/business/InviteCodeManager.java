@@ -36,6 +36,10 @@ public class InviteCodeManager {
     @Transactional
     public void create(Integer memberId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员id为空。");
+        }
         Member member = memberManager.findById(memberId);
         if (member == null || member.getCanInviteCount() == 0)
         {
@@ -115,11 +119,28 @@ public class InviteCodeManager {
 
     public InviteCode findByCode(String code)
     {
+        if(StringUtils.isEmpty(code))
+        {
+            throw new IllegalArgumentException("code 为空");
+        }
         return  inviteCodeRepository.findByCode(code);
     }
 
     public void save(InviteCode code)
     {
-        inviteCodeRepository.saveAndFlush(code);
+        if(code.getOwnerId() <=0)
+        {
+            throw new IllegalArgumentException("拥有者id为空。");
+        }
+        if(StringUtils.isEmpty(code.getOwnerCellPhone()))
+        {
+            throw new IllegalArgumentException("拥有者手机号码为空");
+        }
+        if(code.getId() == null || code.getId() <=0) {
+            code.setCreateTime(new Date());
+            code.setExpireTime(DateUtils.addDay(new Date(), 7));   //邀请码7天有效期
+            code.setCode(StringHelper.getRandomString(8));  //随机8位
+        }
+        inviteCodeRepository.save(code);
     }
 }

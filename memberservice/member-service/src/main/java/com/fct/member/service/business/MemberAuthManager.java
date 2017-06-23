@@ -16,6 +16,7 @@ public class MemberAuthManager {
 
     public MemberAuth save(MemberAuth auth)
     {
+
         return memberAuthRepository.saveAndFlush(auth);
     }
 }

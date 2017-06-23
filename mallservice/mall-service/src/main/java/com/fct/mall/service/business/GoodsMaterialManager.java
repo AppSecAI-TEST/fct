@@ -34,6 +34,22 @@ public class GoodsMaterialManager {
 
     public void save(GoodsMaterial goodsMaterial) {
 
+        if(StringUtils.isEmpty(goodsMaterial.getDescription()))
+        {
+            throw new IllegalArgumentException("描述为空");
+        }
+        if(StringUtils.isEmpty(goodsMaterial.getName()))
+        {
+            throw new IllegalArgumentException("名称为空");
+        }
+        if(StringUtils.isEmpty(goodsMaterial.getImages()))
+        {
+            throw new IllegalArgumentException("图片为空");
+        }
+        if(goodsMaterial.getTypeid()==null)
+        {
+            goodsMaterial.setTypeid(0);
+        }
         if (goodsMaterial.getId() ==null ||
                 goodsMaterial.getId() == 0) {//你 这个地方有问题
             goodsMaterial.setStatus(1);
@@ -45,11 +61,19 @@ public class GoodsMaterialManager {
     }
 
     public GoodsMaterial findById(Integer id) {
+        if(id <=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         return goodsMaterialRepository.findOne(id);
     }
 
     public void updateStatus(Integer id)
     {
+        if(id <=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         String sql = "UPDATE GoodsMaterial set Status=1-Status,updatetime=? WHERE Id=?";
         List<Object> param = new ArrayList<>();
         param.add(DateUtils.getNowDateStr("yyyy-MM-dd hh:mm:ss"));
@@ -59,6 +83,10 @@ public class GoodsMaterialManager {
 
     public void delete(Integer id)
     {
+        if(id <=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         //检查商品是否有选择泥料，如有则提示。建议只隐藏。
         PageResponse<Goods> pageResponse = goodsManager.find("","",0,id,0,
                 0,0,-1,1,10);
@@ -124,5 +152,18 @@ public class GoodsMaterialManager {
 
         return pageResponse;
 
+    }
+
+    public List<GoodsMaterial> findByGoods(String materialIds) {
+
+        if(StringUtils.isEmpty(materialIds))
+        {
+            throw new IllegalArgumentException("材质id为空。");
+        }
+        materialIds = materialIds.substring(1,materialIds.length()-1);
+
+        String sql = "SELECT * FROM GoodsMaterial WHERE id in("+ materialIds +")";
+
+        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<GoodsMaterial>(GoodsMaterial.class));
     }
 }

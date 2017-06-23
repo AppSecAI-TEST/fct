@@ -39,6 +39,22 @@ public class ImageSourceManager {
 
             throw  new IllegalArgumentException("guid 为空");
         }
+        if(StringUtils.isEmpty(imageSource.getOriginalName()))
+        {
+            throw new IllegalArgumentException("图片名为空");
+        }
+        if(imageSource.getFileLength() <=0)
+        {
+            throw new IllegalArgumentException("文件长度不合法");
+        }
+        if(StringUtils.isEmpty(imageSource.getUrl()))
+        {
+            throw new IllegalArgumentException("图片地址为空");
+        }
+        if(imageSource.getWidth()<=0 || imageSource.getHeight()<=0)
+        {
+            throw new IllegalArgumentException("图片长或宽为空。");
+        }
         imageSource.setCreateTime(new Date());
         imageSource.setSortIndex(0);
         imageSource.setStatus(1);
@@ -113,11 +129,19 @@ public class ImageSourceManager {
 
     public ImageSource findById(String guid)
     {
+        if(StringUtils.isEmpty(guid))
+        {
+            throw new IllegalArgumentException("guid为空");
+        }
         return imagesSourceRepository.findOne(guid);
     }
 
     public List<ImageSource> findByGuid(String guids)
     {
+        if(StringUtils.isEmpty(guids))
+        {
+            throw new IllegalArgumentException("guid为空");
+        }
         String sql = String.format("SELECT * FROM ImageSource WHERE Status=1 AND guid in (%s)",guids);
 
         return jt.query(sql,new Object[]{}, new BeanPropertyRowMapper<>(ImageSource.class));
@@ -125,6 +149,10 @@ public class ImageSourceManager {
 
     public void updateStatus(String guid)
     {
+        if(StringUtils.isEmpty(guid))
+        {
+            throw new IllegalArgumentException("guid为空");
+        }
         imagesSourceRepository.updateStatus(guid);
     }
 
@@ -194,6 +222,10 @@ public class ImageSourceManager {
 
     public Integer countByCategoryId(Integer cateId)
     {
+        if(cateId<=0)
+        {
+            throw new IllegalArgumentException("分类id为空");
+        }
         return imagesSourceRepository.countByCategoryId(cateId);
     }
 }

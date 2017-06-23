@@ -5,6 +5,7 @@ import com.fct.member.data.entity.Member;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.repository.MemberInfoRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +27,23 @@ public class MemberInfoManager {
 
     public void save(MemberInfo info)
     {
+        if(info.getMemberId()<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if(info.getSex() ==null)
+        {
+            info.setSex(0);
+        }
         memberInfoRepository.save(info);
     }
 
     public MemberInfo findById(Integer memberId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
         return memberInfoRepository.findOne(memberId);
     }
 
@@ -38,6 +51,31 @@ public class MemberInfoManager {
     public void authentication(Integer memberId,String name,String identityCardNo,String identityCardImg,
                                      String bankName,String bankAccount)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if(StringUtils.isEmpty(name))
+        {
+            throw new IllegalArgumentException("姓名为空");
+        }
+        if(StringUtils.isEmpty(identityCardNo))
+        {
+            throw new IllegalArgumentException("身份证号码");
+        }
+        if(StringUtils.isEmpty(identityCardImg))
+        {
+            throw new IllegalArgumentException("身份证照片");
+        }
+        if(StringUtils.isEmpty(bankName))
+        {
+            throw new IllegalArgumentException("银行名称为空");
+        }
+        if(StringUtils.isEmpty(bankAccount))
+        {
+            throw new IllegalArgumentException("银行卡号");
+        }
+
         Member member = memberManager.findById(memberId);
 
         if(member.getAuthStatus() ==1)

@@ -22,9 +22,13 @@ public class SysUserLoginManager {
 
     public SysUserLogin login(String userName, String password, String ip, Integer expireHour)
     {
-        if(StringUtils.isEmpty(userName))
+        if(StringUtils.isEmpty(ip))
         {
-            throw new IllegalArgumentException("用户名为空。");
+            throw new IllegalArgumentException("ip为空。");
+        }
+        if(expireHour<=0)
+        {
+            throw new IllegalArgumentException("过期时间为空。");
         }
         //普通登陆，用户名+密码
         SystemUser user = systemUserManager.login(userName,password);

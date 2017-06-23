@@ -30,6 +30,18 @@ public class SystemUserManager {
 
     public void create(SystemUser user)
     {
+        if(StringUtils.isEmpty(user.getCellPhone()))
+        {
+            throw new IllegalArgumentException("手机号码为空。");
+        }
+        if(StringUtils.isEmpty(user.getUserName()))
+        {
+            throw new IllegalArgumentException("用户名为空。");
+        }
+        if(StringUtils.isEmpty(user.getPassword()))
+        {
+            throw new IllegalArgumentException("密码为空。");
+        }
         if(systemUserRepository.countByUserName(user.getUserName())>0)
         {
             throw new IllegalArgumentException("用户名存在。");
@@ -37,11 +49,28 @@ public class SystemUserManager {
         user.setPassword(StringHelper.md5(user.getPassword()));
         user.setCreateTime(new Date());
         user.setLocked(0);
+        user.setRoleId(0);
         systemUserRepository.save(user);
     }
 
     public void updatePassword(Integer userId,String oldPassword,String newPassword,String reNewPassword)
     {
+        if(userId<=0)
+        {
+            throw new IllegalArgumentException("用户Id为空。");
+        }
+        if(StringUtils.isEmpty(oldPassword))
+        {
+            throw new IllegalArgumentException("旧密码为空.");
+        }
+        if(StringUtils.isEmpty(newPassword))
+        {
+            throw new IllegalArgumentException("新密码为空");
+        }
+        if(StringUtils.isEmpty(reNewPassword))
+        {
+            throw new IllegalArgumentException("重复密码为空");
+        }
         SystemUser user = systemUserRepository.findOne(userId);
         if(user == null)
         {
@@ -63,11 +92,23 @@ public class SystemUserManager {
 
     public SystemUser login(String userName,String password)
     {
+        if(StringUtils.isEmpty(userName))
+        {
+            throw new IllegalArgumentException("用户名为空.");
+        }
+        if(StringUtils.isEmpty(password))
+        {
+            throw new IllegalArgumentException("密码为空");
+        }
         return systemUserRepository.login(userName, StringHelper.md5(password));
     }
 
     public void lock(Integer userId)
     {
+        if(userId<=0)
+        {
+            throw new IllegalArgumentException("用户Id为空");
+        }
         systemUserRepository.lock(userId);
     }
 

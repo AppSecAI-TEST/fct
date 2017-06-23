@@ -31,10 +31,6 @@ public class MemberLoginManager {
 
     public MemberLogin login(String cellPhone, String password,String ip,Integer expireDay)
     {
-        if(StringUtils.isEmpty(cellPhone))
-        {
-            throw new IllegalArgumentException("手机号码为空。");
-        }
         //普通登陆，用户名+密码
         Member member =  memberManager.login(cellPhone,password);
         if(member == null)
@@ -47,6 +43,14 @@ public class MemberLoginManager {
 
     private MemberLogin login(Member member,String ip,Integer expireDay)
     {
+        if(StringUtils.isEmpty(ip))
+        {
+            throw new IllegalArgumentException("ip为空。");
+        }
+        if(expireDay<=0)
+        {
+            throw new IllegalArgumentException("过期时间为空。");
+        }
         if(member.getLocked() ==1)
         {
             throw new IllegalArgumentException("用户被锁，请联系管理员。");
@@ -76,13 +80,11 @@ public class MemberLoginManager {
 
     public MemberLogin quickLogin(String cellPhone,String ip,Integer expireDay)
     {
-        if(StringUtils.isEmpty(cellPhone))
-        {
-            throw new IllegalArgumentException("手机号码为空。");
-        }
         Member member = memberManager.findByCellPhone(cellPhone);
-
-
+        if(member ==  null)
+        {
+            member = memberManager.register(cellPhone,cellPhone,cellPhone.substring(5));
+        }
         return login(member,ip,expireDay);
     }
 

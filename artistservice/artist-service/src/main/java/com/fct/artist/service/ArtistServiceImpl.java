@@ -36,6 +36,11 @@ public class ArtistServiceImpl implements ArtistService {
         return  artistManager.findAll(name,status,pageIndex,pageSize);
     }
 
+    public List<Artist> findArtistByGoodsId(Integer goodsId)
+    {
+        return artistManager.findByGoodsId(goodsId);
+    }
+
     public void saveArtist(Artist artist)
     {
         artistManager.save(artist);

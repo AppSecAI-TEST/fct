@@ -12,6 +12,8 @@ public interface ArtistService {
 
     PageResponse<Artist> findArtist(String name,Integer status,Integer pageIndex, Integer pageSize);
 
+    List<Artist> findArtistByGoodsId(Integer goodsId);
+
     void saveArtist(Artist artist);
 
     Artist getArtist(Integer id);

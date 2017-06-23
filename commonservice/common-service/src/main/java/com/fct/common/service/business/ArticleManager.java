@@ -89,11 +89,29 @@ public class ArticleManager {
 
     public Article findById(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id 为空");
+        }
         return articleRepository.findOne(id);
     }
 
-    public Article save(Article article)
-    {
+    public Article save(Article article) {
+        if (StringUtils.isEmpty(article.getTitle())) {
+            throw new IllegalArgumentException("文章标题");
+        }
+        if (StringUtils.isEmpty(article.getCategoryCode()))
+        {
+            throw new IllegalArgumentException("分类为空");
+        }
+        if(StringUtils.isEmpty(article.getContent()))
+        {
+            throw new IllegalArgumentException("内容为空");
+        }
+        if(StringUtils.isEmpty(article.getIntro()))
+        {
+            throw new IllegalArgumentException("描述为空");
+        }
         if(article.getId() == null || article.getId()<=0)
         {
             article.setCreateTime(new Date());
@@ -107,6 +125,10 @@ public class ArticleManager {
 
     public void updateStatus(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id 为空");
+        }
         Article article = articleRepository.findOne(id);
         article.setStatus(1-article.getStatus());
         article.setUpdateTime(new Date());
@@ -116,13 +138,24 @@ public class ArticleManager {
 
     public Integer countByCategory(Integer categoryId)
     {
-
+        if(categoryId<=0)
+        {
+            throw new IllegalArgumentException("分类id为空");
+        }
         return articleRepository.countByCategory(categoryId +",%");
     }
 
-    public void updateCategory(String newCode,Integer cagetoryId)
+    public void updateCategory(String newCode,Integer catetoryId)
     {
-        String sql = "update Article set categoryCode='"+ newCode +"' where categoryCode like ',"+ cagetoryId +",%'";
+        if(catetoryId<=0)
+        {
+            throw new IllegalArgumentException("分类id为空");
+        }
+        if(StringUtils.isEmpty(newCode))
+        {
+            throw new IllegalArgumentException("分类code为空");
+        }
+        String sql = "update Article set categoryCode='"+ newCode +"' where categoryCode like ',"+ catetoryId +",%'";
 
         jt.update(sql);
     }

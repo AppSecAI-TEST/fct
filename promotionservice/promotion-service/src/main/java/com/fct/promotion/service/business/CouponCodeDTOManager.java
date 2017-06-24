@@ -38,7 +38,7 @@ public class CouponCodeDTOManager {
                                             Boolean isValid)
     {
         String condition = getCondition(policyId,memberId,code,status,isValid);
-        String sql = "Select Count(0) from CouponPolicy p inner join CouponCode c on p.Id = c.policyId  where "+condition;
+        String sql = "Select Count(0) from CouponPolicy as p inner join CouponCode as c on p.Id = c.policyId  where "+condition;
         return jt.queryForObject(sql,Integer.class);
     }
 

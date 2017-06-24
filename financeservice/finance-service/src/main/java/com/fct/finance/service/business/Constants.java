@@ -1,10 +1,14 @@
 package com.fct.finance.service.business;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by jon on 2017/4/10.
  */
 public class Constants {
 
+    public static final Logger logger = LoggerFactory.getLogger("EX");
     /// <summary>
     /// 支付状态
     /// </summary>

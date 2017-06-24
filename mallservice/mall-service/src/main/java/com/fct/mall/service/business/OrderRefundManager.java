@@ -7,7 +7,7 @@ import com.fct.mall.data.repository.OrderRefundRepository;
 import com.fct.mall.interfaces.OrderRefundDTO;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.message.interfaces.MessageService;
-import com.fct.message.model.MQPayRefund;
+import com.fct.message.interfaces.model.MQPayRefund;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

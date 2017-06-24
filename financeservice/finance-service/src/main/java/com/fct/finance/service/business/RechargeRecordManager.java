@@ -64,12 +64,36 @@ public class RechargeRecordManager {
 
     public RechargeRecord findById(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         return rechargeRecordRepository.findOne(id);
     }
 
     @Transactional
     public void paySuccess(Integer id, String payOrderId, String payPlatform, String payTime,String payStatus)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
+        if(StringUtils.isEmpty(payOrderId))
+        {
+            throw new IllegalArgumentException("支付订单号为空");
+        }
+        if(StringUtils.isEmpty(payPlatform))
+        {
+            throw new IllegalArgumentException("支付平台为空");
+        }
+        if(StringUtils.isEmpty(payTime))
+        {
+            throw new IllegalArgumentException("支付时间为空.");
+        }
+        if(StringUtils.isEmpty(payStatus))
+        {
+            throw new IllegalArgumentException("支付状态为空");
+        }
         RechargeRecord record = rechargeRecordRepository.findOne(id);
         record.setPayOrderId(payOrderId);
         record.setPayPlatform(payPlatform);
@@ -86,7 +110,7 @@ public class RechargeRecordManager {
         rechargeRecordRepository.save(record);
     }
 
-    void addAccountAmount(Integer memberId, String cellPhone, BigDecimal rechargeAmount, Integer rechargeId)
+    private void addAccountAmount(Integer memberId, String cellPhone, BigDecimal rechargeAmount, Integer rechargeId)
     {
         MemberAccount account = memberAccountManager.findById(memberId);
 
@@ -96,6 +120,11 @@ public class RechargeRecordManager {
             account.setMemberId(memberId);
             account.setCellPhone(cellPhone);
             account.setCreateTime(new Date());
+            account.setAccumulateIncome(new BigDecimal(0));
+            account.setAccumulatePoints(0);
+            account.setAvailableAmount(new BigDecimal(0));
+            account.setFrozenAmount(new BigDecimal(0));
+            account.setPoints(0);
         }
         account.setAvailableAmount(account.getAvailableAmount().add(rechargeAmount));
         account.setRechargeAmount(account.getRechargeAmount().add(rechargeAmount));

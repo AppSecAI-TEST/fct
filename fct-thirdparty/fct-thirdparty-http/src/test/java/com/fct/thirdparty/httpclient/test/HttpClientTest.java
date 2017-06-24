@@ -39,5 +39,6 @@ public class HttpClientTest {
         JsonNodeResponseWrapper wrapper = (JsonNodeResponseWrapper)manager.newCall(request).run().as(JsonNodeResponseWrapper.class);
         JsonNode node = wrapper.convertBody();
         Assert.assertNotNull(node);
+        //单纯注释
     }
 }

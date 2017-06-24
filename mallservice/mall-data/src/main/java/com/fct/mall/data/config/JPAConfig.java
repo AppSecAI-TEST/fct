@@ -61,7 +61,7 @@ public class JPAConfig {
         return manager;
     }
 
-    @Bean(name = "datasource", initMethod = "init",destroyMethod = "close")
+    @Bean(name = "mall-datasource", initMethod = "init",destroyMethod = "close")
     @Profile("!build-test")
     public DataSource dataSource(Environment env) throws PropertyVetoException, SQLException {
         DruidDataSource dataSource = new DruidDataSource();

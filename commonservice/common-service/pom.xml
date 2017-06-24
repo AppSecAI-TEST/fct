@@ -123,7 +123,7 @@
                     <server>tomcat-jenkins</server>
                     <username>jenkins</username>
                     <password>jenkins_password</password>
-                    <path>/fct-encyclopedia</path>
+                    <path>/common-service</path>
                 </configuration>
             </plugin>
             <plugin>
@@ -131,7 +131,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <warName>encyclopedia-service</warName>
+                    <warName>common-service</warName>
                 </configuration>
             </plugin>
         </plugins>

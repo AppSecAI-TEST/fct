@@ -318,10 +318,24 @@ var JQbox = {
                         $("#"+input).val(imgs.join());
                         // If the image is already a thumbnail:
                         this.emit('thumbnail', file, path+response.data.url+imgwidth);
+
+                        $(file.previewTemplate).children('.fork-remove').attr("data-url",response.data.url);
                     }
               },
               error: function(file, errorMessage, xhr) {
                   $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1');
+              },
+              removedfile: function (file) {
+                  var del_url = $(file.previewTemplate).children('.fork-remove').attr("data-url");
+                  var arrData = $("#"+input).val().split(',');
+                  for (var i = 0 ; i< arrData.length; i ++) {
+                      if(arrData[i] == del_url){
+                          arrData.splice(i,1);
+                      }
+                  }
+                  $("#"+input).val(arrData.join());
+                  $(file.previewTemplate).remove();
+
               },
               previewTemplate: tem_str
           });

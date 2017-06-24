@@ -126,6 +126,7 @@ public class UsersController extends BaseController {
     @RequestMapping(value = "/savepassword", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
     public String savePassword(String oldpassword,String newpassword,String repassword) {
+
         oldpassword = ConvertUtils.toString(oldpassword);
         newpassword =ConvertUtils.toString(newpassword);
         repassword =ConvertUtils.toString(repassword);
@@ -143,5 +144,11 @@ public class UsersController extends BaseController {
             return AjaxUtil.alert("系统或网络错误，请稍候再试。");
         }
         return AjaxUtil.reload("修改密码成功。");
+    }
+
+    @RequestMapping(value = "/uppwd", method = RequestMethod.GET)
+    public String upPassword(Model model) {
+
+        return "sys/users/uppwd";
     }
 }

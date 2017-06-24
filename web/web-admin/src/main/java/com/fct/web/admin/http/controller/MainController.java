@@ -34,9 +34,21 @@ public class MainController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(Model model) {
+    public String logout(HttpServletRequest request,HttpServletResponse response, Model model) {
 
-        return "/main/logout";
+        String token = CookieUtil.getCookieByName(request,"sysuser_token");
+
+        CookieUtil.delCookie(request,response,"sysuser_token");
+        try {
+            if (!StringUtils.isEmpty(token)) {
+                memberService.logoutSysUser(token);
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "redirect:/login";
     }
 
     @RequestMapping(value = "/error", method = RequestMethod.GET)

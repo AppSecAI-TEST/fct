@@ -9,7 +9,7 @@ import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.interfaces.PageResponse;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.web.admin.http.cache.CacheGoodsManager;
-import com.fct.web.admin.utils.AjaxUtil;
+import com.fct.core.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

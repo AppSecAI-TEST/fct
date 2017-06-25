@@ -1,18 +1,15 @@
-package com.fct.web.admin.http.json;
+package com.fct.core.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-/**
- * @author ningyang
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JsonResponseEntity<T> {
+public class ReturnValue<T> {
 
     private int code;
     private String msg;
     private T data;
 
-    public JsonResponseEntity() {
+    public ReturnValue() {
         this.code = 200;
         this.msg="success";
         this.data = null;
@@ -43,3 +40,4 @@ public class JsonResponseEntity<T> {
         this.data = data;
     }
 }
+

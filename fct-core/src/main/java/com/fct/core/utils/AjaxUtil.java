@@ -1,14 +1,8 @@
-package com.fct.web.admin.utils;
+package com.fct.core.utils;
 
 import com.fct.core.json.JsonConverter;
-import com.fct.web.admin.http.exceptions.ErrorMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
 
 /**

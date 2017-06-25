@@ -15,7 +15,7 @@
  *
  * @(#) IdcardUtils.java Date: 2010-06-17
  */
-package com.fct.web.admin.utils;
+package com.fct.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;

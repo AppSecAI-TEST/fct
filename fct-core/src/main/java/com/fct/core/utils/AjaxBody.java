@@ -1,4 +1,4 @@
-package com.fct.web.admin.utils;
+package com.fct.core.utils;
 
 import java.util.Map;
 

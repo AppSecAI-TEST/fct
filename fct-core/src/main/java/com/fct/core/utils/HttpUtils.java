@@ -1,4 +1,4 @@
-package com.fct.web.admin.utils;
+package com.fct.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,5 +22,36 @@ public class HttpUtils {
             return ip;
         }
         return request.getRemoteAddr();
+    }
+
+    public static final String ossUrl = "http://fct-nick.img-cn-shanghai.aliyuncs.com";
+
+    public static String staticFile(String path)
+    {
+        if(StringUtils.isEmpty(path))
+        {
+            return "";
+        }
+
+        return ossUrl+path;
+    }
+
+    public static String thumbnail(String path)
+    {
+        if(StringUtils.isEmpty(path))
+        {
+            return "";
+        }
+
+        return ossUrl+path+"@200w.jpg";
+    }
+
+    public static String uploadFile(String path)
+    {
+        if(StringUtils.isEmpty(path))
+        {
+            return "";
+        }
+        return ossUrl+path;
     }
 }

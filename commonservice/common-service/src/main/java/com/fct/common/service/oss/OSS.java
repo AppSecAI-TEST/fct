@@ -5,6 +5,7 @@ import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.util.concurrent.Callable;
 
 /**
@@ -25,10 +26,12 @@ public final class OSS implements Callable<UploadResponse>{
             request.getOssClient().createBucket(request.getBucketName());
         UploadResponse response = new UploadResponse();
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(request.getFile().length());
+        metadata.setContentLength(request.getFile().length);
         metadata.setContentType("image/*");
         metadata.setUserMetadata(request.getUserMetaData());
-        PutObjectRequest putObjectRequest = new PutObjectRequest(request.getBucketName(), request.getKey(), request.getFile(), metadata);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(request.getBucketName(),
+                request.getKey(), new ByteArrayInputStream(request.getFile()), metadata);
+
         PutObjectResult putObjectResult = request.getOssClient().putObject(putObjectRequest);
         if(!StringUtils.isEmpty(putObjectResult.getETag())){
             //if upload file success and callback exist perform callback
@@ -62,8 +65,8 @@ public final class OSS implements Callable<UploadResponse>{
                 append(bucketName).
                 append(".").
                 append(splits[1]).
-                append(key).
-                append("@50p");
+                append(key);
+                //append("@50p");
         return sb.toString();
     }
 

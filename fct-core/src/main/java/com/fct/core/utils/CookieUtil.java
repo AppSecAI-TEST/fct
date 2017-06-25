@@ -1,4 +1,4 @@
-package com.fct.web.admin.utils;
+package com.fct.core.utils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +92,7 @@ public class CookieUtil {
      * @return
      */
     private  static Map<String,Cookie> ReadCookieMap(HttpServletRequest request){
-        Map<String,Cookie> cookieMap = new HashMap<>();
+        Map<String,Cookie> cookieMap = new HashMap<String, Cookie>();
         Cookie[] cookies = request.getCookies();
         if(null!=cookies){
             for(Cookie cookie : cookies){

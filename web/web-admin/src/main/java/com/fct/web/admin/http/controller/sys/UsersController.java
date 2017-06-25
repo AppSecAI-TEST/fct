@@ -2,9 +2,9 @@ package com.fct.web.admin.http.controller.sys;
 
 import com.alibaba.dubbo.common.URL;
 import com.fct.core.exceptions.Exceptions;
+import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.PageUtil;
-import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.data.entity.SystemUser;
 import com.fct.member.interfaces.MemberService;
 import com.fct.member.interfaces.PageResponse;

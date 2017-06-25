@@ -14,6 +14,6 @@ public class OSSRequest {
     private String bucketName;
     private String key;
     private OSSClient ossClient;
-    private File file;
+    private byte[] file;
     private Map<String, String> userMetaData;
 }

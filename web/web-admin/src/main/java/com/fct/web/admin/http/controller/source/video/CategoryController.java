@@ -6,7 +6,7 @@ import com.fct.common.data.entity.ImageCategory;
 import com.fct.common.data.entity.VideoCategory;
 import com.fct.common.interfaces.CommonService;
 import com.fct.web.admin.http.controller.BaseController;
-import com.fct.web.admin.utils.AjaxUtil;
+import com.fct.core.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

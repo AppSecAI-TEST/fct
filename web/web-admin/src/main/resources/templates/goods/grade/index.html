@@ -48,7 +48,7 @@
                             <tr th:each="grade : ${lsGrade}">
                                 <td th:text="${grade.id}"></td>
                                 <td>
-                                    <img th:src="${pub.thumbnailPath(grade.img)}" class="loadimg" width="80" height="80" />
+                                    <img th:src="${pub.thumbnail(grade.img)}" class="loadimg" width="80" height="80" />
                                     <br>
                                     <span th:text="${grade.name}"></span>
                                 </td>

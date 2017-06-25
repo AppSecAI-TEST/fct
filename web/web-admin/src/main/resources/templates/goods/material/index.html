@@ -49,7 +49,7 @@
                             <tr th:each="m : ${lsMaterial}">
                                 <td th:text="${m.id}"></td>
                                 <td>
-                                    <img th:src="${pub.thumbnailPath(m.images)}" class="loadimg" width="80" height="80" />
+                                    <img th:src="${pub.thumbnail(m.images)}" class="loadimg" width="80" height="80" />
                                     <br>
                                     <span th:text="${m.name}"></span>
                                 </td>

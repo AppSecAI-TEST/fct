@@ -273,7 +273,7 @@ var JQbox = {
               '<div class=\"dz-error-mark\"><span>✘</span></div>\n ' +
               ' <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n' +
               '</div>';
-          var imgwidth = "@300w.jpg";
+          var imgwidth = "@200w.jpg";
           $(ele).dropzone({
               url:url,
               autoProcessQueue:true,
@@ -296,8 +296,11 @@ var JQbox = {
                   for(var i=0;i<default_img.length;i++){
                       //{img_url:,img_name:}
                       if(default_img[i].img_url !=''){
+                          var myurl = default_img[i].img_url+imgwidth;
                           myDropzone.emit("addedfile", default_img[i]);
-                          myDropzone.emit("thumbnail", default_img[i], default_img[i].img_url+imgwidth);
+                          myDropzone.emit("thumbnail", default_img[i], myurl);
+
+                          //$(myDropzone).children('.fork-remove').attr("data-url",myurl);
                       }
                   }
 

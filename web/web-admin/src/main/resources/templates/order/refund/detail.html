@@ -59,7 +59,7 @@
                             <tbody>
                             <tr th:each="msg:${refund.refundMessage}">
                                 <td>
-                                    <img th:src="${pub.thumbnailPath(msg.images)}" width="80" height="80">
+                                    <img th:src="${pub.thumbnail(msg.images)}" width="80" height="80">
                                 </td>
                                 <td th:text="${msg.description}"></td>
                                 <td th:text="${#dates.format(msg.createTime, 'yyyy-MM-dd HH:mm')}"></td>

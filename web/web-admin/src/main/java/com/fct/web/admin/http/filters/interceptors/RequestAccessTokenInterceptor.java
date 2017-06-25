@@ -1,10 +1,10 @@
 package com.fct.web.admin.http.filters.interceptors;
 
+import com.fct.core.utils.ReturnValue;
 import com.fct.web.admin.annotations.WithoutToken;
-import com.fct.web.admin.http.json.JsonResponseEntity;
 import com.fct.web.admin.http.support.version.APIScanner;
 import com.fct.web.admin.session.Session;
-import com.fct.web.admin.utils.ErrorMessageSelector;
+import com.fct.core.utils.ErrorMessageSelector;
 import com.fct.web.admin.utils.SessionUtil;
 import com.fct.core.json.JsonConverter;
 import com.google.common.collect.ImmutableSet;
@@ -78,7 +78,7 @@ public final class RequestAccessTokenInterceptor extends AbstractHeaderIntercept
         try {
             PrintWriter writer = response.getWriter();
             response.setContentType("application/json;charset=UTF-8");
-            JsonResponseEntity result = new JsonResponseEntity();
+            ReturnValue result = new ReturnValue();
             result.setMsg(msg);
             result.setCode(code);
             writer.write(JsonConverter.toJson(result));

@@ -49,7 +49,7 @@
                             <tr th:each="category : ${lsCategory}">
                                 <td th:text="${category.id}"></td>
                                 <td>
-                                    <img th:src="${pub.thumbnailPath(category.img)}" class="loadimg" width="80" height="80" />
+                                    <img th:src="${pub.thumbnail(category.img)}" class="loadimg" width="80" height="80" />
                                     <br>
                                     <span th:text="${category.name}"></span>
                                 </td>

@@ -63,7 +63,7 @@
                             <tr th:each="artist : ${lsArtist}">
                                 <td th:text="${artist.id}"></td>
                                 <td class="text-center">
-                                    <img th:src="${pub.thumbnailPath(artist.headPortrait)}" class="loadimg" width="80" height="80" />
+                                    <img th:src="${pub.thumbnail(artist.headPortrait)}" class="loadimg" width="80" height="80" />
                                     <br>
                                     <span th:text="${artist.name}"></span>
                                 </td>

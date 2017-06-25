@@ -1,7 +1,7 @@
-package com.fct.web.admin.utils.servlet;
+package com.fct.web.pay.utils.servlet;
 
 
-import com.fct.web.admin.http.filters.interceptors.AbstractHeaderInterceptor;
+import com.fct.web.pay.http.filters.interceptors.AbstractHeaderInterceptor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,8 +1,8 @@
-package com.fct.web.admin.config;
+package com.fct.web.pay.config;
 
-import com.fct.web.admin.http.exceptions.handlers.DefaultExceptionHandler;
-import com.fct.web.admin.http.exceptions.handlers.ServiceExceptionHandler;
-import com.fct.web.admin.http.filters.RequestWrapperFilter;
+import com.fct.web.pay.http.exceptions.handlers.DefaultExceptionHandler;
+import com.fct.web.pay.http.exceptions.handlers.ServiceExceptionHandler;
+import com.fct.web.pay.http.filters.RequestWrapperFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -12,10 +12,8 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.DispatcherType;
@@ -39,6 +37,7 @@ public class WebConfig extends WebMvcConfigurerAdapter{
                 Charset.forName("UTF-8"));
         return converter;
     }
+
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -74,23 +73,5 @@ public class WebConfig extends WebMvcConfigurerAdapter{
             return environment.getActiveProfiles()[0];
         }
         return "pe1";
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry){
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
-    }
-
-    /**
-     * 这个是加上为了文件传输用的 前端传文件给服务端服务端传给阿里云
-     * @return
-     */
-    @Bean
-    public CommonsMultipartResolver commonsMultipartResolver(){
-        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setMaxUploadSize(1024*5000);
-        commonsMultipartResolver.setResolveLazily(true);
-        return commonsMultipartResolver;
     }
 }

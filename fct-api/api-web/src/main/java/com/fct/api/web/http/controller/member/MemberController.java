@@ -1,7 +1,6 @@
 package com.fct.api.web.http.controller.member;
 
 import com.fct.core.utils.ReturnValue;
-import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.member.interfaces.MemberService;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 /** 用户类
@@ -30,21 +28,21 @@ public class MemberController {
      *
      * @param cellphone
      * @param password
-     * @param sessionId
+     * @param session_id
      * @param captcha
      * @param ip
-     * @param expireDay
+     * @param expire_day
      * @return
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ReturnValue<MemberLogin> login(String cellphone, String password,
-                                          String sessionId, String captcha,
-                                          String ip, Integer expireDay) {
+                                          String session_id, String captcha,
+                                          String ip, Integer expire_day) {
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();
-        if (sessionId.length() > 0 && captcha.length() > 0) {
+        if (session_id.length() > 0 && captcha.length() > 0) {
             password = "";
-            if (messageService.checkVerifyCode(sessionId, cellphone, captcha) <= 0) {
+            if (messageService.checkVerifyCode(session_id, cellphone, captcha) <= 0) {
                 response.setMsg("手机验证码不正确");
                 response.setCode(404);
 
@@ -58,7 +56,7 @@ public class MemberController {
             return  response;
         }
 
-        MemberLogin member = memberService.loginMember(cellphone, password, ip, expireDay);
+        MemberLogin member = memberService.loginMember(cellphone, password, ip, expire_day);
         response.setData(member);
 
         return  response;
@@ -66,16 +64,16 @@ public class MemberController {
 
     /**用户更新
      *
-     * @param memberId
+     * @param member_id
      * @param username
      * @param gender
      * @param weixin
      * @return
      */
     @RequestMapping(value = "update-info", method = RequestMethod.POST)
-    public ReturnValue updateInfo(Integer memberId, String username, Integer gender, String weixin) {
+    public ReturnValue updateInfo(Integer member_id, String username, Integer gender, String weixin) {
 
-        MemberInfo memberInfo = memberService.getMemberInfo(memberId);
+        MemberInfo memberInfo = memberService.getMemberInfo(member_id);
         memberInfo.setSex(gender);
         memberInfo.setWeixin(weixin);
         memberService.updateMemberInfo(memberInfo);
@@ -85,32 +83,32 @@ public class MemberController {
 
     /**修改密码
      *
-     * @param memberId
-     * @param oldPassword
-     * @param newPassword
+     * @param member_id
+     * @param old_password
+     * @param new_password
      * @return
      */
     @RequestMapping(value = "change-password", method = RequestMethod.POST)
-    public ReturnValue changePassword(Integer memberId, String oldPassword, String newPassword) {
+    public ReturnValue changePassword(Integer member_id, String old_password, String new_password) {
 
-        memberService.updateMemberPassword(memberId, oldPassword, newPassword, newPassword);
+        memberService.updateMemberPassword(member_id, old_password, new_password, new_password);
         return new ReturnValue();
     }
 
     /**找回密码
      *
-     * @param memberId
+     * @param member_id
      * @param cellphone
      * @param password
-     * @param sessionId
+     * @param session_id
      * @param captcha
      * @return
      */
     @RequestMapping(value = "forget-password", method = RequestMethod.POST)
-    public ReturnValue forgetPassword(Integer memberId, String cellphone,
-                                                   String password, String sessionId, String captcha) {
+    public ReturnValue forgetPassword(Integer member_id, String cellphone,
+                                                   String password, String session_id, String captcha) {
 
-        if (messageService.checkVerifyCode(sessionId, cellphone, captcha) <= 0) {
+        if (messageService.checkVerifyCode(session_id, cellphone, captcha) <= 0) {
 
             return new ReturnValue(404,"手机验证码不正确");
         }
@@ -122,29 +120,27 @@ public class MemberController {
 
     /**绑定银行卡与实名认证
      *
-     * @param memberId
-     * @param cellphone
+     * @param member_id
      * @param name
-     * @param bankName
-     * @param bankAccount
+     * @param idcard_no
+     * @param idcard_image_url
+     * @param bank_name
+     * @param bank_account
      * @return
      */
     @RequestMapping(value = "real-auth", method = RequestMethod.POST)
-    public ReturnValue realAuth(Integer memberId, String cellphone,
-                                                    String name, String bankName, String bankAccount) {
+    public ReturnValue realAuth(Integer member_id, String name,
+                                String idcard_no, String idcard_image_url,
+                                String bank_name, String bank_account) {
 
-        MemberBankInfo bankInfo = memberService.getMemberBankInfo(memberId);
-        bankInfo.setCellPhone(cellphone);
-        bankInfo.setName(name);
-        bankInfo.setBankName(bankName);
-        bankInfo.setBankAccount(bankAccount);
-        memberService.saveMemberBankInfo(bankInfo);
+        memberService.authenticationMember(member_id, name,
+                idcard_no,idcard_image_url, bank_name, bank_account);
 
         return new ReturnValue();
     }
 
     @RequestMapping(value = "logout", method = RequestMethod.POST)
-    public ReturnValue logout(Integer memberId) {
+    public ReturnValue logout(Integer member_id) {
 
         return new ReturnValue();
     }

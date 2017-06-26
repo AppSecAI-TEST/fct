@@ -1,8 +1,8 @@
 package com.fct.api.web.http.controller.mall;
 
-import com.fct.api.web.http.json.JsonResponseEntity;
 import com.fct.api.web.http.model.Home;
 import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.interfaces.MallService;
@@ -25,7 +25,7 @@ public class MallController {
     private MallService mallService;
 
     @RequestMapping(value = "index", method = RequestMethod.GET)
-    public JsonResponseEntity<Home> index(String categoryId, Integer levelId, Integer pageIndex, Integer pageSize) {
+    public ReturnValue<Home> index(String categoryId, Integer levelId, Integer pageIndex, Integer pageSize) {
 
         categoryId = ConvertUtils.toString(categoryId);
         levelId = ConvertUtils.toInteger(levelId);
@@ -41,7 +41,7 @@ public class MallController {
         home.categoryList = categories;
         home.goodsList = goodsList;
 
-        JsonResponseEntity<Home> response = new JsonResponseEntity<>();
+        ReturnValue<Home> response = new ReturnValue<>();
         response.setData(home);
 
         return  response;

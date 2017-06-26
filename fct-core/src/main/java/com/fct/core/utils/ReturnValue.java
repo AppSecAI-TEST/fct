@@ -15,6 +15,12 @@ public class ReturnValue<T> {
         this.data = null;
     }
 
+    public ReturnValue(int code,String msg) {
+        this.code = code;
+        this.msg=msg;
+        this.data = null;
+    }
+
 
     public int getCode() {
         return code;

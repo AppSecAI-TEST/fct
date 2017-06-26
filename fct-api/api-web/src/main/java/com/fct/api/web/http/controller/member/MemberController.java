@@ -1,20 +1,16 @@
 package com.fct.api.web.http.controller.member;
 
-import com.fct.api.web.http.json.JsonResponseEntity;
-import com.fct.member.data.entity.Member;
+import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberBankInfo;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.member.interfaces.MemberService;
 import com.fct.message.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Null;
 
 
 /** 用户类
@@ -41,11 +37,11 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public JsonResponseEntity<MemberLogin> login(String cellphone, String password,
-                                                 String sessionId, String captcha,
-                                                 String ip, Integer expireDay) {
+    public ReturnValue<MemberLogin> login(String cellphone, String password,
+                                          String sessionId, String captcha,
+                                          String ip, Integer expireDay) {
 
-        JsonResponseEntity<MemberLogin> response = new JsonResponseEntity<>();
+        ReturnValue<MemberLogin> response = new ReturnValue<>();
         if (sessionId.length() > 0 && captcha.length() > 0) {
             password = "";
             if (messageService.checkVerifyCode(sessionId, cellphone, captcha) <= 0) {
@@ -77,16 +73,14 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "update-info", method = RequestMethod.POST)
-    public JsonResponseEntity<String> updateInfo(Integer memberId, String username, Integer gender, String weixin) {
+    public ReturnValue updateInfo(Integer memberId, String username, Integer gender, String weixin) {
 
         MemberInfo memberInfo = memberService.getMemberInfo(memberId);
         memberInfo.setSex(gender);
         memberInfo.setWeixin(weixin);
         memberService.updateMemberInfo(memberInfo);
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return  response;
+        return new ReturnValue<>();
     }
 
     /**修改密码
@@ -97,12 +91,10 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "change-password", method = RequestMethod.POST)
-    public JsonResponseEntity<String> changePassword(Integer memberId, String oldPassword, String newPassword) {
+    public ReturnValue changePassword(Integer memberId, String oldPassword, String newPassword) {
 
         memberService.updateMemberPassword(memberId, oldPassword, newPassword, newPassword);
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return  response;
+        return new ReturnValue();
     }
 
     /**找回密码
@@ -115,20 +107,17 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "forget-password", method = RequestMethod.POST)
-    public JsonResponseEntity<String> forgetPassword(Integer memberId, String cellphone,
+    public ReturnValue forgetPassword(Integer memberId, String cellphone,
                                                    String password, String sessionId, String captcha) {
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
         if (messageService.checkVerifyCode(sessionId, cellphone, captcha) <= 0) {
-            response.setMsg("手机验证码不正确");
-            response.setCode(404);
 
-            return response;
+            return new ReturnValue(404,"手机验证码不正确");
         }
 
         memberService.forgetPassword(cellphone, password);
 
-        return  response;
+        return  new ReturnValue();
     }
 
     /**绑定银行卡与实名认证
@@ -141,7 +130,7 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "real-auth", method = RequestMethod.POST)
-    public JsonResponseEntity<String> realAuth(Integer memberId, String cellphone,
+    public ReturnValue realAuth(Integer memberId, String cellphone,
                                                     String name, String bankName, String bankAccount) {
 
         MemberBankInfo bankInfo = memberService.getMemberBankInfo(memberId);
@@ -151,16 +140,12 @@ public class MemberController {
         bankInfo.setBankAccount(bankAccount);
         memberService.saveMemberBankInfo(bankInfo);
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return  response;
+        return new ReturnValue();
     }
 
     @RequestMapping(value = "logout", method = RequestMethod.POST)
-    public JsonResponseEntity<String> logout(Integer memberId) {
+    public ReturnValue logout(Integer memberId) {
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return  response;
+        return new ReturnValue();
     }
 }

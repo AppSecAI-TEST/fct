@@ -1,6 +1,6 @@
 package com.fct.api.web.http.controller.mall;
 
-import com.fct.api.web.http.json.JsonResponseEntity;
+import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.ShoppingCart;
 import com.fct.mall.interfaces.MallService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,29 +21,25 @@ public class ShoppingCartController {
     MallService mallService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public JsonResponseEntity<List<ShoppingCart>> index() {
+    public ReturnValue<List<ShoppingCart>> index() {
 
         List<ShoppingCart> shoppingCarts = mallService.findShoppingCart(0,0);
-        JsonResponseEntity<List<ShoppingCart>> response = new JsonResponseEntity<>();
+        ReturnValue<List<ShoppingCart>> response = new ReturnValue<>();
         response.setData(shoppingCarts);
 
         return response;
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public JsonResponseEntity<String> add(Integer memberId) {
+    public ReturnValue add(Integer memberId) {
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return response;
+        return new ReturnValue();
 
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.POST)
-    public JsonResponseEntity<String> remove(Integer memberId) {
+    public ReturnValue remove(Integer memberId) {
 
-        JsonResponseEntity<String> response = new JsonResponseEntity<>();
-
-        return response;
+        return new ReturnValue();
     }
 }

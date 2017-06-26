@@ -1,9 +1,9 @@
 package com.fct.api.web.http.controller.mall;
 
-import com.fct.api.web.http.json.JsonResponseEntity;
 import com.fct.api.web.http.model.Product;
 import com.fct.artist.data.entity.Artist;
 import com.fct.artist.interfaces.ArtistService;
+import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.interfaces.MallService;
@@ -29,10 +29,10 @@ public class ProductController {
     private ArtistService artistService;
 
     @RequestMapping(value = "show", method = RequestMethod.GET)
-    public JsonResponseEntity<Product> show(Integer goodsId) {
+    public ReturnValue<Product> show(Integer goodsId) {
 
         Goods goods = mallService.getGoods(goodsId);
-        List<GoodsMaterial> goodsMaterials = mallService.findMaterialByGoods(goodsId);
+        List<GoodsMaterial> goodsMaterials = mallService.findMaterialByGoods(goods.getMaterialId());
         List<Artist> artists = artistService.findArtistByGoodsId(goodsId);
 
         Product product = new Product();
@@ -40,7 +40,7 @@ public class ProductController {
         product.artists = artists;
         product.goodsMaterials = goodsMaterials;
 
-        JsonResponseEntity<Product> response = new JsonResponseEntity<>();
+        ReturnValue<Product> response = new ReturnValue<>();
         response.setData(product);
 
         return  response;

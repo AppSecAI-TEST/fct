@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false">
-    <property name="LOG_HOME" value="/home/z/workspace/company/dir_samba/HC_logs/fct/api"/>
+    <property name="LOG_HOME" value="/usr/local/dir_samba/HC_logs/fct/api-web"/>
     <property name="APP_NAME" value="api-web"/>
     <contextName>${APP_NAME}</contextName>
 

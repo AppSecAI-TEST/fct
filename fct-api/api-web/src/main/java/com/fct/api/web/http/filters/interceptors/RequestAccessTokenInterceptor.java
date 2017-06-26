@@ -1,12 +1,12 @@
 package com.fct.api.web.http.filters.interceptors;
 
 import com.fct.api.web.annotations.WithoutToken;
-import com.fct.api.web.http.json.JsonResponseEntity;
 import com.fct.api.web.http.support.version.APIScanner;
 import com.fct.api.web.session.Session;
 import com.fct.api.web.utils.ErrorMessageSelector;
 import com.fct.api.web.utils.SessionUtil;
 import com.fct.core.json.JsonConverter;
+import com.fct.core.utils.ReturnValue;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -78,7 +78,7 @@ public final class RequestAccessTokenInterceptor extends AbstractHeaderIntercept
         try {
             PrintWriter writer = response.getWriter();
             response.setContentType("application/json;charset=UTF-8");
-            JsonResponseEntity result = new JsonResponseEntity();
+            ReturnValue result = new ReturnValue();
             result.setMsg(msg);
             result.setCode(code);
             writer.write(JsonConverter.toJson(result));

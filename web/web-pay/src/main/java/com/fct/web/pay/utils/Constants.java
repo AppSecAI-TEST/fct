@@ -1,8 +1,16 @@
 package com.fct.web.pay.utils;
 
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.HttpUtils;
+import com.fct.finance.data.entity.PayOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by jon on 2017/6/4.
@@ -15,4 +23,24 @@ public class Constants {
     }
 
     public static final Logger logger = LoggerFactory.getLogger("EX");
+
+    public static Map<String, String> getRequestData(HttpServletRequest request)
+    {
+        Map<String,String> params = new HashMap<>();
+        Map requestParams = request.getParameterMap();
+        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+            String name = (String) iter.next();
+            String[] values = (String[]) requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i]
+                        : valueStr + values[i] + ",";
+            }
+            //乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+            //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+            params.put(name, valueStr);
+        }
+
+        return params;
+    }
 }

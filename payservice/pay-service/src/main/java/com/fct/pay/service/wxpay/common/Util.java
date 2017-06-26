@@ -2,6 +2,7 @@ package com.fct.pay.service.wxpay.common;
 
 import com.fct.pay.service.PayConfig;
 import com.thoughtworks.xstream.XStream;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class Util {
 
     //打log用
-    private static Log logger = new Log(LoggerFactory.getLogger(Util.class));
+    private static final Log logger = new Log(LoggerFactory.getLogger(Util.class));
 
     /**
      * 通过反射的方式遍历对象的属性和属性值，方便调试

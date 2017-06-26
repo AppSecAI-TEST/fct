@@ -29,4 +29,5 @@
     <!-- 引入财务服务-->
     <dubbo:reference id="financeService" interface="com.fct.finance.interfaces.FinanceService" timeout="5000" check="false"/>
     <dubbo:reference id="mobilePayService" interface="com.fct.pay.interfaces.MobilePayService" timeout="5000" check="false"/>
+    <dubbo:reference id="mallService" interface="com.fct.mall.interfaces.MallService" timeout="5000" check="false"/>
 </beans>

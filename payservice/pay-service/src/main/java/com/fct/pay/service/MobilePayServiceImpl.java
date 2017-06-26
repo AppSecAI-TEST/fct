@@ -6,6 +6,7 @@ import com.fct.pay.service.wxpay.WXPay;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -15,11 +16,11 @@ import java.util.Map;
 public class MobilePayServiceImpl implements MobilePayService {
 
     public String wxpayWap(String payOrderNo, String openId, BigDecimal total_fee, String body,
-                    String notifyUrl, String userIp, Integer expireMinutes)
+                    String notifyUrl, String userIp, Date expireTime)
     {
         try {
             return WXPay.requestUnifiedOrderService(payOrderNo, openId, total_fee, body,notifyUrl,
-                    userIp, expireMinutes);
+                    userIp, expireTime);
         }
         catch (Exception exp)
         {
@@ -34,7 +35,7 @@ public class MobilePayServiceImpl implements MobilePayService {
     }
 
     public String wxpayApp(String payOrderNo, BigDecimal total_fee, String body,
-                    String callBackUrl, String notifyUrl, String createIP, Integer expireMinutes)
+                    String callBackUrl, String notifyUrl, String createIP, Date expireTime)
     {
         return  "";
     }

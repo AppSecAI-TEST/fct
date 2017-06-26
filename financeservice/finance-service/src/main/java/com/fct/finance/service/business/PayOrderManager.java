@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by jon on 2017/4/10.
@@ -77,7 +78,7 @@ public class PayOrderManager  {
         }
         pay.setStatus(Constants.enumPayStatus.waitpay.getValue());
         pay.setCreateTime(new Date());
-        pay.setOrderId(generateOrderId());
+        pay.setOrderId(StringHelper.generateOrderId());
 
         MemberAccount account = memberAccountManager.findById(pay.getMemberId());
 
@@ -495,18 +496,5 @@ public class PayOrderManager  {
         pageResponse.setHasMore(hasmore);
 
         return pageResponse;
-    }
-
-    private String generateOrderId()
-    {
-        /*long orderId = 0;
-        long seconds = (long)(DateTime.Now - DateTime.Now.Date).TotalSeconds;
-        orderId = Convert.ToInt64(string.Format("{0}{1}{2}", DateTime.Now.ToString("yyMMdd"), seconds.ToString().PadLeft(5, '0'), rand.Next(10000, 99999)));
-
-        return orderId;
-        DateUtils.compareDate(new Date(),)
-        String date = DateUtils.getNowDateStr("yyMMddHH");
-        return date + StringHelper.getRandomString(8);*/
-        return "";
     }
 }

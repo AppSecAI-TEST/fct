@@ -1,8 +1,7 @@
 package com.fct.pay.service.wxpay;
 
-import com.fct.core.converter.DateFormatter;
 import com.fct.core.json.JsonConverter;
-import com.fct.core.logger.LogService;
+import com.fct.core.utils.DateUtils;
 import com.fct.pay.interfaces.PayNotify;
 import com.fct.pay.service.Constants;
 import com.fct.pay.service.PayConfig;
@@ -22,7 +21,6 @@ import com.fct.pay.service.wxpay.service.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,9 +59,9 @@ public class WXPay {
     }
 
     public static String requestUnifiedOrderService(String payOrderId, String openId, BigDecimal total_fee, String body,
-                                                    String notifyUrl, String userIp, Integer expireMinutes) throws Exception{
+                                                    String notifyUrl, String userIp,Date expireTime) throws Exception{
 
-        Integer expirtime = expireMinutes > 0 ? expireMinutes : 7200; //以分为单位，默认5天
+        //Integer expirtime = expireMinutes > 0 ? expireMinutes : 7200; //以分为单位，默认5天
 
         Map<String, String> config = PayConfig.instance.getWxpay_fctwap();
 
@@ -71,13 +69,9 @@ public class WXPay {
                 config.get("cert_password"));
 
         Integer totalFee =  total_fee.multiply(new BigDecimal(100)).intValue();
-        String timeStart = DateFormatter.format(new Date(),"yyyyMMddHHmmss");
+        String timeStart = DateUtils.formatDate(new Date(),"yyyyMMddHHmmss");
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, expireMinutes);
-
-        String timeExpire = DateFormatter.format(calendar.getTime(),"yyyyMMddHHmmss");
+        String timeExpire = DateUtils.formatDate(expireTime,"yyyyMMddHHmmss");
 
         UnifiedOrderReqData unifiedOrderReqData = new UnifiedOrderReqData(openId,body,payOrderId,totalFee,userIp,
                 timeStart,timeExpire,config.get("notifyurl"));
@@ -88,7 +82,7 @@ public class WXPay {
 
         if (!map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
         {
-            LogService.warning("wxpay:UnifiedOrder response error!");
+            Constants.logger.info("wxpay:UnifiedOrder response error!");
             throw new IllegalArgumentException("UnifiedOrder response error!");
         }
 

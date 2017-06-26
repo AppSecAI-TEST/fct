@@ -3,6 +3,7 @@ package com.fct.core.utils;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -54,5 +55,49 @@ public class StringHelper {
             sb.append(base.charAt(number));
         }
         return sb.toString();
+    }
+
+    /**
+     * @作者 尧
+     * @功能 String左对齐
+     */
+    public static String padLeft(String src, int len, char ch) {
+        int diff = len - src.length();
+        if (diff <= 0) {
+            return src.substring(0,len);
+        }
+
+        char[] charr = new char[len];
+        System.arraycopy(src.toCharArray(), 0, charr, 0, src.length());
+        for (int i = src.length(); i < len; i++) {
+            charr[i] = ch;
+        }
+        return new String(charr);
+    }
+    /**
+     * @作者 尧
+     * @功能 String右对齐
+     */
+    public static String padRight(String src, int len, char ch) {
+        int diff = len - src.length();
+        if (diff <= 0) {
+            return src.substring(0,len);
+        }
+
+        char[] charr = new char[len];
+        System.arraycopy(src.toCharArray(), 0, charr, diff, src.length());
+        for (int i = 0; i < diff; i++) {
+            charr[i] = ch;
+        }
+        return new String(charr);
+    }
+
+    public static String generateOrderId()
+    {
+        Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
+        Long seconds = DateUtils.compareDate(new Date(),time);
+        Integer ranCode = new Random().nextInt(99999);
+        return DateUtils.getNowDateStr("yyMMdd")+padLeft(seconds.toString(),5,'0')+
+                ranCode;
     }
 }

@@ -99,6 +99,10 @@ public class WithdrawRecordManager {
 
     public void updateStatus(Integer omsOperaterId,Integer id, Integer status,String desc)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         WithdrawRecord record = withdrawRecordRepository.findOne(id);
         if(record.getStatus()>0)
         {

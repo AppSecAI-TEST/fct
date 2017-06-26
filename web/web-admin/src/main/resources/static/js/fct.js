@@ -273,7 +273,7 @@ var JQbox = {
               '<div class=\"dz-error-mark\"><span>✘</span></div>\n ' +
               ' <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n' +
               '</div>';
-          var imgwidth = "@300w.jpg";
+          var imgwidth = "@200w.jpg";
           $(ele).dropzone({
               url:url,
               autoProcessQueue:true,
@@ -296,8 +296,11 @@ var JQbox = {
                   for(var i=0;i<default_img.length;i++){
                       //{img_url:,img_name:}
                       if(default_img[i].img_url !=''){
+                          var myurl = default_img[i].img_url+imgwidth;
                           myDropzone.emit("addedfile", default_img[i]);
-                          myDropzone.emit("thumbnail", default_img[i], default_img[i].img_url+imgwidth);
+                          myDropzone.emit("thumbnail", default_img[i], myurl);
+
+                          //$(myDropzone).children('.fork-remove').attr("data-url",myurl);
                       }
                   }
 
@@ -318,10 +321,24 @@ var JQbox = {
                         $("#"+input).val(imgs.join());
                         // If the image is already a thumbnail:
                         this.emit('thumbnail', file, path+response.data.url+imgwidth);
+
+                        $(file.previewTemplate).children('.fork-remove').attr("data-url",response.data.url);
                     }
               },
               error: function(file, errorMessage, xhr) {
                   $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1');
+              },
+              removedfile: function (file) {
+                  var del_url = $(file.previewTemplate).children('.fork-remove').attr("data-url");
+                  var arrData = $("#"+input).val().split(',');
+                  for (var i = 0 ; i< arrData.length; i ++) {
+                      if(arrData[i] == del_url){
+                          arrData.splice(i,1);
+                      }
+                  }
+                  $("#"+input).val(arrData.join());
+                  $(file.previewTemplate).remove();
+
               },
               previewTemplate: tem_str
           });

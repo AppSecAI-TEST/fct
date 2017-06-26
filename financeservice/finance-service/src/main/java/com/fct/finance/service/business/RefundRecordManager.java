@@ -140,11 +140,23 @@ public class RefundRecordManager {
 
     public RefundRecord findById(Integer id)
     {
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         return  refundRecordRepository.findOne(id);
     }
 
     public RefundRecord findByTradeId(String tradeType,String tradeId)
     {
+        if(StringUtils.isEmpty(tradeId))
+        {
+            throw new IllegalArgumentException("业务单号为空。");
+        }
+        if(StringUtils.isEmpty(tradeType))
+        {
+            throw new IllegalArgumentException("业务类型为空。");
+        }
         return refundRecordRepository.findByTradeIdAndTradeType(tradeId,tradeType);
     }
 
@@ -156,13 +168,13 @@ public class RefundRecordManager {
         //一个支付、一个业务行为对应一条退款记录。
         if (refundRecordRepository.countByTradeIdAndTradeType(result.trade_id,result.trade_type) > 0)
         {
-            LogService.warning("pay_orderid:" + pay.getOrderId() + ",已提交过退款处理");
+            Constants.logger.warn("pay_orderid:" + pay.getOrderId() + ",已提交过退款处理");
             return;
         }
 
         if (result.refund_amount.doubleValue()<pay.getRefundAmount().doubleValue())
         {
-            throw new BaseException("退款金额非法。");
+            throw new IllegalArgumentException("退款金额非法。");
         }
 
         RefundRecord refund = new RefundRecord();
@@ -303,6 +315,10 @@ public class RefundRecordManager {
 
     public void close(Integer omsOperaterId,Integer id,String remark)
     {
+        if (id <= 0)
+        {
+            throw new IllegalArgumentException("退款处理Id为空。");
+        }
         RefundRecord record = refundRecordRepository.findOne(id);
         if(record.getStatus()>0)
         {

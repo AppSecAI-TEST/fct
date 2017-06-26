@@ -27,11 +27,13 @@ public class MemberAccountManager {
 
     public void save(MemberAccount account)
     {
-        memberAccountRepository.saveAndFlush(account);
+        memberAccountRepository.save(account);
     }
 
-    public MemberAccount findById(int memberId)
-    {
+    public MemberAccount findById(int memberId) {
+        if (memberId <= 0) {
+            throw new IllegalArgumentException("会员id为空");
+        }
         return memberAccountRepository.findOne(memberId);
     }
 

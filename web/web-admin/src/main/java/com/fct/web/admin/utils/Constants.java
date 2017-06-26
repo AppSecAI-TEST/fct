@@ -1,7 +1,9 @@
 package com.fct.web.admin.utils;
 
+import com.fct.core.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 /**
@@ -16,32 +18,18 @@ public class Constants {
 
     public static final Logger logger = LoggerFactory.getLogger("EX");
 
-    public String filePath(String filename)
+    public String staticFile(String path)
     {
-        if(StringUtils.isEmpty(filename))
-        {
-            return "";
-        }
-
-        return "http://fct-nick.img-cn-shanghai.aliyuncs.com"+filename;
+        return HttpUtils.staticFile(path);
     }
 
-    public String thumbnailPath(String imgsrc)
+    public String thumbnail(String path)
     {
-        if(StringUtils.isEmpty(imgsrc))
-        {
-            return "";
-        }
-
-        return "http://fct-nick.img-cn-shanghai.aliyuncs.com"+imgsrc+"@200w.jpg";
+        return HttpUtils.thumbnail(path);
     }
 
-    public String uploadPath(String filename)
+    public String uploadFile(String path)
     {
-        if(StringUtils.isEmpty(filename))
-        {
-            return "";
-        }
-        return "http://fct-nick.img-cn-shanghai.aliyuncs.com"+filename;
+        return HttpUtils.uploadFile(path);
     }
 }

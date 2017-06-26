@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false">
-    <property name="LOG_HOME" value="/Users/jon/local/dir_samba/HC_logs/fct/messageservice"/>
+    <property name="LOG_HOME" value="/usr/local/dir_samba/HC_logs/fct/messageservice"/>
     <property name="APP_NAME" value="messageservice"/>
     <contextName>${APP_NAME}</contextName>
 

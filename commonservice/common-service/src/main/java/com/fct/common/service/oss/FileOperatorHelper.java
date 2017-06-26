@@ -2,12 +2,15 @@ package com.fct.common.service.oss;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.DeleteObjectsRequest;
+import com.fct.common.data.entity.ImageSource;
 import com.fct.common.interfaces.FileRequest;
 import lombok.Data;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,8 +57,7 @@ public class FileOperatorHelper {
      * 上传文件
      * @return
      */
-    public UploadResponse uploadFile(File file,String fileName){
-        UploadResponse responses = null;
+    public UploadResponse uploadFile(byte[] file,String fileName){
         try {
             OSSRequestBuilder builder = OSSRequestBuilder.builder();
             OSSRequest request = builder.bucketName(bucketName).
@@ -65,13 +67,14 @@ public class FileOperatorHelper {
                     build();
             Future<UploadResponse> future = pool.submit(new OSS(request));
             UploadResponse response = future.get();
+            return response;
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return responses;
+        return null;
     }
 
     private void initOssClient(){
@@ -85,12 +88,17 @@ public class FileOperatorHelper {
      * @return
      */
     public DeleteResponse deleteFile(FileRequest request){
+        List<String> lsKey =  new ArrayList<>();
+        for (ImageSource img: request.getImages()
+             ) {
+            lsKey.add(img.getName());
+        }
         DeleteResponse deleteResponse = new DeleteResponse();
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
-        deleteObjectsRequest.withKeys(request.getKeys());
+        deleteObjectsRequest.withKeys(lsKey);
         ossClient.deleteObject(deleteObjectsRequest);
         deleteResponse.setUserMetaData(request.getUserMetaData());
-        deleteResponse.setKeys(request.getKeys());
+        deleteResponse.setKeys(lsKey);
         deleteResponse.setCode(0);
         deleteResponse.setMsg("删除文件成功");
         return deleteResponse;

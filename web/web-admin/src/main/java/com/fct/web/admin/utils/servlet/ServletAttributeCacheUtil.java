@@ -2,8 +2,6 @@ package com.fct.web.admin.utils.servlet;
 
 
 import com.fct.web.admin.http.filters.interceptors.AbstractHeaderInterceptor;
-import com.fct.web.admin.session.Session;
-import com.fct.web.admin.utils.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,17 +27,5 @@ public class ServletAttributeCacheUtil {
             request.setAttribute("headerStr", headerStr);
         }
         return headerStr;
-    }
-
-    public static Session getSession(HttpServletRequest request, SessionUtil sessionUtil) {
-        Session session = (Session) request.getAttribute("session");
-        if (session == null) {
-            String accessToken = request.getHeader("access-token");
-            if (StringUtils.isNotBlank(accessToken)) {
-                session = sessionUtil.get(accessToken);
-                request.setAttribute("session", session);
-            }
-        }
-        return session;
     }
 }

@@ -145,7 +145,7 @@
                                 <tr th:each="goods:${cacheOrder.findOrderGoods(order.orderId)}" style="background-color: #FFFFFF;">
                                         <td>
                                             <a href="javascript:;">
-                                                <img th:src="${pub.thumbnailPath(goods.img)}" width="80" height="80">
+                                                <img th:src="${pub.thumbnail(goods.img)}" width="80" height="80">
                                             </a>
                                         </td>
                                         <td>

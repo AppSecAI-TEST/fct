@@ -1,13 +1,10 @@
 package com.fct.web.admin.http.controller;
 
 import com.fct.core.exceptions.Exceptions;
-import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.interfaces.MemberService;
-import com.fct.web.admin.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
-import com.fct.web.admin.utils.CookieUtil;
-import com.fct.web.admin.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,13 +27,26 @@ public class MainController {
     public String login(String returnurl,Model model) {
 
         model.addAttribute("returnurl",returnurl);
+        //model.addAttribute("password", StringHelper.md5("123456"));
         return "/main/login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(Model model) {
+    public String logout(HttpServletRequest request,HttpServletResponse response, Model model) {
 
-        return "/main/logout";
+        String token = CookieUtil.getCookieByName(request,"sysuser_token");
+
+        CookieUtil.delCookie(request,response,"sysuser_token");
+        try {
+            if (!StringUtils.isEmpty(token)) {
+                memberService.logoutSysUser(token);
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "redirect:/login";
     }
 
     @RequestMapping(value = "/error", method = RequestMethod.GET)

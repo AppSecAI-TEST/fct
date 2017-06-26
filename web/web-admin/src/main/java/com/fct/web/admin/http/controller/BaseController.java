@@ -1,20 +1,16 @@
 package com.fct.web.admin.http.controller;
 
 import com.fct.member.data.entity.SysUserLogin;
-import com.fct.member.data.entity.SystemUser;
 import com.fct.web.admin.http.cache.CacheSysUserManager;
 import com.fct.web.admin.utils.Constants;
-import com.fct.web.admin.utils.CookieUtil;
-import com.sun.jndi.toolkit.url.Uri;
+import com.fct.core.utils.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 
 /**
  * Created by jon on 2017/6/9.
@@ -31,11 +27,11 @@ public class BaseController {
 
         //获取cookie
 
-        //initUser(request,response);
+        initUser(request,response);
 
-        currentUser = new SysUserLogin();
+        //currentUser = new SysUserLogin();
 
-        Constants constants =  new Constants();
+        Constants constants = new Constants();
 
         model.addAttribute("pub",constants);
         model.addAttribute("currentUser",currentUser);
@@ -44,14 +40,16 @@ public class BaseController {
     void initUser(HttpServletRequest request, HttpServletResponse response)throws Exception
     {
         String token = CookieUtil.getCookieByName(request,"sysuser_token");
+        String returnUrl = request.getHeader("Referer");
+        returnUrl = !StringUtils.isEmpty(returnUrl) ? "?returnUrl="+returnUrl : "";
         if(StringUtils.isEmpty(token))
         {
-            response.sendRedirect(request.getContextPath() + "/login?returnUrl="+request.getHeader("Referer")); // 跳到登录页面
+            response.sendRedirect(request.getContextPath() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
         currentUser = cacheSysUserManager.getSysUserLogin(token);
         if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login?returnUrl="+request.getHeader("Referer")); // 跳到登录页面
+            response.sendRedirect(request.getContextPath() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
     }

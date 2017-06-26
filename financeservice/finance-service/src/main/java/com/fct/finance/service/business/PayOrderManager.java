@@ -3,7 +3,9 @@ package com.fct.finance.service.business;
 import com.fct.core.exceptions.BaseException;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.logger.LogService;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
+import com.fct.core.utils.StringHelper;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.entity.PayOrder;
@@ -75,7 +77,7 @@ public class PayOrderManager  {
         }
         pay.setStatus(Constants.enumPayStatus.waitpay.getValue());
         pay.setCreateTime(new Date());
-        pay.setOrderId("");
+        pay.setOrderId(generateOrderId());
 
         MemberAccount account = memberAccountManager.findById(pay.getMemberId());
 
@@ -84,16 +86,16 @@ public class PayOrderManager  {
         {
             if (account == null)
             {
-                throw new BaseException("非法操作");
+                throw new IllegalArgumentException("非法操作");
             }
             if (account.getAvailableAmount().doubleValue() < pay.getAccountAmount().doubleValue())
             {
-                throw new BaseException("余额不足");
+                throw new IllegalArgumentException("余额不足");
             }
             // 积分
             if (account.getPoints() < pay.getPoints())
             {
-                throw new BaseException("积分不足");
+                throw new IllegalArgumentException("积分不足");
             }
             pay.setPayTime(new Date());
             pay.setStatus(Constants.enumPayStatus.success.getValue());
@@ -131,6 +133,13 @@ public class PayOrderManager  {
                 account.setMemberId(pay.getMemberId());
                 account.setCellPhone(pay.getCellPhone());
                 account.setCreateTime(new Date());
+                account.setAccumulateIncome(new BigDecimal(0));
+                account.setAccumulatePoints(0);
+                account.setAvailableAmount(new BigDecimal(0));
+                account.setFrozenAmount(new BigDecimal(0));
+                account.setPoints(0);
+                account.setRechargeAmount(new BigDecimal(0));
+                account.setWithdrawAmount(new BigDecimal(0));
 
                 memberAccountManager.save(account);
             }
@@ -166,24 +175,57 @@ public class PayOrderManager  {
 
     private void valid(PayOrder pay)
     {
+        if(pay.getMemberId()<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if(StringUtils.isEmpty(pay.getTradeId()))
+        {
+            throw new IllegalArgumentException("业务单号为空。");
+        }
+        if(StringUtils.isEmpty(pay.getTradeType()))
+        {
+            throw new IllegalArgumentException("业务类型为空。");
+        }
+        if(StringUtils.isEmpty(pay.getPayPlatform()))
+        {
+            throw new IllegalArgumentException("支付平台为空");
+        }
+        if(pay.getAccountAmount().doubleValue()<0 || pay.getPoints()<0 ||
+                pay.getPayAmount().doubleValue()<0 || pay.getTotalAmount().doubleValue()<=0)
+        {
+            throw new IllegalArgumentException("支付金额不正确");
+        }
         if (StringUtils.isEmpty(pay.getCallbackUrl()))
         {
-            throw new NullPointerException("callbackUrl is null");
+            throw new IllegalArgumentException("callbackUrl is null");
         }
         if(StringUtils.isEmpty(pay.getCellPhone()))
         {
-            throw new NullPointerException("cellphone is null");
+            throw new IllegalArgumentException("cellphone is null");
         }
 
     }
 
     public PayOrder findOne(String orderId)
     {
+        if(StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("支付订单号为空");
+        }
         return  payOrderRepository.findOne(orderId);
     }
 
     public PayOrder findByTrade(String tradeType, String tradeId)
     {
+        if(StringUtils.isEmpty(tradeId))
+        {
+            throw new IllegalArgumentException("业务单号为空。");
+        }
+        if(StringUtils.isEmpty(tradeType))
+        {
+            throw new IllegalArgumentException("业务类型为空。");
+        }
         return  payOrderRepository.findBytradeTypeAndTradeId(tradeType,tradeId);
     }
 
@@ -193,11 +235,19 @@ public class PayOrderManager  {
     @Transactional
     public PayOrder paySuccess(String orderId, String platform, String notifyData)
     {
+        if(StringUtils.isEmpty(orderId))
+        {
+            throw new IllegalArgumentException("支付订单号为空");
+        }
+        if(StringUtils.isEmpty(notifyData))
+        {
+            throw new IllegalArgumentException("第三方支付通知内容为空");
+        }
         PayOrder pay = payOrderRepository.findOne(orderId);
 
         if(pay ==  null)
         {
-            throw new BaseException("请求的支付订单不存在");
+            throw new IllegalArgumentException("请求的支付订单不存在");
         }
         if(pay.getPayTime() !=null )
         {
@@ -269,7 +319,7 @@ public class PayOrderManager  {
                 memberAccountHistoryManager.Create(history);
             }
 
-            LogService.info(logContent + "支付成功。");
+            Constants.logger.info(logContent + "支付成功。");
 
             SendMessageQ(pay, Constants.enumPayStatus.success);
         }
@@ -309,7 +359,7 @@ public class PayOrderManager  {
 
         if(pay ==null || pay.getStatus() == Constants.enumPayStatus.fullrefund.getValue())
         {
-            LogService.warning("pay_tradehandle: data is illegal");
+            Constants.logger.warn("pay_tradehandle: data is illegal");
             return;
         }
 
@@ -445,5 +495,18 @@ public class PayOrderManager  {
         pageResponse.setHasMore(hasmore);
 
         return pageResponse;
+    }
+
+    private String generateOrderId()
+    {
+        /*long orderId = 0;
+        long seconds = (long)(DateTime.Now - DateTime.Now.Date).TotalSeconds;
+        orderId = Convert.ToInt64(string.Format("{0}{1}{2}", DateTime.Now.ToString("yyMMdd"), seconds.ToString().PadLeft(5, '0'), rand.Next(10000, 99999)));
+
+        return orderId;
+        DateUtils.compareDate(new Date(),)
+        String date = DateUtils.getNowDateStr("yyMMddHH");
+        return date + StringHelper.getRandomString(8);*/
+        return "";
     }
 }

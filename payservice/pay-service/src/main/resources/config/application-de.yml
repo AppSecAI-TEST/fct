@@ -25,9 +25,9 @@ mongo:
 
 mysql:
   connection:
-    url: jdbc:config://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
-    username: root
-    password: 123456
+    url: jdbc:mysql://116.62.219.91:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: fct
+    password: lf6pQJW2wguBq5hZ
 
 pay:
   wxpay_fyhwap:

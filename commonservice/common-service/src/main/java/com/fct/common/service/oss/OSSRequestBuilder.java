@@ -39,7 +39,7 @@ public class OSSRequestBuilder {
         return builder;
     }
 
-    public OSSRequestBuilder file(File file){
+    public OSSRequestBuilder file(byte[] file){
         preValidate();
         builder.getOssRequest().setFile(file);
         return builder;

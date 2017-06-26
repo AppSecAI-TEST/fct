@@ -1,0 +1,43 @@
+server:
+  port: 8090
+  contextPath: /payweb
+  tomcat:
+    uri-encoding: UTF-8
+
+
+redis:
+  host:
+    url: 127.0.0.1
+    port: 6379
+    test:
+      onborrow: true
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+mongo:
+  host:
+    port: 9024
+    url: mongo-m.fct.me
+    db: easemob
+    collectionName: sms_log
+
+spring:
+  http:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+  thymeleaf:
+    #prefix: classpath:/templates,classpath:/static/
+    #suffix: .html
+    cache: false
+    check-template: true
+    content-type: text/html
+    encoding: UTF-8
+    mode: HTML5
+

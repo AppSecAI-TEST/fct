@@ -84,6 +84,10 @@ public class SettleRecordManager {
         {
             throw  new IllegalArgumentException("非法操作！");
         }
+        if(StringUtils.isEmpty(ids))
+        {
+            throw new IllegalArgumentException("id为空");
+        }
 
         String sql = "UPDATE SettleRecord SET Status=?,remark=?,omsOperaterId=?,updateTime=? WHERE Id IN ("+ ids +") AND Status!=1";
         List<Object> param = new ArrayList<>();
@@ -131,6 +135,10 @@ public class SettleRecordManager {
             account.setMemberId(memberId);
             account.setCellPhone(cellPhone);
             account.setCreateTime(new Date());
+            account.setAccumulatePoints(0);
+            account.setFrozenAmount(new BigDecimal(0));
+            account.setPoints(0);
+            account.setWithdrawAmount(new BigDecimal(0));
         }
         account.setAvailableAmount(account.getAvailableAmount().add(commission));
         account.setAccumulateIncome(account.getAccumulateIncome().add(commission));
@@ -153,8 +161,11 @@ public class SettleRecordManager {
 
     }
 
-    public SettleRecord findById(Integer id)
-    {
+    public SettleRecord findById(Integer id) {
+        if (id <= 0)
+        {
+            throw new IllegalArgumentException("id为空");
+        }
         return settleRecordRepository.findOne(id);
     }
 

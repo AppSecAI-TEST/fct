@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">身份照片：</label>
                 <div class="col-sm-8">
-                    <a th:href="${pub.uploadPath(info.identityCardImg)}" target="_blank"><img th:src="${pub.thumbnailPath(info.identityCardImg)}" class="loadimg" />
+                    <a th:href="${pub.uploadFile(info.identityCardImg)}" target="_blank"><img th:src="${pub.thumbnail(info.identityCardImg)}" class="loadimg" />
                     </a>
                 </div>
             </div>

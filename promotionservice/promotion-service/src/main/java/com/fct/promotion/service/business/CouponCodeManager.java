@@ -5,8 +5,10 @@ import com.fct.promotion.data.entity.CouponCode;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.repository.CouponCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -35,6 +37,14 @@ public class CouponCodeManager {
     @Transactional
     public String receive(Integer memberId, Integer policyId)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if(policyId<=0)
+        {
+            throw new IllegalArgumentException("优惠券id不存在");
+        }
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {
@@ -48,11 +58,6 @@ public class CouponCodeManager {
         if (policy.getFetchType() != 0)
         {
             throw new IllegalArgumentException("该优惠券不支持领取");
-        }
-
-        if (memberId < 1)
-        {
-            throw new IllegalArgumentException("该会员无效");
         }
         String code = "";
         synchronized (syncObj)
@@ -85,7 +90,7 @@ public class CouponCodeManager {
 
     void setCodeUsing(String code)
     {
-        String sql = String.format("update CouponCode set Status =1,UseTime=getdate(),LastUpdateTime=getdate() where code='%s' and Status=0",
+        String sql = String.format("update CouponCode set Status =1,UseTime=now(),LastUpdateTime=now() where code='%s' and Status=0",
                 code);
 
         synchronized (syncObj)
@@ -100,7 +105,7 @@ public class CouponCodeManager {
 
     public void setCodeUsed(String code)
     {
-        String sql = String.format("update CouponCode set Status =2,LastUpdateTime=getdate() where code='%s' and Status=1",code);
+        String sql = String.format("update CouponCode set Status =2,LastUpdateTime=now() where code='%s' and Status=1",code);
 
         synchronized (syncObj)
         {
@@ -114,7 +119,7 @@ public class CouponCodeManager {
 
     public void cancelCodeUsed(String code)
     {
-        String sql = String.format("update CouponCode set Status =0,LastUpdateTime=getdate() where code='%s' and Status!=0",code);
+        String sql = String.format("update CouponCode set Status =0,LastUpdateTime=now() where code='%s' and Status!=0",code);
 
         synchronized (syncObj)
         {
@@ -149,8 +154,18 @@ public class CouponCodeManager {
     }
 
 
-    public void receiveSystemCouponCode(Integer memberId, Integer policyId, String code)
-    {
+    public void receiveSystemCouponCode(Integer memberId, Integer policyId, String code) {
+
+        if (memberId <= 0) {
+            throw new IllegalArgumentException("会员不存在");
+        }
+        if (policyId <= 0) {
+            throw new IllegalArgumentException("优惠券id不存在");
+        }
+        if (StringUtils.isEmpty(code))
+        {
+            throw new IllegalArgumentException("优惠券码为空");
+        }
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {
@@ -191,11 +206,18 @@ public class CouponCodeManager {
 
     public CouponCode findByCode(String code)
     {
+        if (StringUtils.isEmpty(code))
+        {
+            throw new IllegalArgumentException("优惠券码为空");
+        }
         return couponCodeRepository.findByCode(code);
     }
 
     String receiveForSystem(Integer policyId)
     {
+        if (policyId <= 0) {
+            throw new IllegalArgumentException("优惠券id不存在");
+        }
         CouponPolicy policy = couponPolicyManager.findById(policyId);
         if (policy == null)
         {

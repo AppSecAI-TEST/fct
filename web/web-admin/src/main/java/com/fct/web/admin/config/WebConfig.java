@@ -3,8 +3,6 @@ package com.fct.web.admin.config;
 import com.fct.web.admin.http.exceptions.handlers.DefaultExceptionHandler;
 import com.fct.web.admin.http.exceptions.handlers.ServiceExceptionHandler;
 import com.fct.web.admin.http.filters.RequestWrapperFilter;
-import com.fct.web.admin.http.filters.StringMethodParamResolver;
-import com.fct.web.admin.http.support.session.SessionExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +12,6 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -33,12 +30,6 @@ import java.util.List;
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter{
 
-//    @Autowired
-//    private SessionUtil sessionService;
-
-//    @Autowired
-//    private ReplayAttackDefender defender;
-
     @Autowired
     private Environment environment;
 
@@ -48,25 +39,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
                 Charset.forName("UTF-8"));
         return converter;
     }
-//    @Bean
-//    @Order(0)
-//    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-//
-//        RequestMappingHandlerMapping handlerMapping = new VersionedRequestMappingHandlerMapping();
-//        String profile = getActiveProfile();
-//        Boolean isSandbox = "de".equals(profile) || "te".equals(profile);
-//        List<Object> interceptorList = Lists.newLinkedList();
-//        interceptorList.add(new GateInterceptor(sessionService));
-//        if (!"de".equals(profile)) {
-//            interceptorList.add(new RequestHeaderInterceptor(isSandbox));
-//            interceptorList.add(new RequestAccessTokenInterceptor(sessionService, isSandbox));
-//            interceptorList.add(new RequestSignatureInterceptor(sessionService, isSandbox));
-//            interceptorList.add(new RequestReplayDefenderInterceptor(defender, isSandbox));
-//        }
-//        handlerMapping.setInterceptors(interceptorList.toArray());
-//        return handlerMapping;
-//    }
-
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -76,7 +48,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
 
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        exceptionResolvers.add(new SessionExceptionHandler());
         exceptionResolvers.add(new ServiceExceptionHandler());
         exceptionResolvers.add(new DefaultExceptionHandler());//default exception handler
     }
@@ -87,16 +58,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         registration.setFilter(new RequestWrapperFilter());
         registration.setDispatcherTypes(DispatcherType.REQUEST);
         return registration;
-    }
-
-    /**
-     * 这个是框架层面加了一个方法参数解析 解决string null 转成""问题
-     * @param resolvers
-     */
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers){
-        super.addArgumentResolvers(resolvers);
-        resolvers.add(new StringMethodParamResolver());
     }
 
     @Bean//etag

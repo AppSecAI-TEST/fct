@@ -7,7 +7,7 @@ import com.fct.core.utils.PageUtil;
 import com.fct.member.data.entity.MemberStore;
 import com.fct.member.interfaces.MemberService;
 import com.fct.member.interfaces.PageResponse;
-import com.fct.web.admin.utils.AjaxUtil;
+import com.fct.core.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

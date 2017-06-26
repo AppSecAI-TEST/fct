@@ -26,7 +26,7 @@ public class MainController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(String returnurl,Model model) {
 
-        model.addAttribute("returnurl",StringHelper.generateOrderId());
+        model.addAttribute("returnurl",returnurl);
         //model.addAttribute("password", StringHelper.md5("123456"));
         return "/main/login";
     }

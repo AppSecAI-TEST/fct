@@ -1,11 +1,13 @@
-package com.fct.pay.model;
+package com.fct.pay.interfaces;
 
+import java.io.Serializable;
 import java.util.Map;
+
 
 /**
  * Created by jon on 2017/4/24.
  */
-public class PayNotify {
+public class PayNotify implements Serializable {
 
     /// <summary>
     /// 支付平台

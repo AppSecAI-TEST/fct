@@ -10,7 +10,6 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>pay-interface</module>
-        <module>pay-model</module>
         <module>pay-service</module>
     </modules>
 

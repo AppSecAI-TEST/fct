@@ -48,5 +48,7 @@ public interface MessageService {
 
     String getVerifyCode(String sessionId,String cellPhone);
 
+    void sendVerifyCode(String sessionId,String cellPhone,String content,String ip,String action);
+
     int checkVerifyCode(String sessionId,String cellPhone,String code);
 }

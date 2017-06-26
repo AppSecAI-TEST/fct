@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication(scanBasePackages = "com.fct.web")
 @ImportResource({"classpath:dubbo/dubbo-consumer.xml"})
+@Import(RedisConfig.class)
 public class ApplicationStartUp extends SpringBootServletInitializer {
 
     @Override

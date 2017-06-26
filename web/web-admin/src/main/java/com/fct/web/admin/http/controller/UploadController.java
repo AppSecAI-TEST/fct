@@ -32,14 +32,14 @@ public class UploadController {
     private CommonService commonService;
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
-    public ReturnValue<Object> uploadImages(HttpServletRequest request){
+    public ReturnValue<ImageResponse> uploadImages(HttpServletRequest request){
         List<byte[]> fileList = Lists.newArrayList();
         List<ImageSource> imgList = new ArrayList<>();
 
         List<MultipartFile> files = ((MultipartHttpServletRequest) request)
                 .getFiles("file");
         String action = request.getParameter("action");
-        ReturnValue<Object> responseEntity =  new ReturnValue<>();
+        ReturnValue<ImageResponse> responseEntity =  new ReturnValue<>();
 
         try{
             if(files!=null&&files.size()>0){

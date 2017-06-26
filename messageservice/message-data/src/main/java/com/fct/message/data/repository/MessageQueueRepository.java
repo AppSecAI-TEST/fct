@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +22,8 @@ public interface MessageQueueRepository extends JpaRepository<MessageQueue, Inte
     @Query(nativeQuery = true, value = "select * from MessageQueue where typeId=?1 and status=0 and requestcount<=3 limit 500")
     List<MessageQueue> findByTypeId(String typeId);
 
-    @Query(nativeQuery = true, value = "UPDATE MessageQueue SET Status=1,RequestCount=1,ProcessTime='?2' WHERE Id=?1")
-    void complete(Integer id, Date date);
-
+    @Modifying
+    @Transactional
     @Query(nativeQuery = true, value = "UPDATE MessageQueue SET Status=0,RequestCount=0 WHERE Id=?1")
     void resume(Integer id);
 

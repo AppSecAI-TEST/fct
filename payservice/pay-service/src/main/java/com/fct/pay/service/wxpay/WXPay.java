@@ -3,7 +3,7 @@ package com.fct.pay.service.wxpay;
 import com.fct.core.converter.DateFormatter;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.logger.LogService;
-import com.fct.pay.model.PayNotify;
+import com.fct.pay.interfaces.PayNotify;
 import com.fct.pay.service.Constants;
 import com.fct.pay.service.PayConfig;
 import com.fct.pay.service.wxpay.business.DownloadBillBusiness;
@@ -60,7 +60,7 @@ public class WXPay {
         return new ScanPayService().request(scanPayReqData);
     }
 
-    public static String requestUnifiedOrderService(String payment,String payOrderId, String openId, BigDecimal total_fee, String body,
+    public static String requestUnifiedOrderService(String payOrderId, String openId, BigDecimal total_fee, String body,
                                                     String notifyUrl, String userIp, Integer expireMinutes) throws Exception{
 
         Integer expirtime = expireMinutes > 0 ? expireMinutes : 7200; //以分为单位，默认5天
@@ -103,7 +103,7 @@ public class WXPay {
 
         String jsonParam = JsonConverter.toJson(jsAPI);
 
-        LogService.info("Get jsApiParam : " + jsonParam);
+        Constants.logger.info("Get jsApiParam : " + jsonParam);
 
         return jsonParam;
     }

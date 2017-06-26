@@ -7,6 +7,7 @@ import com.fct.message.interfaces.MessageService;
 import com.fct.message.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,14 @@ public class MessageServiceImpl implements MessageService {
     private MessageQueueRepository messageQueueRepository;
 
     @Autowired
+    private VerifyCodeManager verifyCodeManager;
+
+    @Autowired
+    private SMSRecordManager smsRecordManager;
+
+    @Autowired
     private JdbcTemplate jt;
 
-    @Override
     public void create(MessageQueue message) {
 
         message.setStatus(0);
@@ -35,8 +41,6 @@ public class MessageServiceImpl implements MessageService {
         message.setCreateTime(new Date());
         messageQueueRepository.save(message);
     }
-
-    @Override
     public void send(String typeId,String targetModule,String sourceAppName,String jsonBody,String remark)
     {
         MessageQueue message = new MessageQueue();
@@ -52,12 +56,15 @@ public class MessageServiceImpl implements MessageService {
         messageQueueRepository.save(message);
     }
 
-    @Override
     public void complete(Integer id) {
-        messageQueueRepository.complete(id,new Date());
+
+        MessageQueue messageQueue = messageQueueRepository.findOne(id);
+        messageQueue.setStatus(1);
+        messageQueue.setRequestCount(1);
+        messageQueue.setProcessTime(new Date());
+        messageQueueRepository.save(messageQueue);
     }
 
-    @Override
     public void fail(Integer id, String message) {
         MessageQueue msg = messageQueueRepository.findOne(id);
         if(msg.getRequestCount()>=3)
@@ -70,17 +77,14 @@ public class MessageServiceImpl implements MessageService {
         messageQueueRepository.saveAndFlush(msg);
     }
 
-    @Override
     public void resume(Integer id) {
         messageQueueRepository.resume(id);
     }
 
-    @Override
     public List<MessageQueue> find(String typeId) {
         return messageQueueRepository.findByTypeId(typeId);
     }
 
-    @Override
     public PageResponse<MessageQueue> findAll(String targetModule, Integer status, Integer pageIndex, Integer pageSize) {
 
         List<Object> param = new ArrayList<>();
@@ -123,25 +127,25 @@ public class MessageServiceImpl implements MessageService {
 
     }
 
-    @Autowired
-    VerifyCodeManager verifyCodeManager;
-
-    @Autowired
-    SMSRecordManager smsRecordManager;
-
-    @Override
     public void sendSMS(String cellPhone,String content,String ip,String action)
     {
         smsRecordManager.send(cellPhone,content,ip,action);
     }
 
-    @Override
+    public void sendVerifyCode(String sessionId,String cellPhone,String content,String ip,String action)
+    {
+        String code = verifyCodeManager.create(sessionId,cellPhone);
+
+        content = content.replace("{code}",code);
+
+        smsRecordManager.send(cellPhone,content,ip,action);
+    }
+
     public String getVerifyCode(String sessionId,String cellPhone)
     {
         return verifyCodeManager.create(sessionId,cellPhone);
     }
 
-    @Override
     public int checkVerifyCode(String sessionId,String cellPhone,String code)
     {
         return verifyCodeManager.check(sessionId,cellPhone,code);

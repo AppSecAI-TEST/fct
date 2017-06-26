@@ -1,7 +1,7 @@
 package com.fct.pay.service;
 
 import com.fct.pay.interfaces.MobilePayService;
-import com.fct.pay.model.PayNotify;
+import com.fct.pay.interfaces.PayNotify;
 import com.fct.pay.service.wxpay.WXPay;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,11 @@ import java.util.Map;
 @Service("mobilePayService")
 public class MobilePayServiceImpl implements MobilePayService {
 
-    public String wxpayWap(String payment, String payOrderNo, String openId, BigDecimal total_fee, String body,
+    public String wxpayWap(String payOrderNo, String openId, BigDecimal total_fee, String body,
                     String notifyUrl, String userIp, Integer expireMinutes)
     {
         try {
-            return WXPay.requestUnifiedOrderService(payment, payOrderNo, openId, total_fee, body,notifyUrl,
+            return WXPay.requestUnifiedOrderService(payOrderNo, openId, total_fee, body,notifyUrl,
                     userIp, expireMinutes);
         }
         catch (Exception exp)
@@ -33,7 +33,7 @@ public class MobilePayServiceImpl implements MobilePayService {
         return WXPay.payNotify(mapParam,xmlContent);
     }
 
-    public String wxpayApp(String payment, String payOrderNo, BigDecimal total_fee, String body,
+    public String wxpayApp(String payOrderNo, BigDecimal total_fee, String body,
                     String callBackUrl, String notifyUrl, String createIP, Integer expireMinutes)
     {
         return  "";

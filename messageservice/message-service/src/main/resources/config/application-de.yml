@@ -29,6 +29,9 @@ mysql:
     username: fct
     password: lf6pQJW2wguBq5hZ
 
-
+qcloud:
+  sms:
+    appid:
+    appkey:
 
 

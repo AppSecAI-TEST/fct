@@ -30,7 +30,7 @@ mysql:
     password: lf6pQJW2wguBq5hZ
 
 pay:
-  wxpay_fyhwap:
+  wxpay_fctwap:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1405964802
     notifyurl:  http://pay.fct.com/wap/wxpay/notify
@@ -39,7 +39,7 @@ pay:
     appid:  wx5b63ee784fa7fc96
     appsecret:  d70744148ac1f943f844caa175f8ee73
 
-  wxpay_fyhapp:
+  wxpay_fctapp:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1442883002
     notifyurl:  http://pay.fct.com/wap/wxpay/appnotify
@@ -48,7 +48,7 @@ pay:
     appid:  wx7c866f046dab34b8
     appsecret:  7b6d038c11400a323bbd7f7849021159
 
-  alipay_fyhapp:
+  alipay_fctapp:
     partner:  2088621198090730
     key:  alhanc3pys7dm7o1vqdmtv5bzjj1kpvj
     selleraccount:  pay@fct.com
@@ -56,7 +56,7 @@ pay:
     privatekey_path:  conf\alipay\rsa_private_key.pem
     publickey_path:  conf\alipay\rsa_public_key.pem
 
-  unionpay_fyhwap:
+  unionpay_fctwap:
     meriId: 802310054110766
     frontTransUrl: https://gateway.95516.com/gateway/api/frontTransReq.do?
     backTransUrl: https://gateway.95516.com/gateway/api/backTransReq.do?

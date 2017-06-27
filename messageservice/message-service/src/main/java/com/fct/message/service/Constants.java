@@ -1,9 +1,14 @@
 package com.fct.message.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by jon on 2017/5/6.
  */
 public class Constants {
+
+    public static final Logger logger = LoggerFactory.getLogger("EX");
 
     public  enum enumSMSSource
     {

@@ -27,6 +27,7 @@
 
     <dubbo:protocol name="dubbo" port="20808" />
 
+    <!-- hello -->
     <dubbo:service interface="com.fct.artist.interfaces.ArtistService" ref="artistService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
 </beans>
 

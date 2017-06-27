@@ -1,6 +1,7 @@
 package com.fct.member.service.business;
 
 import com.fct.core.utils.DateUtils;
+import com.fct.core.utils.UUIDUtil;
 import com.fct.member.data.entity.*;
 import com.fct.member.data.repository.MemberLoginRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +69,7 @@ public class MemberLoginManager {
         login.setIp(ip);
         login.setAuthStatus(member.getAuthStatus());
         login.setLoginTime(new Date());
-        login.setToken(UUID.randomUUID().toString());
+        login.setToken(UUIDUtil.generateUUID());
         login.setUserName(member.getUserName());
         login.setShopId(store!=null ?store.getId() :0);
         login.setGradeId(member.getGradeId());

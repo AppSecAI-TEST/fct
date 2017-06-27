@@ -1,13 +1,9 @@
 package com.fct.web.pay.utils;
 
-import com.fct.core.utils.DateUtils;
-import com.fct.core.utils.HttpUtils;
-import com.fct.finance.data.entity.PayOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,6 +19,10 @@ public class Constants {
     }
 
     public static final Logger logger = LoggerFactory.getLogger("EX");
+
+    public static final String domain = "http://www.fangcuntang.com";
+
+    public static final String payDomain = "http://pay.fangcuntang.com";
 
     public static Map<String, String> getRequestData(HttpServletRequest request)
     {

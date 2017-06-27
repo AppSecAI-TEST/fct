@@ -14,7 +14,7 @@
             // get_brand_wcpay_request:fail 发送失败
             // get_brand_wcpay_request:ok 发送成功
             if(res.err_msg == 'get_brand_wcpay_request:ok') {
-                window.location.href = "<%=Constans.TenpayMobile_CallBackUrl%>?orderid=[[${orderid}]]";
+                window.location.href = "http://pay.fangcuntang.com/mobile/wxpay/callback?orderid=[[${orderid}]]";
             } else if(res.err_msg == 'get_brand_wcpay_request:fail'){
                 alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
             }else if (res.err_msg == "get_brand_wcpay_request:cancel") {

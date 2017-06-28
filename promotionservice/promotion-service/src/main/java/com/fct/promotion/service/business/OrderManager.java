@@ -1,9 +1,9 @@
 package com.fct.promotion.service.business;
 
-import com.fct.core.logger.LogService;
 import com.fct.core.utils.DateUtils;
 import com.fct.promotion.data.entity.*;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import com.fct.promotion.service.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -188,7 +188,7 @@ public class OrderManager {
 
             if (obj.getRealPrice().multiply(discountProduct.getDiscountRate()).doubleValue() != obj.getDiscountPrice().doubleValue())
             {
-                LogService.error(String.format("折后价格不正确,d%,d%,s%", obj.getProductId(), obj.getDiscountId(), discountProduct.getDiscountRate()));
+                Constants.logger.error(String.format("折后价格不正确,d%,d%,s%", obj.getProductId(), obj.getDiscountId(), discountProduct.getDiscountRate()));
                 throw new IllegalArgumentException("折后价格不正确");
             }
 

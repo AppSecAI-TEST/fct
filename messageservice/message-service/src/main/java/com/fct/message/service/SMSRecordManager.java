@@ -25,6 +25,8 @@ public class SMSRecordManager {
 
     //请根据实际 appid 和 appkey 进行开发，以下只作为演示 sdk 使用
 
+    @Autowired
+    private QCloudSMSConfig qCloudSMSConfig;
 
     public void send(String cellPhone,String content,String ip,String action) {
         if (StringUtils.isEmpty(cellPhone)) {
@@ -80,7 +82,7 @@ public class SMSRecordManager {
     {
         try {
             // 初始化群发
-            SmsMultiSender multiSender = new SmsMultiSender(QCloudSMSConfig.appId, QCloudSMSConfig.appKey);
+            SmsMultiSender multiSender = new SmsMultiSender(qCloudSMSConfig.getAppId(), qCloudSMSConfig.getAppKey());
             SmsMultiSenderResult multiSenderResult = multiSender.send(0, "86", phoneNumbers,
                     content, "", "");
 
@@ -104,7 +106,7 @@ public class SMSRecordManager {
     {
         try {
             //初始化单发
-            SmsSingleSender singleSender = new SmsSingleSender(QCloudSMSConfig.appId, QCloudSMSConfig.appKey);
+            SmsSingleSender singleSender = new SmsSingleSender(qCloudSMSConfig.getAppId(), qCloudSMSConfig.getAppKey());
             SmsSingleSenderResult singleSenderResult = singleSender.send(0, "86", cellphone,
                     content, "", "");
 

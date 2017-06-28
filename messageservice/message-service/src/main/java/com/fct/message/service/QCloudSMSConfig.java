@@ -10,9 +10,29 @@ import org.springframework.context.annotation.Configuration;
 public class QCloudSMSConfig {
 
     @Value("${qcloud.sms.appid}")
-    public static int appId;
+    private int appId;
+
+    public int getAppId()
+    {
+        return appId;
+    }
+
+    public void setAppId(int appId)
+    {
+        this.appId = appId;
+    }
 
     @Value("${qcloud.sms.appkey}")
-    public static String appKey;
+    private String appKey;
+
+    public String getAppKey()
+    {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey)
+    {
+        this.appKey = appKey;
+    }
 }
 

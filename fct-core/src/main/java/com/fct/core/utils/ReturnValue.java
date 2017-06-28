@@ -39,12 +39,10 @@ public class ReturnValue<T> {
         this.msg = msg;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public T getData() {
         return data;
     }
 
-    @JsonIgnore
     public void setData(T data) {
         this.data = data;
     }

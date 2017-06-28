@@ -2,7 +2,6 @@ package com.fct.finance.service.business;
 
 import com.fct.core.exceptions.BaseException;
 import com.fct.core.json.JsonConverter;
-import com.fct.core.logger.LogService;
 import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.core.utils.StringHelper;
@@ -252,7 +251,7 @@ public class PayOrderManager  {
         }
         if(pay.getPayTime() !=null )
         {
-            LogService.info(pay.getOrderId() + "重复请求该笔已处理过的支付订单。");
+//            LogService.info(pay.getOrderId() + "重复请求该笔已处理过的支付订单。");
             return pay;
         }
         if(!StringUtils.isEmpty(platform))
@@ -283,7 +282,7 @@ public class PayOrderManager  {
             }*/
 
             // 写余额异常日志
-            LogService.warning(logContent + "第三方支付平台付款成功，但余额不足无法继续交易。");
+//            LogService.warning(logContent + "第三方支付平台付款成功，但余额不足无法继续交易。");
 
             //余额异常，通知业务方关闭订单，并生成退款流程（原路返回）。
             SendMessageQ(pay, Constants.enumPayStatus.exception);

@@ -19,6 +19,7 @@ import com.fct.pay.service.wxpay.protocol.reverse_protocol.ReverseReqData;
 import com.fct.pay.service.wxpay.protocol.unifiedorder.UnifiedOrderReqData;
 import com.fct.pay.service.wxpay.service.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -30,6 +31,9 @@ import java.util.Map;
  */
 public class WXPay {
 
+    @Autowired
+    private PayConfig payConfig;
+
     /**
      * 初始化SDK依赖的几个关键配置
      * @param key 签名算法需要用到的秘钥
@@ -39,7 +43,7 @@ public class WXPay {
      * @param certLocalPath HTTP证书在服务器中的路径，用来加载证书用
      * @param certPassword HTTP证书的密码，默认等于MCHID
      */
-    public static void initSDKConfiguration(String key,String appID,String mchID,String sdbMchID,String certLocalPath,String certPassword){
+    public void initSDKConfiguration(String key,String appID,String mchID,String sdbMchID,String certLocalPath,String certPassword){
         Configure.setKey(key);
         Configure.setAppID(appID);
         Configure.setMchID(mchID);
@@ -48,25 +52,44 @@ public class WXPay {
         Configure.setCertPassword(certPassword);
     }
 
+    private void initSDKConfiguration(String payment,String userip){
+
+        Map<String, String> config = null;
+        switch (payment)
+        {
+            case "wxpay_fctapp":
+                config = payConfig.getWxpay_fctapp();
+                break;
+            default:
+                config = payConfig.getWxpay_fctwap();
+                break;
+        }
+
+        Configure.setKey(config.get("key"));
+        Configure.setAppID(config.get("appid"));
+        Configure.setMchID(config.get("mchid"));
+        Configure.setSubMchID("");
+        Configure.setCertLocalPath(config.get("cert_path"));
+        Configure.setCertPassword(config.get("cert_password"));
+        Configure.setNotifyUrl(config.get("notifyurl"));
+        Configure.setIp(userip);
+    }
+
     /**
      * 请求支付服务
      * @param scanPayReqData 这个数据对象里面包含了API要求提交的各种数据字段
      * @return API返回的数据
      * @throws Exception
      */
-    public static String requestScanPayService(ScanPayReqData scanPayReqData) throws Exception{
+    public String requestScanPayService(ScanPayReqData scanPayReqData) throws Exception{
         return new ScanPayService().request(scanPayReqData);
     }
 
-    public static String requestUnifiedOrderService(String payOrderId, String openId, BigDecimal total_fee, String body,
+    public String requestUnifiedOrderService(String payment,String payOrderId, String openId, BigDecimal total_fee, String body,
                                                     String notifyUrl, String userIp,Date expireTime) throws Exception{
 
         //Integer expirtime = expireMinutes > 0 ? expireMinutes : 7200; //以分为单位，默认5天
-
-        Map<String, String> config = PayConfig.instance.getWxpay_fctwap();
-
-        initSDKConfiguration(config.get("key"),config.get("appid"),config.get("mchid"),"",config.get("cert_path"),
-                config.get("cert_password"));
+        initSDKConfiguration(payment,userIp);
 
         Integer totalFee =  total_fee.multiply(new BigDecimal(100)).intValue();
         String timeStart = DateUtils.formatDate(new Date(),"yyyyMMddHHmmss");
@@ -74,7 +97,7 @@ public class WXPay {
         String timeExpire = DateUtils.formatDate(expireTime,"yyyyMMddHHmmss");
 
         UnifiedOrderReqData unifiedOrderReqData = new UnifiedOrderReqData(openId,body,payOrderId,totalFee,userIp,
-                timeStart,timeExpire,config.get("notifyurl"));
+                timeStart,timeExpire,"JSAPI",Configure.getNotifyUrl());
 
         String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
 
@@ -102,7 +125,51 @@ public class WXPay {
         return jsonParam;
     }
 
-    public static PayNotify payNotify(Map<String, String> mapParam, String xmlContent)
+    public String requestAppPay(String payment, String payOrderId, BigDecimal total_fee, String body,
+                                String notifyUrl, String userIp, Date expireTime)throws Exception
+    {
+        //统一下单
+       initSDKConfiguration(payment,userIp);
+
+        Integer totalFee =  total_fee.multiply(new BigDecimal(100)).intValue();
+        String timeStart = DateUtils.formatDate(new Date(),"yyyyMMddHHmmss");
+
+        String timeExpire = DateUtils.formatDate(expireTime,"yyyyMMddHHmmss");
+
+        UnifiedOrderReqData unifiedOrderReqData = new UnifiedOrderReqData("",body,payOrderId,totalFee,userIp,
+                timeStart,timeExpire,"APP",Configure.getNotifyUrl());
+
+        String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
+
+        Map<String,Object> map = XMLParser.getMapFromXML(reqdata);
+
+        if (!map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
+        {
+            Constants.logger.info("wxpay:UnifiedOrder response error!");
+            throw new IllegalArgumentException("UnifiedOrder response error!");
+        }
+
+        Map<String,Object> jsAPI = new HashMap<String, Object>();
+
+        jsAPI.put("appid",map.get("appid"));
+        jsAPI.put("partnerid",Configure.getMchid());
+        jsAPI.put("timestamp", RandomStringGenerator.getGenerateTimeStamp());
+        jsAPI.put("nonceStr", RandomStringGenerator.getRandomStringByLength(12));
+        jsAPI.put("prepayid",map.get("prepay_id"));
+        jsAPI.put("package","Sign=WXPay");
+        jsAPI.put("sign", Signature.getSign(jsAPI));
+
+        String jsonParam = JsonConverter.toJson(jsAPI);
+
+        Constants.logger.info("Get jsApiParam : " + jsonParam);
+
+        return jsonParam;
+    }
+
+    /***
+     * h5与app通用
+     * */
+    public PayNotify payNotify(Map<String, String> mapParam, String xmlContent)
     {
         PayNotify notify = new PayNotify();
         if (mapParam == null)
@@ -119,7 +186,9 @@ public class WXPay {
 
             Map<String, Object> map = XMLParser.getMapFromXML(xmlContent);
 
-            String platform = Util.getNotifyPayment(map);
+            String payment = getNotifyPayment(map);
+
+            initSDKConfiguration(payment,"");
 
             if (!Signature.checkIsSignValidFromResponseMap(map)) {
                 throw new IllegalArgumentException("WxPayData签名验证错误");
@@ -154,7 +223,7 @@ public class WXPay {
                 notify.setPayOrderNo(map.get("out_trade_no").toString());
                 notify.setHasError(false);
                 notify.setExtandProperties(map);
-                notify.setPayPlatform(platform);
+                notify.setPayPlatform(payment);
 
                 map = new HashMap<>();
                 map.put("return_code", "SUCCESS");
@@ -175,7 +244,7 @@ public class WXPay {
     }
 
     //查询订单
-    private static Boolean QueryOrder(String transaction_id,String out_tradeNo)
+    private  Boolean QueryOrder(String transaction_id,String out_tradeNo)
     {
         ScanPayQueryReqData scanPayQueryReqData = new ScanPayQueryReqData(transaction_id,out_tradeNo);
 
@@ -202,27 +271,24 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-	public static String requestScanPayQueryService(ScanPayQueryReqData scanPayQueryReqData) throws Exception{
+	public String requestScanPayQueryService(ScanPayQueryReqData scanPayQueryReqData) throws Exception{
 		return new ScanPayQueryService().request(scanPayQueryReqData);
 	}
 
     /**
      * 请求退款服务
-     * @param refundReqData 这个数据对象里面包含了API要求提交的各种数据字段
+     * @param payment 这个数据对象里面包含了API要求提交的各种数据字段
      * @return API返回的XML数据
      * @throws Exception
      */
-    public static PayNotify requestRefundService(String payPlatform,String payOrderId,String refundId,
+    public PayNotify requestRefundService(String payment,String payOrderId,String refundId,
                                                  BigDecimal payAmount,BigDecimal refundAmount) throws Exception{
 
-        Map<String,String> config = PayConfig.instance.getWxpay_fctwap();
-
-        initSDKConfiguration(config.get("key"),config.get("appid"),config.get("mchid"),"",config.get("cert_path"),
-                config.get("cert_password"));
+        initSDKConfiguration(payment,"");
 
         RefundReqData refundReqData = new RefundReqData(payOrderId,payOrderId,"",refundId,
                 payAmount.multiply(new BigDecimal(100)).intValue(),refundAmount.multiply(new BigDecimal(100)).intValue(),
-                config.get("mchid"),"");
+                Configure.getMchid(),"");
 
         String reqdata =  new RefundService().request(refundReqData); //提交退款申请给API，接收返回数据
 
@@ -258,7 +324,7 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-	public static String requestRefundQueryService(RefundQueryReqData refundQueryReqData) throws Exception{
+	public String requestRefundQueryService(RefundQueryReqData refundQueryReqData) throws Exception{
 		return new RefundQueryService().request(refundQueryReqData);
 	}
 
@@ -268,7 +334,7 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-	public static String requestReverseService(ReverseReqData reverseReqData) throws Exception{
+	public String requestReverseService(ReverseReqData reverseReqData) throws Exception{
 		return new ReverseService().request(reverseReqData);
 	}
 
@@ -278,7 +344,7 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-    public static String requestDownloadBillService(DownloadBillReqData downloadBillReqData) throws Exception{
+    public String requestDownloadBillService(DownloadBillReqData downloadBillReqData) throws Exception{
         return new DownloadBillService().request(downloadBillReqData);
     }
 
@@ -288,7 +354,7 @@ public class WXPay {
      * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws Exception
      */
-    public static void doScanPayBusiness(ScanPayReqData scanPayReqData, ScanPayBusiness.ResultListener resultListener) throws Exception {
+    public void doScanPayBusiness(ScanPayReqData scanPayReqData, ScanPayBusiness.ResultListener resultListener) throws Exception {
         new ScanPayBusiness().run(scanPayReqData, resultListener);
     }
 
@@ -298,7 +364,7 @@ public class WXPay {
      * @param resultListener 业务逻辑可能走到的结果分支，需要商户处理
      * @throws Exception
      */
-    public static void doRefundBusiness(RefundReqData refundReqData, RefundBusiness.ResultListener resultListener) throws Exception {
+    public void doRefundBusiness(RefundReqData refundReqData, RefundBusiness.ResultListener resultListener) throws Exception {
         new RefundBusiness().run(refundReqData,resultListener);
     }
 
@@ -308,7 +374,7 @@ public class WXPay {
      * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
      * @throws Exception
      */
-    public static void doRefundQueryBusiness(RefundQueryReqData refundQueryReqData, RefundQueryBusiness.ResultListener resultListener) throws Exception {
+    public void doRefundQueryBusiness(RefundQueryReqData refundQueryReqData, RefundQueryBusiness.ResultListener resultListener) throws Exception {
         new RefundQueryBusiness().run(refundQueryReqData,resultListener);
     }
 
@@ -319,8 +385,28 @@ public class WXPay {
      * @return API返回的XML数据
      * @throws Exception
      */
-    public static void doDownloadBillBusiness(DownloadBillReqData downloadBillReqData,DownloadBillBusiness.ResultListener resultListener) throws Exception {
+    public void doDownloadBillBusiness(DownloadBillReqData downloadBillReqData,DownloadBillBusiness.ResultListener resultListener) throws Exception {
         new DownloadBillBusiness().run(downloadBillReqData,resultListener);
+    }
+
+
+
+    /// <summary>
+    /// 获取异步通知支付平台方式
+    /// </summary>
+    /// <param name="dic"></param>
+    /// <returns></returns>
+    private String getNotifyPayment(Map<String,Object> dic)
+    {
+        String[] arrAppId = payConfig.getPlatform_ids().get("wxpay_appids").split("|");
+        for (int i = 0; i < arrAppId.length; i++)
+        {
+            if (arrAppId[i].contains(dic.get("appid").toString()))
+            {
+                return arrAppId[i].split("#")[1];
+            }
+        }
+        return "";
     }
 
 

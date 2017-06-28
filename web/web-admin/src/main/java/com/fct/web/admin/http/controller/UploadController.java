@@ -47,12 +47,11 @@ public class UploadController {
 
                     byte[] bytes = multipartFile.getBytes();
                     String originalName = multipartFile.getOriginalFilename();
-                    File f = new File(originalName);
 
                     ImageSource img = new ImageSource();
-                    BufferedImage sourceImg = ImageIO.read(new FileInputStream(f));
+                    BufferedImage sourceImg = ImageIO.read(multipartFile.getInputStream());
 
-                    Float length = new Float(f.length() / 1024.0); // 源图大小
+                    Float length = new Float(multipartFile.getSize() / 1024.0); // 源图大小
 
                     img.setCategoryId(0);
                     img.setWidth(sourceImg.getWidth());// 源图宽度

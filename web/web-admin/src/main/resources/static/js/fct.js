@@ -300,7 +300,7 @@ var JQbox = {
                           myDropzone.emit("addedfile", default_img[i]);
                           myDropzone.emit("thumbnail", default_img[i], myurl);
 
-                          //$(myDropzone).children('.fork-remove').attr("data-url",myurl);
+                          //$('.fork-remove').attr("data-url",myurl);
                       }
                   }
 
@@ -334,6 +334,7 @@ var JQbox = {
                   for (var i = 0 ; i< arrData.length; i ++) {
                       if(arrData[i] == del_url){
                           arrData.splice(i,1);
+                          imgs.splice(i,1);
                       }
                   }
                   $("#"+input).val(arrData.join());
@@ -353,7 +354,7 @@ var JQbox = {
             input: '',
             max: 1,
             default_img: '',
-            path:'http://fct-nick.img-cn-shanghai.aliyuncs.com',
+            path:fct_imageUrl,
 
         };
         var options = $.extend({}, defaults, opt);

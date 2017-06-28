@@ -46,7 +46,7 @@ public class UnifiedOrderReqData {
      * @param goodsTag 商品标记，微信平台配置的商品标记，用于优惠券或者满减使用
      */
     public UnifiedOrderReqData(String openId,String body,String outTradeNo,int totalFee,
-                               String spBillCreateIP,String timeStart,String timeExpire,String notify_url){
+                               String spBillCreateIP,String timeStart,String timeExpire,String tradeType,String notify_url){
 
         //微信分配的公众号ID（开通公众号之后可以获取到）
         setAppid(Configure.getAppid());
@@ -80,7 +80,7 @@ public class UnifiedOrderReqData {
         //商品标记，微信平台配置的商品标记，用于优惠券或者满减使用
         //setGoods_tag(goodsTag);
 
-        setTrade_type("JSAPI");
+        setTrade_type(tradeType);
 
         //随机字符串，不长于32 位
         setNonce_str(RandomStringGenerator.getRandomStringByLength(32));

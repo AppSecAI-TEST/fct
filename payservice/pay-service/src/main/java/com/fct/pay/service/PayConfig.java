@@ -11,8 +11,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix="pay") //application.yml中的pay下的属性
 public class PayConfig {
 
-    public static PayConfig instance = new PayConfig();
-
     private Map<String, String> wxpay_fctwap = new HashMap<>();
 
     public Map<String, String> getWxpay_fctwap() {

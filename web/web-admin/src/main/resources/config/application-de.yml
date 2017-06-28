@@ -40,4 +40,10 @@ spring:
     content-type: text/html
     encoding: UTF-8
     mode: HTML5
+fct:
+  domain:
+    url: http://www.fangcun.com
+    imageurl: http://img.fangcun.com
+    videourl: http://video.fangcun.com
+    staticurl: http://static.fangcun.com
 

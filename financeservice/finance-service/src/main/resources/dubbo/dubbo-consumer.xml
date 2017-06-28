@@ -25,7 +25,7 @@
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" client="zkclient"/>
 
-    <dubbo:protocol name="dubbo" port="20887" />
+    <dubbo:protocol name="dubbo" port="20805" />
 
     <dubbo:reference id="messageService" interface="com.fct.message.interfaces.MessageService" timeout="5000" check="false" />
 

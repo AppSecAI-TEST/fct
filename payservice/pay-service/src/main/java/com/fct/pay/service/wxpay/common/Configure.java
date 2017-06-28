@@ -31,6 +31,8 @@ public class Configure {
 	//是否使用异步线程的方式来上报API测速，默认为异步模式
 	private static boolean useThreadToDoReport = true;
 
+	private static String notifyUrl ="";
+
 	//机器IP
 	private static String ip = "";
 
@@ -123,6 +125,16 @@ public class Configure {
 
 	public static String getIP(){
 		return ip;
+	}
+
+	public static String getNotifyUrl()
+	{
+		return notifyUrl;
+	}
+
+	public static void setNotifyUrl(String notifyUrl)
+	{
+		Configure.notifyUrl = notifyUrl;
 	}
 
 	public static void setHttpsRequestClassName(String name){

@@ -5,11 +5,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.ImportResource;
 
 /**
  * Created by ningyang on 2017/4/11.
  */
 @SpringBootApplication(scanBasePackages = "com.fct.pay")
+@ImportResource("classpath:dubbo/dubbo-consumer.xml")
 public class StartUpApplication extends SpringBootServletInitializer{
 
     @Override

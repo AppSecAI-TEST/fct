@@ -1,6 +1,5 @@
 package com.fct.pay.service.wxpay.common;
 
-import com.fct.pay.service.PayConfig;
 import com.thoughtworks.xstream.XStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,25 +115,6 @@ public class Util {
      */
     public static String getLocalXMLString(String localPath) throws IOException {
         return Util.inputStreamToString(Util.class.getResourceAsStream(localPath));
-    }
-
-
-    /// <summary>
-    /// 获取异步通知支付平台方式
-    /// </summary>
-    /// <param name="dic"></param>
-    /// <returns></returns>
-    public static String getNotifyPayment(Map<String,Object> dic)
-    {
-        String[] arrAppId = PayConfig.instance.getPlatform_ids().get("wxpay_appids").split("|");
-        for (int i = 0; i < arrAppId.length; i++)
-        {
-            if (arrAppId[i].contains(dic.get("appid").toString()))
-            {
-                return arrAppId[i].split("#")[1];
-            }
-        }
-        return "";
     }
 
 }

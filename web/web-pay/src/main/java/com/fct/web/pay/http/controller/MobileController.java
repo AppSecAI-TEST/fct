@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @RequestMapping(value = "mobile")
-public class MobileController {
+public class MobileController extends BaseController{
 
     @Autowired
     private FinanceService financeService;
@@ -46,12 +46,11 @@ public class MobileController {
                 case "buy":
                     Orders orders = mallService.getOrders(tradeid);
                     if (orders.getStatus() != 0) {
-                        //出错跳转
-                        return "redirect:/error?msg=支付业务订单状态异常";
+                        return errorPage("支付业务订单状态异常");
                     }
-                    if (orders.getMemberId() != 100) {
+                    if (orders.getMemberId() != currentUser.getMemberId()) {
                         //出错跳转
-                        return "redirect:/error?msg=非法用户操作";
+                        return errorPage("非法用户操作");
                     }
             }
 
@@ -60,7 +59,7 @@ public class MobileController {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-            return "redirect:/error?msg=系统异常";
+            return errorPage("系统或网络异常");
         }
 
         model.addAttribute("payamount", payAmount);

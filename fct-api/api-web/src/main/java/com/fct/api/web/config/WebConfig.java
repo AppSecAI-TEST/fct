@@ -44,12 +44,13 @@ public class WebConfig extends WebMvcConfigurerAdapter{
     @Autowired
     private Environment environment;
 
+    /*
     @Bean
     @Order(0)
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
 
         RequestMappingHandlerMapping handlerMapping = new VersionedRequestMappingHandlerMapping();
-        String profile = getActiveProfile();
+        /*String profile = getActiveProfile();
         Boolean isSandbox = "de".equals(profile) || "te".equals(profile);
         List<Object> interceptorList = Lists.newLinkedList();
         interceptorList.add(new GateInterceptor(sessionService));
@@ -61,7 +62,7 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         }
         handlerMapping.setInterceptors(interceptorList.toArray());
         return handlerMapping;
-    }
+    }*/
 
 
     @Override
@@ -97,12 +98,12 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         registration.setFilter(new ShallowEtagHeaderFilter());
         return registration;
     }
-
+    /*
     private String getActiveProfile(){
         if(environment.getActiveProfiles()!=null&&environment.getActiveProfiles().length>0){
             return environment.getActiveProfiles()[0];
         }
         return "pe1";
-    }
+    }*/
 
 }

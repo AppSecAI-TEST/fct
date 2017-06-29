@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller.member;
 
+import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;
@@ -16,10 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/member")
-public class MemberController {
+public class MemberController extends BaseController {
 
-    @Autowired
-    private MemberService memberService;
 
     @Autowired
     private MessageService messageService;
@@ -64,16 +63,16 @@ public class MemberController {
 
     /**用户更新
      *
-     * @param member_id
      * @param username
      * @param gender
      * @param weixin
      * @return
      */
     @RequestMapping(value = "update-info", method = RequestMethod.POST)
-    public ReturnValue updateInfo(Integer member_id, String username, Integer gender, String weixin) {
+    public ReturnValue updateInfo(String username, Integer gender, String weixin) {
 
-        MemberInfo memberInfo = memberService.getMemberInfo(member_id);
+        MemberLogin member = this.memberAuth();
+        MemberInfo memberInfo = memberService.getMemberInfo(member.getMemberId());
         memberInfo.setSex(gender);
         memberInfo.setWeixin(weixin);
         memberService.updateMemberInfo(memberInfo);
@@ -83,21 +82,20 @@ public class MemberController {
 
     /**修改密码
      *
-     * @param member_id
      * @param old_password
      * @param new_password
      * @return
      */
     @RequestMapping(value = "change-password", method = RequestMethod.POST)
-    public ReturnValue changePassword(Integer member_id, String old_password, String new_password) {
+    public ReturnValue changePassword(String old_password, String new_password) {
 
-        memberService.updateMemberPassword(member_id, old_password, new_password, new_password);
+        MemberLogin member = this.memberAuth();
+        memberService.updateMemberPassword(member.getMemberId(), old_password, new_password, new_password);
         return new ReturnValue();
     }
 
     /**找回密码
      *
-     * @param member_id
      * @param cellphone
      * @param password
      * @param session_id
@@ -105,8 +103,8 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "forget-password", method = RequestMethod.POST)
-    public ReturnValue forgetPassword(Integer member_id, String cellphone,
-                                                   String password, String session_id, String captcha) {
+    public ReturnValue forgetPassword(String cellphone, String password,
+                                      String session_id, String captcha) {
 
         if (messageService.checkVerifyCode(session_id, cellphone, captcha) <= 0) {
 
@@ -120,7 +118,6 @@ public class MemberController {
 
     /**绑定银行卡与实名认证
      *
-     * @param member_id
      * @param name
      * @param idcard_no
      * @param idcard_image_url
@@ -129,18 +126,30 @@ public class MemberController {
      * @return
      */
     @RequestMapping(value = "real-auth", method = RequestMethod.POST)
-    public ReturnValue realAuth(Integer member_id, String name,
+    public ReturnValue realAuth(String name,
                                 String idcard_no, String idcard_image_url,
                                 String bank_name, String bank_account) {
 
-        memberService.authenticationMember(member_id, name,
+        MemberLogin member = this.memberAuth();
+        memberService.authenticationMember(member.getMemberId(), name,
                 idcard_no,idcard_image_url, bank_name, bank_account);
 
         return new ReturnValue();
     }
 
+    @RequestMapping(value = "get-by-token", method = RequestMethod.GET)
+    public ReturnValue<MemberLogin> getByToken()
+    {
+        MemberLogin member = this.memberAuth();
+
+        ReturnValue<MemberLogin> response = new ReturnValue<>();
+        response.setData(member);
+
+        return response;
+    }
+
     @RequestMapping(value = "logout", method = RequestMethod.POST)
-    public ReturnValue logout(Integer member_id) {
+    public ReturnValue logout() {
 
         return new ReturnValue();
     }

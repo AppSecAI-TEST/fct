@@ -23,6 +23,14 @@ mongo:
     db: easemob
     collectionName: sms_log
 
+fct:
+  domain:
+    url: http://www.fangcun.com
+    payurl: http://pay.fangcun.com
+    staticurl: http://static.fangcun.com
+    imageurl: http://img.fangcun.com
+    videourl: http://vod.fangcun.com
+
 
 
 

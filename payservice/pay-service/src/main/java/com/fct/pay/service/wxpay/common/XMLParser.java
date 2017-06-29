@@ -81,6 +81,32 @@ public class XMLParser {
 
     }
 
+    public static Map<String,String> getMapConvertToMap(Map<String,Object> map)
+    {
+        //数据为空时不能转化为xml格式
+        if (0 == map.size())
+        {
+            Constants.logger.warn("WxPayData数据为空!");
+            throw new IllegalArgumentException("WxPayData数据为空!");
+        }
+
+        Map<String,String> param = new HashMap<>();
+        Set set = map.keySet();
+
+        for(Iterator iter = set.iterator(); iter.hasNext();) {
+            String key = (String) iter.next();
+            String value = (String) map.get(key);
+            if(StringUtils.isEmpty(value))
+            {
+                Constants.logger.warn("WxPayData内部含有值为null的字段!");
+                throw new IllegalArgumentException("WxPayData内部含有值为null的字段!");
+            }
+            param.put(key,value);
+
+        }
+        return param;
+    }
+
 
     /**
      * @将Dictionary转成xml

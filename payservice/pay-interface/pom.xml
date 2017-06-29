@@ -10,12 +10,4 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pay-interface</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.fct.payservice</groupId>
-            <artifactId>pay-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>

@@ -40,4 +40,15 @@ public class PayConfig {
     public void setPlatform_ids(Map<String, String> platform_ids) {
         this.platform_ids = platform_ids;
     }
+
+    private Map<String,String> unionpay_fctwap = new HashMap<>();
+
+    public Map<String, String> getUnionpay_fctwap() {
+        return unionpay_fctwap;
+    }
+
+    public void setUnionpay_fctwap(Map<String, String> unionpay_fctwap)
+    {
+        this.unionpay_fctwap = unionpay_fctwap;
+    }
 }

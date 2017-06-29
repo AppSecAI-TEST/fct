@@ -220,9 +220,10 @@ public class WXPay {
             }
             //查询订单成功
             else {
+
                 notify.setPayOrderNo(map.get("out_trade_no").toString());
                 notify.setHasError(false);
-                notify.setExtandProperties(map);
+                notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
                 notify.setPayPlatform(payment);
 
                 map = new HashMap<>();
@@ -306,7 +307,7 @@ public class WXPay {
             //交易成功并在页面返回success
             notify.setHasError(false);
             notify.setPayOrderNo(refundId);
-            notify.setExtandProperties(result);
+            notify.setExtandProperties(XMLParser.getMapConvertToMap(result));
         }
         else
         {

@@ -17,7 +17,28 @@ public interface MobilePayService {
     String wxpayApp(String payment,String payOrderNo, BigDecimal total_fee, String body,
                     String callBackUrl, String notifyUrl, String createIP, Date expireTime);
 
-    PayNotify wxpayRefund(String payment,String payOrderId,String refundId,
+    PayNotify wxpayWapRefund(String payment,String payOrderId,String refundId,
                           BigDecimal payAmount,BigDecimal refundAmount);
+
+    PayNotify wxpayAppRefund(String payment,String payOrderId,String refundId,
+                             BigDecimal payAmount,BigDecimal refundAmount);
+
+    String unionpayWap(String payment,String orderId, BigDecimal payAmount, String desc, Date expireTime,
+                           String notifyUrl, String callbackUrl);
+
+    PayNotify unionpayCallBack(Map<String, String> map);
+
+    PayNotify unionpayNotify(Map<String, String> map);
+
+    PayNotify unionpayRefundNotify(Map<String, String> map);
+
+    PayNotify unionpayWapRefund(String payment,String refundId, String payOrderId, BigDecimal payAmount, BigDecimal refundAmount);
+
+    PayNotify unionpayAppRefund(String payment,String refundId, String payOrderId, BigDecimal payAmount, BigDecimal refundAmount);
+
+    String alipayApp(String payment, String payOrderNo, BigDecimal amount, String title, Date expireTime,
+                     String notifyUrl);
+
+    PayNotify alipayAppNotify(Map<String, String> map);
 
 }

@@ -80,13 +80,13 @@ public class PayNotify implements Serializable {
     /// <summary>
     /// 扩展属性，包含汇付所有的返回信息
     /// </summary>
-    private Map<String, Object> extandProperties;
+    private Map<String, String> extandProperties;
 
-    public Map<String, Object> getExtandProperties() {
+    public Map<String, String> getExtandProperties() {
         return extandProperties;
     }
 
-    public void setExtandProperties(Map<String, Object> extandProperties) {
+    public void setExtandProperties(Map<String, String> extandProperties) {
         this.extandProperties = extandProperties;
     }
 

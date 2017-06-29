@@ -6,6 +6,7 @@ import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.web.admin.http.cache.CacheFinanceManager;
+import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/finance/payorder")
-public class PayOrderController {
+public class PayOrderController extends BaseController {
 
     @Autowired
     private FinanceService financeService;

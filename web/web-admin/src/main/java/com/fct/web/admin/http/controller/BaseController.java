@@ -58,12 +58,12 @@ public class BaseController {
             return;
         }
     }
-
+/*
     @RequestMapping(value = "/fragment/left", method = RequestMethod.GET)
-    public ModelAndView messages() {
+    public ModelAndView leftLayout() {
         ModelAndView mav = new ModelAndView("/fragment/left");
         mav.addObject("currentUser",currentUser);
         return mav;
-    }
+    }*/
 
 }

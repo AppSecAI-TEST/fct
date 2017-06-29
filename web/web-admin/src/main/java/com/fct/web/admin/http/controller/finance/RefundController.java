@@ -7,6 +7,7 @@ import com.fct.finance.interfaces.FinanceService;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.web.admin.http.cache.CacheFinanceManager;
 import com.fct.core.utils.AjaxUtil;
+import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
 
 @Controller
 @RequestMapping(value = "/finance/refund")
-public class RefundController {
+public class RefundController extends BaseController{
     @Autowired
     private FinanceService financeService;
 

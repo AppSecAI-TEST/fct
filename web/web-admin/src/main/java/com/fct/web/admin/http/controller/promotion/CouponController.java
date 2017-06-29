@@ -10,6 +10,7 @@ import com.fct.promotion.interfaces.PageResponse;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.web.admin.http.cache.CacheGoodsManager;
 import com.fct.core.utils.AjaxUtil;
+import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/promotion/coupon")
-public class CouponController {
+public class CouponController extends BaseController {
 
     @Autowired
     private PromotionService promotionService;

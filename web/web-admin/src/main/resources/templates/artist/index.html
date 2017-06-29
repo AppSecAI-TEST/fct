@@ -79,9 +79,9 @@
                                 </td>
                                 <td>
                                     <a th:href="@{/artist/create(id=${artist.id})}" class="btn btn-xs btn-outline btn-default" >修改</a>
-                                    <a th:href="@{/artist/comment(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" >查看留言</a>
                                     <a href="javascript:;" th:attr="data-id=${artist.id}" class="btn btn-xs btn-outline btn-default setlive" >直播设置</a>
-                                    <a th:href="@{/artist/dynamic(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" >查看动态</a>
+                                    <a th:href="@{/artist/comment(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" title="查看留言" >留言</a>
+                                    <a th:href="@{/artist/dynamic(artistid=${artist.id})}" class="btn btn-xs btn-outline btn-default" title="查看动态">动态</a>
                                 </td>
                             </tr>
                             </tbody>

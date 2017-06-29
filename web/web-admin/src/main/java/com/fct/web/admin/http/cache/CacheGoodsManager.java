@@ -81,22 +81,6 @@ public class CacheGoodsManager {
         return new ArrayList<>();
     }
 
-    public String getGoodsArtistName(String ids)
-    {
-        List<GoodsGrade> gradeList = findGoodsGrade();
-        String[] arrId = ids.split(",");
-        List<String> idList = Arrays.asList(arrId);
-        String name = "";
-        for (GoodsGrade grade: gradeList
-                ) {
-            if(idList.contains(grade.getId()))
-            {
-                name += grade.getName() + "、";
-            }
-        }
-        return name;
-    }
-
     public String getGoodsCateName(String ids)
     {
         List<GoodsCategory> cateList = findGoodsCategory();

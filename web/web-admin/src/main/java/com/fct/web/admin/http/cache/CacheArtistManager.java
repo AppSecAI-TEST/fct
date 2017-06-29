@@ -6,7 +6,9 @@ import com.fct.artist.interfaces.PageResponse;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -43,5 +45,27 @@ public class CacheArtistManager {
             pageResponse = new PageResponse<Artist>();
         }
         return pageResponse.getElements();
+    }
+
+
+
+    public String getArtistName(String ids)
+    {
+        List<Artist> artistList = findArtist();
+        String[] arrId = ids.split(",");
+        List<String> idList = Arrays.asList(arrId);
+        String name = "";
+        for (Artist artist: artistList
+                ) {
+            if(idList.contains(artist.getId().toString()))
+            {
+                if(!StringUtils.isEmpty(name))
+                {
+                    name += "、";
+                }
+                name += artist.getName();
+            }
+        }
+        return name;
     }
 }

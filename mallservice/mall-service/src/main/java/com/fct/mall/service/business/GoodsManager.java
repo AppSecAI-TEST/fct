@@ -198,7 +198,9 @@ public class GoodsManager {
         List<Integer> lsArtistId = new ArrayList<>();
         for (String arid: goods.getArtistIds().split(",")
              ) {
-            lsArtistId.add(Integer.valueOf(arid));
+            if(!StringUtils.isEmpty(arid)) {
+                lsArtistId.add(Integer.valueOf(arid));
+            }
         }
         artistService.saveArtistGoods(lsArtistId,goods.getId());
 
@@ -304,7 +306,7 @@ public class GoodsManager {
             condition += " AND maxVolume="+maxVolume;
         }
         if (artistId>0) {
-            condition += " AND artistId like ?";
+            condition += " AND artistIds like ?";
             param.add(","+artistId +",");
         }
         return condition;

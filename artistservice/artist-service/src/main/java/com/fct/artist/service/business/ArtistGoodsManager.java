@@ -25,7 +25,7 @@ public class ArtistGoodsManager {
         {
             throw new IllegalArgumentException("艺人不存在");
         }
-        if(goodsId>0)
+        if(goodsId<=0)
         {
             throw new IllegalArgumentException("宝贝为空.");
         }

@@ -118,6 +118,7 @@ public class GoodsController extends BaseController {
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
         model.addAttribute("cache", cacheGoodsManager);
+        model.addAttribute("cacheArtist", cacheArtistManager);
 
         return "goods/index";
     }

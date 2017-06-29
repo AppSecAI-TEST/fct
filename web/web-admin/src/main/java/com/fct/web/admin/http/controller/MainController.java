@@ -92,7 +92,7 @@ public class MainController {
         {
             returnurl = "/member";
         }
-        return AjaxUtil.goUrl(returnurl,"登陆成功。");
+        return AjaxUtil.goUrl(returnurl,"登录成功。");
     }
 
     @RequestMapping(value = "/fragment/layout", method = RequestMethod.GET)

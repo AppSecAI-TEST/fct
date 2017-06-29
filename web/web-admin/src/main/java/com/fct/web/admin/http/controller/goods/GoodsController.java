@@ -1,5 +1,6 @@
 package com.fct.web.admin.http.controller.goods;
 
+import com.fct.artist.data.entity.Artist;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.GoodsGrade;
@@ -10,6 +11,7 @@ import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.interfaces.PageResponse;
+import com.fct.web.admin.http.cache.CacheArtistManager;
 import com.fct.web.admin.http.cache.CacheGoodsManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.core.utils.AjaxUtil;
@@ -43,6 +45,9 @@ public class GoodsController extends BaseController {
     @Autowired
     private CacheGoodsManager cacheGoodsManager;
 
+    @Autowired
+    private CacheArtistManager cacheArtistManager;
+
     /**
      * 获取商品品级
      * @return
@@ -61,6 +66,7 @@ public class GoodsController extends BaseController {
 
         List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();//这样引用出错
         List<GoodsGrade> lsGrade = cacheGoodsManager.findGoodsGrade();
+        List<Artist> artistList = cacheArtistManager.findArtist();
         Integer pageSize = 30;
         String pageUrl = "?page=%d";
         if(!StringUtils.isEmpty(name))
@@ -103,6 +109,7 @@ public class GoodsController extends BaseController {
         query.put("artistid", artistid);
         query.put("parentCate", lsCategory);
         query.put("gradeList", lsGrade);
+        query.put("artistList", artistList);
         query.put("materialid",materialid);
         query.put("catecode",catecode);
 
@@ -139,10 +146,12 @@ public class GoodsController extends BaseController {
         }
         List<GoodsCategory> categoryList = cacheGoodsManager.findGoodsCategoryByParent();
         List<GoodsGrade> gradeList = cacheGoodsManager.findGoodsGrade();
+        List<Artist> artistList = cacheArtistManager.findArtist();
 
         model.addAttribute("materialName",materialName);
         model.addAttribute("gradeList", gradeList);
         model.addAttribute("categoryList", categoryList);
+        model.addAttribute("artistList", artistList);
         model.addAttribute("goods", goods);
         return "goods/create";
     }

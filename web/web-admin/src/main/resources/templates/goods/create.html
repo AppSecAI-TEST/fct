@@ -77,9 +77,9 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">合作艺人：</label>
                                     <div class="col-sm-9 m-b">
-                                        <th:block th:each="cate : ${categoryList}">
+                                        <th:block th:each="artist : ${artistList}">
                                             <label class="checkbox-inline i-checks">
-                                                <input type="checkbox" th:value="${cate.id}" name="artistId" th:text="'&nbsp;'+${cate.name}" th:checked="${#strings.contains(goods.ArtistIds,cate.id)} ? 'checked'" />
+                                                <input type="checkbox" th:value="${artist.id}" name="artistId" th:text="'&nbsp;'+${artist.name}" th:checked="${#strings.contains(goods.ArtistIds,artist.id)} ? 'checked'" />
                                             </label>
                                         </th:block>
                                     </div>

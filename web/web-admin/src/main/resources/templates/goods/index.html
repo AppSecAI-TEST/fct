@@ -41,8 +41,8 @@
                         <div class="col-sm-6 m-b-xs">
                             <select class="input-sm form-control input-s-sm inline" name="gradeid">
                                 <option value="0">选择艺人</option>
-                                <th:block th:each="grade : ${query.gradeList}">
-                                    <option th:text="${grade.name}" th:value="${grade.id}" th:selected="${query.artistid eq grade.id} ? 'selected'"></option>
+                                <th:block th:each="artist : ${query.artistList}">
+                                    <option th:text="${artist.name}" th:value="${artist.id}" th:selected="${query.artistid eq artist.id} ? 'selected'"></option>
                                 </th:block>
                             </select>
                         </div>

@@ -27,9 +27,9 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        //initUser(request,response);
 
-        //currentUser = new SysUserLogin();
+        currentUser = new SysUserLogin();
 
         Constants constants = new Constants();
 

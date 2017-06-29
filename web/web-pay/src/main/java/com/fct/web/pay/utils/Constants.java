@@ -28,6 +28,35 @@ public class Constants {
     {
         Map<String,String> params = new HashMap<>();
         Map requestParams = request.getParameterMap();
+
+
+        Map<String, String> reqParam = getAllRequestParam(req);
+
+        Map<String, String> valideData = null;
+
+        if (null != reqParam && !reqParam.isEmpty()) {
+
+            Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+
+            valideData = new HashMap<String, String>(reqParam.size());
+
+            while (it.hasNext()) {
+
+                Entry<String, String> e = it.next();
+
+                String key = (String) e.getKey();
+
+                String value = (String) e.getValue();
+
+                value = new String(value.getBytes(encoding), encoding);
+
+                valideData.put(key,value);
+
+            }
+
+        }
+
+
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             String[] values = (String[]) requestParams.get(name);

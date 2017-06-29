@@ -288,19 +288,22 @@ var JQbox = {
                       if(inputValue!="") {
                           imgs = inputValue.split(",");
                           for (var i = 0; i < imgs.length; i++) {
-                              var json = {img_url: "" + path + imgs[i] + "", img_name: ""};
+                              var json = {img_url: "" +imgs[i] + "", img_name: ""};
                               default_img.push(json);
                           }
                       }
                   }
+
+                  myDropzone.on("thumbnail", function(file, dataUrl,imgpath) {
+                      $(file.previewTemplate).children('.fork-remove').attr('data-url', imgpath);
+                  });
+
                   for(var i=0;i<default_img.length;i++){
                       //{img_url:,img_name:}
                       if(default_img[i].img_url !=''){
-                          var myurl = default_img[i].img_url+imgwidth;
+                          var myurl = path + default_img[i].img_url+imgwidth;
                           myDropzone.emit("addedfile", default_img[i]);
-                          myDropzone.emit("thumbnail", default_img[i], myurl);
-
-                          //$('.fork-remove').attr("data-url",myurl);
+                          myDropzone.emit("thumbnail", default_img[i], myurl,default_img[i].img_url);
                       }
                   }
 

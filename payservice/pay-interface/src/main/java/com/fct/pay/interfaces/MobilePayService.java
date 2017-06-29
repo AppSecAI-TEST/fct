@@ -19,4 +19,5 @@ public interface MobilePayService {
 
     PayNotify wxpayRefund(String payment,String payOrderId,String refundId,
                           BigDecimal payAmount,BigDecimal refundAmount);
+
 }

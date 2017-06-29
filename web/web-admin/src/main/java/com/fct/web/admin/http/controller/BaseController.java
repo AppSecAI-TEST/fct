@@ -34,9 +34,9 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        currentUser = new SysUserLogin();
 
-        //currentUser = new SysUserLogin();
+        initUser(request,response);
 
         model.addAttribute("pub",config);
         model.addAttribute("currentUser",currentUser);
@@ -53,7 +53,7 @@ public class BaseController {
             return;
         }
         currentUser = cacheSysUserManager.getSysUserLogin(token);
-        if (currentUser == null) {
+        if (currentUser == null || currentUser.getUserId() <=0) {
             response.sendRedirect(request.getContextPath() + "/login"+returnUrl); // 跳到登录页面
             return;
         }

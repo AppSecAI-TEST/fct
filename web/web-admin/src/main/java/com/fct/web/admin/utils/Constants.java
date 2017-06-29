@@ -17,19 +17,4 @@ public class Constants {
     }
 
     public static final Logger logger = LoggerFactory.getLogger("EX");
-
-    public String staticFile(String path)
-    {
-        return HttpUtils.staticFile(path);
-    }
-
-    public String thumbnail(String path)
-    {
-        return HttpUtils.thumbnail(path);
-    }
-
-    public String uploadFile(String path)
-    {
-        return HttpUtils.uploadFile(path);
-    }
 }

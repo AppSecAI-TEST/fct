@@ -11,10 +11,10 @@
     <meta http-equiv="refresh" content="0;ie.html" />
     <![endif]-->
     <link rel="shortcut icon" href="favicon.ico" />
-    <link href="//static/css/bootstrap.min.css" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}" />
-    <link href="//static/css/font-awesome.min.css" rel="stylesheet" th:href="@{/static/css/font-awesome.min.css}" />
-    <link href="//static/css/style.min.css" rel="stylesheet" th:href="@{/static/css/style.min.css}" />
-    <link href="//static/css/dropzone.css" rel="stylesheet" th:href="@{/static/css/dropzone.css}" />
+    <link href="//static/css/bootstrap.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/bootstrap.min.css')}" />
+    <link href="//static/css/font-awesome.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/font-awesome.min.css')}" />
+    <link href="//static/css/style.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/style.min.css')}" />
+    <link href="//static/css/dropzone.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/dropzone.css')}" />
 
     <!--/* Per-page placeholder for additional links */-->
     <th:block th:replace="${links}" />
@@ -38,15 +38,15 @@
                     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
                 </div>
                 <div class="pull-right">
-                    &copy; 2017 <a href="http://www.fangcuntang.com/" target="_blank">fangcuntang.com</a>
+                    &copy; 2017 <a href="http://www.fangcun.com/" target="_blank">fangcun.com</a>
                 </div>
             </div>
         </div>
     </div>
 
-<script src="//static/js/jquery.js" th:src="@{/static/js/jquery.js}"></script>
-<script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="@{/static/js/bootstrap.min.js}"></script>
-<script src="//static/js/plugins/jtools.js" th:src="@{/static/js/plugins/jtools.js}"></script>
+<script src="//static/js/jquery.js" th:src="${pub.staticPath('/static/js/jquery.js')}"></script>
+<script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
+<script src="//static/js/plugins/jtools.js" th:src="${pub.staticPath('/static/js/plugins/jtools.js')}"></script>
 <!--菜单高亮-->
 <script type="application/javascript">
 

@@ -24,34 +24,56 @@ public class HttpUtils {
         return request.getRemoteAddr();
     }
 
-    public static final String ossUrl = "http://fct-nick.img-cn-shanghai.aliyuncs.com";
+    public static final String domain = "fangcun.com";
 
-    public static String staticFile(String path)
+    public static final String url = "http://www.fangcun.com";
+
+    public static final String payUrl = "http://pay.fangcun.com";
+
+    public static final String adminUrl = "http://admin.fangcun.com";
+
+    public static String staticUrl(String path)
     {
         if(StringUtils.isEmpty(path))
         {
             return "";
         }
 
-        return ossUrl+path;
+        return "http://static.fangcun.com"+path;
     }
 
-    public static String thumbnail(String path)
+    public static String imagesUrl(String path)
     {
         if(StringUtils.isEmpty(path))
         {
             return "";
         }
 
-        return ossUrl+path+"@200w.jpg";
+        return "http://img.fangcun.com"+path;
     }
 
-    public static String uploadFile(String path)
+    public static String videoUrl(String path)
     {
         if(StringUtils.isEmpty(path))
         {
             return "";
         }
-        return ossUrl+path;
+
+        return "http://video.fangcun.com"+path;
+    }
+
+    public static String thumbnail(String path,Integer width)
+    {
+        if(StringUtils.isEmpty(path))
+        {
+            return "";
+        }
+
+        if(width<=0)
+        {
+            width =120;
+        }
+
+        return String.format("http://img.fangcun.com%s@%dw.jpg",path,width);
     }
 }

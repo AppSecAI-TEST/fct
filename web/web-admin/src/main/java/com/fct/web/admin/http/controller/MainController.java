@@ -4,6 +4,7 @@ import com.fct.core.exceptions.Exceptions;
 import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.interfaces.MemberService;
+import com.fct.web.admin.config.FctConfig;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,10 +25,14 @@ public class MainController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private FctConfig fctConfig;
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(String returnurl,Model model) {
 
         model.addAttribute("returnurl",returnurl);
+        model.addAttribute("pub",fctConfig);
         //model.addAttribute("password", StringHelper.md5("123456"));
         return "/main/login";
     }
@@ -87,5 +93,12 @@ public class MainController {
             returnurl = "/member";
         }
         return AjaxUtil.goUrl(returnurl,"登陆成功。");
+    }
+
+    @RequestMapping(value = "/fragment/layout", method = RequestMethod.GET)
+    public ModelAndView messages() {
+        ModelAndView mav = new ModelAndView("/fragment/layout");
+        mav.addObject("pub",fctConfig);
+        return mav;
     }
 }

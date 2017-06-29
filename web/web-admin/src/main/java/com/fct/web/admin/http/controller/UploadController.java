@@ -5,6 +5,7 @@ import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
 import com.fct.core.utils.ReturnValue;
+import com.fct.web.admin.config.FctConfig;
 import com.fct.web.admin.utils.Constants;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.map.HashedMap;
@@ -30,6 +31,9 @@ public class UploadController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private FctConfig fctConfig;
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public ReturnValue<ImageResponse> uploadImages(HttpServletRequest request){
@@ -78,8 +82,7 @@ public class UploadController {
                 //非编辑器模式，上传的图片
                 if(!StringUtils.isEmpty(action))
                 {
-                    Constants constants = new Constants();
-                    response.setUrl(constants.thumbnail(response.getUrl()));
+                    response.setUrl(fctConfig.thumbnail(response.getUrl()));
                 }
 
                 responseEntity.setData(response);

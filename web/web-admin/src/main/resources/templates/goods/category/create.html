@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
     <title>方寸堂-宝贝分类添加/修改</title>
-    <link href="//static/js/plugins/summernote/summernote.css" rel="stylesheet" th:href="@{/static/js/plugins/summernote/summernote.css}" />
-    <link href="//static/js/plugins/summernote/summernote-bs3.css" rel="stylesheet" th:href="@{/static/js/plugins/summernote/summernote-bs3.css}" />
+    <link href="//static/js/plugins/summernote/summernote.css" rel="stylesheet" th:href="${pub.staticPath('/static/js/plugins/summernote/summernote.css')}" />
+    <link href="//static/js/plugins/summernote/summernote-bs3.css" rel="stylesheet" th:href="${pub.staticPath('/static/js/plugins/summernote/summernote-bs3.css')}" />
 </head>
 
 <body th:replace="fragment/layout::body(~{ :: .bodyContent},'goods_category',~{::.script})">
@@ -76,8 +76,8 @@
         </div>
     </div>
 </div>
-<script type="application/javascript" th:src="@{/static/js/plugins/summernote/summernote.min.js}" class="script"></script>
-<script type="application/javascript" th:src="@{/static/js/plugins/summernote/summernote-zh-CN.js}" class="script"></script>
+<script type="application/javascript" th:src="${path.staticPath('/static/js/plugins/summernote/summernote.min.js')}" class="script"></script>
+<script type="application/javascript" th:src="${path.staticPath('/static/js/plugins/summernote/summernote-zh-CN.js')}" class="script"></script>
 <script type="application/javascript" class="script">
 
     $(function () {

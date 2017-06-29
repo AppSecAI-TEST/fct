@@ -158,7 +158,7 @@ public class MobileController extends BaseController{
                                 payExpire.ConvertToInt32(0), "", "");
                         break;*/
                 case "wxpay_fctwap":
-                    payurl =  mobilePayService.wxpayWap(payOrder.getOrderId(),openid,payOrder.getPayAmount(),
+                    payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),openid,payOrder.getPayAmount(),
                             payOrder.getDesc(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
 
                     payurl = "/mobile/pay?orderid="+payOrder.getOrderId()+"&payurl="+payurl;

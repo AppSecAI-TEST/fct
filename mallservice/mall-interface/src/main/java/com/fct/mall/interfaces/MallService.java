@@ -55,7 +55,7 @@ public interface MallService {
     OrderGoodsResponse getSubmitOrderGoods(Integer memberId, List<OrderGoodsDTO> lsGoods);
 
     String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
-                       List<OrderGoods> lsOrderGoods, String couponCode, String remark,Integer receiverId);
+                       List<OrderGoodsDTO> lsOrderGoods, String couponCode, String remark,Integer receiverId);
 
     PageResponse<Orders> findOrders(Integer memberId,String cellPhone,String orderId,Integer shopId,String goodsName,
                             Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,

@@ -134,7 +134,7 @@ public class MallServiceImpl implements MallService {
     }
 
     public String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
-                              List<OrderGoods> lsOrderGoods, String couponCode, String remark, Integer receiverId) {
+                              List<OrderGoodsDTO> lsOrderGoods, String couponCode, String remark, Integer receiverId) {
         return ordersManager.create(memberId, userName, shopId, points, accountAmount,
                 lsOrderGoods, couponCode, remark, receiverId);
     }

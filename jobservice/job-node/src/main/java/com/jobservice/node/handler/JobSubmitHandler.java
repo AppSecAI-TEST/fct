@@ -31,6 +31,9 @@ public class JobSubmitHandler implements JobHandler {
         //这个地方不要修改
         job.setParam(ShardConstant.SHARD_VALUE, jobTask.getTaskType().name());
         job.setReplaceOnExist(true);
+        if(jobTask.getTriggerTime()!=null){
+            job.setTriggerDate(jobTask.getTriggerTime());
+        }
         jobClient.submitJob(job);
         Result result = new Result(0, "提交成功");
         return result;

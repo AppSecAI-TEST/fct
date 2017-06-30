@@ -33,7 +33,7 @@ pay:
   wxpay_fctwap:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1405964802
-    notifyurl:  http://pay.fct.com/wap/wxpay/notify
+    notifyurl:  http://pay.fangcun.com/mobile/wxpay/notify
     cert_path:  conf\wxpay\1405964802_cert.p12
     cert_password:  1405964802
     appid:  wx5b63ee784fa7fc96
@@ -42,7 +42,7 @@ pay:
   wxpay_fctapp:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1442883002
-    notifyurl:  http://pay.fct.com/wap/wxpay/appnotify
+    notifyurl:  http://pay.fangcun.com/mobile/wxpay/appnotify
     cert_path:  conf\wxpayapp\1442883002_cert.p12
     cert_password:  1442883002
     appid:  wx7c866f046dab34b8
@@ -52,20 +52,20 @@ pay:
     partner:  2088621198090730
     key:  alhanc3pys7dm7o1vqdmtv5bzjj1kpvj
     selleraccount:  pay@fct.com
-    notifyurl:  http://pay.golddiy.com/mobile/alipay/appnotify
+    notifyurl:  http://pay.fangcun.com/mobile/alipay/appnotify
     privatekey_path:  conf\alipay\rsa_private_key.pem
     publickey_path:  conf\alipay\rsa_public_key.pem
 
   unionpay_fctwap:
-    meriId: 802310054110766
+    meriId: 777290058148557
     frontTransUrl: https://gateway.95516.com/gateway/api/frontTransReq.do?
     backTransUrl: https://gateway.95516.com/gateway/api/backTransReq.do?
-    signCert_path:  conf\unionpay\unionpay.pfx
-    signCert_pwd: 898989
+    signCert_path:  conf\unionpay\700000000000001_acp.pfx
+    signCert_pwd: 000000
     validateCert_dir: conf\unionpay\
-    backUrl:  http://pay.golddiy.com/mobile/unionpay/notify
-    frontUrl: http://pay.golddiy.com/mobile/unionpay/callback
-    refund_backUrl: http://pay.golddiy.com/mobile/unionpay/refundnotify
+    backUrl:  http://pay.fangcun.com/mobile/unionpay/notify
+    frontUrl: http://pay.fangcun.com/mobile/unionpay/callback
+    refund_backUrl: http://pay.fangcun.com/mobile/unionpay/refundnotify
 
   platform_ids:
     wxpay_appids: wx5b63ee784fa7fc96#wxpay_fctwap|wx7c866f046dab34b8#wxpay_fctapp

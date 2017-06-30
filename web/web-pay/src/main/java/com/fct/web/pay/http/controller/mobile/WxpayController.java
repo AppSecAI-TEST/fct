@@ -53,18 +53,10 @@ public class WxpayController {
 
                 responData = payNotify.getErrorMessage();
 
-                if (payNotify != null)
+                if (payNotify != null && !payNotify.getHasError())
                 {
-                    if (payNotify.getHasError())
-                    {
-                        Constants.logger.warn(payNotify.getErrorMessage());
-                    }
-                    else
-                    {
-                        financeService.paySuccess(payNotify.getPayOrderNo(),
-                                payNotify.getPayPlatform(), JsonConverter.toJson(payNotify.getExtandProperties()));
-
-                    }
+                    financeService.paySuccess(payNotify.getPayOrderNo(),
+                            payNotify.getPayPlatform(),payNotify.getErrorMessage());
                 }
                 else
                 {
@@ -76,7 +68,6 @@ public class WxpayController {
             out.println(responData);
             out.flush();
             out.close();
-
         }
         catch (Exception exp)
         {

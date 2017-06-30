@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fct.mall.data.entity.OrderRefund;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRefundDTO extends OrderRefund {
+public class OrderRefundDTO extends OrderRefund implements Serializable{
 
     private Integer goodsId;
 

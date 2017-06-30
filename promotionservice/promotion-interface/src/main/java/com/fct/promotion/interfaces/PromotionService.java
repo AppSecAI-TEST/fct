@@ -3,10 +3,7 @@ package com.fct.promotion.interfaces;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
-import com.fct.promotion.interfaces.dto.CouponCodeDTO;
-import com.fct.promotion.interfaces.dto.DisCountDTO;
-import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
-import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import com.fct.promotion.interfaces.dto.*;
 
 import java.util.List;
 
@@ -57,6 +54,8 @@ public interface PromotionService {
     PageResponse<Discount> findDiscount(String name,String goodsName,Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize);
 
     List<DiscountProduct> findDiscountProduct(Integer discountId);
+
+    List<DiscountProductDTO> findDiscountProductDTO(List<Integer> productIds, int filterNoBegin);
 
     DisCountDTO getDisCountDTOById(Integer discountId);
 

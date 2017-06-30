@@ -223,7 +223,7 @@ public class WXPay {
 
                 notify.setPayOrderNo(map.get("out_trade_no").toString());
                 notify.setHasError(false);
-                notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
+                //notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
                 notify.setPayPlatform(payment);
 
                 map = new HashMap<>();

@@ -39,7 +39,6 @@ public class WebConfig extends WebMvcConfigurerAdapter{
         return converter;
     }
 
-
     @Override
     public void addFormatters(FormatterRegistry registry) {
         super.addFormatters(registry);

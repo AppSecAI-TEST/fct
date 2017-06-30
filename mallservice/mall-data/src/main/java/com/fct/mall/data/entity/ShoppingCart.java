@@ -58,5 +58,5 @@ public class ShoppingCart implements Serializable{
     /// 产品信息
     /// </summary>
     @Transient
-    private Goods goods;
+    private OrderGoods goods;
 }

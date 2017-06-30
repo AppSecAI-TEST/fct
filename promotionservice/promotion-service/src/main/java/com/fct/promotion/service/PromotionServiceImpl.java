@@ -5,10 +5,7 @@ import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.interfaces.PageResponse;
 import com.fct.promotion.interfaces.PromotionService;
-import com.fct.promotion.interfaces.dto.CouponCodeDTO;
-import com.fct.promotion.interfaces.dto.DisCountDTO;
-import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
-import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import com.fct.promotion.interfaces.dto.*;
 import com.fct.promotion.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -156,6 +153,11 @@ public class PromotionServiceImpl implements PromotionService {
         dto.setDiscount(discountManager.findById(discountId));
         dto.setProductList(discountProductManager.findByDiscountId(discountId));
         return dto;
+    }
+
+    public List<DiscountProductDTO> findDiscountProductDTO(List<Integer> productIds, int filterNoBegin)
+    {
+        return discountProductDTOManager.findByProduct(productIds,filterNoBegin);
     }
 
     public Integer useCouponCodeDiscount(String orderId,Integer memberId,Integer memberGradeId,List<OrderProductDTO> products,

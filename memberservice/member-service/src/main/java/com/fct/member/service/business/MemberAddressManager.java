@@ -24,6 +24,10 @@ public class MemberAddressManager {
         {
             throw new IllegalArgumentException("用户为空");
         }
+        if(StringUtils.isEmpty(address.getName()))
+        {
+            throw new IllegalArgumentException("姓名为空");
+        }
         if(StringUtils.isEmpty(address.getAddress()))
         {
             throw new IllegalArgumentException("地址为空");

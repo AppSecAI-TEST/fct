@@ -2,8 +2,10 @@ package com.fct.web.pay.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,10 +22,6 @@ public class Constants {
     }
 
     public static final Logger logger = LoggerFactory.getLogger("EX");
-
-    public static final String domain = "http://www.fangcuntang.com";
-
-    public static final String payDomain = "http://pay.fangcuntang.com";
 
     /**
      * 获取请求参数中所有的信息
@@ -51,5 +49,37 @@ public class Constants {
             }
         }
         return res;
+    }
+
+    public static Map<String, String> getRequestData(String readContent,Boolean urlDecode)
+    {
+        Map<String, String> sArray = new HashMap<>();
+
+        try {
+            //对url第一个字符？过滤
+            //string query = readContent.Replace("?", "");
+            if (!StringUtils.isEmpty(readContent)) {
+                //根据&符号分隔成数组
+                String[] coll = readContent.split("&");
+                //定义临时数组
+                String[] temp = {};
+                //循环各数组
+                for (int i = 0; i < coll.length; i++) {
+                    //根据=号拆分
+                    temp = coll[i].split("=");
+                    //把参数名和值分别添加至SortedDictionary数组
+                    String value = temp[1];
+                    if (urlDecode) {
+                        value = new String(value.getBytes("utf-8"), "utf-8");
+                    }
+                    sArray.put(temp[0], value);
+                }
+            }
+        }
+        catch (IOException exp)
+        {
+            exp.printStackTrace();
+        }
+        return sArray;
     }
 }

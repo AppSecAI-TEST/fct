@@ -8,6 +8,8 @@ import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
 import com.fct.mall.interfaces.PageResponse;
+import com.fct.member.data.entity.MemberAddress;
+import com.fct.member.interfaces.MemberService;
 import com.fct.message.interfaces.MessageService;
 import com.fct.message.interfaces.model.MQPayRefund;
 import com.fct.message.interfaces.model.MQPayTrade;
@@ -60,6 +62,9 @@ public class OrdersManager {
     private FinanceService financeService;
 
     @Autowired
+    private MemberService memberService;
+
+    @Autowired
     JdbcTemplate jt;
 
     public void save(Orders orders)
@@ -82,7 +87,7 @@ public class OrdersManager {
 
     @Transactional
     public String create(Integer memberId, String cellPhone, Integer shopId, Integer points, BigDecimal accountAmount,
-                       List<OrderGoods> lsOrderGoods, String couponCode, String remark,OrderReceiver orderReceiver)
+                       List<OrderGoods> lsOrderGoods, String couponCode, String remark,Integer receiverId)
     {
         if (memberId < 1)
         {
@@ -109,6 +114,12 @@ public class OrdersManager {
         {
             throw new IllegalArgumentException("账户余额为空。");
         }
+        if(receiverId<=0)
+        {
+            throw new IllegalArgumentException("收货地址为空");
+        }
+
+        MemberAddress address = memberService.getMemberAddress(receiverId);
 
         //如有优惠券校验是否有效。异步通知支付结果，如业务正常再次校验优惠券的有效性
         //如非法优惠券订单将关闭交易，通知支付方发起退款。
@@ -333,6 +344,15 @@ public class OrdersManager {
         order.setCreateTime(new Date());
         ordersRepository.save(order);
 
+
+        OrderReceiver orderReceiver = new OrderReceiver();
+        orderReceiver.setAddress(address.getAddress());
+        orderReceiver.setName(address.getName());
+        orderReceiver.setPhone(address.getCellPhone());
+        orderReceiver.setProvince(address.getProvince());
+        orderReceiver.setCity(address.getCityId());
+        orderReceiver.setRegion(address.getTownId());
+        orderReceiver.setPostCode(address.getPostCode());
         orderReceiver.setOrderId(order.getOrderId());
         //insert、
         orderReceiverManager.save(orderReceiver);

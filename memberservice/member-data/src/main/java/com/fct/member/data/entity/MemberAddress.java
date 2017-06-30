@@ -27,6 +27,11 @@ public class MemberAddress implements Serializable {
     /// </summary>
     private Integer memberId;
 
+    /**
+     * 收货人姓名
+     * */
+    private String name;
+
     /// <summary>
     /// 收货人手机号码
     /// </summary>

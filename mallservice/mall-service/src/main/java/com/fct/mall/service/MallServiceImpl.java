@@ -1,9 +1,7 @@
 package com.fct.mall.service;
 
 import com.fct.mall.data.entity.*;
-import com.fct.mall.interfaces.MallService;
-import com.fct.mall.interfaces.OrderRefundDTO;
-import com.fct.mall.interfaces.PageResponse;
+import com.fct.mall.interfaces.*;
 import com.fct.mall.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,10 +128,15 @@ public class MallServiceImpl implements MallService {
         shoppingCartManager.delete(memberId, shopId, cartId);
     }
 
+    public OrderGoodsResponse getSubmitOrderGoods(Integer memberId, List<OrderGoodsDTO> lsGoods)
+    {
+        return orderGoodsManager.findFinalGoods(memberId,lsGoods);
+    }
+
     public String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
-                              List<OrderGoods> lsOrderGoods, String couponCode, String remark, OrderReceiver orderReceiver) {
+                              List<OrderGoods> lsOrderGoods, String couponCode, String remark, Integer receiverId) {
         return ordersManager.create(memberId, userName, shopId, points, accountAmount,
-                lsOrderGoods, couponCode, remark, orderReceiver);
+                lsOrderGoods, couponCode, remark, receiverId);
     }
 
     public PageResponse<Orders> findOrders(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,

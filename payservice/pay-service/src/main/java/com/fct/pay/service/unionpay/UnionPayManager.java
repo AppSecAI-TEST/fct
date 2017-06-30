@@ -8,9 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @Service
@@ -158,6 +160,8 @@ public class UnionPayManager {
             return notify;
         }
 
+        map = getSortMap(map);
+
         String unionPaySign = map.get("signature");
 
         LogUtil.writeMessage("银联无线支付传输过来的参数值:" + JsonConverter.toJson(map));
@@ -198,9 +202,13 @@ public class UnionPayManager {
             return notify;
         }
 
+        initSDKConfiguration("unionpay_fctwap");
+
         String unionPaySign = map.get("signature");
 
         LogUtil.writeMessage("银联无线支付传输过来的参数值:" + JsonConverter.toJson(map));
+
+        //map = getSortMap(map);
 
         // 返回报文中不包含UPOG,表示Server端正确接收交易请求,则需要验证Server端返回报文的签名
         if (AcpService.validate(map, SDKConfig.getEncoding()))
@@ -331,7 +339,7 @@ public class UnionPayManager {
 
         String url = SDKConfig.getBackTransUrl();
 
-        HttpClient hc = new HttpClient(url,3000,3000);
+        HttpClient hc = new HttpClient(url,10000,30000);
         int status =500;
         try {
             status = hc.send(param, SDKConfig.getEncoding());
@@ -390,11 +398,38 @@ public class UnionPayManager {
         return notify;
     }
 
+    private Map<String,String> getSortMap(Map<String, String> reqParam)
+    {
+        Map<String, String> valideData = null;
+        try {
+            if (null != reqParam && !reqParam.isEmpty()) {
+                Iterator<Map.Entry<String, String>> it = reqParam.entrySet().iterator();
+                valideData = new HashMap<String, String>(reqParam.size());
+                while (it.hasNext()) {
+                    Map.Entry<String, String> e = it.next();
+                    String key = (String) e.getKey();
+                    String value = (String) e.getValue();
+                    value = new String(value.getBytes(SDKConfig.getEncoding()), SDKConfig.getEncoding());
+                    valideData.put(key, value);
+                }
+            }
+        }
+        catch (IOException exp)
+        {
+            exp.printStackTrace();
+        }
+        return valideData;
+    }
+
     public PayNotify refundNotify(Map<String, String> resData)
     {
         PayNotify notify = new PayNotify();
 
         notify.setHasError(true);
+
+        initSDKConfiguration("unionpay_fctwap");
+
+        //resData = getSortMap(resData);
 
         if (AcpService.validate(resData, SDKConfig.getEncoding()))
         {

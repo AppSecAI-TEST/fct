@@ -11,11 +11,13 @@ import com.fct.pay.interfaces.MobilePayService;
 import com.fct.web.pay.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.Date;
 
 @RequestMapping(value = "mobile")
@@ -120,12 +122,13 @@ public class MobileController extends BaseController{
                     {
                         desc += "等多件";
                     }
-                    showUrl = Constants.domain+"/my/order/detail?orderid="+orders;
+                    showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders;
                     expiredTime = orders.getExpiresTime();
                     break;
             }
 
-            String callback = Constants.payDomain+"/mobile/success?tradeid="+tradeid+"&tradetype="+tradetype;
+            String callback = String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
+                    tradeid,tradetype);
 
             payOrder.setCellPhone(cellphone);
             payOrder.setMemberId(memberid);
@@ -152,16 +155,14 @@ public class MobileController extends BaseController{
                 case "alipay_fctwap":
                         /*retUrl = APIClient.PayMobileService.AlipayCreatePayUrl(payMethod,record.OrderNo, record.CashAmount, record.MemberId.ToString(), record.Description, "",
                                 payExpire.ConvertToInt32(0), "", showUrl, "");
-                        break;
-                    case "unionpay_fctwap":
-                        retUrl = APIClient.PayMobileService.UnionpayCreatePayUrl(record.OrderNo, record.CashAmount, record.MemberId.ToString(),record.Description,
-                                payExpire.ConvertToInt32(0), "", "");
                         break;*/
+                    case "unionpay_fctwap":
+                        payurl = mobilePayService.unionpayWap(platform,payOrder.getOrderId(),payOrder.getPayAmount(),
+                                payOrder.getDesc(),expiredTime,"","");
+                        break;
                 case "wxpay_fctwap":
                     payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),openid,payOrder.getPayAmount(),
                             payOrder.getDesc(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
-
-                    payurl = "/mobile/pay?orderid="+payOrder.getOrderId()+"&payurl="+payurl;
             }
         }
         catch (IllegalArgumentException exp)
@@ -173,7 +174,9 @@ public class MobileController extends BaseController{
             Constants.logger.error(exp.toString());
             return AjaxUtil.alert("访问出错！由于系统或网络造成的原因，请稍候再试。");
         }
-
+        if(!StringUtils.isEmpty(payurl)) {
+            payurl = "/mobile/pay?orderid=" + payOrder.getOrderId() + "&payurl=" + URLEncoder.encode(payurl);
+        }
         return AjaxUtil.goUrl(payurl,"");
     }
 

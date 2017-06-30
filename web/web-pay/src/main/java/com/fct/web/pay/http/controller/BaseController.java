@@ -2,6 +2,7 @@ package com.fct.web.pay.http.controller;
 
 import com.fct.core.utils.CookieUtil;
 import com.fct.member.data.entity.MemberLogin;
+import com.fct.web.pay.config.FctConfig;
 import com.fct.web.pay.http.cache.CacheMemberManager;
 import com.fct.web.pay.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,9 @@ public class BaseController {
 
     public MemberLogin currentUser;
 
+    @Autowired
+    protected FctConfig fctConfig;
+
     @ModelAttribute
     public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
@@ -39,15 +43,15 @@ public class BaseController {
     {
         String token = CookieUtil.getCookieByName(request,"fct_auth");
         String returnUrl = request.getHeader("Referer");
-        returnUrl = !StringUtils.isEmpty(returnUrl) ? "?returnUrl="+returnUrl : "";
+        returnUrl = !StringUtils.isEmpty(returnUrl) ? "?redirecturl="+returnUrl : "";
         if(StringUtils.isEmpty(token))
         {
-            response.sendRedirect(Constants.domain + "/login"+returnUrl); // 跳到登录页面
+            response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
         currentUser = cacheMemberManager.getMemberLogin(token);
         if (currentUser == null) {
-            response.sendRedirect(Constants.domain + "/login"+returnUrl); // 跳到登录页面
+            response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
     }
@@ -55,7 +59,7 @@ public class BaseController {
     protected String errorPage(String msg)
     {
         try {
-            return "redirect:" + Constants.domain + "/error?msg=" + URLEncoder.encode(msg, "utf-8");
+            return "redirect:" + fctConfig.getUrl() + "/error?msg=" + URLEncoder.encode(msg, "utf-8");
         }
         catch (Exception exp)
         {

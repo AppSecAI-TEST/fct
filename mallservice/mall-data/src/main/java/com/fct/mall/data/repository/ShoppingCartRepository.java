@@ -2,8 +2,10 @@ package com.fct.mall.data.repository;
 
 import com.fct.mall.data.entity.ShoppingCart;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -19,7 +21,15 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Inte
             value = "SELECT * FROM ShoppingCart WHERE MemberId=?1 And ShopId=?2")
     List<ShoppingCart> findByMemberId(Integer memberId, Integer shopId);
 
+    @Modifying
+    @Transactional
     @Query(nativeQuery = true,
             value = "Delete FROM ShoppingCart WHERE MemberId=?1 And ShopId=?2 AND id=?3")
     void  delete(Integer memberId,Integer shopId,Integer cartId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,
+            value = "Delete FROM ShoppingCart WHERE GoodsId=?1")
+    void  deleteByGoodsId(Integer goodsId);
 }

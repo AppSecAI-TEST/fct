@@ -1,4 +1,5 @@
 
+
 lts:
   jobtracker:
     cluster-name: fct
@@ -19,6 +20,6 @@ lts:
         logger: mysql
         queue: mysql
         jdbc:
-          url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+          url: jdbc:mysql://localhost:3306/fctjob?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
           username: root
           password: 123456

@@ -32,7 +32,7 @@ public class ProductCommentController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<OrderComment>> getComments(@PathVariable("product_id") Integer product_id,
+    public ReturnValue<PageResponse<OrderComment>> findComments(@PathVariable("product_id") Integer product_id,
                                                                Integer page_index, Integer page_size) {
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size, 20);

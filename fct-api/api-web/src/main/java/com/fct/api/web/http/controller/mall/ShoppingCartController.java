@@ -29,7 +29,7 @@ public class ShoppingCartController extends BaseController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ReturnValue<List<ShoppingCart>> getCartProducts() {
+    public ReturnValue<List<ShoppingCart>> findCartProducts() {
 
         MemberLogin member = this.memberAuth();
 
@@ -70,6 +70,13 @@ public class ShoppingCartController extends BaseController {
 
         MemberLogin member = this.memberAuth();
         mallService.deleteShoppingCart(member.getMemberId(), 0, id);
+
+        return new ReturnValue(200, "删除成功");
+    }
+
+    @Deprecated
+    @RequestMapping(value = "clean", method = RequestMethod.POST)
+    public ReturnValue cleanCartProducts() {
 
         return new ReturnValue(200, "删除成功");
     }

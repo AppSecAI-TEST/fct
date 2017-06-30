@@ -1,0 +1,19 @@
+lts:
+  jobclient:
+    cluster-name: fct
+    registry-address: zookeeper://127.0.0.1:2181
+    node-group: fct_node
+    tasknodegroup: fct_tasktracker
+    dataPath: /usr/src/lts/failstore
+    use-retry-client: true
+    configs:
+      job:
+        fail:
+          store: leveldb
+
+
+mysql:
+  connection:
+    url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: admin
+    password: admin

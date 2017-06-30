@@ -1,0 +1,59 @@
+server:
+  port: 3791
+  contextPath: /vaccine-tasktracker
+  tomcat:
+    uri-encoding: UTF-8
+
+
+lts:
+  tasktracker:
+     cluster-name: vaccine_cluster
+     registry-address: zookeeper://zookeeper.wdjky.me:9062
+     node-group: vaccine_tasktracker
+     dataPath: /usr/src/lts/failstore
+     dispatch-runner:
+      enable: true
+      shard-value: vaccinejobType
+     configs:
+      job:
+       fail:
+        store: leveldb
+
+mysql:
+  connection:
+    url: jdbc:mysql://mysql-m.wdjky.me:9034/vaccine_server_core?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: healthcloud
+    password: healthcloud123456
+
+redis:
+  host:
+    url: redis.wdjky.me
+    port: 9005
+    test:
+      onborrow: true
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+mongo:
+  host:
+    port: 9023
+    url: mongo-m.wdjky.me
+    db: easemob
+    collectionName: sms_log
+
+vaccine:
+  sms:
+    url: http://121.40.152.72:8180/webservice/http/service
+    cid: 8000159
+    uid: admin
+    pwd: 20160517
+
+push:
+  gexin:
+    host: http://sdk.open.api.igexin.com/apiex.htm
+    AppID: MlJlonSwAo5xBm8YuIkww7
+    AppSecret: 2WZH2RIsT68ZIYITVMtKv3
+    AppKey: 8kGYVDGFYe9tXN81tfw0n2
+    MasterSecret: PKSmAGlnZl60ljdUshSnT8

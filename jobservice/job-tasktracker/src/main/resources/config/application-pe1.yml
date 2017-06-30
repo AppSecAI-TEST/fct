@@ -1,0 +1,62 @@
+server:
+  port: 3791
+  contextPath: /vaccine-tasktracker
+  tomcat:
+    uri-encoding: UTF-8
+
+
+lts:
+  tasktracker:
+     cluster-name: vaccine_cluster
+     registry-address: zookeeper://zookeeper1.wdjky.com:2181,zookeeper2.wdjky.com:2181,zookeeper3.wdjky.com:2181
+     node-group: vaccine_tasktracker
+     dataPath: /usr/src/lts/failstore
+     dispatch-runner:
+      enable: true
+      shard-value: vaccinejobType
+     configs:
+      job:
+       fail:
+        store: leveldb
+
+mysql:
+  connection:
+    url: jdbc:mysql://eye-mysql-pe1.wdjky.me:5500/vaccine_server_core?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: vaccine
+    password: PassWord
+
+redis:
+  host:
+    url: redis1-pe1.wdjky.me
+    port: 9001
+    test:
+      onborrow: true
+    password: Wonders20155
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+
+vaccine:
+  sms:
+    url: http://121.40.152.72:8180/webservice/http/service
+    cid: 8000159
+    uid: admin
+    pwd: 20160517
+
+push:
+  gexin:
+    host: http://sdk.open.api.igexin.com/apiex.htm
+    AppID: TmAGBW3nam86kpQsKL5CZ1
+    AppSecret: pUGZWdVLwKA2XEcHKSkGW4
+    AppKey: vKzmKpThKj8pvle6PauyI
+    MasterSecret: 2oP2Gr963xAxpfOQyIFZa5
+
+mongo:
+  host:
+    port: 9023
+    url: mongo1-pe1.wdjky.me
+    db: message
+    collectionName: sms_log
+    username: sms_user
+    password: Sdecf90#rt

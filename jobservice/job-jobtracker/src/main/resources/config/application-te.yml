@@ -1,0 +1,24 @@
+
+lts:
+  jobtracker:
+    cluster-name: fct
+    listen-port: 35001
+    registry-address: zookeeper://127.0.0.1:2181
+    dataPath: /usr/src/lts/failstore
+    configs:
+#      job:
+        jobtracker:
+          executing:
+              job:
+                fix:
+                  deadline:
+                    seconds: 60
+                  check:
+                    interval:
+                      seconds: 60
+        logger: mysql
+        queue: mysql
+        jdbc:
+          url: jdbc:mysql://localhost:9035/vaccine_lts
+          username: admin
+          password: admin

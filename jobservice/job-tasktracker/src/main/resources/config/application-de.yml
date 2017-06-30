@@ -1,0 +1,30 @@
+server:
+  port: 5002
+  contextPath: /job-tasktracker
+  tomcat:
+    uri-encoding: UTF-8
+
+
+lts:
+  tasktracker:
+     cluster-name: fct
+     registry-address: zookeeper://127.0.0.1:2181
+     node-group: fct_tasktracker
+     dataPath: /usr/src/lts/failstore
+     dispatch-runner:
+      enable: true
+      shard-value: fc-job
+     configs:
+      lts:
+        http:
+          cmd:
+           port: 5901
+      job:
+       fail:
+        store: leveldb
+
+mysql:
+  connection:
+    url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 123456

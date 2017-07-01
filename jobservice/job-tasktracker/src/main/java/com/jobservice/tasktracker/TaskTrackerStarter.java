@@ -46,7 +46,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  *          <exclusion>
  *              <groupId>javax.jms</groupId>
  *              <artifactId>jms</artifactId>
-*           </exclusion>
+ *          </exclusion>
  *          <exclusion>
  *              <groupId>com.sun.jdmk</groupId>
  *              <artifactId>jmxtools</artifactId>

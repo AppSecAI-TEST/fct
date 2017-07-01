@@ -16,6 +16,8 @@ public class JobTask {
 
     private Date triggerTime;
 
+    private String cronExpression;
+
     public String getTaskId() {
         return taskId;
     }
@@ -46,5 +48,13 @@ public class JobTask {
 
     public void setTriggerTime(Date triggerTime) {
         this.triggerTime = triggerTime;
+    }
+
+    public String getCronExpression() {
+        return cronExpression;
+    }
+
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
     }
 }

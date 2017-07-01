@@ -28,6 +28,8 @@ public class SDKConfig {
 
 	private static String signCertPwd = "";//功能：读取配置文件获取签名证书密码
 
+	private static String signCertType = "";//签名类型：
+
 	private static String cardRequestUrl = "";  //功能：有卡交易路径;
 	private static String appRequestUrl = "";  //功能：appj交易路径;
 	private static String singleQueryUrl = ""; //功能：读取配置文件获取交易查询地址
@@ -119,6 +121,16 @@ public class SDKConfig {
 	public static void setMerId(String merId)
 	{
 		SDKConfig.merId = merId;
+	}
+
+	public static String getSignCertType()
+	{
+		return SDKConfig.signCertType;
+	}
+
+	public static void setSignCertType(String signCertType)
+	{
+		SDKConfig.signCertType = signCertType;
 	}
 
 	public static String getSignCertPath()

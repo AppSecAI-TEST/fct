@@ -11,7 +11,7 @@ public class AjaxBody {
 
     protected String message ="";
 
-    protected String function ="";
+    protected String func ="";
 
     protected String url="";
 
@@ -44,12 +44,12 @@ public class AjaxBody {
 
     public String getMessage(){return this.message;}
 
-    public void setFunction(String function)
+    public void setFunc(String func)
     {
-        this.function = function;
+        this.func = func;
     }
 
-    public String getFunction(){return this.function;}
+    public String getFunc(){return this.func;}
 
     public void setDic(Map<String,String> dic)
     {

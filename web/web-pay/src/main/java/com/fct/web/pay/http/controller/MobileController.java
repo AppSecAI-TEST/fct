@@ -4,22 +4,27 @@ import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.HttpUtils;
 import com.fct.finance.data.entity.PayOrder;
+import com.fct.finance.data.entity.RechargeRecord;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.Orders;
 import com.fct.mall.interfaces.MallService;
 import com.fct.pay.interfaces.MobilePayService;
 import com.fct.web.pay.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Date;
 
+@Controller
 @RequestMapping(value = "mobile")
 public class MobileController extends BaseController{
 
@@ -42,18 +47,23 @@ public class MobileController extends BaseController{
         tradeid = ConvertUtils.toString(tradeid);
         tradetype =ConvertUtils.toString(tradetype);
         BigDecimal payAmount =new BigDecimal(0);
+        Integer payStatus = 0;
+        Integer memberId=0;
 
         try {
             switch (tradetype) {
                 case "buy":
                     Orders orders = mallService.getOrders(tradeid);
-                    if (orders.getStatus() != 0) {
-                        return errorPage("支付业务订单状态异常");
-                    }
-                    if (orders.getMemberId() != currentUser.getMemberId()) {
-                        //出错跳转
-                        return errorPage("非法用户操作");
-                    }
+                    payStatus = orders.getStatus();
+                    payAmount = orders.getCashAmount();
+                    memberId = orders.getMemberId();
+                    break;
+                case "recharge":
+                    RechargeRecord rechargeRecord = financeService.getRechargeRecord(Integer.valueOf(tradeid));
+                    payStatus = rechargeRecord.getStatus();
+                    memberId = rechargeRecord.getMemberId();
+                    payAmount = rechargeRecord.getPayAmount();
+                    break;
             }
 
             model.addAttribute("platformList", financeService.findPayPlatform());
@@ -62,6 +72,20 @@ public class MobileController extends BaseController{
         {
             Constants.logger.error(exp.toString());
             return errorPage("系统或网络异常");
+        }
+
+        if(payStatus >1)
+        {
+            return errorPage("支付业务订单状态异常");
+        }
+        else if(payStatus ==1)
+        {
+            return "redirect:"+String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
+                    tradeid,tradetype);
+        }
+        if (memberId != currentUser.getMemberId()) {
+            //出错跳转
+            return errorPage("非法用户操作");
         }
 
         model.addAttribute("payamount", payAmount);
@@ -74,7 +98,8 @@ public class MobileController extends BaseController{
     /**
      * 支付保存
      * */
-    @RequestMapping(value = "/savepay", method = RequestMethod.POST)
+    @RequestMapping(value = "/savepay", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
     public String savePay(HttpServletRequest request,String tradeid, String tradetype, String platform,
                                                String openid) {
 
@@ -106,7 +131,7 @@ public class MobileController extends BaseController{
                     {
                         return AjaxUtil.alert("支付业务订单状态异常。");
                     }
-                    if(orders.getMemberId() != 100) {
+                    if(orders.getMemberId() != currentUser.getMemberId()) {
                         return AjaxUtil.alert("非法用户操作。");
                     }
                     orders.setPayPlatform(platform);
@@ -114,7 +139,7 @@ public class MobileController extends BaseController{
                     memberid = orders.getMemberId();
                     cellphone = orders.getCellPhone();
                     accountAmount = orders.getAccountAmount();
-                    payAmount = orders.getPayAmount();
+                    payAmount = orders.getCashAmount(); //现金应支付
                     totalAmount = orders.getTotalAmount();
                     points = orders.getPoints();
                     desc="购买"+orders.getOrderGoods().get(0).getName();
@@ -122,8 +147,26 @@ public class MobileController extends BaseController{
                     {
                         desc += "等多件";
                     }
-                    showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders;
+                    showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders.getOrderId();
                     expiredTime = orders.getExpiresTime();
+                    break;
+                case "recharge":
+                    RechargeRecord record = financeService.getRechargeRecord(Integer.valueOf(tradeid));
+                    if(record == null || record.getStatus() !=0)
+                    {
+                        return AjaxUtil.alert("支付业务订单状态异常。");
+                    }
+                    if(record.getMemberId() != currentUser.getMemberId()) {
+                        return AjaxUtil.alert("非法用户操作。");
+                    }
+                    record.setPayPlatform(platform);
+                    //保存支付方式
+                    memberid = record.getMemberId();
+                    cellphone = record.getCellPhone();
+                    payAmount = record.getPayAmount();
+                    desc="在线充值";
+                    showUrl = fctConfig.getUrl()+"/recharge";
+                    expiredTime = record.getExpiredTime();
                     break;
             }
 
@@ -139,11 +182,11 @@ public class MobileController extends BaseController{
             payOrder.setTotalAmount(totalAmount);
             payOrder.setDiscountAmount(discountAmount);
             payOrder.setPoints(points);
-            payOrder.setDesc(desc);
             payOrder.setExpiredTime(expiredTime);
             payOrder.setPayPlatform(platform);
             payOrder.setShowUrl(showUrl);
             payOrder.setCallbackUrl(callback);
+            payOrder.setDescription(desc);
 
             payOrder = financeService.createPayOrder(payOrder);
             if(payOrder == null || payOrder.getStatus() !=0)
@@ -158,11 +201,12 @@ public class MobileController extends BaseController{
                         break;*/
                     case "unionpay_fctwap":
                         payurl = mobilePayService.unionpayWap(platform,payOrder.getOrderId(),payOrder.getPayAmount(),
-                                payOrder.getDesc(),expiredTime,"","");
+                                payOrder.getDescription(),expiredTime,"","");
                         break;
+
                 case "wxpay_fctwap":
                     payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),openid,payOrder.getPayAmount(),
-                            payOrder.getDesc(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
+                            payOrder.getDescription(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
             }
         }
         catch (IllegalArgumentException exp)
@@ -187,6 +231,12 @@ public class MobileController extends BaseController{
     public String pay(String payurl,String orderid,Model model) {
         payurl = ConvertUtils.toString(payurl);
         orderid = ConvertUtils.toString(orderid);
+
+        if(StringUtils.isEmpty(payurl) || StringUtils.isEmpty(orderid))
+        {
+            return errorPage("支付参数错误，非法请求。");
+        }
+        payurl = URLDecoder.decode(payurl);
         try {
             PayOrder payOrder = financeService.getPayOrder(orderid);
             if(payOrder !=null && payOrder.getStatus()==0) {

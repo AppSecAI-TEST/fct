@@ -90,7 +90,8 @@ public class CertUtil {
 		}
 		try {
 			keyStore = getKeyInfo(SDKConfig.getSignCertPath(),
-					SDKConfig.getSignCertPwd(), SDKConfig.getSignMethod());
+					SDKConfig.getSignCertPwd(), SDKConfig
+							.getSignCertType());
 			LogUtil.writeLog("InitSignCert Successful. CertId=["
 					+ getSignCertId() + "]");
 		} catch (IOException e) {

@@ -24,9 +24,9 @@ import java.util.Map.Entry;
 
 public class LogUtil {
 
-	private final static Logger GATELOG = LoggerFactory.getLogger("ACP_SDK_LOG");
-	private final static Logger GATELOG_ERROR = LoggerFactory.getLogger("SDK_ERR_LOG");
-	private final static Logger GATELOG_MESSAGE = LoggerFactory.getLogger("SDK_MSG_LOG");
+	private final static Logger GATELOG = LoggerFactory.getLogger("gate");
+	private final static Logger GATELOG_ERROR = LoggerFactory.getLogger("ex");
+	private final static Logger GATELOG_MESSAGE = LoggerFactory.getLogger("info");
 
 	final static String LOG_STRING_REQ_MSG_BEGIN = "============================== SDK REQ MSG BEGIN ==============================";
 	final static String LOG_STRING_REQ_MSG_END = "==============================  SDK REQ MSG END  ==============================";

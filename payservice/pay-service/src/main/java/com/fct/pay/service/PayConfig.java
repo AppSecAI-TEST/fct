@@ -1,6 +1,7 @@
 package com.fct.pay.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 /**
  * Created by jon on 2017/4/22.
  */
+
+@Service
 @ConfigurationProperties(prefix="pay") //application.yml中的pay下的属性
 public class PayConfig {
 

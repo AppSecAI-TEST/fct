@@ -1,8 +1,6 @@
 package com.fct.finance.service.business;
 
-import com.fct.core.exceptions.BaseException;
 import com.fct.core.json.JsonConverter;
-import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.core.utils.StringHelper;
 import com.fct.finance.data.entity.MemberAccount;
@@ -25,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by jon on 2017/4/10.
@@ -72,9 +69,11 @@ public class PayOrderManager  {
                 throw new IllegalArgumentException("支付请求异常。");
             }
             exitOrder.setPayPlatform(pay.getPayPlatform());
-            payOrderRepository.saveAndFlush(exitOrder);
-            return pay;
+            payOrderRepository.save(exitOrder);
+            return exitOrder;
         }
+        pay.setRefundAmount(new BigDecimal(0));
+        pay.setRefundPoints(0);
         pay.setStatus(Constants.enumPayStatus.waitpay.getValue());
         pay.setCreateTime(new Date());
         pay.setOrderId(StringHelper.generateOrderId());
@@ -118,7 +117,7 @@ public class PayOrderManager  {
             history.setBalanceAmount(account.getAvailableAmount());
             history.setPoints(pay.getPoints());
             history.setBalancePoints(account.getPoints());
-            history.setRemark(pay.getDesc());
+            history.setRemark(pay.getDescription());
             history.setCreateTime(new Date());
             history.setBehaviorType(0); //支出
 
@@ -312,7 +311,7 @@ public class PayOrderManager  {
                 history.setBalanceAmount(account.getAvailableAmount());
                 history.setPoints(pay.getPoints());
                 history.setBalancePoints(account.getPoints());
-                history.setRemark(pay.getDesc());
+                history.setRemark(pay.getDescription());
                 history.setCreateTime(new Date());
                 history.setBehaviorType(0); //支出
 

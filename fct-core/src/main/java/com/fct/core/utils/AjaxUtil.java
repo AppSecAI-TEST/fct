@@ -47,7 +47,7 @@ public class AjaxUtil {
     /// </summary>
     public static String eval(String function)
     {
-        return respondJson("function", function, "",function, null);
+        return respondJson("function", "", "",function, null);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class AjaxUtil {
             body.setMessage(message);
         }
         if (!StringUtils.isEmpty(function)) {
-            body.setFunction(function);
+            body.setFunc(function);
         }
         if (error != null && error.size() > 0) {
             body.setDic(error);

@@ -3,7 +3,7 @@ package com.fct.pay.service;
 import com.fct.pay.interfaces.MobilePayService;
 import com.fct.pay.interfaces.PayNotify;
 import com.fct.pay.service.unionpay.UnionPayManager;
-import com.fct.pay.service.wxpay.WXPay;
+import com.fct.pay.service.wxpay.WxpayManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class MobilePayServiceImpl implements MobilePayService {
 
     @Autowired
-    private WXPay wxPay;
+    private WxpayManager wxpayManager;
 
     @Autowired
     private UnionPayManager unionPayManager;
@@ -32,7 +32,7 @@ public class MobilePayServiceImpl implements MobilePayService {
             payment = "wxpay_fctwap";
         }
         try {
-            return wxPay.requestUnifiedOrderService(payment,payOrderNo, openId, total_fee, body,notifyUrl,
+            return wxpayManager.requestUnifiedOrderService(payment,payOrderNo, openId, total_fee, body,notifyUrl,
                     userIp, expireTime);
         }
         catch (Exception exp)
@@ -44,7 +44,7 @@ public class MobilePayServiceImpl implements MobilePayService {
 
     public PayNotify wxpayNotify(Map<String, String> mapParam, String xmlContent)
     {
-        return wxPay.payNotify(mapParam,xmlContent);
+        return wxpayManager.payNotify(mapParam,xmlContent);
     }
 
     public String wxpayApp(String payment,String payOrderNo, BigDecimal total_fee, String body,
@@ -55,7 +55,7 @@ public class MobilePayServiceImpl implements MobilePayService {
             payment = "wxpay_fctapp";
         }
         try {
-            return wxPay.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
+            return wxpayManager.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
         }
         catch (Exception exp)
         {
@@ -72,7 +72,7 @@ public class MobilePayServiceImpl implements MobilePayService {
             payment = "wxpay_fctwap";
         }
         try {
-            return wxPay.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
+            return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
         }
         catch (Exception exp)
         {
@@ -89,7 +89,7 @@ public class MobilePayServiceImpl implements MobilePayService {
             payment = "wxpay_fctapp";
         }
         try {
-            return wxPay.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
+            return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
         }
         catch (Exception exp)
         {

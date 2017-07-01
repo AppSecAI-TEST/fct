@@ -3,6 +3,7 @@ package com.fct.pay.service.unionpay;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.DateUtils;
 import com.fct.pay.interfaces.PayNotify;
+import com.fct.pay.service.Constants;
 import com.fct.pay.service.PayConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,16 @@ public class UnionPayManager {
         SDKConfig.setMerId(config.get("meriId"));
         SDKConfig.setFrontTransUrl(config.get("frontTransUrl"));
         SDKConfig.setBackTransUrl(config.get("backTransUrl"));
-        SDKConfig.setSignCertPath(config.get("signCert_path"));
-        SDKConfig.setSignCertPwd(config.get("signCert_pwd"));
-        SDKConfig.setValidateCertDir(config.get("validateCert_dir"));
+        SDKConfig.setEncryptCertPath(config.get("encryptCert_path"));
+        SDKConfig.setSignCertPath(Constants.getProjectPath()+config.get("signCert_path"));
+        //SDKConfig.setSignCertPwd(config.get("signCert_pwd"));
+        SDKConfig.setSignCertPwd("000000");
+        SDKConfig.setValidateCertDir(Constants.getProjectPath()+config.get("validateCert_dir"));
         SDKConfig.setBackUrl(config.get("backUrl"));
         SDKConfig.setFrontUrl(config.get("frontUrl"));
         SDKConfig.setRefundBackUrl(config.get("refund_backUrl"));
+        SDKConfig.setSingleMode("true");
+        SDKConfig.setSignCertType("PKCS12");    //签名证书类型，固定不需要修改
     }
 
     public String createWapPayUrl(String payment,String orderId, BigDecimal payAmount, String desc, Date expireTime,
@@ -74,13 +79,13 @@ public class UnionPayManager {
         Map<String, String> param = new HashMap<String, String>();
         param.put("version",SDKConfig.getVersion());
         param.put("encoding",SDKConfig.getEncoding());
-        param.put("certId",CertUtil.getSignCertId()); //证书ID
+        //param.put("certId",CertUtil.getSignCertId()); //证书ID
 
         param.put("txnType","01");  //交易类型
         param.put("txnSubType","01");   //交易子类
         param.put("bizType",SDKConfig.getBizType());
         param.put("signMethod",SDKConfig.getSignMethod());
-        param.put("channelType","08");//渠道类型
+        param.put("channelType","08");//渠道类型，这个字段区分B2C网关支付和手机wap支付；07：PC,平板  08：手机
         param.put("accessType",SDKConfig.getAccessType());
         param.put("frontUrl", StringUtils.isEmpty(callbackUrl) ?  SDKConfig.getFrontUrl() : callbackUrl);//前台通知地址
         param.put("backUrl",StringUtils.isEmpty(notifyUrl) ? SDKConfig.getBackUrl() : notifyUrl);   //后台通知地址
@@ -93,53 +98,17 @@ public class UnionPayManager {
 
         //TODO 其他特殊用法请查看 pages/api_01_gateway/special_use_purchase.htm
 
-        /*
-        ///**请求参数设置完毕，以下对请求参数进行签名并发送http post请求，接收同步应答报文
-        Map<String, String> reqData  = AcpService.sign(param,SDKConfig.getEncoding());//报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
-        String reqUrl = SDKConfig.getBackTransUrl();//交易请求url从配置文件读取对应属性文件acp_sdk.properties中的 acpsdk.backTransUrl
+        /**请求参数设置完毕，以下对请求参数进行签名并生成html表单，将表单写入浏览器跳转打开银联页面**/
+        Map<String, String> submitFromData = AcpService.sign(param,SDKConfig.getEncoding());  //报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
 
+        //获取请求银联的前台地址：对应属性文件acp_sdk.properties文件中的acpsdk.frontTransUrl
+        /*String html = AcpService.createAutoFormHtml(SDKConfig.getFrontUrl(), submitFromData,SDKConfig.getEncoding());   //生成自动跳转的Html表单
 
-        Map<String,String> rspData = AcpService.post(reqData,reqUrl,SDKConfig.getEncoding());//发送请求报文并接受同步应答（默认连接超时时间30秒，读取返回结果超时时间30秒）;这里调用signData之后，调用submitUrl之前不能对submitFromData中的键值对做任何修改，如果修改会导致验签不通过
+        LogUtil.writeLog("打印请求HTML，此为请求报文，为联调排查问题的依据："+html);*/
+        //将生成的html写到浏览器中完成自动跳转打开银联支付页面；这里调用signData之后，将html写到浏览器跳转到银联页面之前均不能对html中的表单项的名称和值进行修改，如果修改会导致验签不通过
+        //SDKUtil.sign(param,SDKConfig.getEncoding());
 
-        //对应答码的处理，请根据您的业务逻辑来编写程序,以下应答码处理逻辑仅供参考------------->
-
-        //应答码规范参考open.unionpay.com帮助中心 下载  产品接口规范  《平台接入接口规范-第5部分-附录》
-        if(!rspData.isEmpty()){
-            if(AcpService.validate(rspData, SDKConfig.getEncoding())){
-                LogUtil.writeLog("验证签名成功");
-                String respCode = rspData.get("respCode");
-                if("00".equals(respCode)){
-                    //交易已受理(不代表交易已成功），等待接收后台通知确定交易成功，也可以主动发起 查询交易确定交易状态。
-                    //TODO
-                    System.out.println("respCode = 00");
-                }else if("03".equals(respCode) ||
-                        "04".equals(respCode) ||
-                        "05".equals(respCode)){
-                    //后续需发起交易状态查询交易确定交易状态。
-                    //TODO
-                }else{
-                    //其他应答码为失败请排查原因
-                    //TODO
-                }
-            }else{
-                LogUtil.writeErrorLog("验证签名失败");
-                //TODO 检查验证签名失败的原因
-            }
-        }else{
-            //未返回正确的http状态
-            LogUtil.writeErrorLog("未获取到返回报文或返回http状态码非200");
-        }
-
-        String reqMessage = SDKUtil.genHtmlResult(reqData);
-        String rspMessage = SDKUtil.genHtmlResult(rspData);
-
-        LogUtil.writeMessage("</br>请求报文:<br/>"+reqMessage+"<br/>" + "应答报文:</br>"+rspMessage+"");
-
-        return reqMessage;*/
-
-        SDKUtil.sign(param,SDKConfig.getEncoding());
-
-        String url = SDKConfig.getFrontTransUrl() + SDKUtil.createLinkString(param, false,true);
+        String url = SDKConfig.getFrontTransUrl() + SDKUtil.createLinkString(submitFromData, false,true);
 
         LogUtil.writeMessage("unionpay_mobile_url:" + url);
         return url;
@@ -164,6 +133,9 @@ public class UnionPayManager {
 
         String unionPaySign = map.get("signature");
 
+        String payment = "unionpay_fctwap";
+        initSDKConfiguration(payment);
+
         LogUtil.writeMessage("银联无线支付传输过来的参数值:" + JsonConverter.toJson(map));
 
         // 返回报文中不包含UPOG,表示Server端正确接收交易请求,则需要验证Server端返回报文的签名
@@ -175,7 +147,7 @@ public class UnionPayManager {
             notify.setHasError(false);
             notify.setPayOrderNo(map.get("orderId"));
             notify.setExtandProperties(map);
-            notify.setPayPlatform("unionpay_fctwap");
+            notify.setPayPlatform(payment);
 
             LogUtil.writeMessage("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
         }
@@ -201,8 +173,8 @@ public class UnionPayManager {
             notify.setHasError(true);
             return notify;
         }
-
-        initSDKConfiguration("unionpay_fctwap");
+        String payment = "unionpay_fctwap";
+        initSDKConfiguration(payment);
 
         String unionPaySign = map.get("signature");
 
@@ -219,7 +191,7 @@ public class UnionPayManager {
             notify.setHasError(false);
             notify.setPayOrderNo(map.get("orderId"));
             notify.setExtandProperties(map);
-            notify.setPayPlatform("unionpay_fctwap");
+            notify.setPayPlatform(payment);
 
             LogUtil.writeMessage("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
         }
@@ -427,7 +399,8 @@ public class UnionPayManager {
 
         notify.setHasError(true);
 
-        initSDKConfiguration("unionpay_fctwap");
+        String payment = "unionpay_fctwap";
+        initSDKConfiguration(payment);
 
         //resData = getSortMap(resData);
 
@@ -470,4 +443,24 @@ public class UnionPayManager {
 
         return notify;
     }
+
+    /***
+    /// <summary>
+    /// 获取异步通知支付平台方式
+    /// </summary>
+    /// <param name="dic"></param>
+    /// <returns></returns>**/
+    private String getNotifyPayment(Map<String,Object> dic)
+    {
+        String[] arrAppId = payConfig.getPlatform_ids().get("unionpay_merids").split("|");
+        for (int i = 0; i < arrAppId.length; i++)
+        {
+            if (arrAppId[i].contains(dic.get("merid").toString()))
+            {
+                return arrAppId[i].split("#")[0];
+            }
+        }
+        return "";
+    }
+
 }

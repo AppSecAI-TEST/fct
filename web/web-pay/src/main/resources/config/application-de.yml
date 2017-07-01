@@ -43,6 +43,6 @@ spring:
 fct:
   domain:
     url: http://www.fangcun.com
-    imageurl: http://img.fctcdn.com
-    staticurl: http://static.fctcdn.com
+    imageurl: http://img.fccdn.cn
+    staticurl:
     payurl: http://pay.fangcun.com

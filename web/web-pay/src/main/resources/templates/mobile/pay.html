@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>方寸堂-支付跳转中...</title>
+</head>
+<body>
+
+<script type="text/javascript" th:if="${platform eq 'wxpay_fctwap'}">
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.invoke('getBrandWCPayRequest',[[${payurl}]],function (res) {
+            // 返回 res.err_msg,取值
+            // get_brand_wcpay_request:cancel  用户取消
+            // get_brand_wcpay_request:fail 发送失败
+            // get_brand_wcpay_request:ok 发送成功
+            if(res.err_msg == 'get_brand_wcpay_request:ok') {
+                window.location.href = "http://pay.fangcuntang.com/mobile/wxpay/callback?orderid=[[${orderid}]]";
+            } else if(res.err_msg == 'get_brand_wcpay_request:fail'){
+                alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
+            }else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                alert("用户取消支付!");
+                history.go(-1);
+            }else{
+                history.go(-1);
+            }
+        });
+    }, false);
+</script>
+
+<th:block th:if="${platform eq 'unionpay_fctwap'}">
+    <form id="pay_form" th:action="${payurl}" method="post">
+
+    </form>
+    <script>
+        document.getElementById("pay_form").submit();
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -297,6 +297,33 @@ public class SDKUtil {
 	{
 		StringBuilder sb = new StringBuilder();
 
+
+		if (null != para && 0 != para.size()) {
+			Set<Entry<String, String>> set = para.entrySet();
+			Iterator<Entry<String, String>> it = set.iterator();
+			while (it.hasNext()) {
+				Entry<String, String> ey = it.next();
+				String key = ey.getKey();
+				String value = ey.getValue();
+				try
+				{
+					value = URLEncoder.encode(value);
+				}
+				catch (Exception ex)
+				{
+					//LogError(ex);
+					return "#ERROR: HttpUtility.UrlEncode Error!" + ex.getMessage();
+				}
+				if(!StringUtils.isEmpty(sb.toString()))
+				{
+					sb.append("&");
+				}
+				sb.append(key).append("=").append(value);
+			}
+		}
+		/*
+
+
 		Set<String> keyset = para.keySet();
 		for(String key:keyset){
 			String value = para.get(key);
@@ -311,14 +338,13 @@ public class SDKUtil {
 					//LogError(ex);
 					return "#ERROR: HttpUtility.UrlEncode Error!" + ex.getMessage();
 				}
-
-				if(!StringUtils.isEmpty(sb.toString()))
-				{
-					sb.append("&");
-				}
 			}
-				sb.append(key).append("=").append(value);
-		}
+			if(!StringUtils.isEmpty(sb.toString()))
+			{
+				sb.append("&");
+			}
+			sb.append(key).append("=").append(value);
+		}*/
 		return sb.toString();
 	}
 

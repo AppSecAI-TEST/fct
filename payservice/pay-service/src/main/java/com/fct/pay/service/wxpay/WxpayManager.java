@@ -20,6 +20,7 @@ import com.fct.pay.service.wxpay.protocol.unifiedorder.UnifiedOrderReqData;
 import com.fct.pay.service.wxpay.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * SDK总入口
  */
-public class WXPay {
+@Service
+public class WxpayManager {
 
     @Autowired
     private PayConfig payConfig;
@@ -69,7 +71,7 @@ public class WXPay {
         Configure.setAppID(config.get("appid"));
         Configure.setMchID(config.get("mchid"));
         Configure.setSubMchID("");
-        Configure.setCertLocalPath(config.get("cert_path"));
+        Configure.setCertLocalPath(Constants.getProjectPath() + config.get("cert_path")); //"cert\\wxpayapp\\1442883002_cert.p12";
         Configure.setCertPassword(config.get("cert_password"));
         Configure.setNotifyUrl(config.get("notifyurl"));
         Configure.setIp(userip);
@@ -404,7 +406,7 @@ public class WXPay {
         {
             if (arrAppId[i].contains(dic.get("appid").toString()))
             {
-                return arrAppId[i].split("#")[1];
+                return arrAppId[i].split("#")[0];
             }
         }
         return "";

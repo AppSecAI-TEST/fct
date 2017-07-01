@@ -43,7 +43,7 @@ public class PayOrder implements Serializable {
     /// <summary>
     /// 备注
     /// </summary>
-    private  String Desc;
+    private  String Description;
 
     /// <summary>
     /// 使用帐户支付的金额

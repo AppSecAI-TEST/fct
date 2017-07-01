@@ -4,7 +4,6 @@ import com.fct.core.utils.CookieUtil;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.web.pay.config.FctConfig;
 import com.fct.web.pay.http.cache.CacheMemberManager;
-import com.fct.web.pay.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -32,10 +31,12 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        //initUser(request,response);
 
-        //currentUser = new SysUserLogin();
+        currentUser = new MemberLogin();
+        currentUser.setMemberId(1);
 
+        model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);
     }
 

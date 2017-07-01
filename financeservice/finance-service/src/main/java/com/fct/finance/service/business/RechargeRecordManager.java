@@ -1,6 +1,7 @@
 package com.fct.finance.service.business;
 
 import com.fct.core.converter.DateFormatter;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
@@ -47,14 +48,19 @@ public class RechargeRecordManager {
         {
             throw new IllegalArgumentException("手机号为空。");
         }
-        if(record.getAmount().doubleValue()<=0)
+        /*if(record.getAmount().doubleValue()<=0)
         {
             throw new IllegalArgumentException("充值金额不合法。");
-        }
+        }*/
         if(record.getPayAmount().doubleValue()<=0)
         {
             throw new IllegalArgumentException("应付金额不合法。");
         }
+        if(record.getGiftAmount().doubleValue()<=0) {
+            record.setGiftAmount(new BigDecimal(0));
+        }
+        record.setStatus(0);
+        record.setAmount(record.getPayAmount().add(record.getGiftAmount()));
         record.setCreateTime(new Date());
 
         rechargeRecordRepository.save(record);
@@ -97,7 +103,7 @@ public class RechargeRecordManager {
         RechargeRecord record = rechargeRecordRepository.findOne(id);
         record.setPayOrderId(payOrderId);
         record.setPayPlatform(payPlatform);
-        record.setPayTime(DateFormatter.parseDateTime(payTime));
+        record.setPayTime(DateUtils.parseString(payTime));
         if(payStatus =="200") {
             record.setStatus(1);    //充值成功
             addAccountAmount(record.getMemberId(),record.getCellPhone(),record.getAmount(),

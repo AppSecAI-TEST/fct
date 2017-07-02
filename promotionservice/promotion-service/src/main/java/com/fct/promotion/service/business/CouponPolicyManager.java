@@ -7,6 +7,7 @@ import com.fct.promotion.data.entity.CouponOperateLog;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.repository.CouponPolicyRepository;
 import com.fct.promotion.interfaces.PageResponse;
+import com.fct.promotion.service.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +29,9 @@ public class CouponPolicyManager {
 
     @Autowired
     private CouponOperateLogManager couponOperateLogManager;
+
+    @Autowired
+    private CouponCodeManager couponCodeManager;
 
     @Autowired
     private JdbcTemplate jt;
@@ -176,7 +180,10 @@ public class CouponPolicyManager {
 
     public List<CouponPolicy> findByCanReceive()
     {
-        return couponPolicyRepository.findByCanReceive(new Date().toString());
+        String sql = String.format("select * from CouponPolicy where AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s' order by Id desc limit 20",
+                DateUtils.format(new Date()));
+
+        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<CouponPolicy>(CouponPolicy.class));
     }
 
     void addReceiveCount(Integer policyId)
@@ -292,6 +299,41 @@ public class CouponPolicyManager {
                     }
                 }
             }
+        }
+    }
+
+
+    /**
+     * 系统发放优惠码生成服务
+     * **/
+    public void task()
+    {
+        try
+        {
+            List<CouponPolicy> lst = findNeedGenerate();
+            if (lst == null)
+            {
+                return;
+            }
+            for (CouponPolicy policy:lst
+                 ) {
+                Integer count = couponCodeManager.getSendCount(policy.getId(),0);
+                int remainCount = policy.getTotalCount() - count;
+                if (remainCount < 1)
+                {
+                    updateGenerateStatus(policy.getId());
+                    continue;
+                }
+                //插入系统发放券码
+                for (int i = 0; i < remainCount; i++)
+                {
+                    couponCodeManager.receiveForSystem(policy.getId());
+                }
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
         }
     }
 }

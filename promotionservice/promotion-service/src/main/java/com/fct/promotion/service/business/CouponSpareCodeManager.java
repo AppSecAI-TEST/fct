@@ -2,9 +2,11 @@ package com.fct.promotion.service.business;
 
 import com.fct.promotion.data.entity.CouponSpareCode;
 import com.fct.promotion.data.repository.CouponSpareCodeRepository;
+import com.fct.promotion.service.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 
 /**
@@ -54,5 +56,51 @@ public class CouponSpareCodeManager {
     {
         return couponSpareCodeRepository.getCount();
 
+    }
+
+
+    private Integer getNewCode()
+    {
+        return (int) ((Math.random()*9+1)*10000);
+    }
+
+
+    int limitCount = 100000;
+
+    //优惠券空闲编码生成服务
+    public void task()
+    {
+        try
+        {
+            int currentSpareCodeCount = getCount();
+            if (currentSpareCodeCount >= limitCount)
+            {
+                return;
+            }
+            int count = Math.min(10000, limitCount - currentSpareCodeCount);
+            int i = 0;
+            while (i < count)
+            {
+                String code = getNewCode().toString();
+                try
+                {
+                    //数据库唯一键约束保证券码不重复
+                    addCode(code);
+                }
+                catch (Exception exp)
+                {
+                    Constants.logger.info("插入空闲券码出错：" + exp.toString());
+                }
+                i++;
+                if (i % 100 == 0)
+                {
+                    Thread.sleep(3000);
+                }
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 }

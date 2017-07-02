@@ -200,8 +200,17 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
         return rechargeRecordManager.findById(id);
     }
 
+    public void rechargeExpiredTask()
+    {
+        rechargeRecordManager.handleExpired();
+    }
 
-    public void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime,String payStatus)
+    public void updateRechargePayPlatform(Integer id,String payPlatform)
+    {
+        rechargeRecordManager.updatePayPlatform(id,payPlatform);
+    }
+
+    public void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, Integer payStatus)
     {
         rechargeRecordManager.paySuccess(id,payOrderId,payPlatform,payTime,payStatus);
     }

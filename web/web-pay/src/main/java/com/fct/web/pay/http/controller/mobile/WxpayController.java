@@ -39,7 +39,7 @@ public class WxpayController {
         String responData = "";
         try
         {
-            Map<String, String> dicParam = Constants.getAllRequestParam(request);
+            Map<String, String> dicParam = Constants.getAllRequestParam(request,true);
 
             if (request.getInputStream() != null)
             {

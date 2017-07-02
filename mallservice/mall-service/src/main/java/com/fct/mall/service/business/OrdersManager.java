@@ -526,6 +526,14 @@ public class OrdersManager {
         }
     }
 
+    public void updatePayPlatform(String orderId,String platform) {
+
+        Orders orders = ordersRepository.findOne(orderId);
+        orders.setPayPlatform(platform);
+        orders.setUpdateTime(new Date());
+        ordersRepository.save(orders);
+    }
+
     //设置为已取消
     public void cancel(String orderId,Integer memberId,Integer operatorId)
     {
@@ -756,5 +764,14 @@ public class OrdersManager {
         result.setTrade_status(tradeState); //200:success,1000:fail
         result.setDesc("");
         messageService.send("mq_paytrade","MQPayTrade","com.fct.mallservice",JsonConverter.toJson(result),"购买商品订单处理结果");
+    }
+
+    public void handleExpire()
+    {
+        String nowTime = DateUtils.format(new Date());
+        String sql = String.format("UPDATE Orders set status = %d,updateTime='%s' WHERE status=0 AND expiresTime<'%s'",
+                Constants.enumOrderStatus.close.getValue(),nowTime,nowTime);
+
+        jt.update(sql);
     }
 }

@@ -42,7 +42,7 @@ spring:
     mode: HTML5
 fct:
   domain:
-    url: http://www.fangcun.com
-    imageurl: http://img.fccdn.cn
+    url: http://test.fangcun.com
+    imageurl: http://img.fangcun.com
     staticurl:
-    payurl: http://pay.fangcun.com
+    payurl: http://test.pay.fangcun.com

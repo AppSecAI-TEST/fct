@@ -11,11 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by ningyang on 2017/7/1.
- */
 @Component
-public class CronJob implements InitializingBean{
+public class CouponSpareCodeCron implements InitializingBean {
 
     @Autowired
     private JobHandler jobHandler;
@@ -24,10 +21,10 @@ public class CronJob implements InitializingBean{
     public void afterPropertiesSet() throws Exception {
         JobTask jobTask = new JobTask();
         Map<String, Object> params = new HashMap<>();
-        params.putIfAbsent(ShardConstant.SHARD_VALUE, "PAYMENT");
+        params.putIfAbsent(ShardConstant.SHARD_VALUE, "couponSpareCodeCron");
         jobTask.setParams(params);
         jobTask.setTaskId(UUID.randomUUID().toString());
-        jobTask.setCronExpression("0 10 11 * * ?");
+        jobTask.setCronExpression("0 */10 * * * ?");    //每隔10分钟执行一次
         jobHandler.raiseJob(jobTask);
     }
 }

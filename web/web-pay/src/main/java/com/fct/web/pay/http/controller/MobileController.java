@@ -2,6 +2,7 @@ package com.fct.web.pay.http.controller;
 
 import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.HttpUtils;
 import com.fct.finance.data.entity.PayOrder;
 import com.fct.finance.data.entity.RechargeRecord;
@@ -57,12 +58,14 @@ public class MobileController extends BaseController{
                     payStatus = orders.getStatus();
                     payAmount = orders.getCashAmount();
                     memberId = orders.getMemberId();
+
                     break;
                 case "recharge":
                     RechargeRecord rechargeRecord = financeService.getRechargeRecord(Integer.valueOf(tradeid));
                     payStatus = rechargeRecord.getStatus();
                     memberId = rechargeRecord.getMemberId();
                     payAmount = rechargeRecord.getPayAmount();
+
                     break;
             }
 
@@ -134,8 +137,14 @@ public class MobileController extends BaseController{
                     if(orders.getMemberId() != currentUser.getMemberId()) {
                         return AjaxUtil.alert("非法用户操作。");
                     }
+                    if(DateUtils.compareDate(orders.getExpiresTime(),new Date())<=0)
+                    {
+                        return AjaxUtil.alert("订单已过期。");
+                    }
                     orders.setPayPlatform(platform);
                     //保存支付方式
+                    mallService.updateOrderPayPlatform(orders.getOrderId(),platform);
+
                     memberid = orders.getMemberId();
                     cellphone = orders.getCellPhone();
                     accountAmount = orders.getAccountAmount();
@@ -148,7 +157,8 @@ public class MobileController extends BaseController{
                         desc += "等多件";
                     }
                     showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders.getOrderId();
-                    expiredTime = orders.getExpiresTime();
+                    //为业务特殊需求（延期过期时间）特将支付系统的过期时间再追加1天
+                    expiredTime = DateUtils.addDay(orders.getExpiresTime(),1);
                     break;
                 case "recharge":
                     RechargeRecord record = financeService.getRechargeRecord(Integer.valueOf(tradeid));
@@ -159,8 +169,14 @@ public class MobileController extends BaseController{
                     if(record.getMemberId() != currentUser.getMemberId()) {
                         return AjaxUtil.alert("非法用户操作。");
                     }
+                    if(DateUtils.compareDate(record.getExpiredTime(),new Date())<=0)
+                    {
+                        return AjaxUtil.alert("订单已过期。");
+                    }
                     record.setPayPlatform(platform);
                     //保存支付方式
+                    financeService.updateRechargePayPlatform(record.getId(),platform);
+
                     memberid = record.getMemberId();
                     cellphone = record.getCellPhone();
                     payAmount = record.getPayAmount();

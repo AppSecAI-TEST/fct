@@ -1,6 +1,7 @@
 package com.fct.finance.service.business;
 
 import com.fct.core.json.JsonConverter;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.core.utils.StringHelper;
 import com.fct.finance.data.entity.MemberAccount;
@@ -67,6 +68,10 @@ public class PayOrderManager  {
             if (exitOrder.getStatus() != Constants.enumPayStatus.waitpay.getValue())
             {
                 throw new IllegalArgumentException("支付请求异常。");
+            }
+            if(DateUtils.compareDate(exitOrder.getExpiredTime(),new Date())<0)
+            {
+                throw new IllegalArgumentException("支付时间已过。");
             }
             exitOrder.setPayPlatform(pay.getPayPlatform());
             payOrderRepository.save(exitOrder);
@@ -358,8 +363,7 @@ public class PayOrderManager  {
 
         if(pay ==null || pay.getStatus() == Constants.enumPayStatus.fullrefund.getValue())
         {
-            Constants.logger.warn("pay_tradehandle: data is illegal");
-            return;
+            throw new IllegalArgumentException("pay_tradehandle: data is illegal");
         }
 
         //交易完成,并却业务类型为消费
@@ -386,7 +390,6 @@ public class PayOrderManager  {
             history.setBehaviorType(1); //收入
             memberAccountHistoryManager.Create(history);
 
-            return;
         }
 
         //业务异常，发起退款请求,销售订单会有多个商品存在且多条退款记录

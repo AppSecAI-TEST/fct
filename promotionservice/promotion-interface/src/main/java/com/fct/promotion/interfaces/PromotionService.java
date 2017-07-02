@@ -63,4 +63,11 @@ public interface PromotionService {
                                    String couponCode);
 
     DiscountCouponDTO getPromotion(Integer memberId,List<OrderProductDTO> products,String couponCode);
+
+    void couponCodeExpirseTask();
+
+    void generateSpareCodeTask();
+
+    void generateCouponCodeForSystemTask();
+
 }

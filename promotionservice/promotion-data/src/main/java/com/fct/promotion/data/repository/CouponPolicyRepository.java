@@ -15,9 +15,6 @@ import java.util.List;
  */
 public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Integer> {
 
-    @Query(nativeQuery = true, value = "select * from CouponPolicy where AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'?1' order by Id desc limit 20")
-    List<CouponPolicy> findByCanReceive(String datetime);
-
     @Modifying
     @Query(nativeQuery = true, value = "update CouponPolicy set ReceivedCount+=1 where Id=?1")
     void addReceiveCount(Integer policyId);

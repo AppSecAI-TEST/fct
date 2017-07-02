@@ -85,7 +85,7 @@ public class UnionPayManager {
         param.put("txnSubType","01");   //交易子类
         param.put("bizType",SDKConfig.getBizType());
         param.put("signMethod",SDKConfig.getSignMethod());
-        param.put("channelType","08");//渠道类型，这个字段区分B2C网关支付和手机wap支付；07：PC,平板  08：手机
+        param.put("channelType","07");//渠道类型，这个字段区分B2C网关支付和手机wap支付；07：PC,平板  08：手机
         param.put("accessType",SDKConfig.getAccessType());
         param.put("frontUrl", StringUtils.isEmpty(callbackUrl) ?  SDKConfig.getFrontUrl() : callbackUrl);//前台通知地址
         param.put("backUrl",StringUtils.isEmpty(notifyUrl) ? SDKConfig.getBackUrl() : notifyUrl);   //后台通知地址
@@ -129,7 +129,7 @@ public class UnionPayManager {
             return notify;
         }
 
-        map = getSortMap(map);
+        //map = getSortMap(map);
 
         String unionPaySign = map.get("signature");
 
@@ -241,7 +241,7 @@ public class UnionPayManager {
         Map<String, String> param = new HashMap<String, String>();
         param.put("version",SDKConfig.getVersion());
         param.put("encoding",SDKConfig.getEncoding());
-        param.put("certId",CertUtil.getSignCertId()); //证书ID
+        //param.put("certId",CertUtil.getSignCertId()); //证书ID
 
         param.put("txnType","04");  //交易类型
         param.put("txnSubType","00");   //交易子类
@@ -401,8 +401,6 @@ public class UnionPayManager {
 
         String payment = "unionpay_fctwap";
         initSDKConfiguration(payment);
-
-        //resData = getSortMap(resData);
 
         if (AcpService.validate(resData, SDKConfig.getEncoding()))
         {

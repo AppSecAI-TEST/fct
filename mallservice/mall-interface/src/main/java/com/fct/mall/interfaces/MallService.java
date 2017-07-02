@@ -69,6 +69,10 @@ public interface MallService {
 
     void orderDeliver(String orderId, String expressPlatform, String expressNo, Integer operatorId);
 
+    void updateOrderPayPlatform(String orderId,String payPlatform);
+
+    void orderExpiredTask();
+
     List<OrderGoods> findOrderGoods(String orderId);
 
     void saveOrderReciver(OrderReceiver or);

@@ -154,6 +154,16 @@ public class MallServiceImpl implements MallService {
         ordersManager.offPaySuccess(orderId, payPlatform, operatorId);
     }
 
+    public void updateOrderPayPlatform(String orderId,String payPlatform)
+    {
+        ordersManager.updatePayPlatform(orderId,payPlatform);
+    }
+
+    public void orderExpiredTask()
+    {
+        ordersManager.handleExpire();
+    }
+
     public void cancelOrders(String orderId, Integer memberId, Integer operatorId) {
         ordersManager.cancel(orderId, memberId, operatorId);
     }

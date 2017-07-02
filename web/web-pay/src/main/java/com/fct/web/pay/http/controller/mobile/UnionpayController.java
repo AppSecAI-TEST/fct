@@ -87,7 +87,7 @@ public class UnionpayController {
         String successUrl = "";
         try
         {
-            Map<String, String> dicParam = Constants.getAllRequestParam(request);
+            Map<String, String> dicParam = Constants.getAllRequestParam(request,true);
 
             if (dicParam != null && dicParam.size()>0)
             {
@@ -141,7 +141,6 @@ public class UnionpayController {
         String successUrl = "";
         try
         {
-
             //Map<String, String> dicParam = Constants.getAllRequestParam(request);
 
             if (request.getInputStream() != null)

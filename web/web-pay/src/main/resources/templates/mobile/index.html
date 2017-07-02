@@ -6,9 +6,9 @@
     <link href="//static/css/bootstrap.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/bootstrap.min.css')}" />
 </head>
 <body>
-<div>
+<div class="wrapper wrapper-content ibox-content">
 
-    <form id="submitForm">
+    <form id="submitForm" class="form-horizontal">
         <input type="hidden" name="tradeid" th:value="${tradeid}">
         <input type="hidden" name="tradetype" th:value="${tradetype}">
 

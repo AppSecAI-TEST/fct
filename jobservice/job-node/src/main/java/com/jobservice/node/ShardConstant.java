@@ -5,5 +5,5 @@ package com.jobservice.node;
  */
 public class ShardConstant {
 
-    public static final String SHARD_VALUE = "fc-job";
+    public static final String SHARD_VALUE = "fct-job";
 }

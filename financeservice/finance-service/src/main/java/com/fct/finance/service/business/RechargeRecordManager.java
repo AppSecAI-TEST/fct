@@ -60,6 +60,7 @@ public class RechargeRecordManager {
             record.setGiftAmount(new BigDecimal(0));
         }
         record.setStatus(0);
+        record.setExpiredTime(DateUtils.addDay(new Date(),2)); //2天过期
         record.setAmount(record.getPayAmount().add(record.getGiftAmount()));
         record.setCreateTime(new Date());
 
@@ -78,7 +79,7 @@ public class RechargeRecordManager {
     }
 
     @Transactional
-    public void paySuccess(Integer id, String payOrderId, String payPlatform, String payTime,String payStatus)
+    public void paySuccess(Integer id, String payOrderId, String payPlatform, String payTime,Integer payStatus)
     {
         if(id<=0)
         {
@@ -96,7 +97,7 @@ public class RechargeRecordManager {
         {
             throw new IllegalArgumentException("支付时间为空.");
         }
-        if(StringUtils.isEmpty(payStatus))
+        if(payStatus == null || payStatus<=0)
         {
             throw new IllegalArgumentException("支付状态为空");
         }
@@ -104,7 +105,7 @@ public class RechargeRecordManager {
         record.setPayOrderId(payOrderId);
         record.setPayPlatform(payPlatform);
         record.setPayTime(DateUtils.parseString(payTime));
-        if(payStatus =="200") {
+        if(payStatus == 200) {
             record.setStatus(1);    //充值成功
             addAccountAmount(record.getMemberId(),record.getCellPhone(),record.getAmount(),
                     record.getId());
@@ -225,5 +226,18 @@ public class RechargeRecordManager {
         pageResponse.setHasMore(hasmore);
 
         return pageResponse;
+    }
+
+    public void handleExpired()
+    {
+        String nowTime = DateUtils.format(new Date());
+        String sql = String.format("UPDATE Orders set status = 2 WHERE status=0 AND expiredTime<'%s'",
+                nowTime,nowTime);
+
+        jt.update(sql);
+    }
+
+    public void updatePayPlatform(Integer id,String payPlatform) {
+        rechargeRecordRepository.updatePayPlatform(payPlatform,id);
     }
 }

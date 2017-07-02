@@ -15,7 +15,7 @@ pay:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1405964802
     notifyurl:  http://pay.fangcun.com/mobile/wxpay/notify
-    cert_path:  /cert/wxpay/fctwap/1405964802_cert.p12
+    cert_path:  /usr/local/fct/cert/wxpay/fctwap/1405964802_cert.p12
     cert_password:  1405964802
     appid:  wx5b63ee784fa7fc96
     appsecret:  d70744148ac1f943f844caa175f8ee73
@@ -24,7 +24,7 @@ pay:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1442883002
     notifyurl:  http://pay.fangcun.com/mobile/wxpay/appnotify
-    cert_path:  /cert/wxpay/fctapp/1442883002_cert.p12
+    cert_path:  /usr/local/fct/cert/wxpay/fctapp/1442883002_cert.p12
     cert_password:  1442883002
     appid:  wx7c866f046dab34b8
     appsecret:  7b6d038c11400a323bbd7f7849021159
@@ -41,10 +41,10 @@ pay:
     meriId: 777290058148557
     frontTransUrl: https://gateway.test.95516.com/gateway/api/frontTransReq.do?
     backTransUrl: https://gateway.test.95516.com/gateway/api/backTransReq.do?
-    encryptCert_path:  /Users/jon/workspace/fct/payservice/cert/unionpay/fctwap/acp_test_enc.cer
-    signCert_path:  /Users/jon/workspace/fct/payservice/cert/unionpay/fctwap/700000000000001_acp.pfx
+    encryptCert_path:  /usr/local/fct/cert/unionpay/fctwap/acp_test_enc.cer
+    signCert_path:  /usr/local/fct/cert/unionpay/fctwap/700000000000001_acp.pfx
     signCert_pwd: 000000
-    validateCert_dir: /Users/jon/workspace/fct/payservice/cert/unionpay/fctwap
+    validateCert_dir: /usr/local/fct/cert/unionpay/fctwap
     backUrl:  http://pay.fangcun.com/mobile/unionpay/notify
     frontUrl: http://pay.fangcun.com/mobile/unionpay/callback
     refund_backUrl: http://pay.fangcun.com/mobile/unionpay/refundnotify

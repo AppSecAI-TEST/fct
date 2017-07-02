@@ -62,7 +62,7 @@ public class RechargeRecord implements Serializable {
     private BigDecimal payAmount;
 
     /// <summary>
-    /// 充值状态：等待充值，充值成功。充值失败。
+    /// 充值状态：等待充值，充值成功。关闭。
     /// </summary>
     private Integer status;
 

@@ -92,7 +92,11 @@ public interface FinanceService {
 
     RechargeRecord getRechargeRecord(Integer id);
 
-    void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, String payStatus);
+    void rechargeExpiredTask();
+
+    void updateRechargePayPlatform(Integer id,String payPlatform);
+
+    void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, Integer payStatus);
 
     PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
                                                     Integer status,Integer timeType,String beginTime, String endTime,

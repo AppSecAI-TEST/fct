@@ -39,6 +39,9 @@ public class PromotionServiceImpl implements PromotionService {
     @Autowired
     private DiscountProductDTOManager discountProductDTOManager;
 
+    @Autowired
+    private CouponSpareCodeManager couponSpareCodeManager;
+
     public CouponPolicy saveCouponPolicy(CouponPolicy policy) {
         return couponPolicyManager.add(policy);
     }
@@ -169,5 +172,20 @@ public class PromotionServiceImpl implements PromotionService {
     public DiscountCouponDTO getPromotion(Integer memberId, List<OrderProductDTO> products, String couponCode)
     {
         return discountProductDTOManager.getDiscountCoupon(memberId,products,couponCode);
+    }
+
+    public void couponCodeExpirseTask()
+    {
+        couponCodeManager.setStatusExpire();
+    }
+
+    public void generateSpareCodeTask()
+    {
+        couponSpareCodeManager.task();
+    }
+
+    public void generateCouponCodeForSystemTask()
+    {
+        couponPolicyManager.task();
     }
 }

@@ -128,6 +128,11 @@ public class MallServiceImpl implements MallService {
         shoppingCartManager.delete(memberId, shopId, cartId);
     }
 
+    public int getShoopingCartCount(Integer memberId)
+    {
+        return shoppingCartManager.getCount(memberId);
+    }
+
     public OrderGoodsResponse getSubmitOrderGoods(Integer memberId, List<OrderGoodsDTO> lsGoods)
     {
         return orderGoodsManager.findFinalGoods(memberId,lsGoods);

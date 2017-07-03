@@ -23,7 +23,9 @@ public interface PromotionService {
     PageResponse<CouponPolicy> findCouponPolicy(Integer typeId,Integer fetchType,Integer status, String startTime,
                                         String endTime,Integer pageIndex, Integer pageSize);
 
-    List<CouponPolicy> findCanReceiveCouponPolicy();
+    List<CouponPolicy> findCanReceiveCouponPolicy(Integer productId);
+
+    Integer getReceiveCountByProduct(Integer productId);
 
     List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds);
 

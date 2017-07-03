@@ -21,6 +21,8 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Inte
             value = "SELECT * FROM ShoppingCart WHERE MemberId=?1 And ShopId=?2")
     List<ShoppingCart> findByMemberId(Integer memberId, Integer shopId);
 
+    int countByMemberId(Integer memberId);
+
     @Modifying
     @Transactional
     @Query(nativeQuery = true,

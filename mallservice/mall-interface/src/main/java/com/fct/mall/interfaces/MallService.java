@@ -52,6 +52,8 @@ public interface MallService {
 
     void deleteShoppingCart(Integer memberId,Integer shopId,Integer cartId);
 
+    int getShoopingCartCount(Integer memberId);
+
     OrderGoodsResponse getSubmitOrderGoods(Integer memberId, List<OrderGoodsDTO> lsGoods);
 
     String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,

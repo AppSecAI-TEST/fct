@@ -127,6 +127,15 @@ public class ShoppingCartManager {
         shoppingCartRepository.saveAndFlush(cart);
     }
 
+    public int getCount(Integer memberId)
+    {
+        if (memberId < 1)
+        {
+            throw new IllegalArgumentException("无此用户");
+        }
+        return shoppingCartRepository.countByMemberId(memberId);
+    }
+
     public List<ShoppingCart> find(Integer memberId, Integer shopId)
     {
         if (memberId < 1)

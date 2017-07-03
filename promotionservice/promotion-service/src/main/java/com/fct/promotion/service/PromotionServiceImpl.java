@@ -63,9 +63,14 @@ public class PromotionServiceImpl implements PromotionService {
         return couponPolicyManager.findAll(typeId,fetchType,status,startTime,endTime,pageIndex,pageSize);
     }
 
-    public List<CouponPolicy> findCanReceiveCouponPolicy()
+    public List<CouponPolicy> findCanReceiveCouponPolicy(Integer productId)
     {
-        return couponPolicyManager.findByCanReceive();
+        return couponPolicyManager.findByCanReceive(productId);
+    }
+
+    public Integer getReceiveCountByProduct(Integer productId)
+    {
+        return couponPolicyManager.canReceiveCountByProduct(productId);
     }
 
     public List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds)

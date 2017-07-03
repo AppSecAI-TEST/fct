@@ -748,7 +748,7 @@ public class OrdersManager {
                     g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
             }
 
-            sendPayTradeMessage(payOrderId,orderId,200,null);
+            //sendPayTradeMessage(payOrderId,orderId,200,null);
         }
     }
 
@@ -774,4 +774,45 @@ public class OrdersManager {
 
         jt.update(sql);
     }
+
+    private void setFinishStatus(Orders orders)
+    {
+        if(orders.getStatus() != Constants.enumOrderStatus.delivered.getValue())
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+        orders.setStatus(Constants.enumOrderStatus.finished.getValue());
+        orders.setUpdateTime(new Date());
+        ordersRepository.save(orders);
+
+        //赠送积分
+        //String tradeId,String tradeType,Integer memberId,Integer points
+        Integer points = orders.getCashAmount().intValue();
+        if(points>0) {
+            financeService.giftPoints(orders.getOrderId(), "buy", orders.getMemberId(), points);
+        }
+    }
+
+    public void finishByMember(Integer memberid,String orderId)
+    {
+        Orders orders = ordersRepository.findOne(orderId);
+        if(orders.getMemberId() != memberid)
+        {
+            throw new IllegalArgumentException("非法操作，用户不合法。");
+        }
+        setFinishStatus(orders);
+    }
+
+    public void finishTask()
+    {
+        String sql = String.format("SELECT * FROM Orders WHERE Status=%d AND finishTime<'%s'",
+                Constants.enumOrderStatus.delivered.getValue(),DateUtils.format(new Date()));
+        List<Orders> ls = jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<Orders>(Orders.class));
+
+        for (Orders order:ls
+             ) {
+            setFinishStatus(order);
+        }
+    }
+
 }

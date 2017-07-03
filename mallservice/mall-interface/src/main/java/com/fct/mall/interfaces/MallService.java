@@ -73,6 +73,10 @@ public interface MallService {
 
     void orderExpiredTask();
 
+    void orderFinishTask();
+
+    void orderFinishByMember(Integer memberid,String orderId);
+
     List<OrderGoods> findOrderGoods(String orderId);
 
     void saveOrderReciver(OrderReceiver or);
@@ -100,7 +104,7 @@ public interface MallService {
 
     void refundSuccess (Integer refundId, String description);
 
-    void createOrderCommment(OrderComment comment);
+    void createOrderCommment(List<OrderComment> commentList,String orderId);
 
     void replyOrderComment(Integer id,String replyContent);
 

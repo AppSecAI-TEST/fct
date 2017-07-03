@@ -2,6 +2,7 @@ package com.fct.finance.service.business;
 
 import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
+import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.repository.MemberAccountRepository;
 import com.fct.finance.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class MemberAccountManager {
 
     @Autowired
     private MemberAccountRepository memberAccountRepository;
+
+    @Autowired
+    private MemberAccountHistoryManager memberAccountHistoryManager;
 
     @Autowired
     private JdbcTemplate jt;
@@ -91,6 +96,28 @@ public class MemberAccountManager {
         pageResponse.setHasMore(hasmore);
 
         return pageResponse;
+    }
+
+    public void giftPoints(String tradeId,String tradeType,Integer memberId,Integer points)
+    {
+        MemberAccount account = findById(memberId);
+        account.setPoints(account.getPoints()+points);
+        account.setAccumulatePoints(account.getAccumulatePoints()+points);
+
+        memberAccountRepository.save(account);
+
+        MemberAccountHistory history = new MemberAccountHistory();
+        history.setTradeId(tradeId);
+        history.setTradeType(tradeType);
+        history.setMemberId(memberId);
+        history.setCellPhone(account.getCellPhone());
+        history.setAmount(new BigDecimal(0));
+        history.setBalanceAmount(account.getAvailableAmount());
+        history.setPoints(points);
+        history.setBalancePoints(account.getPoints());
+        history.setRemark("用户消费使用现金赠送同比积分");
+        history.setBehaviorType(1); //收入
+        memberAccountHistoryManager.Create(history);
     }
 
 }

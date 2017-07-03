@@ -366,6 +366,7 @@ public class PayOrderManager  {
             throw new IllegalArgumentException("pay_tradehandle: data is illegal");
         }
 
+        /*  交易方如正常处理，则不写入交易通知，否则将处理 异常消息,进行退款处理。
         //交易完成,并却业务类型为消费
         if (result.getTrade_status() == 200)
         {
@@ -390,7 +391,7 @@ public class PayOrderManager  {
             history.setBehaviorType(1); //收入
             memberAccountHistoryManager.Create(history);
 
-        }
+        }*/
 
         //业务异常，发起退款请求,销售订单会有多个商品存在且多条退款记录
         if (result.getTrade_status() == 1000 && result.getRefund()!=null &&
@@ -402,7 +403,7 @@ public class PayOrderManager  {
                 refundRecordManager.tradeException(refund,pay);
             }
             pay.setStatus(Constants.enumPayStatus.fullrefund.getValue());
-            payOrderRepository.saveAndFlush(pay);
+            payOrderRepository.save(pay);
 
         }
     }

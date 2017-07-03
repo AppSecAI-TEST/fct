@@ -101,8 +101,8 @@ public class Orders implements Serializable{
     //结算Id
     private Integer settleId;
 
-    //评论id
-    private Integer commentId;
+    //评论状态{0：待评论，1.已评论}
+    private Integer commentStatus;
 
     /// <summary>
     /// 支付时间

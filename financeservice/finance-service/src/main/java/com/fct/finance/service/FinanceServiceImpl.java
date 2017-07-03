@@ -224,4 +224,8 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
                 endTime,pageIndex,pageSize);
     }
 
+    public  void giftPoints(String tradeId,String tradeType,Integer memberId,Integer points)
+    {
+        memberAccountManager.giftPoints(tradeId,tradeType,memberId,points);
+    }
 }

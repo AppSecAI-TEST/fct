@@ -37,45 +37,56 @@ public class OrderCommentManager {
     private JdbcTemplate jt;
 
     @Transactional
-    public void create(OrderComment commnet)
+    public void createMutil(List<OrderComment> commentList,String orderId)
     {
-        //校验：一笔订单一个商品只能对应一条评论，并且订单是交易完成状态
-        if(commnet.getGoodsId()<=0)
+        if(commentList ==null || commentList.size()<=0)
         {
-            throw  new IllegalArgumentException("商品不存在");
+            throw  new IllegalArgumentException("评论为空");
         }
-        if(StringUtils.isEmpty(commnet.getContent()))
+        if(StringUtils.isEmpty(orderId))
         {
-            throw new IllegalArgumentException("评论内容为空");
-        }
-        if(commnet.getMemberId()<=0)
-        {
-            throw new IllegalArgumentException("用户不存在");
-        }
-        if(!StringUtils.isEmpty(commnet.getOrderId()))
-        {
-            throw new IllegalArgumentException("订单为空");
+            throw  new IllegalArgumentException("订单为空");
         }
 
-        int count = orderCommentRepository.countByOrderIdAndGoodsId(commnet.getOrderId(),commnet.getGoodsId());
-        if(count>0)
+        Orders orders = ordersManager.findById(orderId);
+        if(orders.getCommentStatus() ==1)
         {
-            throw new IllegalArgumentException("已评论");
+            throw  new IllegalArgumentException("已评论过。");
         }
-
-        /*Goods g = goodsManager.findById(commnet.getGoodsId());
-        g.setCommentCount(g.getCommentCount()+1);
-        g.setCommentScore(new Float(1));//计算动态评分
-        goodsManager.save(g);*/
-
-        commnet.setCreateTime(new Date());
-        commnet.setUpdateTime(new Date());
-        orderCommentRepository.save(commnet);
-
-        Orders orders = ordersManager.findById(commnet.getOrderId());
         orders.setUpdateTime(new Date());
-        orders.setCommentId(commnet.getId());
+        orders.setCommentStatus(1);
         ordersManager.save(orders);
+
+        for (OrderComment comment:commentList
+             ) {
+            //校验：一笔订单一个商品只能对应一条评论，并且订单是交易完成状态
+            if(comment.getGoodsId()<=0)
+            {
+                throw  new IllegalArgumentException("商品不存在");
+            }
+            if(StringUtils.isEmpty(comment.getContent()))
+            {
+                throw new IllegalArgumentException("评论内容为空");
+            }
+            if(comment.getDescScore()<1 || comment.getLogisticsScore()<1 || comment.getSaleScore()<1 ||
+                    comment.getDescScore()>5 || comment.getLogisticsScore()>5 || comment.getSaleScore()>5)
+            {
+                throw new IllegalArgumentException("动态分不正确");
+            }
+            comment.setCellPhone(orders.getCellPhone());
+            comment.setOrderId(orderId);
+            comment.setMemberId(orders.getMemberId());
+
+            int count = orderCommentRepository.countByOrderIdAndGoodsId(comment.getOrderId(),comment.getGoodsId());
+            if(count<=0)
+            {
+                comment.setCreateTime(new Date());
+                comment.setUpdateTime(new Date());
+                comment.setStatus(0);
+                orderCommentRepository.save(comment);
+            }
+
+        }
     }
 
     private Float getGoodsScore(Integer goodsId,Integer newScore)

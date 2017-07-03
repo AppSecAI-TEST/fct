@@ -101,4 +101,6 @@ public interface FinanceService {
     PageResponse<RechargeRecord> findRechargeRecord(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
                                                     Integer status,Integer timeType,String beginTime, String endTime,
                                                     Integer pageIndex, Integer pageSize);
+
+    void giftPoints(String tradeId,String tradeType,Integer memberId,Integer points);
 }

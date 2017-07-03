@@ -196,6 +196,16 @@ public class MallServiceImpl implements MallService {
         ordersManager.paySuccess(orderId, payOrderId, payPlatform, payStatus, payTime);
     }
 
+    public void orderFinishTask()
+    {
+        ordersManager.finishTask();
+    }
+
+    public void orderFinishByMember(Integer memberid,String orderId)
+    {
+        ordersManager.finishByMember(memberid,orderId);
+    }
+
     public void createOrderRefund(Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
                                   Integer serviceType, Integer refundMethod, String refundReason, String description, String images) {
         orderRefundManager.apply(memberId, orderId, orderGoodsId, isReceived, serviceType,
@@ -241,8 +251,8 @@ public class MallServiceImpl implements MallService {
         orderRefundManager.refundSuccess(refundId, description);
     }
 
-    public void createOrderCommment(OrderComment comment) {
-        orderCommentManager.create(comment);
+    public void createOrderCommment(List<OrderComment> commentList,String orderId) {
+        orderCommentManager.createMutil(commentList,orderId);
     }
 
     public void replyOrderComment(Integer id, String replyContent) {

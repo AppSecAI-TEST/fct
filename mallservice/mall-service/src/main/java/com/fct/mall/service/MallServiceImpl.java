@@ -256,8 +256,9 @@ public class MallServiceImpl implements MallService {
         orderRefundManager.refundSuccess(refundId, description);
     }
 
-    public void createOrderCommment(List<OrderComment> commentList,String orderId) {
-        orderCommentManager.createMutil(commentList,orderId);
+    public void createOrderCommment(String orderId,Integer anonymous, Integer logisticsScore,
+                                    Integer saleScore,List<OrderComment> commentList) {
+        orderCommentManager.createMutil(orderId,anonymous,logisticsScore,saleScore,commentList);
     }
 
     public void replyOrderComment(Integer id, String replyContent) {

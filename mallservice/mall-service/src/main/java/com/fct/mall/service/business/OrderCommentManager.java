@@ -37,7 +37,8 @@ public class OrderCommentManager {
     private JdbcTemplate jt;
 
     @Transactional
-    public void createMutil(List<OrderComment> commentList,String orderId)
+    public void createMutil(String orderId,Integer anonymous, Integer logisticsScore,
+                            Integer saleScore,List<OrderComment> commentList)
     {
         if(commentList ==null || commentList.size()<=0)
         {
@@ -46,6 +47,11 @@ public class OrderCommentManager {
         if(StringUtils.isEmpty(orderId))
         {
             throw  new IllegalArgumentException("订单为空");
+        }
+        if(logisticsScore<1 || saleScore<1 || logisticsScore>5 ||
+                saleScore>5)
+        {
+            throw new IllegalArgumentException("动态分不正确");
         }
 
         Orders orders = ordersManager.findById(orderId);
@@ -68,14 +74,16 @@ public class OrderCommentManager {
             {
                 throw new IllegalArgumentException("评论内容为空");
             }
-            if(comment.getDescScore()<1 || comment.getLogisticsScore()<1 || comment.getSaleScore()<1 ||
-                    comment.getDescScore()>5 || comment.getLogisticsScore()>5 || comment.getSaleScore()>5)
+            if(comment.getDescScore()<1 || comment.getDescScore()>5)
             {
-                throw new IllegalArgumentException("动态分不正确");
+                throw new IllegalArgumentException("宝贝描述分不正确");
             }
             comment.setCellPhone(orders.getCellPhone());
             comment.setOrderId(orderId);
             comment.setMemberId(orders.getMemberId());
+            comment.setLogisticsScore(logisticsScore);
+            comment.setStatus(saleScore);
+            comment.setIsAnonymous(anonymous);
 
             int count = orderCommentRepository.countByOrderIdAndGoodsId(comment.getOrderId(),comment.getGoodsId());
             if(count<=0)

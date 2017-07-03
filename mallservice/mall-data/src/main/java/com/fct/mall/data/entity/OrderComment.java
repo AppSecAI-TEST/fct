@@ -32,6 +32,8 @@ public class OrderComment implements Serializable{
 
     private String content;
 
+    private Integer isAnonymous;
+
     //回复内容
     private String replyContent;
 

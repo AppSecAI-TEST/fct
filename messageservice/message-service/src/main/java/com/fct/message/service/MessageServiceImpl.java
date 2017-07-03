@@ -40,8 +40,30 @@ public class MessageServiceImpl implements MessageService {
         message.setCreateTime(new Date());
         messageQueueRepository.save(message);
     }
+    public MessageQueue getMessage(Integer messageId)
+    {
+        if(messageId<=0)
+        {
+            throw new IllegalArgumentException("消息id不存在");
+        }
+        return messageQueueRepository.findOne(messageId);
+    }
+
     public void send(String typeId,String targetModule,String sourceAppName,String jsonBody,String remark)
     {
+        if(StringUtils.isEmpty(typeId))
+        {
+            throw new IllegalArgumentException("消息类型为空");
+        }
+        if(StringUtils.isEmpty(targetModule))
+        {
+            throw new IllegalArgumentException("消息模型为空.");
+        }
+        if(StringUtils.isEmpty(jsonBody))
+        {
+            throw new IllegalArgumentException("消息体为空。");
+        }
+
         MessageQueue message = new MessageQueue();
         message.setTypeId(typeId);
         message.setTargetModule(targetModule);

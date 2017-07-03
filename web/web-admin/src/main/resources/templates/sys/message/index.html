@@ -13,15 +13,13 @@
             <div class="row">
                 <div class="col-sm-12">
                     <form action="" method="get">
-                        <div class="row col-sm-2 form-inline">
+                        <div class="col-sm-5 form-inline">
                             <select class="form-control" name="typeid">
                                 <option value="">选择类型</option>
                                 <option value="mq_paysuccess" th:selected="${query.typeid eq 'mq_paysuccess'} ? 'selected'">支付成功通知</option>
                                 <option value="mq_paytrade" th:selected="${query.typeid eq 'mq_paytrade'} ? 'selected'">业务处理通知</option>
                                 <option value="mq_payrefund" th:selected="${query.typeid eq 'mq_payrefund'} ? 'selected'">退款通知</option>
                             </select>
-                        </div>
-                        <div class="col-sm-4 form-inline">
                             <select class="form-control" name="status">
                                 <option value="">选择状态</option>
                                 <option value="0" th:selected="${query.status eq 0} ? 'selected'">待处理</option>
@@ -75,7 +73,7 @@
                                     <a href="javascript:;" th:if="${msg.status eq -1}">处理异常</a>
                                 </td>
                                 <td>
-                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default" th:attr="data-id=${msg.id}" >查看</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default detailClick" th:attr="data-id=${msg.id}" >查看</a>
                                     <a href="javascript:;" class="btn btn-xs btn-outline btn-default resumeClick" th:attr="data-id=${msg.id}" >恢复</a>
                                 </td>
                             </tr>
@@ -99,7 +97,6 @@
 <script type="application/javascript" class="script">
 
     $(function () {
-
         $(".resumeClick").click(function () {
             var id = $(this).attr("data-id");
             JQAjax.post(this, {
@@ -107,6 +104,15 @@
                 url: "/sys/message/upstatus?action=resume&id="+ id,
                 wait:true
             });
+        });
+
+        $(".detailClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQbox.open({
+                title:"查看消息",
+                width: 600,
+                url: '/sys/message/detail?id'+id
+            })
         });
     })
 </script>

@@ -38,6 +38,8 @@ public interface MessageService {
     /// </summary>
     List<MessageQueue> find(String typeId);
 
+    MessageQueue getMessage(Integer messageId);
+
     /// <summary>
     /// 获取异常消息
     /// </summary>

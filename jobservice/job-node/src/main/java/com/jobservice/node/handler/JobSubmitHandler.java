@@ -8,6 +8,7 @@ import com.jobservice.node.ShardConstant;
 import com.jobservice.node.interfaces.JobHandler;
 import com.jobservice.task.JobTask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -21,6 +22,9 @@ public class JobSubmitHandler implements JobHandler {
 
     @Autowired
     private JobClient jobClient;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * 如果提交任务 有cron表达式并且触发时间为空则设置cron表达式
@@ -44,6 +48,7 @@ public class JobSubmitHandler implements JobHandler {
         if(jobTask.getTriggerTime()!=null){
             job.setTriggerDate(jobTask.getTriggerTime());
         }
+        job.setTaskTrackerNodeGroup(environment.getProperty("lts.jobclient.tasknodegroup"));
         jobClient.submitJob(job);
         Result result = new Result(0, "提交成功");
         return result;

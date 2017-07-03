@@ -23,7 +23,7 @@ public class CouponCodeExpiredCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "couponCodeExpired");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("coupon-code-expired-job");
         jobTask.setCronExpression("0 0 3,18 * * ?");    //天3点和18点各执行一次
         jobHandler.raiseJob(jobTask);
     }

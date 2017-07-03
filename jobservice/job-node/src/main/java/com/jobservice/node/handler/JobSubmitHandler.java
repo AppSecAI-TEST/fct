@@ -36,7 +36,7 @@ public class JobSubmitHandler implements JobHandler {
             job.setParam((String) entry.getKey(), (String) entry.getValue());
         }
         //这个地方不要修改
-        job.setParam(ShardConstant.SHARD_VALUE, jobTask.getTaskType().name());
+//        job.setParam(ShardConstant.SHARD_VALUE, jobTask.getTaskType().name());
         job.setReplaceOnExist(true);
         if(!StringUtils.isEmpty(jobTask.getCronExpression())&&jobTask.getTriggerTime()==null){
             job.setCronExpression(jobTask.getCronExpression());

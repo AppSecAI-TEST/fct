@@ -84,4 +84,13 @@ public interface MemberService {
 
     PageResponse<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize);
 
+    void saveFavourite(Integer memberId,Integer favType,Integer relatedId);
+
+    void deleteFavourite(Integer memberId,Integer favId);
+
+    int getFavouriteCount(Integer memberId,Integer favType,Integer relatedId);
+
+    PageResponse<MemberFavourite> findFavourite(Integer memberId,Integer favType,
+                                                Integer pageIndex, Integer pageSize);
+
 }

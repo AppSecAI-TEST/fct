@@ -46,6 +46,9 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     @Autowired
     private SysUserLoginManager sysUserLoginManager;
 
+    @Autowired
+    private MemberFavouriteManager memberFavouriteManager;
+
     /*注册会员*/
 //    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
@@ -202,7 +205,7 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public void logoutSysUser(String token)
     {
-
+        sysUserLoginManager.logOut(token);
     }
 
     public SysUserLogin getSysUserLogin(String token)
@@ -223,5 +226,26 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     public PageResponse<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize)
     {
         return systemUserManager.findAll(userName,pageIndex,pageSize);
+    }
+
+    public void saveFavourite(Integer memberId,Integer favType,Integer relatedId)
+    {
+        memberFavouriteManager.create(memberId,favType,relatedId);
+    }
+
+    public void deleteFavourite(Integer memberId,Integer favId)
+    {
+        memberFavouriteManager.delete(memberId,favId);
+    }
+
+    public int getFavouriteCount(Integer memberId,Integer favType,Integer relatedId)
+    {
+        return memberFavouriteManager.getCount(memberId,favType,relatedId);
+    }
+
+    public PageResponse<MemberFavourite> findFavourite(Integer memberId,Integer favType,
+                                                Integer pageIndex, Integer pageSize)
+    {
+        return memberFavouriteManager.findAll(memberId,favType,pageIndex,pageSize);
     }
 }

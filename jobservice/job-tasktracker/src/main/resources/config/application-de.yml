@@ -11,9 +11,10 @@ lts:
      registry-address: zookeeper://127.0.0.1:2181
      node-group: fct_tasktracker
      dataPath: /usr/src/lts/failstore
+     #dataPath: /Users/nick/project/lts/failstore
      dispatch-runner:
       enable: true
-      shard-value: fc-job
+      shard-value: fct-job
      configs:
       lts:
         http:
@@ -27,4 +28,4 @@ mysql:
   connection:
     url: jdbc:mysql://localhost:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
     username: root
-    password: 123456
+    password: 3202547c

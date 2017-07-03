@@ -7,7 +7,7 @@ server:
 lts:
   jobclient:
     cluster-name: fct
-    registry-address: zookeeper://116.62.219.91:2181
+    registry-address: zookeeper://127.0.0.1:2181
     node-group: fct_node
     tasknodegroup: fct_tasktracker
     dataPath: /usr/src/lts/failstore

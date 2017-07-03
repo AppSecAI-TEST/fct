@@ -239,9 +239,9 @@ public class CouponCodeManager {
     public void setStatusExpire() {
         String sql = "update CouponCode set Status = 2,LastUpdateTime = ?  where Status =0 and Id in (select top 10000 c.Id from CouponCode c inner join CouponPolicy p on c.PolicyId = p.Id where c.Status =0  and p.EndTime<? and p.EndTime> ?";
         List<Object> param = new ArrayList<>();
-        param.add(new Date());
-        param.add(new Date());
-        param.add(DateUtils.addDay(new Date(),-3));
+        param.add(DateUtils.format(new Date()));
+        param.add(DateUtils.format(new Date()));
+        param.add(DateUtils.format(DateUtils.addDay(new Date(),-3)));
         jt.update(sql,param);
     }
 }

@@ -140,6 +140,15 @@ public class DiscountManager {
         discountRepository.save(obj);
     }
 
+    public Discount findByProductId(Integer productId)
+    {
+        String sql = "select d.* from Discount as d inner join DiscountProduct as p on d.id=p.discountid";
+        sql += String.format(" WHERE p.productId=%d and d.endtime>='%s' and d.AuditStatus=1 limit 1",
+                productId,DateUtils.format(new Date()));
+
+        return jt.queryForObject(sql,Discount.class);
+    }
+
     private String getCondition(String name,String goodsName,Integer status, String startTime, String endTime,List<Object> param)
     {
         String condition ="";

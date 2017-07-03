@@ -81,7 +81,8 @@ public class DiscountProductManager {
         }
         ids = ids.substring(ids.length()-1);
 
-        String sql = String.format("select p.* from discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",new Date());
+        String sql = String.format("select p.* from discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
+                DateUtils.format(new Date()));
         if (filterNoBegin == 1)
         {
             sql += " AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)";

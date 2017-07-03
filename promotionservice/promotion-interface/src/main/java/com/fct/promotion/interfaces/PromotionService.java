@@ -51,6 +51,8 @@ public interface PromotionService {
 
     Discount getDiscountById(Integer discountId);
 
+    Discount getDiscountByProduct(Integer productId);
+
     void auditDiscount(Integer discount,Boolean pass,Integer userId);
 
     PageResponse<Discount> findDiscount(String name,String goodsName,Integer status,String startTime,String endTime,Integer pageIndex,Integer pageSize);

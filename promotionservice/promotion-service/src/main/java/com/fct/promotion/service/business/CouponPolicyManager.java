@@ -180,20 +180,12 @@ public class CouponPolicyManager {
 
     public List<CouponPolicy> findByCanReceive(Integer productId)
     {
-        String condition = String.format("AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s'",
-                DateUtils.format(new Date()));
-        if(productId>0)
-        {
-            condition += " AND find_in_set("+ productId +",productids)";
-        }
 
-        String sql = String.format("select * from CouponPolicy where  %s order by Id desc limit 20",
-                condition);
-
-        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<CouponPolicy>(CouponPolicy.class));
+        return jt.query(getReceiveSql(productId), new Object[]{},
+                new BeanPropertyRowMapper<CouponPolicy>(CouponPolicy.class));
     }
 
-    public Integer canReceiveCountByProduct(Integer productId)
+    private String getReceiveSql(Integer productId)
     {
         if(productId<=0)
         {
@@ -205,8 +197,13 @@ public class CouponPolicyManager {
 
         String sql = String.format("select Count(0) from CouponPolicy where  %s ",
                 condition);
+        return sql;
+    }
 
-        return jt.queryForObject(sql,Integer.class);
+    public Integer canReceiveCountByProduct(Integer productId)
+    {
+
+        return jt.queryForObject(getReceiveSql(productId),Integer.class);
     }
 
     void addReceiveCount(Integer policyId)

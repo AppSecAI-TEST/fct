@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ImportResource;
 
 /**
  * Created by ningyang on 2017/4/11.
@@ -68,6 +69,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  */
 @SpringBootApplication(scanBasePackages = "com.jobservice.tasktracker")
 @EnableTaskTracker
+@ImportResource("classpath:dubbo/dubbo-consumer.xml")
 public class TaskTrackerStarter extends SpringBootServletInitializer{
 
     @Override

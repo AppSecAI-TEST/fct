@@ -27,10 +27,10 @@
 
     <dubbo:protocol name="dubbo" />
 
-    <dubbo:reference interface="com.fct.pay.interfaces.MobilePayService" id="mobilePayService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
-    <dubbo:reference interface="com.fct.promotion.interfaces.PromotionService" id="promotionService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
-    <dubbo:reference interface="com.fct.mall.interfaces.MallService" id="mallService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
-    <dubbo:reference interface="com.fct.message.interfaces.MessageService" id="messageService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
-    <dubbo:reference interface="com.fct.finance.interfaces.FinanceService" id="financeService" timeout="5000"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:reference interface="com.fct.pay.interfaces.MobilePayService" id="mobilePayService" timeout="5000" check="false"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:reference interface="com.fct.promotion.interfaces.PromotionService" id="promotionService" timeout="5000" check="false"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:reference interface="com.fct.mall.interfaces.MallService" id="mallService" timeout="5000" check="false"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:reference interface="com.fct.message.interfaces.MessageService" id="messageService" timeout="5000" check="false"/> <!-- 增加暴露远程服务配置 -->
+    <dubbo:reference interface="com.fct.finance.interfaces.FinanceService" id="financeService" timeout="5000" check="false"/> <!-- 增加暴露远程服务配置 -->
 </beans>
 

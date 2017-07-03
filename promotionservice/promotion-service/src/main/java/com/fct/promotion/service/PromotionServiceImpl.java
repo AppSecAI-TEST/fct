@@ -139,9 +139,9 @@ public class PromotionServiceImpl implements PromotionService {
         return discountManager.findById(discountId);
     }
 
-    public Discount getDiscountByProduct(Integer productId)
+    public DiscountProductDTO getDiscountByProduct(Integer productId)
     {
-       return discountManager.findByProductId(productId);
+       return discountProductDTOManager.findByProductId(productId);
     }
 
     public void auditDiscount(Integer discountId,Boolean pass,Integer userId)

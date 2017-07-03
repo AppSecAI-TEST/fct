@@ -51,7 +51,7 @@ public interface PromotionService {
 
     Discount getDiscountById(Integer discountId);
 
-    Discount getDiscountByProduct(Integer productId);
+    DiscountProductDTO getDiscountByProduct(Integer productId);
 
     void auditDiscount(Integer discount,Boolean pass,Integer userId);
 

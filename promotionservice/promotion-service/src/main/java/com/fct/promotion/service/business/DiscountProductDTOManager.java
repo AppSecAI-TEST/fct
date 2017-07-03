@@ -1,5 +1,6 @@
 package com.fct.promotion.service.business;
 
+import com.fct.core.utils.DateUtils;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
@@ -7,12 +8,10 @@ import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.DiscountProductDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jon on 2017/5/13.
@@ -28,6 +27,9 @@ public class DiscountProductDTOManager {
 
     @Autowired
     CouponCodeDTOManager couponCodeDTOManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public List<DiscountProductDTO> findByProduct(List<Integer> productIds, Integer filterNoBegin)
     {
@@ -67,6 +69,26 @@ public class DiscountProductDTOManager {
             lst.add(dto);
         }
         return lst;
+    }
+
+
+    public DiscountProductDTO findByProductId(Integer productId)
+    {
+        String sql = "select p.* from Discount as d inner join DiscountProduct as p on d.id=p.discountid";
+        sql += String.format(" WHERE p.productId=%d and d.endtime>='%s' and d.AuditStatus=1 limit 1",
+                productId, DateUtils.format(new Date()));
+
+        DiscountProduct product =  jt.queryForObject(sql,DiscountProduct.class);
+
+        if(product != null) {
+            Discount discount = discountManager.findById(product.getDiscountId());
+            DiscountProductDTO dto = new DiscountProductDTO();
+            dto.setProductId(productId);
+            dto.setDiscount(discount);
+            dto.setDiscountProduct(product);
+            return dto;
+        }
+        return null;
     }
 
     /// <summary>

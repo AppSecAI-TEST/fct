@@ -84,17 +84,22 @@ public class MessageServiceImpl implements MessageService {
         return messageQueueRepository.findByTypeId(typeId);
     }
 
-    public PageResponse<MessageQueue> findAll(String targetModule, Integer status, Integer pageIndex, Integer pageSize) {
+    public PageResponse<MessageQueue> findAll(String typeId, Integer status,String body, Integer pageIndex, Integer pageSize) {
 
         List<Object> param = new ArrayList<>();
         String condition ="";
-        if (StringUtils.isEmpty(targetModule)) {
-            condition +=" AND targetModule=?";
-            param.add(targetModule);
+        if (StringUtils.isEmpty(typeId)) {
+            condition +=" AND typeId=?";
+            param.add(typeId);
         }
         if(status > -1)
         {
             condition +=" AND status="+status;
+        }
+        if(!StringUtils.isEmpty(body))
+        {
+            condition +=" AND body like ?";
+            param.add("%"+body+"%");
         }
 
         String table="MessageQueue";

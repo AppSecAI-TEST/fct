@@ -42,7 +42,7 @@ public interface MessageService {
     /// 获取异常消息
     /// </summary>
     /// <returns></returns>
-    PageResponse<MessageQueue> findAll(String targetModule, Integer status, Integer pageIndex, Integer pageSize);
+    PageResponse<MessageQueue> findAll(String typeId, Integer status, String body,Integer pageIndex, Integer pageSize);
 
     void sendSMS(String cellPhone,String content,String ip,String action);
 

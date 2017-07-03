@@ -10,14 +10,14 @@ import org.springframework.context.annotation.Configuration;
 public class QCloudSMSConfig {
 
     @Value("${qcloud.sms.appid}")
-    private int appId;
+    private Integer appId;
 
-    public int getAppId()
+    public Integer getAppId()
     {
         return appId;
     }
 
-    public void setAppId(int appId)
+    public void setAppId(Integer appId)
     {
         this.appId = appId;
     }

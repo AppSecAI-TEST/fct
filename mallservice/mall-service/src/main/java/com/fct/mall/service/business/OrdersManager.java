@@ -768,11 +768,30 @@ public class OrdersManager {
 
     public void handleExpire()
     {
-        String nowTime = DateUtils.format(new Date());
-        String sql = String.format("UPDATE Orders set status = %d,updateTime='%s' WHERE status=0 AND expiresTime<'%s'",
-                Constants.enumOrderStatus.close.getValue(),nowTime,nowTime);
+        String sql = String.format("select * from Orders where status=0 and expiresTime<'%s'",DateUtils.format(new Date()));
+        List<Orders> ls = jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<Orders>(Orders.class));
 
-        jt.update(sql);
+        for (Orders o:ls
+             ) {
+            o.setUpdateTime(new Date());
+            o.setStatus(Constants.enumOrderStatus.close.getValue());
+            ordersRepository.save(o);
+
+            //恢复库存
+            List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(o.getOrderId());
+            for (OrderGoods g: lsOrderGoods
+                    ) {
+                //减去规格库存
+                if (g.getGoodsSpecId() > 0)
+                {
+                    jt.update("UPDATE GoodsSpecification SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsSpecId());
+
+                }
+                //减去产品
+                jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
+            }
+        }
+
     }
 
     private void setFinishStatus(Orders orders)

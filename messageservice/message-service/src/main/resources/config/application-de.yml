@@ -31,7 +31,7 @@ mysql:
 
 qcloud:
   sms:
-    appid:
-    appkey:
+    appid: 123456
+    appkey: hellworld
 
 

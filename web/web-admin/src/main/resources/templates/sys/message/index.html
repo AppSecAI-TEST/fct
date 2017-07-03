@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-消息管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'sys_message',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" method="get">
+                        <div class="row col-sm-2 form-inline">
+                            <select class="form-control" name="typeid">
+                                <option value="">选择类型</option>
+                                <option value="mq_paysuccess" th:selected="${query.typeid eq 'mq_paysuccess'} ? 'selected'">支付成功通知</option>
+                                <option value="mq_paytrade" th:selected="${query.typeid eq 'mq_paytrade'} ? 'selected'">业务处理通知</option>
+                                <option value="mq_payrefund" th:selected="${query.typeid eq 'mq_payrefund'} ? 'selected'">退款通知</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 form-inline">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待处理</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已处理</option>
+                                <option value="-1" th:selected="${query.status eq -1} ? 'selected'">异常</option>
+                            </select>
+
+                            <div class="input-group"> <input type="text" placeholder="请输入关键字" th:value="${query.q}" class="input-sm form-control" name="q">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>消息类型</th>
+                                <th>备注</th>
+                                <th>请求次数</th>
+                                <th>错误信息</th>
+                                <th>处理时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="msg : ${lsMessage}">
+                                <td th:text="${msg.id}"></td>
+                                <td th:text="${msg.typeId}"></td>
+                                <td th:text="${msg.remark}"></td>
+                                <td th:text="${msg.requestCount}"></td>
+                                <td th:text="${msg.failMessage}"></td>
+                                <td th:text="${#dates.format(article.processTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${msg.status eq 0}">待处理</a>
+                                    <a href="javascript:;" th:if="${msg.status eq 1}">已处理</a>
+                                    <a href="javascript:;" th:if="${msg.status eq -1}">处理异常</a>
+                                </td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default" th:attr="data-id=${msg.id}" >查看</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default resumeClick" th:attr="data-id=${msg.id}" >恢复</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        $(".resumeClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/sys/message/upstatus?action=resume&id="+ id,
+                wait:true
+            });
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,9 +1,11 @@
 package com.fct.promotion.service.business;
 
 import com.fct.core.utils.ListUtils;
+import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,7 +32,7 @@ public class CouponCodeDTOManager {
         String sql = String.format("select * from (select %s,ROW_NUMBER() over(order by  %s) as r  from CouponPolicy p inner join CouponCode c on p.Id = c.policyId where %s)t where t.r between %s and %s",
                 fields, orderby, condition, startIndex, startIndex + count - 1);
 
-        return jt.queryForList(sql,CouponCodeDTO.class);
+        return jt.query(sql,new Object[]{}, new BeanPropertyRowMapper<CouponCodeDTO>(CouponCodeDTO.class));
 
     }
 

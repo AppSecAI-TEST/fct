@@ -4,7 +4,6 @@ import com.fct.core.utils.DateUtils;
 import com.fct.promotion.data.entity.CouponCode;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.data.repository.CouponCodeRepository;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

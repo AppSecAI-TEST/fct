@@ -67,7 +67,6 @@ public class DiscountManager {
 
             discountProductManager.save(p);
         }
-        //discountProductManager.add(obj,lsGoods);
     }
 
     public List<Discount> findByDiscountId(List<Integer> discountIds)
@@ -81,7 +80,7 @@ public class DiscountManager {
         ids = ids.substring(ids.length()-1);
 
         String sql = "select * from Discount where id in (" + ids + ")";
-        return jt.queryForList(sql,Discount.class);
+        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<Discount>(Discount.class));
     }
 
     public void update(Discount obj)

@@ -7,6 +7,7 @@ import com.fct.promotion.data.repository.DiscountProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -77,9 +78,12 @@ public class DiscountProductManager {
 
         for (Integer id:productIds
              ) {
-            ids += id + ",";
+            if(!StringUtils.isEmpty(id))
+            {
+                ids += ",";
+            }
+            ids += id;
         }
-        ids = ids.substring(ids.length()-1);
 
         String sql = String.format("select p.* from discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
                 DateUtils.format(new Date()));

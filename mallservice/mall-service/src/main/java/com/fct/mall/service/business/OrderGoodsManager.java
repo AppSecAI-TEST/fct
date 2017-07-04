@@ -88,7 +88,7 @@ public class OrderGoodsManager {
         for (OrderGoodsDTO cart: lsGoods
                 ) {
             Goods g = goodsManager.findById(cart.getGoodsId());
-            if (g.getIsDel() == 1 || g.getStatus() != 0)
+            if (g.getIsDel() == 1 || g.getStatus() != 1)
             {
                 throw new IllegalArgumentException("宝贝不存在。");
             }

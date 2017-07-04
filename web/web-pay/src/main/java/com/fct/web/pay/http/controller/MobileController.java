@@ -269,4 +269,28 @@ public class MobileController extends BaseController{
 
         return "/mobile/pay";
     }
+
+    @RequestMapping(value = "/success", method = RequestMethod.GET)
+    public String success(String tradeid,String tradetype,Model model) {
+        tradeid = ConvertUtils.toString(tradeid);
+        tradetype = ConvertUtils.toString(tradetype);
+
+        if(StringUtils.isEmpty(tradeid) || StringUtils.isEmpty(tradetype))
+        {
+            return errorPage("支付参数错误，非法请求。");
+        }
+        try {
+            PayOrder payOrder = financeService.getPayOrderByTrade(tradeid,tradetype);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+
+        model.addAttribute("orderid",tradeid);
+        model.addAttribute("remark","您购买的“紫砂壶”已进入仓库备货中，请耐心等待并关注订单状态。");
+        model.addAttribute("gourl","");
+
+        return "/mobile/success";
+    }
 }

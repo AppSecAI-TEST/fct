@@ -124,7 +124,7 @@ public class ShoppingCartManager {
             throw new IllegalArgumentException("购买量不能大于规格库存");
         }
 
-        shoppingCartRepository.saveAndFlush(cart);
+        shoppingCartRepository.save(cart);
     }
 
     public int getCount(Integer memberId)

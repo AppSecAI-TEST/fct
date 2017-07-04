@@ -91,7 +91,7 @@ public class DiscountProductManager {
             ids += id;
         }
 
-        String sql = String.format("select p.* from discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
+        String sql = String.format("select p.* from Discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
                 DateUtils.format(new Date()));
         if (filterNoBegin == 1)
         {

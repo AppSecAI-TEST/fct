@@ -36,7 +36,7 @@ public class BaseController {
 
         currentUser = new SysUserLogin();
 
-        //initUser(request,response);
+        initUser(request,response);
 
         model.addAttribute("pub",config);
         model.addAttribute("currentUser",currentUser);

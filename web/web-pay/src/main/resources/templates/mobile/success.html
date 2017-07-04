@@ -5,11 +5,10 @@
 </head>
 <body th:replace="fragment/layout::body(~{ :: .bodyContent},~{::.script})">
 
-
 <div class="pay-container bodyContent" id="pay">
     <section class="tips">
         <div class="title">
-            <img th:src="${pub.staticPath('/static/img/check.png')}" class="check"><span>订单支付成功！</span>
+            <img th:src="${pub.staticPath('/static/img/check.png')}" class="check"><span>订单支付成功</span>
         </div>
         <div class="info">
             <div th:text="'订单编号：'+${orderid}"></div>
@@ -31,9 +30,9 @@
         如有任何疑问请拨打官方电话：400-888-9988
     </section>
 
-    <section class="pay-sub">
-        <span id="skiptime" class="pri">3</span>秒后自动跳转...
-    </section>
+    <div class="link">
+        <span><span class="second" id="skiptime">3</span>秒后自动跳转...</span>
+    </div>
 </div>
 
 

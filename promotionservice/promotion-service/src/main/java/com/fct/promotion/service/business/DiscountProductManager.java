@@ -76,6 +76,11 @@ public class DiscountProductManager {
     {
         String ids = "";
 
+        if(productIds == null || productIds.size() <=0)
+        {
+            throw new IllegalArgumentException("宝贝为空");
+        }
+
         for (Integer id:productIds
              ) {
             if(!StringUtils.isEmpty(id))

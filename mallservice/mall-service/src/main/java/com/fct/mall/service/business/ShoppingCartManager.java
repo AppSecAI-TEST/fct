@@ -142,7 +142,7 @@ public class ShoppingCartManager {
         {
             throw new IllegalArgumentException("无此用户");
         }
-        if (shopId < 1)
+        if (shopId < 0)
         {
             throw new IllegalArgumentException("没找到商铺");
         }

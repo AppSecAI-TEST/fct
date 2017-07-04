@@ -279,17 +279,42 @@ public class MobileController extends BaseController{
         {
             return errorPage("支付参数错误，非法请求。");
         }
+        String remark = "";
+        String gourl ="";
         try {
-            PayOrder payOrder = financeService.getPayOrderByTrade(tradeid,tradetype);
+            PayOrder payOrder = financeService.getPayOrderByTrade(tradetype,tradeid);
+            switch (payOrder.getTradeType())
+            {
+                case "buy":
+                    Orders orders = mallService.getOrders(tradeid);
+                    remark=orders.getOrderGoods().get(0).getName();
+                    if(orders.getOrderGoods().size()>1)
+                    {
+                        remark += "等多件";
+                    }
+                    remark = "您购买的”"+remark +"”正在处理中，请耐心等待并关注订单状态。";
+                    gourl = fctConfig.getUrl() +"/my/order/detail?orderid="+payOrder.getOrderId();
+                    break;
+                case "recharge":
+                    RechargeRecord rechargeRecord = financeService.getRechargeRecord(Integer.valueOf(payOrder.getTradeId()));
+                    remark = String.format("您已成功充值%d元（包含赠送金额%d元）",
+                            rechargeRecord.getAmount(),rechargeRecord.getGiftAmount());
+                    gourl = fctConfig.getUrl() +"/my/cash/recharge/record";
+                    break;
+            }
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
         }
+        if(StringUtils.isEmpty(remark))
+        {
+            return errorPage("支付参数错误，非法请求。");
+        }
 
         model.addAttribute("orderid",tradeid);
-        model.addAttribute("remark","您购买的“紫砂壶”已进入仓库备货中，请耐心等待并关注订单状态。");
-        model.addAttribute("gourl","");
+        model.addAttribute("remark",remark);
+        model.addAttribute("gourl",gourl);
 
         return "/mobile/success";
     }

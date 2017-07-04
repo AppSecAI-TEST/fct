@@ -184,7 +184,7 @@ public class OrdersManager {
         CouponCodeDTO cc = null;
         if(dc!=null)
         {
-            lsOrderProduct = dc.getDiscount();
+            lsOrderProduct = dc.getDiscount();//宝贝促销信息重新赋值 。
             cc = dc.getCoupon();
         }
 
@@ -212,6 +212,8 @@ public class OrdersManager {
             Goods g  = goodsManager.findById(goodsDTO.getGoodsId());
             OrderGoods orderGoods = new OrderGoods();
 
+            orderGoods.setName(g.getName());
+
             if(goodsDTO.getSpecId()>0)
             {
                 GoodsSpecification spec = goodsSpecificationManager.findById(goodsDTO.getSpecId());
@@ -219,10 +221,14 @@ public class OrdersManager {
                 orderGoods.setPrice(spec.getSalePrice());
                 orderGoods.setGoodsSpecId(spec.getId());
                 orderGoods.setCommission(spec.getCommission());
-
+            }
+            else
+            {
+                orderGoods.setPrice(g.getSalePrice());
+                orderGoods.setCommission(g.getCommission());
             }
             orderGoods.setGoodsId(goodsDTO.getGoodsId());
-            orderGoods.setPromotionPrice(p.getDiscountPrice());
+            //orderGoods.setPromotionPrice(p.getDiscountPrice());
             orderGoods.setBuyCount(goodsDTO.getBuyCount());
             orderGoods.setImg(g.getDefaultImage());
             orderGoods.setCommission(orderGoods.getCommission());

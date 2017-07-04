@@ -85,68 +85,70 @@ public class OrderGoodsManager {
 
         List<OrderProductDTO> lsProduct = new ArrayList<>();
 
-        if (lsDiscountGoods != null && lsDiscountGoods.size()>0)
-        {
-            for (OrderGoodsDTO cart: lsGoods
-                 ) {
-                Goods g = goodsManager.findById(cart.getGoodsId());
-                if (g.getIsDel() == 1 || g.getStatus() != 0)
-                {
-                    throw new IllegalArgumentException("宝贝不存在。");
-                }
-                if(g.getStockCount()<cart.getBuyCount())
-                {
-                    throw new IllegalArgumentException("宝贝库存不足。");
-                }
+        for (OrderGoodsDTO cart: lsGoods
+                ) {
+            Goods g = goodsManager.findById(cart.getGoodsId());
+            if (g.getIsDel() == 1 || g.getStatus() != 0)
+            {
+                throw new IllegalArgumentException("宝贝不存在。");
+            }
+            if(g.getStockCount()<cart.getBuyCount())
+            {
+                throw new IllegalArgumentException("宝贝库存不足。");
+            }
 
-                OrderGoods orderGoods = new OrderGoods();
-                orderGoods.setGoodsId(g.getId());
-                if (cart.getSpecId() > 0)
+            OrderGoods orderGoods = new OrderGoods();
+            orderGoods.setGoodsId(g.getId());
+            if (cart.getSpecId() > 0)
+            {
+                GoodsSpecification gsp = goodsSpecificationManager.findById(cart.getSpecId());
+                if (gsp == null || gsp.getGoodsId() != g.getId())
                 {
-                    GoodsSpecification gsp = goodsSpecificationManager.findById(cart.getSpecId());
-                    if (gsp == null || gsp.getGoodsId() != g.getId())
-                    {
-                        throw new IllegalArgumentException("非法数据");
-                    }
-
-                    orderGoods.setSpecName(gsp.getName());
-                    orderGoods.setGoodsSpecId(gsp.getId());
-                    orderGoods.setPrice(gsp.getSalePrice());
-                }
-                else
-                {
-                    List<GoodsSpecification> lsGS = goodsSpecificationManager.findByGoodsId(g.getId());
-
-                    if (lsGS != null && lsGS.size() >0)
-                    {
-                        throw new IllegalArgumentException("订单商品存在规格，您没有选择规格");
-                    }
-                    orderGoods.setPrice(g.getSalePrice());
+                    throw new IllegalArgumentException("非法数据");
                 }
 
+                orderGoods.setSpecName(gsp.getName());
+                orderGoods.setGoodsSpecId(gsp.getId());
+                orderGoods.setPrice(gsp.getSalePrice());
+            }
+            else
+            {
+                List<GoodsSpecification> lsGS = goodsSpecificationManager.findByGoodsId(g.getId());
+
+                if (lsGS != null && lsGS.size() >0)
+                {
+                    throw new IllegalArgumentException("订单商品存在规格，您没有选择规格");
+                }
+                orderGoods.setPrice(g.getSalePrice());
+            }
+            orderGoods.setPromotionPrice(g.getSalePrice());
+            //从当前用户购买的商品中，获取是否有折扣信息
+            if (lsDiscountGoods != null && lsDiscountGoods.size()>0)
+            {
                 DiscountProductDTO discount = getDiscount(lsDiscountGoods,cart.getGoodsId());
                 if(discount != null)
                 {
                     BigDecimal realPrice =  discount.getDiscountProduct().getDiscountRate().multiply(orderGoods.getPrice());
                     orderGoods.setPromotionPrice(realPrice); //重新计算真实销售价，
                 }
-
-                orderGoods.setImg(g.getDefaultImage());
-                orderGoods.setName(g.getName());
-                orderGoods.setBuyCount(cart.getBuyCount());
-                orderGoods.setGoodsId(g.getId());
-                orderGoods.setTotalAmount(orderGoods.getPromotionPrice().multiply(new BigDecimal(cart.getBuyCount())));
-
-                orderGoodsList.add(orderGoods);
-
-                OrderProductDTO productDTO = new OrderProductDTO();
-                productDTO.setRealPrice(orderGoods.getPrice());
-                productDTO.setCount(orderGoods.getBuyCount());
-                productDTO.setProductId(orderGoods.getGoodsId());
-                productDTO.setSizeId(orderGoods.getGoodsSpecId());
-
-                lsProduct.add(productDTO);
             }
+
+            orderGoods.setImg(g.getDefaultImage());
+            orderGoods.setName(g.getName());
+            orderGoods.setBuyCount(cart.getBuyCount());
+            orderGoods.setGoodsId(g.getId());
+            orderGoods.setTotalAmount(orderGoods.getPromotionPrice().multiply(new BigDecimal(cart.getBuyCount())));
+
+            orderGoodsList.add(orderGoods);
+
+            OrderProductDTO productDTO = new OrderProductDTO();
+            productDTO.setRealPrice(orderGoods.getPrice());
+            productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
+            productDTO.setCount(orderGoods.getBuyCount());
+            productDTO.setProductId(orderGoods.getGoodsId());
+            productDTO.setSizeId(orderGoods.getGoodsSpecId());
+
+            lsProduct.add(productDTO);
         }
 
         goodsDTO.setItems(orderGoodsList);

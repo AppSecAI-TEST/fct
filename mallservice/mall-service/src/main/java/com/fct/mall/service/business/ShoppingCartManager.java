@@ -162,49 +162,53 @@ public class ShoppingCartManager {
 
         List<DiscountProductDTO> lsDiscountGoods = promotionService.findDiscountProductDTO(goodsIdList, 1);
 
-        if (lsDiscountGoods != null && lsDiscountGoods.size() > 0) {
-            for (ShoppingCart cart : cartList
-                    ) {
-                Goods g = goodsManager.findById(cart.getGoodsId());
-                if (g.getIsDel() == 1) {
-                    //从购物车中删除
-                    shoppingCartRepository.deleteByGoodsId(g.getId());
-                    continue;
+        for (ShoppingCart cart : cartList
+                ) {
+            Goods g = goodsManager.findById(cart.getGoodsId());
+            if (g.getIsDel() == 1) {
+                //从购物车中删除
+                shoppingCartRepository.deleteByGoodsId(g.getId());
+                continue;
+            }
+            OrderGoods orderGoods = new OrderGoods();
+
+            if (cart.getGoodsSpecId() > 0) {
+                GoodsSpecification gsp = goodsSpecificationManager.findById(cart.getGoodsSpecId());
+                if (gsp == null || gsp.getGoodsId() != g.getId()) {
+                    throw new IllegalArgumentException("非法数据");
                 }
-                OrderGoods orderGoods = new OrderGoods();
+                orderGoods.setSpecName(gsp.getName());
+                orderGoods.setGoodsSpecId(gsp.getId());
+                orderGoods.setPrice(gsp.getSalePrice());
+            } else {
+                List<GoodsSpecification> lsGS = goodsSpecificationManager.findByGoodsId(g.getId());
+
+                if (lsGS != null && lsGS.size() > 0) {
+                    throw new IllegalArgumentException("订单商品存在规格，您没有选择规格");
+                }
+                orderGoods.setPrice(g.getSalePrice());
+            }
+
+            orderGoods.setPromotionPrice(g.getSalePrice());
+            //从折扣活动中获取数据
+            if (lsDiscountGoods != null && lsDiscountGoods.size() > 0) {
                 DiscountProductDTO discount = orderGoodsManager.getDiscount(lsDiscountGoods, cart.getGoodsId());
                 if (discount != null) {
                     BigDecimal realPrice = discount.getDiscountProduct().getDiscountRate().multiply(g.getSalePrice());
                     orderGoods.setPromotionPrice(realPrice); //重新计算真实销售价，
                 }
+            }
 
-                if (cart.getGoodsSpecId() > 0) {
-                    GoodsSpecification gsp = goodsSpecificationManager.findById(cart.getGoodsSpecId());
-                    if (gsp == null || gsp.getGoodsId() != g.getId()) {
-                        throw new IllegalArgumentException("非法数据");
-                    }
-                    orderGoods.setSpecName(gsp.getName());
-                    orderGoods.setGoodsSpecId(gsp.getId());
-                    orderGoods.setPrice(gsp.getSalePrice());
-                } else {
-                    List<GoodsSpecification> lsGS = goodsSpecificationManager.findByGoodsId(g.getId());
+            orderGoods.setImg(g.getDefaultImage());
+            orderGoods.setName(g.getName());
+            orderGoods.setTotalAmount(orderGoods.getPromotionPrice().multiply(new BigDecimal(cart.getBuyCount())));
 
-                    if (lsGS != null && lsGS.size() > 0) {
-                        throw new IllegalArgumentException("订单商品存在规格，您没有选择规格");
-                    }
-                    orderGoods.setPrice(g.getSalePrice());
-                }
-                orderGoods.setImg(g.getDefaultImage());
-                orderGoods.setName(g.getName());
-                orderGoods.setTotalAmount(orderGoods.getPromotionPrice().multiply(new BigDecimal(cart.getBuyCount())));
+            cart.setGoods(orderGoods);
 
-                cart.setGoods(orderGoods);
-
-                if(g.getStatus() != 1)
-                {
-                    //前端用来判断宝贝状态，下架
-                    cart.setGoodsSpecId(-1);
-                }
+            if(g.getStatus() != 1)
+            {
+                //前端用来判断宝贝状态，下架
+                cart.setGoodsSpecId(-1);
             }
         }
 

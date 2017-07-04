@@ -123,14 +123,11 @@ public class OrderGoodsManager {
             }
             orderGoods.setPromotionPrice(g.getSalePrice());
             //从当前用户购买的商品中，获取是否有折扣信息
-            if (lsDiscountGoods != null && lsDiscountGoods.size()>0)
+            DiscountProductDTO discount = getDiscount(lsDiscountGoods,cart.getGoodsId());
+            if(discount != null)
             {
-                DiscountProductDTO discount = getDiscount(lsDiscountGoods,cart.getGoodsId());
-                if(discount != null)
-                {
-                    BigDecimal realPrice =  discount.getDiscountProduct().getDiscountRate().multiply(orderGoods.getPrice());
-                    orderGoods.setPromotionPrice(realPrice); //重新计算真实销售价，
-                }
+                BigDecimal realPrice =  discount.getDiscountProduct().getDiscountRate().multiply(orderGoods.getPrice());
+                orderGoods.setPromotionPrice(realPrice); //重新计算真实销售价，
             }
 
             orderGoods.setImg(g.getDefaultImage());
@@ -167,6 +164,10 @@ public class OrderGoodsManager {
     
     public DiscountProductDTO getDiscount(List<DiscountProductDTO> lsDiscountGoods, Integer productid)
     {
+        if(lsDiscountGoods == null || lsDiscountGoods.size()<1)
+        {
+            return null;
+        }
         for (DiscountProductDTO dp: lsDiscountGoods
              ) {
             if(dp.getProductId() == productid)

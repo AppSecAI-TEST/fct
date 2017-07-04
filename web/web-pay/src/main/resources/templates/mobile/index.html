@@ -4,45 +4,55 @@
     <title>方寸堂-支付</title>
 </head>
 <body th:replace="fragment/layout::body(~{ :: .bodyContent},~{::.script})">
-        <div class="pay-container bodyContent" id="pay">
-            <section class="tips">
-                <div class="title">
-                    <i class="fa fa-check"></i><span>订单提交成功，请尽快前往付款。</span>
-                </div>
-                <div class="text">
-                    应付金额：<span class="pri" th:text="'￥'+${payamount}">￥999999.00</span>
-                </div>
+
+
+    <div class="pay-container bodyContent" id="pay">
+        <section class="tips">
+            <div class="title">
+                <img th:src="${pub.staticPath('/static/img/check.png')}" class="check"><span>订单提交成功，请尽快前往付款。</span>
+            </div>
+            <div class="text">
+                应付金额：<span class="pri" th:text="'￥'+${payamount}">￥999999.00</span>
+            </div>
+        </section>
+        <form id="payform" class="form-horizontal">
+            <input type="hidden" name="tradeid" th:value="${tradeid}">
+            <input type="hidden" name="tradetype" th:value="${tradetype}">
+            <section class="ways">
+                <ul class="way-list">
+                    <li class="hide">
+                        <label for="alipay">
+                            <img th:src="${pub.staticPath('/static/img/alipay.png')}"><span class="line">
+                    <span class="txt">支付宝支付</span>
+                    <input type="radio" class="" name="platform" value="alipay_fctwap" id="alipay">
+                  </span>
+                        </label>
+                    </li>
+                    <li>
+                        <label for="weipay">
+                            <img th:src="${pub.staticPath('/static/img/wxpay.png')}"><span class="line">
+                    <span class="txt">微信支付</span>
+                    <input type="radio" class="" name="platform" value="wxpay_fctwap" id="weipay">
+                  </span>
+                        </label>
+                    </li>
+                    <li>
+                        <label for="unionpay">
+                            <img th:src="${pub.staticPath('/static/img/unionpay.png')}"><span class="line">
+                    <span class="txt">银联支付</span>
+                    <input type="radio" class="" name="platform" value="unionpay_fctwap" id="unionpay">
+                  </span>
+
+                        </label>
+                    </li>
+                </ul>
             </section>
-            <form id="payform" class="form-horizontal">
-                <input type="hidden" name="tradeid" th:value="${tradeid}">
-                <input type="hidden" name="tradetype" th:value="${tradetype}">
-                <section class="ways">
-                    <ul class="way-list">
-                        <li class="hide">
-                            <label for="alipay">
-                                <img th:src="${pub.staticPath('/static/img/alipay.png')}">支付宝支付
-                                <input type="radio" value="alipay_fctwap" name="platform" id="alipay">
-                            </label>
-                        </li>
-                        <li>
-                            <label for="weipay">
-                                <img th:src="${pub.staticPath('/static/img/wxpay.png')}">微信支付
-                                <input type="radio" value="wxpay_fctwap" name="platform" id="weipay">
-                            </label>
-                        </li>
-                        <li>
-                            <label for="unionpay">
-                                <img th:src="${pub.staticPath('/static/img/unionpay.png')}">银联支付
-                                <input type="radio" value="unionpay_fctwap" name="platform" id="unionpay">
-                            </label>
-                        </li>
-                    </ul>
-                </section>
-            </form>
-            <section class="pay-sub">
-                <a href="javascript:;" class="sub-link" id="payClick">确认支付</a>
-            </section>
-        </div>
+        </form>
+        <section class="pay-sub">
+            <a href="javascript:;" class="sub-link">确认支付</a>
+        </section>
+    </div>
+
 
         <script type="application/javascript" class="script">
 

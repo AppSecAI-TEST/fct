@@ -84,7 +84,7 @@ public class DiscountProductManager {
 
         for (Integer id:productIds
              ) {
-            if(!StringUtils.isEmpty(id))
+            if(!StringUtils.isEmpty(ids))
             {
                 ids += ",";
             }

@@ -125,24 +125,23 @@ public class OrderManager {
             }
             else
             {
-                dicProductCount.put(obj.getProductId(),dicProductCount.get(obj.getProductId())+obj.getCount());
+                Integer productCount = dicProductCount.get(obj.getProductId());
+                dicProductCount.put(obj.getProductId(),productCount+obj.getCount());
 
+                Map<Integer,Integer> mapSize = dicProductSizeCount.get(obj.getProductId());
 
-                if (dicProductSizeCount.get(obj.getProductId()).containsKey(obj.getSizeId()))
+                if (mapSize !=null && mapSize.containsKey(obj.getSizeId()))
                 {
-                    Map<Integer,Integer> mapSize = dicProductSizeCount.get(obj.getProductId());
-                    mapSize.put(obj.getSizeId(),mapSize.get(obj.getSizeId())+obj.getCount());
-
-
-                    dicProductSizeCount.put(obj.getProductId(),mapSize);
+                    Integer sizeId = mapSize.get(obj.getSizeId());
+                    mapSize.put(obj.getSizeId(),sizeId+obj.getCount());
                 }
                 else
                 {
-                    Map<Integer,Integer> mapSize = new HashMap<>();
+                    mapSize = new HashMap<>();
                     mapSize.put(obj.getSizeId(),obj.getCount());
 
-                    dicProductSizeCount.put(obj.getProductId(),mapSize);
                 }
+                dicProductSizeCount.put(obj.getProductId(),mapSize);
             }
         }
 

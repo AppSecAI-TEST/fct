@@ -1,9 +1,12 @@
 package com.fct.promotion.service.business;
 
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.ListUtils;
+import com.fct.core.utils.PageUtil;
 import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,14 +28,16 @@ public class CouponCodeDTOManager {
     private JdbcTemplate jt;
 
     public List<CouponCodeDTO> findMemberCouponCode(Integer policyId,Integer memberId,String code,Integer status,
-                                                           Boolean isValid,Integer startIndex, Integer count)
+                                                           Boolean isValid,Integer pageIndex, Integer pageSize)
     {
-        String condition = getCondition(policyId,memberId,code,status,isValid);
+        List<Object> param = new ArrayList<>();
+        String condition = getCondition(policyId,memberId,code,status,isValid,param);
 
         String orderby = " c.Id desc";
         String fields = "c.*,p.Name as CouponName,p.StartTime,p.EndTime,p.Amount as Amount,p.FullAmount as FullAmount,p.ProductIds as ProductIds";
-        String sql = String.format("select * from (select %s,ROW_NUMBER() over(order by  %s) as r  from CouponPolicy p inner join CouponCode c on p.Id = c.policyId where %s)t where t.r between %s and %s",
-                fields, orderby, condition, startIndex, startIndex + count - 1);
+        String tables = " CouponPolicy p inner join CouponCode c on p.Id = c.policyId";
+
+        String sql = PageUtil.getPageSQL(tables,fields,condition,orderby,pageIndex,pageSize);
 
         return jt.query(sql,new Object[]{}, new BeanPropertyRowMapper<CouponCodeDTO>(CouponCodeDTO.class));
 
@@ -39,41 +46,47 @@ public class CouponCodeDTOManager {
     public Integer getMemberCouponCodeCount(Integer policyId,Integer memberId,String code,Integer status,
                                             Boolean isValid)
     {
-        String condition = getCondition(policyId,memberId,code,status,isValid);
+        List<Object> param = new ArrayList<>();
+        String condition = getCondition(policyId,memberId,code,status,isValid,param);
+
         String sql = "Select Count(0) from CouponPolicy as p inner join CouponCode as c on p.Id = c.policyId  where "+condition;
-        return jt.queryForObject(sql,Integer.class);
+        return jt.queryForObject(sql,Integer.class,param.toArray());
     }
 
-    private String getCondition(Integer policyId,Integer memberId,String code,Integer status,Boolean isValid)
+    private String getCondition(Integer policyId, Integer memberId, String code, Integer status,
+                                Boolean isValid, List<Object> param)
     {
-        StringBuilder sb = new StringBuilder(" 1=1");
+        String condition = "";
 
         if (policyId > 0)
         {
-            sb.append(" and p.Id="+policyId);
+            condition += " and p.Id="+policyId;
         }
 
         if (memberId > 0)
         {
-            sb.append(" and c.MemberId="+memberId);
+            condition += " and c.MemberId="+memberId;
         }
 
         if (!StringUtils.isEmpty(code))
         {
-            sb.append(" and c.Code='"+ code +"'");
+            condition += " and c.Code=?";
+            param.add(code);
         }
 
         if (status>-1)
         {
-            sb.append(" and c.Status="+status);
+            condition += " and c.Status="+status;
         }
 
         if (isValid)
         {
-            sb.append(" and p.StartTime<=getdate() and p.EndTime>=getdate()");
+            condition += " and p.StartTime<='?' and p.EndTime>='?'";
+            param.add(DateUtils.format(new Date()));
+            param.add(DateUtils.format(new Date()));
         }
 
-        return sb.toString();
+        return condition;
     }
 
     public CouponCodeDTO findByMemberId(Integer memberId, List<OrderProductDTO> products, String couponCode)

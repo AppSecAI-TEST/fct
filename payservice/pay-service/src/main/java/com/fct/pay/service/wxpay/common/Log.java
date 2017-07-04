@@ -29,6 +29,7 @@ public class Log {
 
     public void d(String s){
         logger.debug(s);
+
     }
 
     public void i(String s){

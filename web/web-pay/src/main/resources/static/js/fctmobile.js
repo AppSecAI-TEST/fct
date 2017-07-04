@@ -21,17 +21,6 @@ var Ajax = function (element, options) {
     } else {
         data = options.form ? $('#' + options.form).serialize() : "";
     }
-
-    var obj = new XMLHttpRequest();
-    obj.open("POST", url, true);
-    bj.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // 发送信息至服务器时内容编码类型
-    obj.onreadystatechange = function () {
-        if (obj.readyState == 4 && (obj.status == 200 || obj.status == 304)) {  // 304未修改
-            fn.call(this, obj.responseText);
-        }
-    };
-    obj.send(data);
-
     $.ajax({
         url: options.url,
         type: 'POST',

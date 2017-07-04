@@ -88,7 +88,35 @@ public class WxpayManager {
     }
 
     public String requestUnifiedOrderService(String payment,String payOrderId, String openId, BigDecimal total_fee, String body,
-                                                    String notifyUrl, String userIp,Date expireTime) throws Exception{
+                                                    String notifyUrl, String userIp,Date expireTime) {
+
+        if (StringUtils.isEmpty(payment)) {
+            throw new IllegalArgumentException("支付方式不空");
+        }
+        if (StringUtils.isEmpty(payOrderId))
+        {
+            throw new IllegalArgumentException("支付订单为空");
+        }
+        if(StringUtils.isEmpty(userIp))
+        {
+            throw new IllegalArgumentException("用户ip为空");
+        }
+        if(StringUtils.isEmpty(body))
+        {
+            throw new IllegalArgumentException("描述为空");
+        }
+        if(StringUtils.isEmpty(openId))
+        {
+            throw new IllegalArgumentException("openid为空");
+        }
+        if(total_fee.doubleValue()<=0)
+        {
+            throw new IllegalArgumentException("支付金额不正确。");
+        }
+        if(DateUtils.compareDate(expireTime,new Date())<=0)
+        {
+            throw new IllegalArgumentException("已过期不可进行支付。");
+        }
 
         //Integer expirtime = expireMinutes > 0 ? expireMinutes : 7200; //以分为单位，默认5天
         initSDKConfiguration(payment,userIp);
@@ -100,15 +128,20 @@ public class WxpayManager {
 
         UnifiedOrderReqData unifiedOrderReqData = new UnifiedOrderReqData(openId,body,payOrderId,totalFee,userIp,
                 timeStart,timeExpire,"JSAPI",Configure.getNotifyUrl());
+        Map<String,Object> map = null;
+        try {
+            String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
+            map = XMLParser.getMapFromXML(reqdata);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
 
-        String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
-
-        Map<String,Object> map = XMLParser.getMapFromXML(reqdata);
-
-        if (!map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
+        if (map == null || !map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
         {
             Constants.logger.info("wxpay:UnifiedOrder response error!");
-            throw new IllegalArgumentException("UnifiedOrder response error!");
+            throw new IllegalArgumentException("请求微信支付过程中出错，请稍候再试。");
         }
 
         Map<String,Object> jsAPI = new HashMap<String, Object>();
@@ -128,8 +161,30 @@ public class WxpayManager {
     }
 
     public String requestAppPay(String payment, String payOrderId, BigDecimal total_fee, String body,
-                                String notifyUrl, String userIp, Date expireTime)throws Exception
-    {
+                                String notifyUrl, String userIp, Date expireTime) {
+        if (StringUtils.isEmpty(payment)) {
+            throw new IllegalArgumentException("支付方式不空");
+        }
+        if (StringUtils.isEmpty(payOrderId))
+        {
+            throw new IllegalArgumentException("支付订单为空");
+        }
+        if(StringUtils.isEmpty(userIp))
+        {
+            throw new IllegalArgumentException("用户ip为空");
+        }
+        if(StringUtils.isEmpty(body))
+        {
+            throw new IllegalArgumentException("描述为空");
+        }
+        if(total_fee.doubleValue()<=0)
+        {
+            throw new IllegalArgumentException("支付金额不正确。");
+        }
+        if(DateUtils.compareDate(expireTime,new Date())<=0)
+        {
+            throw new IllegalArgumentException("已过期不可进行支付。");
+        }
         //统一下单
        initSDKConfiguration(payment,userIp);
 
@@ -141,14 +196,20 @@ public class WxpayManager {
         UnifiedOrderReqData unifiedOrderReqData = new UnifiedOrderReqData("",body,payOrderId,totalFee,userIp,
                 timeStart,timeExpire,"APP",Configure.getNotifyUrl());
 
-        String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
+        Map<String,Object> map = null;
+        try {
+            String reqdata = new UnifiedOrderService().request(unifiedOrderReqData);
+            map = XMLParser.getMapFromXML(reqdata);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
 
-        Map<String,Object> map = XMLParser.getMapFromXML(reqdata);
-
-        if (!map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
+        if (map == null || !map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
         {
             Constants.logger.info("wxpay:UnifiedOrder response error!");
-            throw new IllegalArgumentException("UnifiedOrder response error!");
+            throw new IllegalArgumentException("unifiedOrder response error!");
         }
 
         Map<String,Object> jsAPI = new HashMap<String, Object>();
@@ -285,7 +346,7 @@ public class WxpayManager {
      * @throws Exception
      */
     public PayNotify requestRefundService(String payment,String payOrderId,String refundId,
-                                                 BigDecimal payAmount,BigDecimal refundAmount) throws Exception{
+                                                 BigDecimal payAmount,BigDecimal refundAmount){
 
         initSDKConfiguration(payment,"");
 
@@ -293,31 +354,36 @@ public class WxpayManager {
                 payAmount.multiply(new BigDecimal(100)).intValue(),refundAmount.multiply(new BigDecimal(100)).intValue(),
                 Configure.getMchid(),"");
 
-        String reqdata =  new RefundService().request(refundReqData); //提交退款申请给API，接收返回数据
-
-        Map<String,Object> result = XMLParser.getMapFromXML(reqdata);
-
+        Map<String,Object> result = null;
         PayNotify notify = new PayNotify();
 
-        Constants.logger.info("wxpay:" + reqdata);
+        try {
+            String reqdata = new RefundService().request(refundReqData);//提交退款申请给API，接收返回数据
+            result = XMLParser.getMapFromXML(reqdata);
 
-        if (result.get("return_code").toString().toLowerCase() == "success" &&
-                result.get("result_code").toString().toLowerCase() == "success" &&
-                result.get("out_trade_no").toString() == payOrderId
-                )
-        {
-            //交易成功并在页面返回success
-            notify.setHasError(false);
-            notify.setPayOrderNo(refundId);
-            notify.setExtandProperties(XMLParser.getMapConvertToMap(result));
-        }
-        else
-        {
-            //签名验证失败
-            notify.setHasError(true);
-            notify.setErrorMessage("微信支付平台退款异步通知签名验证失败.");
-        }
+            Constants.logger.info("wxpay:" + reqdata);
 
+            if (result.get("return_code").toString().toLowerCase() == "success" &&
+                    result.get("result_code").toString().toLowerCase() == "success" &&
+                    result.get("out_trade_no").toString() == payOrderId
+                    )
+            {
+                //交易成功并在页面返回success
+                notify.setHasError(false);
+                notify.setPayOrderNo(refundId);
+                notify.setExtandProperties(XMLParser.getMapConvertToMap(result));
+            }
+            else
+            {
+                //签名验证失败
+                notify.setHasError(true);
+                notify.setErrorMessage("微信支付平台退款异步通知签名验证失败.");
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return notify;
     }
 

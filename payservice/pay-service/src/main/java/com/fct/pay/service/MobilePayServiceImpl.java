@@ -31,15 +31,8 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctwap";
         }
-        try {
-            return wxpayManager.requestUnifiedOrderService(payment,payOrderNo, openId, total_fee, body,notifyUrl,
-                    userIp, expireTime);
-        }
-        catch (Exception exp)
-        {
-            exp.printStackTrace();
-            return "";
-        }
+        return wxpayManager.requestUnifiedOrderService(payment,payOrderNo, openId, total_fee, body,notifyUrl,
+                userIp, expireTime);
     }
 
     public PayNotify wxpayNotify(Map<String, String> mapParam, String xmlContent)
@@ -54,14 +47,7 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctapp";
         }
-        try {
-            return wxpayManager.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
-        }
-        catch (Exception exp)
-        {
-            exp.printStackTrace();
-            return "";
-        }
+        return wxpayManager.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
     }
 
     public PayNotify wxpayWapRefund(String payment,String payOrderId,String refundId,
@@ -88,14 +74,7 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctapp";
         }
-        try {
-            return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
-        }
-        catch (Exception exp)
-        {
-            exp.printStackTrace();
-        }
-        return new PayNotify();
+        return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
     }
 
     public String unionpayWap(String payment,String orderId, BigDecimal payAmount, String desc, Date expireTime,

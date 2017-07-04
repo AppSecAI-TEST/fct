@@ -75,7 +75,7 @@ public class ShoppingCartManager {
             {
                 throw new IllegalArgumentException("规格有误");
             }
-            if (spec.getId() != goods.getId())
+            if (spec.getGoodsId() != goods.getId())
             {
                 throw new IllegalArgumentException("规格有误");
             }

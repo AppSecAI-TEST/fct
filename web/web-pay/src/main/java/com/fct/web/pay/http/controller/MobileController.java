@@ -47,7 +47,7 @@ public class MobileController extends BaseController{
     {
         tradeid = ConvertUtils.toString(tradeid);
         tradetype =ConvertUtils.toString(tradetype);
-        BigDecimal payAmount =new BigDecimal(0);
+        BigDecimal payAmount = new BigDecimal(0);
         Integer payStatus = 0;
         Integer memberId=0;
 
@@ -67,6 +67,8 @@ public class MobileController extends BaseController{
                     payAmount = rechargeRecord.getPayAmount();
 
                     break;
+                default:
+                    return errorPage("非法用户操作");
             }
 
             model.addAttribute("platformList", financeService.findPayPlatform());

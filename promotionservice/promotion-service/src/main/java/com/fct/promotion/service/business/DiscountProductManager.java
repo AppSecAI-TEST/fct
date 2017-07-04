@@ -5,6 +5,7 @@ import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.data.entity.DiscountProduct;
 import com.fct.promotion.data.repository.DiscountProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -96,7 +97,8 @@ public class DiscountProductManager {
         {
             sql += " AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)";
         }
-        return jt.queryForList(sql,DiscountProduct.class);
+        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
+        //return jt.queryForList(sql,DiscountProduct.class);
     }
 
 

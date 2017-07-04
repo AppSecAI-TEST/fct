@@ -8,6 +8,7 @@ import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
 import com.fct.promotion.interfaces.dto.DiscountProductDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,9 @@ public class DiscountProductDTOManager {
         sql += String.format(" WHERE p.productId=%d and d.endtime>='%s' and d.AuditStatus=1 limit 1",
                 productId, DateUtils.format(new Date()));
 
-        DiscountProduct product =  jt.queryForObject(sql,DiscountProduct.class);
+        DiscountProduct product = jt.queryForObject(sql,new Object[]{},
+                new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
+
 
         if(product != null) {
             Discount discount = discountManager.findById(product.getDiscountId());

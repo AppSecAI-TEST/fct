@@ -7,15 +7,23 @@ import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CacheArtistManager {
 
     @Autowired
     private ArtistService artistService;
+
+    @Autowired
+    private JedisPool jedisPool;
+
+    private static final int expireSecond = 60 * 24 * 60 * 60;
 
     public Artist getArtist(Integer id)
     {

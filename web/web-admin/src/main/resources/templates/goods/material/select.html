@@ -73,8 +73,8 @@
         $("#okClick").click(function () {
             var arrId =[];
             var arrName=[];
-            for(var key in arrJson) {
-                var json = eval('(' + arrJson[key] + ')');
+            for(var key in arrData) {
+                var json = eval('(' + arrData[key] + ')');
                 arrId.push(json.id);
                 arrName.push(name);
 

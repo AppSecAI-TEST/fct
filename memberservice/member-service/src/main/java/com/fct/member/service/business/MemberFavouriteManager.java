@@ -37,7 +37,7 @@ public class MemberFavouriteManager {
         {
             throw new IllegalArgumentException("关联Id为空");
         }
-        if(memberFavouriteRepository.countByMemberIdAndFavTypeAndRelatedId(memberId,favType,relatedId)>0)
+        if(memberFavouriteRepository.getCountByMember(memberId,favType,relatedId)>0)
         {
             throw new IllegalArgumentException("已收藏");
         }
@@ -52,9 +52,9 @@ public class MemberFavouriteManager {
     public int getCount(Integer memberId,Integer favType,Integer relatedId)
     {
         if(memberId>0) {
-            memberFavouriteRepository.countByMemberIdAndFavTypeAndRelatedId(memberId,favType,relatedId);
+            memberFavouriteRepository.getCountByMember(memberId,favType,relatedId);
         }
-        return memberFavouriteRepository.countByFavTypeAndRelatedId(favType,relatedId);
+        return memberFavouriteRepository.getCountByType(favType,relatedId);
     }
 
     public void delete(Integer memberId,Integer id)

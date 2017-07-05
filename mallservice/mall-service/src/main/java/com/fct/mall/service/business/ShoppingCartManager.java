@@ -203,6 +203,9 @@ public class ShoppingCartManager {
             orderGoods.setName(g.getName());
             orderGoods.setTotalAmount(orderGoods.getPromotionPrice().multiply(new BigDecimal(cart.getBuyCount())));
 
+            //占用buycount字段，返回宝贝库存
+            orderGoods.setBuyCount(g.getStockCount());
+
             cart.setGoods(orderGoods);
 
             if(g.getStatus() != 1)

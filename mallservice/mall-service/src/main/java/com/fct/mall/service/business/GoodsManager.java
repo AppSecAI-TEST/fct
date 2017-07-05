@@ -400,4 +400,21 @@ public class GoodsManager {
         g.setUpdateTime(new Date());
         goodsRepository.save(g);
     }
+
+    public List<Goods> findByArtistOrMaterial(Integer artistId,Integer materialId, int top)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select * from Goods where 1=1");
+        List<Object> param = new ArrayList<>();
+        if (materialId>0) {
+            sb.append(" AND materialId like ?");
+            param.add(","+ materialId +",");
+        }
+        if (artistId>0) {
+            sb.append(" AND artistIds like ?");
+            param.add(","+artistId +",");
+        }
+        sb.append(" order by sellCount desc limit "+top);
+        return jt.query(sb.toString(), param.toArray(), new BeanPropertyRowMapper<Goods>(Goods.class));
+    }
 }

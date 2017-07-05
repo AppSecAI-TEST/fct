@@ -295,6 +295,14 @@ public class MallServiceImpl implements MallService {
         return goodsMaterialManager.findByGoods(materialIds);
     }
 
+    public List<Goods> findGoodsByMaterial(Integer materialId,int top) {
+        return goodsManager.findByArtistOrMaterial(0,materialId,top);
+    }
+
+    public List<Goods> findGoodsByArtist(Integer artistId,int top) {
+        return goodsManager.findByArtistOrMaterial(artistId,0,top);
+    }
+
     public  void deleteGoodsMaterial(Integer id)
     {
         goodsMaterialManager.delete(id);

@@ -126,5 +126,9 @@ public interface MallService {
 
     List<GoodsMaterial> findMaterialByGoods(String materialIds);
 
+    List<Goods> findGoodsByMaterial(Integer materialId,int top);
+
+    List<Goods> findGoodsByArtist(Integer artistId,int top);
+
     PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize);
 }

@@ -1,7 +1,6 @@
 package com.fct.member.service.business;
 
 import com.fct.core.utils.PageUtil;
-import com.fct.member.data.entity.InviteCode;
 import com.fct.member.data.entity.MemberFavourite;
 import com.fct.member.data.repository.MemberFavouriteRepository;
 import com.fct.member.interfaces.PageResponse;
@@ -57,9 +56,9 @@ public class MemberFavouriteManager {
         return memberFavouriteRepository.getCountByType(favType,relatedId);
     }
 
-    public void delete(Integer memberId,Integer id)
+    public void delete(Integer memberId,Integer favType,Integer relatedId)
     {
-        memberFavouriteRepository.deleteByMemberIdAndId(memberId,id);
+        memberFavouriteRepository.deleteByMember(memberId,favType,relatedId);
     }
 
     private String getCondition(Integer memberId, Integer favType, List<Object> param)

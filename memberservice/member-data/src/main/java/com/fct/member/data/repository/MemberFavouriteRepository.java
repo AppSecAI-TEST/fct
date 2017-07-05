@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MemberFavouriteRepository extends JpaRepository<MemberFavourite, Integer> {
 
-    void deleteByMemberIdAndId(Integer memberId,Integer id);
+    @Query(nativeQuery = true, value = "DELETE FROM MemberFavourite WHERE MemberId=?1 and favtype=?2 and relatedId=?3")
+    void deleteByMember(Integer memberId,Integer favType,Integer relatedId);
 
     @Query(nativeQuery = true, value = "SELECT count(0) FROM MemberFavourite WHERE MemberId=?1 and favtype=?2 and relatedId=?3")
     int getCountByMember(Integer memberId,Integer favType,Integer relatedId);

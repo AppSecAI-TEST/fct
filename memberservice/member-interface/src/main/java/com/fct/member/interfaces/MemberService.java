@@ -86,7 +86,7 @@ public interface MemberService {
 
     void saveFavourite(Integer memberId,Integer favType,Integer relatedId);
 
-    void deleteFavourite(Integer memberId,Integer favId);
+    void deleteFavourite(Integer memberId,Integer favType,Integer relatedId);
 
     int getFavouriteCount(Integer memberId,Integer favType,Integer relatedId);
 

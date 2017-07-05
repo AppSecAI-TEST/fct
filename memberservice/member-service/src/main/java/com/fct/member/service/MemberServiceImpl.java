@@ -233,9 +233,9 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         memberFavouriteManager.create(memberId,favType,relatedId);
     }
 
-    public void deleteFavourite(Integer memberId,Integer favId)
+    public void deleteFavourite(Integer memberId,Integer favType,Integer relatedId)
     {
-        memberFavouriteManager.delete(memberId,favId);
+        memberFavouriteManager.delete(memberId,favType,relatedId);
     }
 
     public int getFavouriteCount(Integer memberId,Integer favType,Integer relatedId)

@@ -33,13 +33,16 @@ public class BaseController {
     public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
         //获取cookie
-
-        currentUser = new SysUserLogin();
-
         initUser(request,response);
+
+        if(currentUser == null)
+        {
+            currentUser = new SysUserLogin();
+        }
 
         model.addAttribute("pub",config);
         model.addAttribute("currentUser",currentUser);
+
     }
 
     void initUser(HttpServletRequest request, HttpServletResponse response)throws Exception
@@ -58,12 +61,5 @@ public class BaseController {
             return;
         }
     }
-/*
-    @RequestMapping(value = "/fragment/left", method = RequestMethod.GET)
-    public ModelAndView leftLayout() {
-        ModelAndView mav = new ModelAndView("/fragment/left");
-        mav.addObject("currentUser",currentUser);
-        return mav;
-    }*/
 
 }

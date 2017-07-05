@@ -5,6 +5,7 @@ import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.interfaces.MemberService;
 import com.fct.web.admin.config.FctConfig;
+import com.fct.web.admin.http.cache.CacheSysUserManager;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class MainController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private CacheSysUserManager cacheSysUserManager;
 
     @Autowired
     private FctConfig fctConfig;
@@ -76,7 +80,7 @@ public class MainController {
             if(user !=null)
             {
                 //写入cookie
-                CookieUtil.addCookie(response,"sysuser_token",user.getToken());
+                CookieUtil.addCookie(response,"sysuser_token",user.getToken(),"localhost");
             }
         }
         catch (IllegalArgumentException exp)
@@ -93,12 +97,5 @@ public class MainController {
             returnurl = "/member";
         }
         return AjaxUtil.goUrl(returnurl,"登录成功。");
-    }
-
-    @RequestMapping(value = "/fragment/layout", method = RequestMethod.GET)
-    public ModelAndView messages() {
-        ModelAndView mav = new ModelAndView("/fragment/layout");
-        mav.addObject("pub",fctConfig);
-        return mav;
     }
 }

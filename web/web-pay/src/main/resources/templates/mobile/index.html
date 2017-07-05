@@ -20,14 +20,6 @@
             <input type="hidden" name="tradetype" th:value="${tradetype}">
             <section class="ways">
                 <ul class="way-list">
-                    <li class="hide">
-                        <label for="alipay">
-                            <img th:src="${pub.staticPath('/static/img/alipay.png')}"><span class="line">
-                    <span class="txt">支付宝支付</span>
-                    <input type="radio" class="" name="platform" value="alipay_fctwap" id="alipay">
-                  </span>
-                        </label>
-                    </li>
                     <li>
                         <label for="weipay">
                             <img th:src="${pub.staticPath('/static/img/wxpay.png')}"><span class="line">
@@ -52,6 +44,7 @@
             <a href="javascript:;" class="sub-link" id="payClick">确认支付</a>
         </section>
     </div>
+
 
         <script type="application/javascript" class="script">
 

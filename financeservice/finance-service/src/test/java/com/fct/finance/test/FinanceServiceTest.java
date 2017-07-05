@@ -29,7 +29,7 @@ public class FinanceServiceTest {
 
     @Test
     public void findMemberAccount(){
-        List<PayPlatform> ls = financeService.findPayPlatform();
+        List<PayPlatform> ls = financeService.findPayPlatform("app");
         Assert.assertNotNull(ls);
     }
 }

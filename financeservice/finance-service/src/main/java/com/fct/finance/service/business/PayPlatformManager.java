@@ -16,10 +16,8 @@ public class PayPlatformManager {
     @Autowired
     private PayPlatformRepository payPlatformRepository;
 
-    public List<PayPlatform> findAll()
+    public List<PayPlatform> findAll(String payment)
     {
-        Sort sort = new Sort(Sort.Direction.ASC, "SortIndex");
-
-        return payPlatformRepository.findAll(sort);
+        return payPlatformRepository.findByCode("%"+payment+"%");
     }
 }

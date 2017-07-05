@@ -45,26 +45,27 @@ public class DynamicController extends BaseController{
         page =ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(q))
         {
-            pageUrl +="&q="+ URL.encode(q);
+            sb.append("&q="+ URL.encode(q));
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl +="&starttime="+ starttime;
+            sb.append("&starttime="+ starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
         if(status>-1)
         {
-            pageUrl +="&status="+status;
+            sb.append("&status="+status);
         }
         if(artistid>0)
         {
-            pageUrl +="&artistid="+artistid;
+            sb.append("&artistid="+artistid);
         }
         PageResponse<ArtistDynamic> pageResponse = null;
 
@@ -88,7 +89,7 @@ public class DynamicController extends BaseController{
         model.addAttribute("query", query);
         model.addAttribute("lsDynamic", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "artist/dynamic/index";
     }

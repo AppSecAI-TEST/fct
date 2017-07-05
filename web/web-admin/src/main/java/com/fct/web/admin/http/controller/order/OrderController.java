@@ -12,10 +12,13 @@ import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +60,8 @@ public class OrderController  extends BaseController {
         String orderid="";
         String tabname ="order_index";
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         if(selkey == "orderid")
         {
@@ -74,6 +78,42 @@ public class OrderController  extends BaseController {
         else if(status==1)
         {
             tabname = "order_paysuccess";
+        }
+        if(!StringUtils.isEmpty(selkey))
+        {
+            sb.append("&selkey="+selkey+"&selValue="+selvalue);
+        }
+        if(shopid>0)
+        {
+            sb.append("&shopid="+shopid);
+        }
+        if(!StringUtils.isEmpty(goodsname))
+        {
+            sb.append("&goodsname="+ URLEncoder.encode(goodsname));
+        }
+        if(!StringUtils.isEmpty(payplatform))
+        {
+            sb.append("&payplatform="+payplatform);
+        }
+        if(!StringUtils.isEmpty(payorderid))
+        {
+            sb.append("&payorderid="+payorderid);
+        }
+        if(status>-1)
+        {
+            sb.append("&status="+status);
+        }
+        if(timetype>-1)
+        {
+            sb.append("&timetype="+timetype);
+        }
+        if(!StringUtils.isEmpty(starttime))
+        {
+            sb.append("&starttime="+starttime);
+        }
+        if(!StringUtils.isEmpty(endtime))
+        {
+            sb.append("&endtime="+endtime);
         }
 
         PageResponse<Orders> pageResponse = null;
@@ -103,7 +143,7 @@ public class OrderController  extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsOrder", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
         model.addAttribute("cacheOrder",cacheOrderManager);
 

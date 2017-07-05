@@ -50,7 +50,8 @@ public class DiscountController extends BaseController {
         page =ConvertUtils.toPageIndex(page);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         String goodsname="";
         String name="";
@@ -65,23 +66,23 @@ public class DiscountController extends BaseController {
 
         if(!StringUtils.isEmpty(selvalue))
         {
-            pageUrl += "&selkey="+selkey +"&selvalue="+selvalue;
+            sb.append("&selkey="+selkey +"&selvalue="+selvalue);
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(!StringUtils.isEmpty(selvalue))
         {
-            pageUrl += "&selkey="+selkey +"&selvalue="+selvalue;
+            sb.append("&selkey="+selkey +"&selvalue="+selvalue);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
 
@@ -106,7 +107,7 @@ public class DiscountController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsDiscount", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
         return "/promotion/discount/index";
     }

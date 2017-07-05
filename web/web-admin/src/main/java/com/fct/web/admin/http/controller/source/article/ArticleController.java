@@ -49,26 +49,27 @@ public class ArticleController extends BaseController{
         List<ArticleCategory> lsCategory = cacheCommonManager.findArticleCategoryByParent();//这样引用出错
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(title))
         {
-            pageUrl +="&q="+ URL.encode(title);
+            sb.append("&q="+ URL.encode(title));
         }
         if(!StringUtils.isEmpty(catecode))
         {
-            pageUrl +="&catecode="+ catecode;
+            sb.append("&catecode="+ catecode);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl +="&starttime="+ starttime;
+            sb.append("&starttime="+ starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
         if(status>-1)
         {
-            pageUrl +="&status="+status;
+            sb.append("&status="+status);
         }
         PageResponse<Article> pageResponse = null;
 
@@ -94,7 +95,7 @@ public class ArticleController extends BaseController{
         model.addAttribute("query", query);
         model.addAttribute("lsArticle", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
         model.addAttribute("cache", cacheCommonManager);
 
         return "source/article/index";

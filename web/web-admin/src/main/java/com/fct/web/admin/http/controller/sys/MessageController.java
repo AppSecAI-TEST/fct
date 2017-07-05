@@ -37,18 +37,19 @@ public class MessageController extends BaseController {
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(q))
         {
-            pageUrl +="&q="+ URL.encode(q);
+            sb.append("&q="+ URL.encode(q));
         }
         if(!StringUtils.isEmpty(typeid))
         {
-            pageUrl += "&typeid="+typeid;
+            sb.append("&typeid="+typeid);
         }
         if(status>-1)
         {
-            pageUrl += "&status="+status;
+            sb.append("&status="+status);
         }
         PageResponse<MessageQueue> pageResponse = null;
 
@@ -69,7 +70,7 @@ public class MessageController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsMessage", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "sys/message/index";
     }

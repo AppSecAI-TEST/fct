@@ -68,26 +68,27 @@ public class GoodsController extends BaseController {
         List<GoodsGrade> lsGrade = cacheGoodsManager.findGoodsGrade();
         List<Artist> artistList = cacheArtistManager.findArtist();
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(name))
         {
-            pageUrl +="&q="+ URL.encode(name);
+            sb.append("&q="+ URL.encode(name));
         }
         if(!StringUtils.isEmpty(catecode))
         {
-            pageUrl +="&catecode="+ catecode;
+            sb.append("&catecode="+ catecode);
         }
         if(gradeid>0)
         {
-            pageUrl +="&gradeid="+ gradeid;
+            sb.append("&gradeid="+ gradeid);
         }
         if(artistid>0)
         {
-            pageUrl +="&artistid="+ artistid;
+            sb.append("&artistid="+ artistid);
         }
         if(materialid>0)
         {
-            pageUrl +="&materialid="+ materialid;
+            sb.append("&materialid="+ materialid);
         }
         PageResponse<Goods> pageResponse = null;
 
@@ -116,7 +117,7 @@ public class GoodsController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsGoods", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
         model.addAttribute("cache", cacheGoodsManager);
         model.addAttribute("cacheArtist", cacheArtistManager);
 

@@ -34,10 +34,11 @@ public class UsersController extends BaseController {
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(q))
         {
-            pageUrl +="&q="+ URL.encode(q);
+            sb.append("&q="+ URL.encode(q));
         }
         PageResponse<SystemUser> pageResponse = null;
 
@@ -57,7 +58,7 @@ public class UsersController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsUser", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "sys/users/index";
     }

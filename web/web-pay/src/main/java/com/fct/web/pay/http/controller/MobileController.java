@@ -70,8 +70,6 @@ public class MobileController extends BaseController{
                 default:
                     return errorPage("非法用户操作");
             }
-
-            model.addAttribute("platformList", financeService.findPayPlatform());
         }
         catch (Exception exp)
         {
@@ -93,6 +91,7 @@ public class MobileController extends BaseController{
             return errorPage("非法用户操作");
         }
 
+        //model.addAttribute("platformList", financeService.findPayPlatform("wap"));
         model.addAttribute("payamount", payAmount);
         model.addAttribute("tradeid", tradeid);
         model.addAttribute("tradetype", tradetype);

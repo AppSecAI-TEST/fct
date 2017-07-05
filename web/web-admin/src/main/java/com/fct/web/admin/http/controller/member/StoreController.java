@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,27 +40,24 @@ public class StoreController extends BaseController{
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         if(!StringUtils.isEmpty(q))
         {
-            pageUrl +="&q="+ q;
+            sb.append("&q="+ URLEncoder.encode(q));
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
-        }
-        if(!StringUtils.isEmpty(q))
-        {
-            pageUrl +="&q="+ q;
+            sb.append("&status="+status);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl +="&starttime="+ starttime;
+            sb.append("&starttime="+ starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
 
         PageResponse<MemberStore> pageResponse = null;
@@ -83,7 +81,7 @@ public class StoreController extends BaseController{
         model.addAttribute("query", query);
         model.addAttribute("lsStore", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "member/store";
     }

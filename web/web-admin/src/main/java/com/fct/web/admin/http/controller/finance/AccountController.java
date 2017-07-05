@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.print.DocFlavor;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,32 +86,33 @@ public class AccountController extends BaseController{
         endtime =ConvertUtils.toString(endtime);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         if(memberid>0)
         {
-            pageUrl+="&memberid="+memberid;
+            sb.append("&memberid="+memberid);
         }
         if(!StringUtils.isEmpty(cellphone))
         {
-            pageUrl += "&cellphone="+cellphone;
+            sb.append("&cellphone="+cellphone);
         }
 
         if(!StringUtils.isEmpty(tradeid))
         {
-            pageUrl += "&tradeid="+tradeid;
+            sb.append("&tradeid="+tradeid);
         }
         if(!StringUtils.isEmpty(tradetype))
         {
-            pageUrl += "&tradetype="+tradetype;
+            sb.append("&tradetype="+tradetype);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
         PageResponse<MemberAccountHistory> pageResponse = null;
@@ -125,7 +127,7 @@ public class AccountController extends BaseController{
         }
 
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
 
         Map<String,Object> query = new HashMap<>();

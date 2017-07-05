@@ -45,7 +45,8 @@ public class SettleController extends BaseController{
         endtime =ConvertUtils.toString(endtime);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         String cellphone ="";
         String tradeid ="";
@@ -58,23 +59,23 @@ public class SettleController extends BaseController{
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(memberid>0)
         {
-            pageUrl+="&memberid="+memberid;
+            sb.append("&memberid="+memberid);
         }
         if(!StringUtils.isEmpty(selvalue))
         {
-            pageUrl += "&selkey="+ selkey +"&selvalue="+selvalue;
+            sb.append("&selkey="+ selkey +"&selvalue="+selvalue);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
         PageResponse<SettleRecord> pageResponse = null;
@@ -89,7 +90,7 @@ public class SettleController extends BaseController{
         }
 
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
 
         Map<String,Object> query = new HashMap<>();

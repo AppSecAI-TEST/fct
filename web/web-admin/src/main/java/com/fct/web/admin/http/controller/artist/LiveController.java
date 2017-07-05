@@ -44,18 +44,19 @@ public class LiveController extends BaseController{
         page =ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(startitme))
         {
-            pageUrl +="&startitme="+ startitme;
+            sb.append("&startitme="+ startitme);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
         if(status>-1)
         {
-            pageUrl +="&status="+status;
+            sb.append("&status="+status);
         }
         PageResponse<ArtistLive> pageResponse = null;
 
@@ -77,7 +78,7 @@ public class LiveController extends BaseController{
         model.addAttribute("query", query);
         model.addAttribute("lsLive", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "artist/live/index";
     }

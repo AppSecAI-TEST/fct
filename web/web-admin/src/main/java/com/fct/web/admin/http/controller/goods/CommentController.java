@@ -44,7 +44,8 @@ public class CommentController extends BaseController{
         goodsid =ConvertUtils.toInteger(goodsid);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         String cellphone="";
         String orderid="";
@@ -59,23 +60,23 @@ public class CommentController extends BaseController{
 
         if(!StringUtils.isEmpty(selvalue))
         {
-            pageUrl += "&selkey="+selkey +"&selvalue="+selvalue;
+            sb.append("&selkey="+selkey +"&selvalue="+selvalue);
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(!StringUtils.isEmpty(selvalue))
         {
-            pageUrl += "&selkey="+selkey +"&selvalue="+selvalue;
+            sb.append("&selkey="+selkey +"&selvalue="+selvalue);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
         PageResponse<OrderComment> pageResponse = null;
@@ -90,7 +91,7 @@ public class CommentController extends BaseController{
         }
 
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
 
         Map<String,Object> query = new HashMap<>();

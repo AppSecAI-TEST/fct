@@ -51,27 +51,28 @@ public class CouponController extends BaseController {
         page =ConvertUtils.toPageIndex(page);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         if(typeid>-1)
         {
-            pageUrl+="&typeid="+typeid;
+            sb.append("&typeid="+typeid);
         }
         if(fetchtype>-1)
         {
-            pageUrl+="&fetchtype="+fetchtype;
+            sb.append("&fetchtype="+fetchtype);
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
 
@@ -95,7 +96,7 @@ public class CouponController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsCoupon", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
         return "/promotion/coupon/index";
     }

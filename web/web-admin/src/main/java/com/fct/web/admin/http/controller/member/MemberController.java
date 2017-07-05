@@ -41,22 +41,23 @@ public class MemberController extends BaseController {
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(q))
         {
-            pageUrl +="&q="+ URL.encode(q);
+            sb.append("&q="+ URL.encode(q));
         }
         if(status>-1)
         {
-            pageUrl +="&authstatus="+ status;
+            sb.append("&authstatus="+ status);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl +="&starttime="+ starttime;
+            sb.append("&starttime="+ starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
         PageResponse<Member> pageResponse = null;
 
@@ -79,7 +80,7 @@ public class MemberController extends BaseController {
         model.addAttribute("query", query);
         model.addAttribute("lsMember", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
 
         return "member/index";
     }

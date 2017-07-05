@@ -45,22 +45,23 @@ public class ImageController extends BaseController{
         List<ImageCategory> lsCategory = cacheCommonManager.findImageCategory();//这样引用出错
 
         Integer pageSize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
         if(!StringUtils.isEmpty(name))
         {
-            pageUrl +="&q="+ URL.encode(name);
+            sb.append("&q="+ URL.encode(name));
         }
         if(categoryid>0)
         {
-            pageUrl +="&categoryid="+categoryid;
+            sb.append("&categoryid="+categoryid);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl +="&starttime="+ starttime;
+            sb.append("&starttime="+ starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl +="&endtime="+ endtime;
+            sb.append("&endtime="+ endtime);
         }
         PageResponse<ImageSource> pageResponse = null;
 
@@ -86,7 +87,7 @@ public class ImageController extends BaseController{
         model.addAttribute("query", query);
         model.addAttribute("lsImage", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pageSize,pageUrl));
+                pageSize,sb.toString()));
         model.addAttribute("cache", cacheCommonManager);
 
         return "source/image/index";

@@ -47,7 +47,9 @@ public class PayOrderController extends BaseController {
         tradetype =ConvertUtils.toString(tradetype);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         String orderid = selvalue;
         String cellphone ="";
@@ -58,43 +60,43 @@ public class PayOrderController extends BaseController {
 
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(memberid>0)
         {
-            pageUrl+="&memberid="+memberid;
+            sb.append("&memberid="+memberid);
         }
         if(timetype>0)
         {
-            pageUrl+="&timetype="+timetype;
+            sb.append("&timetype="+timetype);
         }
         if(!StringUtils.isEmpty(payorderid))
         {
-            pageUrl += "&payorderid="+payorderid;
+            sb.append("&payorderid="+payorderid);
         }
         if(!StringUtils.isEmpty(payplatform))
         {
-            pageUrl += "&payplatform="+payplatform;
+            sb.append("&payplatform="+payplatform);
         }
         if(!StringUtils.isEmpty(cellphone))
         {
-            pageUrl += "&cellphone="+cellphone;
+            sb.append("&cellphone="+cellphone);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
         if(!StringUtils.isEmpty(tradeid))
         {
-            pageUrl += "&tradeid="+tradeid;
+            sb.append("&tradeid="+tradeid);
         }
         if(!StringUtils.isEmpty(tradetype))
         {
-            pageUrl += "&tradetype="+tradetype;
+            sb.append("&tradetype="+tradetype);
         }
 
         PageResponse<PayOrder> pageResponse = null;
@@ -109,7 +111,7 @@ public class PayOrderController extends BaseController {
         }
 
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
 
         Map<String,Object> query = new HashMap<>();

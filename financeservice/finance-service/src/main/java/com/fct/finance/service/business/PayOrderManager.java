@@ -419,7 +419,7 @@ public class PayOrderManager  {
         }
         if(memberId>0)
         {
-            sb.append(" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
         if (!StringUtils.isEmpty(platform)) {
             sb.append(" AND platform=?");

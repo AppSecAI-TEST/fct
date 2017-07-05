@@ -183,9 +183,9 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
                 pageIndex,pageSize);
     }
 
-    public List<PayPlatform> findPayPlatform()
+    public List<PayPlatform> findPayPlatform(String payment)
     {
-        return  payPlatformManager.findAll();
+        return  payPlatformManager.findAll(payment);
     }
 
 

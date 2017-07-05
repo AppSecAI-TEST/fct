@@ -48,7 +48,8 @@ public class RefundController extends BaseController{
         selvalue = ConvertUtils.toString(selvalue);
 
         Integer pagesize = 30;
-        String pageUrl = "?page=%d";
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
 
         String payorderid = selvalue;
         String cellphone ="";
@@ -63,31 +64,31 @@ public class RefundController extends BaseController{
         }
         if(status>-1)
         {
-            pageUrl+="&status="+status;
+            sb.append("&status="+status);
         }
         if(memberid>0)
         {
-            pageUrl+="&memberid="+memberid;
+            sb.append("&memberid="+memberid);
         }
         if(method>-1)
         {
-            pageUrl+="&method="+method;
+            sb.append("&method="+method);
         }
         if(!StringUtils.isEmpty(payplatform))
         {
-            pageUrl += "&payplatform="+payplatform;
+            sb.append("&payplatform="+payplatform);
         }
         if(!StringUtils.isEmpty(cellphone))
         {
-            pageUrl += "&cellphone="+cellphone;
+            sb.append("&cellphone="+cellphone);
         }
         if(!StringUtils.isEmpty(starttime))
         {
-            pageUrl += "&starttime="+starttime;
+            sb.append("&starttime="+starttime);
         }
         if(!StringUtils.isEmpty(endtime))
         {
-            pageUrl += "&endtime="+endtime;
+            sb.append("&endtime="+endtime);
         }
 
         PageResponse<RefundRecord> pageResponse = null;
@@ -102,7 +103,7 @@ public class RefundController extends BaseController{
         }
 
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
-                pagesize,pageUrl));
+                pagesize,sb.toString()));
 
 
         Map<String,Object> query = new HashMap<>();

@@ -61,35 +61,33 @@ public class StringHelper {
      * @作者 尧
      * @功能 String左对齐
      */
-    public static String padLeft(String src, int len, char ch) {
+    public static String padLeft(String src, int len, String add) {
         int diff = len - src.length();
         if (diff <= 0) {
             return src.substring(0,len);
         }
 
-        char[] charr = new char[len];
-        System.arraycopy(src.toCharArray(), 0, charr, 0, src.length());
-        for (int i = src.length(); i < len; i++) {
-            charr[i] = ch;
+        for(int i=0;i<diff;i++)
+        {
+            add += add;
         }
-        return new String(charr);
+        return src+add;
     }
     /**
      * @作者 尧
      * @功能 String右对齐
      */
-    public static String padRight(String src, int len, char ch) {
+    public static String padRight(String src, int len, String add) {
         int diff = len - src.length();
         if (diff <= 0) {
             return src.substring(0,len);
         }
 
-        char[] charr = new char[len];
-        System.arraycopy(src.toCharArray(), 0, charr, diff, src.length());
-        for (int i = 0; i < diff; i++) {
-            charr[i] = ch;
+        for(int i=0;i<diff;i++)
+        {
+            add += add;
         }
-        return new String(charr);
+        return add+src;
     }
 
     public static String generateOrderId()
@@ -97,7 +95,16 @@ public class StringHelper {
         Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
         Long seconds = DateUtils.compareDate(new Date(),time);
         Integer ranCode = new Random().nextInt(99999);
-        return DateUtils.getNowDateStr("yyMMdd")+padLeft(seconds.toString(),5,'0')+
+        return DateUtils.getNowDateStr("yyMMdd")+padLeft(seconds.toString(),5,"0")+
+                ranCode;
+    }
+
+    public static String generatePayOrderId()
+    {
+        Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
+        Long seconds = DateUtils.compareDate(new Date(),time);
+        Integer ranCode = new Random().nextInt(99999);
+        return padLeft(seconds.toString(),5,"1")+DateUtils.getNowDateStr("yyMMdd")+
                 ranCode;
     }
 }

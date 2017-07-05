@@ -81,7 +81,7 @@ public class PayOrderManager  {
         pay.setRefundPoints(0);
         pay.setStatus(Constants.enumPayStatus.waitpay.getValue());
         pay.setCreateTime(new Date());
-        pay.setOrderId(StringHelper.generateOrderId());
+        pay.setOrderId(StringHelper.generatePayOrderId());
 
         MemberAccount account = memberAccountManager.findById(pay.getMemberId());
 

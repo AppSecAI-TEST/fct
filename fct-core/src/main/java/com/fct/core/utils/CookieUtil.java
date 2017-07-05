@@ -24,9 +24,6 @@ public class CookieUtil {
         {
             cookie.setDomain(domain);
         }
-        else {
-            cookie.setDomain("fangcun.com");
-        }
         response.addCookie(cookie);
     }
 
@@ -55,9 +52,6 @@ public class CookieUtil {
                     if(!StringUtils.isEmpty(domain))
                     {
                         cookie.setDomain(domain);
-                    }
-                    else {
-                        cookie.setDomain("fangcun.com");
                     }
                     cookie.setMaxAge(30 * 60);// 设置为30min
                     System.out.println("被修改的cookie名字为:"+cookie.getName()+",新值为:"+cookie.getValue());
@@ -89,9 +83,6 @@ public class CookieUtil {
                     if(!StringUtils.isEmpty(domain))
                     {
                         cookie.setDomain(domain);
-                    }
-                    else {
-                        cookie.setDomain("fangcun.com");
                     }
                     response.addCookie(cookie);
                     break;

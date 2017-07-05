@@ -81,8 +81,8 @@ public class MainController {
                     12);
             if(user !=null)
             {
-                //写入cookie
-                CookieUtil.addCookie(response,"sysuser_token",user.getToken(),"localhost");
+                //写入cookie,测试暂时domain为空，不然写入cookie有问题，正式环境需传入 fangcun.com
+                CookieUtil.addCookie(response,"sysuser_token",user.getToken(),"");
             }
         }
         catch (IllegalArgumentException exp)

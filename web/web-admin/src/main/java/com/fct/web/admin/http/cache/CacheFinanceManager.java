@@ -23,7 +23,7 @@ public class CacheFinanceManager {
     public List<PayPlatform> getPayPlatform()
     {
         try {
-            return financeService.findPayPlatform();
+            return financeService.findPayPlatform("");
         }
         catch (Exception exp)
         {

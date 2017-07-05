@@ -119,28 +119,28 @@ public class CouponPolicyManager {
     private String getCondition(Integer typeId,Integer fetchType,Integer status, String startTime,
                                 String endTime,List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(status>-1)
         {
-            condition += " AND AuditStatus="+status;
+            sb.append(" AND AuditStatus="+status);
         }
         if(fetchType>-1)
         {
-            condition += " AND FetchType="+fetchType;
+            sb.append(" AND FetchType="+fetchType);
         }
         if(typeId>-1)
         {
-            condition += " AND typeId="+typeId;
+            sb.append(" AND typeId="+typeId);
         }
         if (!StringUtils.isEmpty(startTime)) {
-            condition += " AND startTime>=?";
+            sb.append(" AND startTime>=?");
             param.add(startTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition += " AND endTime <?";
+            sb.append(" AND endTime <?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<CouponPolicy> findAll(Integer typeId,Integer fetchType,Integer status, String startTime,
@@ -191,13 +191,13 @@ public class CouponPolicyManager {
         {
             throw new IllegalArgumentException("宝贝为空");
         }
-        String condition = String.format("AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s'",
-                DateUtils.format(new Date()));
-        condition += " AND find_in_set("+ productId +",productids)";
+        StringBuilder sb = new StringBuilder();
+        sb.append("select Count(0) from CouponPolicy where");
+        sb.append(String.format(" AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s'",
+                DateUtils.format(new Date())));
+        sb.append(" AND find_in_set("+ productId +",productids)");
 
-        String sql = String.format("select Count(0) from CouponPolicy where  %s ",
-                condition);
-        return sql;
+        return sb.toString();
     }
 
     public Integer canReceiveCountByProduct(Integer productId)

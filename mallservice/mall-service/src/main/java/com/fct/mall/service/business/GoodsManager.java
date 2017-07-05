@@ -277,39 +277,40 @@ public class GoodsManager {
                               Integer artistId,Integer minVolume,Integer maxVolume,
                               Integer status,List<Object> param)
     {
-        String condition=" AND isDel=0 ";
+        StringBuilder sb = new StringBuilder();
+        sb.append("  AND isDel=0 ");
         if (!StringUtils.isEmpty(name)) {
-            condition += " AND name like ?";
+            sb.append("  AND name like ?");
             param.add("%"+ name +"%");
         }
         if(!StringUtils.isEmpty(categoryCode))
         {
-            condition += " AND categoryCode like ?";
+            sb.append("  AND categoryCode like ?");
             param.add(categoryCode+"%");
         }
         if(status>-1)
         {
-            condition += " AND status="+status;
+            sb.append("  AND status="+status);
         }
 
         if (gradeId>0) {
-            condition += " AND gradeId="+gradeId;
+            sb.append("  AND gradeId="+gradeId);
         }
         if (materialId>0) {
-            condition += " AND materialId like ?";
+            sb.append("  AND materialId like ?");
             param.add(","+ materialId +",");
         }
         if (minVolume>0) {
-            condition += " AND minVolume="+minVolume;
+            sb.append("  AND minVolume="+minVolume);
         }
         if (maxVolume>0) {
-            condition += " AND maxVolume="+maxVolume;
+            sb.append("  AND maxVolume="+maxVolume);
         }
         if (artistId>0) {
-            condition += " AND artistIds like ?";
+            sb.append("  AND artistIds like ?");
             param.add(","+artistId +",");
         }
-        return condition;
+        return sb.toString();
     }
 
     //修改排序
@@ -348,17 +349,17 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("添加库存不能小于1");
         }
-
-        String sql = String.format("UPDATE Goods set StockCount=StockCount+%d, UpdateTime='%s' WHERE Id=d%;",
-                stockCount, new Date(), id);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("UPDATE Goods set StockCount=StockCount+%d, UpdateTime='%s' WHERE Id=d%;",
+                stockCount, new Date(), id));
 
         if (specificationId > 0)
         {
-            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount+%d WHERE Id=%d AND GoodsId=%d",
-                    stockCount, specificationId, id);
+            sb.append(String.format("UPDATE GoodsSpecification set StockCount=StockCount+%d WHERE Id=%d AND GoodsId=%d",
+                    stockCount, specificationId, id));
         }
 
-        jt.update(sql);
+        jt.update(sb.toString());
     }
 
 
@@ -373,16 +374,17 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("减去的库存不能小于1");
         }
+        StringBuilder sb = new StringBuilder();
 
-        String sql = String.format("UPDATE Goods set StockCount=StockCount-%d, UpdateTime='%s' WHERE Id=%d AND StockCount>=%d;",
-                stockCount, new Date(), id,stockCount);
+        sb.append(String.format("UPDATE Goods set StockCount=StockCount-%d, UpdateTime='%s' WHERE Id=%d AND StockCount>=%d;",
+                stockCount, new Date(), id,stockCount));
 
         if (specificationId > 0)
         {
-            sql += String.format("UPDATE GoodsSpecification set StockCount=StockCount-%d WHERE Id=%d AND GoodsId=%d AND StockCount>=%d",
-                    stockCount, specificationId, id,stockCount);
+            sb.append(String.format("UPDATE GoodsSpecification set StockCount=StockCount-%d WHERE Id=%d AND GoodsId=%d AND StockCount>=%d",
+                    stockCount, specificationId, id,stockCount));
         }
-        jt.update(sql);
+        jt.update(sb.toString());
 
     }
 

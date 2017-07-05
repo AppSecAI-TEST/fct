@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.DocFlavor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -366,49 +367,49 @@ public class RefundRecordManager {
                                 String payPlatform, Integer method,Integer status, String beginTime, String endTime,
                                 List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(cellPhone)) {
-            condition += " AND cellPhone=?";
+            sb.append(" AND cellPhone=?");
             param.add(cellPhone);
         }
         if(memberId>0)
         {
-            condition +=" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
         if (!StringUtils.isEmpty(tradeId)) {
-            condition += " AND tradeId=?";
+            sb.append(" AND tradeId=?");
             param.add(tradeId);
         }
         if (!StringUtils.isEmpty(tradeType)) {
-            condition += " AND tradeType=?";
+            sb.append(" AND tradeType=?");
             param.add(tradeType);
         }
         if (!StringUtils.isEmpty(payPlatform)) {
-            condition +=" AND payPlatform=?";
+            sb.append(" AND payPlatform=?");
             param.add(payPlatform);
         }
         if(status>-1)
         {
-            condition += " AND status="+status;
+            sb.append(" AND status="+status);
         }
         if(method>-1)
         {
-            condition += " AND method="+method;
+            sb.append(" AND method="+method);
         }
         if(!StringUtils.isEmpty(payOrderId))
         {
-            condition +=" AND payOrderId=?";
+            sb.append(" AND payOrderId=?");
             param.add(payOrderId);
         }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition +=" AND createTime>=?";
+            sb.append(" AND createTime>=?");
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition +=" AND createTime<?";
+            sb.append(" AND createTime<?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<RefundRecord> findAll(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType, String payPlatform,

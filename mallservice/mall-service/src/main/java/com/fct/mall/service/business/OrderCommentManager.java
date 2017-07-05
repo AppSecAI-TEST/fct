@@ -150,40 +150,41 @@ public class OrderCommentManager {
     private String getContion(Integer goodsId, Integer memberId,String cellphone,String orderId,
                               Integer status,String beginTime,String endTime,List<Object> param)
     {
-        String condition =" AND status!=2";
+        StringBuilder sb = new StringBuilder();
+        sb.append(" AND status!=2");
         if(goodsId>0)
         {
-            condition += " AND goodsId="+goodsId;
+            sb.append(" AND goodsId="+goodsId);
         }
 
         if (memberId>0) {
-            condition += " AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
 
         if (!StringUtils.isEmpty(orderId)) {
-            condition += " AND orderId=?";
+            sb.append(" AND orderId=?");
             param.add(orderId);
         }
 
         if (!StringUtils.isEmpty(cellphone)) {
-            condition += " AND cellphone=?";
+            sb.append(" AND cellphone=?");
             param.add(cellphone);
         }
         if(status>-1)
         {
-            condition += " AND status="+status;
+            sb.append(" AND status="+status);
         }
         if(!StringUtils.isEmpty(beginTime))
         {
-            condition += " AND createTime >=?";
+            sb.append(" AND createTime >=?");
             param.add(beginTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND createTime <=?";
+            sb.append(" AND createTime <=?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<OrderComment> findAll(Integer goodsId, Integer memberId,String cellphone, String orderId,

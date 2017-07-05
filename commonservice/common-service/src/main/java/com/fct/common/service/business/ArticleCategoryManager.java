@@ -82,24 +82,24 @@ public class ArticleCategoryManager {
     //获取分类列表
     public List<ArticleCategory> findAll(String name, String categoryCode, Integer parentId) {
 
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
 
         List<Object> param = new ArrayList<>();
 
         if (!StringUtils.isEmpty(name)) {
-            condition += " AND name like ?";
+            sb.append(" AND name like ?");
             param.add("%"+name+"%");
         }
         if (!StringUtils.isEmpty(categoryCode))
         {
-            condition += " AND code like ?";
+            sb.append(" AND code like ?");
             param.add(categoryCode+"%");
         }
         if (parentId>-1)
         {
-            condition += " AND parentId="+parentId;
+            sb.append(" AND parentId="+parentId);
         }
-        String sql = String.format("select * from ArticleCategory where 1=1 %s order by sortindex asc",condition);
+        String sql = String.format("select * from ArticleCategory where 1=1 %s order by sortindex asc",sb.toString());
 
         return  jt.query(sql,param.toArray(),new BeanPropertyRowMapper<ArticleCategory>(ArticleCategory.class));
     }

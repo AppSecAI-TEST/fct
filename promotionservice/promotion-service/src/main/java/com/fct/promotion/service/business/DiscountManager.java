@@ -42,7 +42,6 @@ public class DiscountManager {
         return discountRepository.findOne(id);
     }
 
-    @Transactional
     public void add(Discount discount)
     {
         List<DiscountProduct> lst = discount.getProductList();

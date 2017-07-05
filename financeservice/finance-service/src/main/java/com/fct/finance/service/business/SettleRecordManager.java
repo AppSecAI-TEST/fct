@@ -172,39 +172,39 @@ public class SettleRecordManager {
     private String getCondition(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                 String beginTime, String endTime,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(cellPhone)) {
-            condition +=" AND cellPhone=?";
+            sb.append(" AND cellPhone=?");
             param.add(cellPhone);
         }
 
         if (!StringUtils.isEmpty(tradeType)) {
-            condition +=" AND tradeType=?";
+            sb.append(" AND tradeType=?");
             param.add(tradeType);
         }
 
         if (!StringUtils.isEmpty(tradeId)) {
-            condition +=" AND tradeId=?";
+            sb.append(" AND tradeId=?");
             param.add(tradeId);
         }
 
         if(memberId>0)
         {
-            condition+=" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
         if(status>-1)
         {
-            condition+=" AND status="+status;
+            sb.append(" AND status="+status);
         }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition +=" AND createTime >=?";
+            sb.append(" AND createTime >=?");
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition +=" AND createTime <?";
+            sb.append(" AND createTime <?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<SettleRecord> findAll(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,

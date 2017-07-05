@@ -56,37 +56,37 @@ public class CouponCodeDTOManager {
     private String getCondition(Integer policyId, Integer memberId, String code, Integer status,
                                 Boolean isValid, List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
 
         if (policyId > 0)
         {
-            condition += " and p.Id="+policyId;
+            sb.append(" and p.Id="+policyId);
         }
 
         if (memberId > 0)
         {
-            condition += " and c.MemberId="+memberId;
+            sb.append(" and c.MemberId="+memberId);
         }
 
         if (!StringUtils.isEmpty(code))
         {
-            condition += " and c.Code=?";
+            sb.append(" and c.Code=?");
             param.add(code);
         }
 
         if (status>-1)
         {
-            condition += " and c.Status="+status;
+            sb.append(" and c.Status="+status);
         }
 
         if (isValid)
         {
-            condition += " and p.StartTime<='?' and p.EndTime>='?'";
+            sb.append(" and p.StartTime<='?' and p.EndTime>='?'");
             param.add(DateUtils.format(new Date()));
             param.add(DateUtils.format(new Date()));
         }
 
-        return condition;
+        return sb.toString();
     }
 
     public CouponCodeDTO findByMemberId(Integer memberId, List<OrderProductDTO> products, String couponCode)

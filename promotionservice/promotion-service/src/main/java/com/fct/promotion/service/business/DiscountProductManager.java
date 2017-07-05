@@ -50,15 +50,16 @@ public class DiscountProductManager {
     @Transactional
     public void deleteByDiscountId(Integer discountId)
     {
-        String query = "insert into DiscountProductHistory(id,DiscountId,ProductId,DiscountRate," +
+        StringBuilder sb = new StringBuilder();
+        sb.append("insert into DiscountProductHistory(id,DiscountId,ProductId,DiscountRate," +
                 "SingleCount,IsValidForSize,CreateUserId,CreateTime,LastUpdateUserId,LastUpdateTime,deleteTime)" +
                 " select Id,DiscountId,ProductId,DiscountRate,SingleCount,IsValidForSize," +
                 "CreateUserId,CreateTime,LastUpdateUserId,LastUpdateTime,now()" +
-                " from DiscountProduct where DiscountId="+discountId;
+                " from DiscountProduct where DiscountId="+discountId);
 
-        jt.execute(query);
+        jt.execute(sb.toString());
 
-        query = "delete from DiscountProduct where DiscountId="+discountId;
+        String query = "delete from DiscountProduct where DiscountId="+discountId;
 
         jt.execute(query);
     }
@@ -91,13 +92,14 @@ public class DiscountProductManager {
             ids += id;
         }
 
-        String sql = String.format("select p.* from Discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
-                DateUtils.format(new Date()));
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("select p.* from Discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
+                DateUtils.format(new Date())));
         if (filterNoBegin == 1)
         {
-            sql += " AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)";
+            sb.append(" AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)");
         }
-        return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
+        return jt.query(sb.toString(), new Object[]{}, new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
         //return jt.queryForList(sql,DiscountProduct.class);
     }
 
@@ -137,18 +139,19 @@ public class DiscountProductManager {
         String starttime = DateUtils.format(discount.getStartTime());
         String endtime =DateUtils.format(discount.getEndTime());
 
-        String query = "select count(0) from Discount d inner join DiscountProduct p on d.Id=p.DiscountId where ";
-        query += String.format("((d.startTime >= '%s' AND d.startTime < '%s') ",starttime,endtime);
-        query += String.format(" OR (d.startTime < '%s' AND d.endTime > '%s') ",starttime,endtime);
-        query += String.format(" OR (d.endTime > '%s' AND d.endTime <= '%s'))",starttime,endtime);
-        query += " and p.ProductId="+obj.getProductId();
+        StringBuilder sb = new StringBuilder();
+        sb.append("select count(0) from Discount d inner join DiscountProduct p on d.Id=p.DiscountId where ");
+        sb.append(String.format("((d.startTime >= '%s' AND d.startTime < '%s') ",starttime,endtime));
+        sb.append(String.format(" OR (d.startTime < '%s' AND d.endTime > '%s') ",starttime,endtime));
+        sb.append(String.format(" OR (d.endTime > '%s' AND d.endTime <= '%s'))",starttime,endtime));
+        sb.append(" and p.ProductId="+obj.getProductId());
 
         if (discount.getId() > 0)
         {
-            query += " and d.Id!="+discount.getId();
+            sb.append(" and d.Id!="+discount.getId());
         }
 
-        Integer exeCount  =jt.queryForObject(query,Integer.class);
+        Integer exeCount  =jt.queryForObject(sb.toString(),Integer.class);
 
         return  exeCount>0;
     }

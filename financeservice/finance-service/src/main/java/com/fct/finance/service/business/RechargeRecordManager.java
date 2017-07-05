@@ -156,39 +156,39 @@ public class RechargeRecordManager {
     private String getCondition(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
                                 Integer status,Integer timeType,String beginTime, String endTime,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(cellPhone)) {
-            condition +=" AND cellPhone=?";
+            sb.append(" AND cellPhone=?");
             param.add(cellPhone);
         }
         if (!StringUtils.isEmpty(payPlayform)) {
-            condition +=" AND payPlayform=?";
+            sb.append(" AND payPlayform=?");
             param.add(payPlayform);
         }
         if (!StringUtils.isEmpty(payOrderId)) {
-            condition +=" AND payOrderId=?";
+            sb.append(" AND payOrderId=?");
             param.add(payOrderId);
         }
 
         if (memberId > 0) {
-            condition +=" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
         String time = "createTime";
         if(timeType ==1){
             time = "payTime";
         }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition +=" AND "+time+">=?";
+            sb.append(" AND "+time+">=?");
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition +=" AND "+time+"<?";
+            sb.append(" AND "+time+"<?");
             param.add(endTime);
         }
         if (status > -1) {
-            condition +=" AND status="+status;
+            sb.append(" AND status="+status);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<RechargeRecord> findAll(Integer memberId, String cellPhone, String payPlayform,String payOrderId,
@@ -231,7 +231,7 @@ public class RechargeRecordManager {
     public void handleExpired()
     {
         String nowTime = DateUtils.format(new Date());
-        String sql = String.format("UPDATE Orders set status = 2 WHERE status=0 AND expiredTime<'%s'",
+        String sql = String.format("UPDATE RechargeRecord set status = 2 WHERE status=0 AND expiredTime<'%s'",
                 nowTime,nowTime);
 
         jt.update(sql);

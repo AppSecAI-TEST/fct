@@ -53,33 +53,33 @@ public class VideoSourceManager {
 
     private String getCondition(String name, Integer categoryId, Integer status, String fileType,
                                 String startTime, String endTime,List<Object> param) {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(name)) {
-            condition += " AND name like ?";
+            sb.append(" AND name like ?");
             param.add("%" + name + "%");
         }
         if (categoryId > 0) {
-            condition += " AND categoryId=" + categoryId;
+            sb.append(" AND categoryId=" + categoryId);
         }
         if (status > -1) {
-            condition += " AND Status=" + status;
+            sb.append(" AND Status=" + status);
         }
         if (!StringUtils.isEmpty(fileType))
         {
-            condition +=" AND filetype=?";
+            sb.append(" AND filetype=?");
             param.add(fileType);
         }
         if(!StringUtils.isEmpty(startTime))
         {
-            condition += " AND createTime >=?";
+            sb.append(" AND createTime >=?");
             param.add(startTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND endTime <?";
+            sb.append(" AND endTime <?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<VideoSource> findAll(String name, Integer categoryId, Integer status, String fileType,

@@ -114,29 +114,29 @@ public class ArtistCommentManager {
     private String getCondition(Integer artistId, Integer memberId, String username, Integer status,
                                 Integer replyId,List<Object> param)
     {
-        String condition="";
+        StringBuilder sb = new StringBuilder();
         if(artistId>0)
         {
-            condition+=" AND artistId="+artistId;
+            sb.append(" AND artistId="+artistId);
         }
         if(memberId>0)
         {
-            condition+=" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
         if(!StringUtils.isEmpty(username))
         {
-            condition+=" AND username like ?";
+            sb.append(" AND username like ?");
             param.add("%+ "+username+" +%");
         }
         if(status>-1)
         {
-            condition+=" AND status="+status;
+            sb.append(" AND status="+status);
         }
         if(replyId>0)
         {
-            condition += " AND replayId="+replyId;
+            sb.append(" AND replayId="+replyId);
         }
-        return condition;
+        return sb.toString();
     }
 
 }

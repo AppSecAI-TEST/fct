@@ -63,17 +63,17 @@ public class MemberFavouriteManager {
 
     private String getCondition(Integer memberId, Integer favType, List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(memberId>0)
         {
-            condition += " AND memberId="+memberId;
+            sb.append("  AND memberId="+memberId);
         }
         if(favType>-1)
         {
-            condition +=" AND  favtype="+favType;
+            sb.append("  AND  favtype="+favType);
         }
 
-        return  condition;
+        return  sb.toString();
     }
 
     public PageResponse<MemberFavourite> findAll(Integer memberId,Integer favType,Integer pageIndex,Integer pageSize)

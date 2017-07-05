@@ -76,22 +76,22 @@ public class MemberBankInfoManager {
 
     public String getCondition(String cellPhone,String bankName,Integer status,List<Object> param)
     {
-        String condition="";
+        StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(cellPhone))
         {
-            condition += " AND cellphone=?";
+            sb.append("  AND cellphone=?");
             param.add(cellPhone);
         }
         if(!StringUtils.isEmpty(bankName))
         {
-            condition += " AND bankName like ?";
+            sb.append("  AND bankName like ?");
             param.add("%"+ bankName +"%");
         }
         if(status>-1)
         {
-            condition += " AND status="+status;
+            sb.append("  AND status="+status);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<MemberBankInfo> findAll(String cellPhone,String bankName,Integer status,Integer pageIndex,

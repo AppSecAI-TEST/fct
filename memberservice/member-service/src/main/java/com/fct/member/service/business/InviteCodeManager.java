@@ -61,27 +61,27 @@ public class InviteCodeManager {
 
     public String getCondition(String code,Integer ownerId, String ownerCellPhone, String toCellphone,List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(ownerId>0)
         {
-            condition +=" AND ownerId="+ownerId;
+            sb.append("  AND ownerId="+ownerId);
         }
         if(!StringUtils.isEmpty(ownerCellPhone))
         {
-            condition += " AND ownerCellPhone=?";
+            sb.append("  AND ownerCellPhone=?");
             param.add(ownerCellPhone);
         }
         if(!StringUtils.isEmpty(code))
         {
-            condition += " AND code=?";
+            sb.append("  AND code=?");
             param.add(code);
         }
         if(!StringUtils.isEmpty(toCellphone))
         {
-            condition +=" AND toCellPhone=?";
+            sb.append("  AND toCellPhone=?");
             param.add(toCellphone);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<InviteCode> findAll(String code,Integer ownerId, String ownerCellPhone, String toCellphone,

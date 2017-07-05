@@ -395,40 +395,40 @@ public class OrderRefundManager {
     private String getContion(String orderId, String goodsName,Integer orderGoodsId, Integer memberId, Integer status, String beginTime,
                               String endTime,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
 
         if (!StringUtils.isEmpty(orderId)) {
-            condition += " AND r.orderId=?";
+            sb.append(" AND r.orderId=?");
             param.add(orderId);
         }
         if(orderGoodsId>0)
         {
-            condition +=" AND r.orderGoodsId="+orderGoodsId;
+            sb.append(" AND r.orderGoodsId="+orderGoodsId);
         }
 
         if (memberId>0) {
-            condition += " AND r.memberId="+memberId;
+            sb.append(" AND r.memberId="+memberId);
         }
         if(!StringUtils.isEmpty(goodsName))
         {
-            condition += " AND g.name=?";
+            sb.append(" AND g.name=?");
             param.add(goodsName);
         }
 
         if (status>-1) {
-            condition += " AND r.status="+status;
+            sb.append(" AND r.status="+status);
         }
         if(!StringUtils.isEmpty(beginTime))
         {
-            condition += " AND r.createTime >=?";
+            sb.append(" AND r.createTime >=?");
             param.add(beginTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND r.createTime <=?";
+            sb.append(" AND r.createTime <=?");
             param.add(endTime);
         }
-        return  condition;
+        return  sb.toString();
 
     }
 

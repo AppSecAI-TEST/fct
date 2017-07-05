@@ -209,27 +209,27 @@ public class MemberManager {
 
     private String getCondition(String cellPhone, Integer authStatus,String beginTime,String endTime,List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(authStatus>-1)
         {
-            condition += " AND authStatus="+authStatus;
+            sb.append(" AND authStatus="+authStatus);
         }
         if(!StringUtils.isEmpty(cellPhone))
         {
-            condition +=" AND cellphone=?";
+            sb.append("  AND cellphone=?");
             param.add(cellPhone);
         }
         if(!StringUtils.isEmpty(beginTime))
         {
-            condition +=" AND registerTime>=?";
+            sb.append(" AND registerTime>=?");
             param.add(beginTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition +=" AND registerTime<?";
+            sb.append("  AND registerTime<?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<Member> findAll(String cellPhone, Integer authStatus,String beginTime,String endTime,Integer pageIndex, Integer pageSize)

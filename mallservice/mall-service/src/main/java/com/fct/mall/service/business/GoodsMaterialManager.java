@@ -99,24 +99,24 @@ public class GoodsMaterialManager {
 
     private String getContion(Integer goodsId, String name, Integer typeId,Integer status,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(name))
         {
-            condition += " And name like ?";
+            sb.append(" And name like ?");
             param.add("%"+ name +"%");
         }
         if(goodsId>0)
         {
-            condition +=" AND id in(select materialid from goods where id="+ goodsId +")";
+            sb.append(" AND id in(select materialid from goods where id="+ goodsId +")");
         }
         if(status>-1)
         {
-            condition += " AND Status="+status;
+            sb.append(" AND Status="+status);
         }
         if(typeId>-1){
-            condition += " AND typeid="+typeId;
+            sb.append(" AND typeid="+typeId);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<GoodsMaterial> findAll(Integer goodsId, String name,Integer typeId,Integer status, Integer pageIndex, Integer pageSize)

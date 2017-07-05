@@ -105,30 +105,30 @@ public class ArtistDynamicManager {
     private String getCondition(Integer artistId, String content, Integer status, String startTime, String endTime,
                                 List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(artistId>0)
         {
-            condition += " AND artistId="+artistId;
+            sb.append(" AND artistId="+artistId);
         }
         if(!StringUtils.isEmpty(content))
         {
-            condition += " AND content like ?";
+            sb.append(" AND content like ?");
             param.add("%"+content+"%");
         }
         if(status>-1)
         {
-            condition += " AND Status="+status;
+            sb.append(" AND Status="+status);
         }
         if(!StringUtils.isEmpty(startTime))
         {
-            condition += " AND createTime>=?";
+            sb.append(" AND createTime>=?");
             param.add(startTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND createTime<?";
+            sb.append(" AND createTime<?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 }

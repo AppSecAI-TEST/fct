@@ -144,29 +144,29 @@ public class WithdrawRecordManager {
     private String getCondition(Integer memberId, String cellPhone, Integer status,
                                 String beginTime, String endTime,List<Object> param)
     {
-        String condition="";
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(cellPhone)) {
-            condition +=" AND cellPhone=?";
+            sb.append(" AND cellPhone=?");
             param.add(cellPhone);
         }
         if(memberId>0)
         {
-            condition +=" AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
             param.add(memberId);
         }
         if(status>-1)
         {
-            condition += " AND Status="+status;
+            sb.append(" AND Status="+status);
         }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition +=" AND createTime >=?";
+            sb.append(" AND createTime >=?");
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition +=" AND createTime <?";
+            sb.append(" AND createTime <?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<WithdrawRecord> findAll(Integer memberId, String cellPhone, Integer status,

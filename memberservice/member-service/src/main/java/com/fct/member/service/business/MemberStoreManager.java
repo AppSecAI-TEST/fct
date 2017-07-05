@@ -89,17 +89,17 @@ public class MemberStoreManager {
 
     private String getCondition(String cellPhone, Integer status, List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(cellPhone))
         {
-            condition+=" AND cellPhone=? OR id="+cellPhone;
+            sb.append("  AND cellPhone=? OR id="+cellPhone);
             param.add(cellPhone);
         }
         if(status>-1)
         {
-            condition += " AND status="+status;
+            sb.append("  AND status="+status);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<MemberStore> findAll(String cellPhone, Integer status, Integer pageIndex, Integer pageSize)

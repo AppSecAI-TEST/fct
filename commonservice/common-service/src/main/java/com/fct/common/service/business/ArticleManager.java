@@ -26,32 +26,32 @@ public class ArticleManager {
     private String getCondition(String title, String categoryCode, Integer status, String startTime,
                               String endTime,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(title))
         {
-            condition += " AND title like ?";
+            sb.append(" AND title like ?");
             param.add("%"+ title +"%");
         }
         if(!StringUtils.isEmpty(categoryCode))
         {
-            condition += " AND categoryCode like ?";
+            sb.append(" AND categoryCode like ?");
             param.add(categoryCode +"%");
         }
         if(status>-1)
         {
-            condition +=" AND status="+status;
+            sb.append(" AND status="+status);
         }
         if(!StringUtils.isEmpty(startTime))
         {
-            condition += " AND startTime >=?";
+            sb.append(" AND startTime >=?");
             param.add(startTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND endTime <?";
+            sb.append(" AND endTime <?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 
     public PageResponse<Article> findAll(String title, String categoryCode, Integer status, String startTime,

@@ -383,46 +383,46 @@ public class OrdersManager {
                                 Integer status, String payPaltform, String payOrderId, Integer timeType, String beginTime,
                                 String endTime,List<Object> param)
     {
-        String condition = "";
+        StringBuilder sb = new StringBuilder();
 
         if (!StringUtils.isEmpty(orderId)) {
-            condition += " AND orderId=?";
+            sb.append(" AND orderId=?");
             param.add(orderId);
         }
         if(!StringUtils.isEmpty(cellPhone))
         {
-            condition += " AND cellPhone=?";
+            sb.append(" AND cellPhone=?");
             param.add(cellPhone);
         }
 
         if (memberId>0) {
-            condition += " AND memberId="+memberId;
+            sb.append(" AND memberId="+memberId);
         }
 
         if (shopId>0) {
-            condition += " AND shopId="+shopId;
+            sb.append(" AND shopId="+shopId);
         }
 
         if(!StringUtils.isEmpty(goodsName))
         {
-            condition += "AND orderId In(Select orderId from orderGoods where name like ?)";
+            sb.append(" AND orderId In(Select orderId from orderGoods where name like ?)");
             param.add("%"+ goodsName +"%");
         }
 
         if(!StringUtils.isEmpty(payPaltform))
         {
-            condition += " AND payPaltform=?";
+            sb.append(" AND payPaltform=?");
             param.add(payPaltform);
         }
 
         if(!StringUtils.isEmpty(payOrderId))
         {
-            condition += " AND payOrderId=?";
+            sb.append(" AND payOrderId=?");
             param.add(payOrderId);
         }
 
         if (status>-1) {
-            condition += " AND status="+status;
+            sb.append(" AND status="+status);
         }
 
         String timeColumn = "createTime";
@@ -430,14 +430,14 @@ public class OrdersManager {
             timeColumn = "payTime";
         }
         if (!StringUtils.isEmpty(beginTime)) {
-            condition += " AND "+ timeColumn +">=?";
+            sb.append(" AND "+ timeColumn +">=?");
             param.add(beginTime);
         }
         if (!StringUtils.isEmpty(endTime)) {
-            condition += " AND "+ timeColumn +"<?";
+            sb.append(" AND "+ timeColumn +"<?");
             param.add(endTime);
         }
-        return  condition;
+        return  sb.toString();
     }
 
     //获取订单列表

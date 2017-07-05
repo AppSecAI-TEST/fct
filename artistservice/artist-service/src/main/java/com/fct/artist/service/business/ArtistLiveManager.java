@@ -117,25 +117,25 @@ public class ArtistLiveManager {
 
     private String getCondition(Integer artistId, Integer status, String startTime, String endTime,List<Object> param)
     {
-        String condition ="";
+        StringBuilder sb = new StringBuilder();
         if(artistId>0)
         {
-            condition +=" AND artistId="+artistId;
+            sb.append(" AND artistId="+artistId);
         }
         if(status>-1)
         {
-            condition += " AND Status="+status;
+            sb.append(" AND Status="+status);
         }
         if(!StringUtils.isEmpty(startTime))
         {
-            condition += " AND startTime>=?";
+            sb.append(" AND startTime>=?");
             param.add(startTime);
         }
         if(!StringUtils.isEmpty(endTime))
         {
-            condition += " AND endTime<=?";
+            sb.append(" AND endTime<=?");
             param.add(endTime);
         }
-        return condition;
+        return sb.toString();
     }
 }

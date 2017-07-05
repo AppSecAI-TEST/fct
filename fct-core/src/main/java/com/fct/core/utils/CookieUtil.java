@@ -1,5 +1,7 @@
 package com.fct.core.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,11 +16,22 @@ public class CookieUtil {
      * @param name
      * @param value
      */
-    public static void addCookie(HttpServletResponse response,String name,String value){
+    public static void addCookie(HttpServletResponse response,String name,String value,String domain){
         Cookie cookie = new Cookie(name.trim(), value.trim());
         cookie.setMaxAge(30 * 60);// 设置为30min,浏览器关闭cookie失效
         cookie.setPath("/");
+        if(!StringUtils.isEmpty(domain))
+        {
+            cookie.setDomain(domain);
+        }
+        else {
+            cookie.setDomain("fangcun.com");
+        }
         response.addCookie(cookie);
+    }
+
+    public static void addCookie(HttpServletResponse response,String name,String value){
+        addCookie(response,name,value,"");
     }
     /**
      * 修改cookie
@@ -28,7 +41,8 @@ public class CookieUtil {
      * @param value
      * 注意一、修改、删除Cookie时，新建的Cookie除value、maxAge之外的所有属性，例如name、path、domain等，都要与原Cookie完全一样。否则，浏览器将视为两个不同的Cookie不予覆盖，导致修改、删除失败。
      */
-    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value){
+    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value,
+                                  String domain){
         Cookie[] cookies = request.getCookies();
         if (null==cookies) {
             System.out.println("没有cookie==============");
@@ -38,6 +52,13 @@ public class CookieUtil {
                     System.out.println("原值为:"+cookie.getValue());
                     cookie.setValue(value);
                     cookie.setPath("/");
+                    if(!StringUtils.isEmpty(domain))
+                    {
+                        cookie.setDomain(domain);
+                    }
+                    else {
+                        cookie.setDomain("fangcun.com");
+                    }
                     cookie.setMaxAge(30 * 60);// 设置为30min
                     System.out.println("被修改的cookie名字为:"+cookie.getName()+",新值为:"+cookie.getValue());
                     response.addCookie(cookie);
@@ -47,13 +68,17 @@ public class CookieUtil {
         }
 
     }
+    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value)
+    {
+        editCookie(request,response,name,value,"");
+    }
     /**
      * 删除cookie
      * @param request
      * @param response
      * @param name
      */
-    public static void delCookie(HttpServletRequest request,HttpServletResponse response,String name){
+    public static void delCookie(HttpServletRequest request,HttpServletResponse response,String name,String domain){
         Cookie[] cookies = request.getCookies();
         if (null!=cookies) {
             for(Cookie cookie : cookies){
@@ -61,11 +86,22 @@ public class CookieUtil {
                     cookie.setValue(null);
                     cookie.setMaxAge(0);// 立即销毁cookie
                     cookie.setPath("/");
+                    if(!StringUtils.isEmpty(domain))
+                    {
+                        cookie.setDomain(domain);
+                    }
+                    else {
+                        cookie.setDomain("fangcun.com");
+                    }
                     response.addCookie(cookie);
                     break;
                 }
             }
         }
+    }
+    public static void delCookie(HttpServletRequest request,HttpServletResponse response,String name)
+    {
+        delCookie(request,response,name,"");
     }
 
     /**
@@ -83,8 +119,6 @@ public class CookieUtil {
             return null;
         }
     }
-
-
 
     /**
      * 将cookie封装到Map里面

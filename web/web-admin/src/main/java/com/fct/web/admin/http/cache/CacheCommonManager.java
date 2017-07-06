@@ -5,12 +5,17 @@ import com.fct.common.data.entity.ImageCategory;
 import com.fct.common.data.entity.VideoCategory;
 import com.fct.common.interfaces.CommonService;
 import com.fct.web.admin.utils.Constants;
+import org.apache.zookeeper.server.util.SerializeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SerializationUtils;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CacheCommonManager {
@@ -18,21 +23,31 @@ public class CacheCommonManager {
     @Autowired
     private CommonService commonService;
 
+    @Autowired
+    private JedisPool jedisPool;
+
+    private int expireSeconds = 60 * 30;        //30分钟
+
     private List<ArticleCategory> findArticleCategory()
     {
-        try {
-            List<ArticleCategory> lsCategory = commonService.findArticleCategory(-1, "", "");
-            if (lsCategory == null && lsCategory.size() <= 0) {
-                lsCategory = new ArrayList<>();
-            }
+        String key = "cache_article_cate";
+        try(Jedis jedis = jedisPool.getResource()){
 
-            return lsCategory;
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<ArticleCategory>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<ArticleCategory> lsCategory = commonService.findArticleCategory(-1, "", "");
+                if (lsCategory != null && lsCategory.size() > 0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(lsCategory));
+                    jedis.expire(key,expireSeconds);
+                }
+                return lsCategory;
+            }
         }
-        catch (Exception exp)
-        {
-            Constants.logger.error(exp.toString());
-        }
-        return new ArrayList<>();
     }
 
     public List<ArticleCategory> findArticleCategoryByParent()

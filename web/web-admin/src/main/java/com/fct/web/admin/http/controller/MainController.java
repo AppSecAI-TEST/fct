@@ -5,7 +5,6 @@ import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.interfaces.MemberService;
 import com.fct.web.admin.config.FctConfig;
-import com.fct.web.admin.http.cache.CacheSysUserManager;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,9 +23,6 @@ public class MainController {
 
     @Autowired
     private MemberService memberService;
-
-    @Autowired
-    private CacheSysUserManager cacheSysUserManager;
 
     @Autowired
     private FctConfig fctConfig;

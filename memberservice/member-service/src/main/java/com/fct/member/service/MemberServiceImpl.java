@@ -2,6 +2,7 @@ package com.fct.member.service;
 
 
 import com.fct.member.data.entity.*;
+import com.fct.member.interfaces.MemberDTO;
 import com.fct.member.interfaces.PageResponse;
 import com.fct.member.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,11 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     public Member getMember(Integer memberId)
     {
         return memberManager.findById(memberId);
+    }
+
+    public MemberDTO getMemberDTO(Integer memberId)
+    {
+        return memberInfoManager.findByMemberId(memberId);
     }
 
     /*修改密码*/

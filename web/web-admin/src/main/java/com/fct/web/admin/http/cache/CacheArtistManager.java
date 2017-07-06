@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,6 @@ public class CacheArtistManager {
 
     @Autowired
     private ArtistService artistService;
-
-    @Autowired
-    private JedisPool jedisPool;
-
-    private static final int expireSecond = 60 * 24 * 60 * 60;
 
     public Artist getArtist(Integer id)
     {
@@ -41,18 +37,16 @@ public class CacheArtistManager {
 
     public List<Artist> findArtist()
     {
-        PageResponse<Artist> pageResponse = null;
-
         try {
 
-            pageResponse = artistService.findArtist("",1,1, 100);
+            PageResponse<Artist> pageResponse = artistService.findArtist("",1,1, 100);
+            return pageResponse.getElements();
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-            pageResponse = new PageResponse<Artist>();
         }
-        return pageResponse.getElements();
+        return new ArrayList<>();
     }
 
 

@@ -33,7 +33,7 @@ public class BaseController {
     public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
         //获取cookie
-        initUser(request,response);
+        //initUser(request,response);
 
         if(currentUser == null)
         {

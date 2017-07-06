@@ -1,14 +1,17 @@
 package com.fct.member.service.business;
 
 import com.fct.core.exceptions.BaseException;
-import com.fct.member.data.entity.Member;
-import com.fct.member.data.entity.MemberBankInfo;
-import com.fct.member.data.entity.MemberInfo;
+import com.fct.core.utils.DateUtils;
+import com.fct.core.utils.UUIDUtil;
+import com.fct.member.data.entity.*;
 import com.fct.member.data.repository.MemberInfoRepository;
+import com.fct.member.interfaces.MemberDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * Created by jon on 2017/5/7.
@@ -24,6 +27,9 @@ public class MemberInfoManager {
 
     @Autowired
     private MemberBankInfoManager memberBankInfoManager;
+
+    @Autowired
+    private MemberStoreManager memberStoreManager;
 
     public void save(MemberInfo info)
     {
@@ -105,5 +111,29 @@ public class MemberInfoManager {
         bank.setBankAccount(bankAccount);
         memberBankInfoManager.save(bank);
 
+    }
+
+    public MemberDTO findByMemberId(Integer id)
+    {
+        if(id <=0)
+        {
+            throw new IllegalArgumentException("用户不存在。");
+        }
+        Member member = memberManager.findById(id);
+
+        MemberInfo info = findById(member.getId());
+
+        MemberStore store = memberStoreManager.findByMemberId(member.getId());
+
+        MemberDTO login = new MemberDTO();
+        login.setCellPhone(member.getCellPhone());
+        login.setMemberId(member.getId());
+        login.setHeadPortrait(info.getHeadPortrait());
+        login.setAuthStatus(member.getAuthStatus());
+        login.setUserName(member.getUserName());
+        login.setShopId(store!=null ?store.getId() :0);
+        login.setGradeId(member.getGradeId());
+
+        return login;
     }
 }

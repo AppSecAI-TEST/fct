@@ -9,10 +9,12 @@ import com.fct.mall.interfaces.PageResponse;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SerializationUtils;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,19 +26,39 @@ public class CacheGoodsManager {
     @Autowired
     private MallService mallService;
 
+    @Autowired
+    private JedisPool jedisPool;
+
+    private int expireSecond = 60 * 30;
+
     private List<GoodsCategory> findGoodsCategory()
     {
-        try {
-            List<GoodsCategory> lsCategory = mallService.findGoodsCategory(-1, "", "");
-            if (lsCategory == null && lsCategory.size() <= 0) {
-                lsCategory = new ArrayList<>();
+        String key = "cache_goods_cate";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<GoodsCategory>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<GoodsCategory> lsCategory = mallService.findGoodsCategory(-1, "", "");
+                if (lsCategory != null && lsCategory.size() > 0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(lsCategory));
+                    jedis.expire(key,expireSecond);
+                }
+                return lsCategory;
             }
 
-            return lsCategory;
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
         }
         return new ArrayList<>();
     }

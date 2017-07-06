@@ -23,6 +23,8 @@ public interface MemberService {
 
     MemberLogin getMemberLogin(String token);
 
+    MemberDTO getMemberDTO(Integer memberId);
+
     /*修改密码*/
     void updateMemberPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword);
 

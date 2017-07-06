@@ -15,7 +15,7 @@ public class RedisConfig {
     @Bean
     public JedisPool redisConnectionFactory(Environment env) {
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(100);
+        config.setMaxTotal(300);
         config.setMaxIdle(100);
         config.setMinIdle(1);
         config.setTestOnBorrow(true);

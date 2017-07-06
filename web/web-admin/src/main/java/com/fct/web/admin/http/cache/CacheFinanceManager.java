@@ -1,10 +1,14 @@
 package com.fct.web.admin.http.cache;
 
+import com.fct.artist.data.entity.Artist;
 import com.fct.finance.data.entity.PayPlatform;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SerializationUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +24,45 @@ public class CacheFinanceManager {
     @Autowired
     private CacheOrderManager cacheOrderManager;
 
-    public List<PayPlatform> getPayPlatform()
+    @Autowired
+    private JedisPool jedisPool;
+
+    private int expireSecond = 60 * 35; //35分钟
+
+    public List<PayPlatform> findCachePayPlatform()
+    {
+        String key = "cache_payplatform";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<PayPlatform>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<PayPlatform> artist = findPayPlatform();
+                if (artist != null) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(artist));
+                    jedis.expire(key,expireSecond);
+                }
+                return artist;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findPayPlatform();
+    }
+
+
+    public List<PayPlatform> findPayPlatform()
     {
         try {
             return financeService.findPayPlatform("");
@@ -34,7 +76,7 @@ public class CacheFinanceManager {
 
     public String getPayPlatformName(String code)
     {
-        List<PayPlatform> list = getPayPlatform();
+        List<PayPlatform> list = findCachePayPlatform();
         for (PayPlatform pay: list
                 ) {
             if(pay.getCode().equals(code))

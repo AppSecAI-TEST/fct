@@ -125,12 +125,14 @@ public class MemberInfoManager {
 
         MemberStore store = memberStoreManager.findByMemberId(member.getId());
 
+        String cellphone = member.getCellPhone().substring(0,3);
+        cellphone +=  "****" + member.getCellPhone().substring(7);
         MemberDTO login = new MemberDTO();
-        login.setCellPhone(member.getCellPhone());
+        login.setCellPhone(cellphone);
         login.setMemberId(member.getId());
         login.setHeadPortrait(info.getHeadPortrait());
         login.setAuthStatus(member.getAuthStatus());
-        login.setUserName(member.getUserName());
+        login.setUserName(StringUtils.isEmpty(member.getUserName()) ?cellphone : member.getUserName() );
         login.setShopId(store!=null ?store.getId() :0);
         login.setGradeId(member.getGradeId());
 

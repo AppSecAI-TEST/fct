@@ -1,5 +1,6 @@
 package com.fct.web.admin.http.cache;
 
+import com.fct.artist.data.entity.Artist;
 import com.fct.common.data.entity.ArticleCategory;
 import com.fct.common.data.entity.ImageCategory;
 import com.fct.common.data.entity.VideoCategory;
@@ -26,13 +27,14 @@ public class CacheCommonManager {
     @Autowired
     private JedisPool jedisPool;
 
-    private int expireSeconds = 60 * 30;        //30分钟
+    private int expireSeconds = 60 * 40;        //30分钟
 
-    private List<ArticleCategory> findArticleCategory()
+    public List<ArticleCategory> findCacheArticleCategory()
     {
-        String key = "cache_article_cate";
-        try(Jedis jedis = jedisPool.getResource()){
-
+        String key = "cache_articlecate_all";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
             byte[] object = jedis.get((key).getBytes());
             if(object != null)
             {
@@ -40,21 +42,42 @@ public class CacheCommonManager {
             }
             else
             {
-                List<ArticleCategory> lsCategory = commonService.findArticleCategory(-1, "", "");
-                if (lsCategory != null && lsCategory.size() > 0) {
-                    jedis.set(key.getBytes(),SerializationUtils.serialize(lsCategory));
+                List<ArticleCategory> ls = findArticleCategory();
+                if (ls != null && ls.size()>0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
                     jedis.expire(key,expireSeconds);
                 }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findArticleCategory();
+    }
+    private List<ArticleCategory> findArticleCategory() {
+        try {
+
+            List<ArticleCategory> lsCategory = commonService.findArticleCategory(-1, "", "");
+            if (lsCategory != null && lsCategory.size() > 0) {
                 return lsCategory;
             }
+        } catch (Exception exp) {
+            Constants.logger.error(exp.toString());
         }
+        return new ArrayList();
     }
 
     public List<ArticleCategory> findArticleCategoryByParent()
     {
         List<ArticleCategory> lsCate = new ArrayList<>();
 
-        for (ArticleCategory cate:findArticleCategory()
+        for (ArticleCategory cate:findCacheArticleCategory()
                 ) {
             if(cate.getParentId() ==0)
                 lsCate.add(cate);
@@ -66,7 +89,7 @@ public class CacheCommonManager {
     {
         List<ArticleCategory> lsCate = new ArrayList<>();
 
-        for (ArticleCategory cate:findArticleCategory()
+        for (ArticleCategory cate:findCacheArticleCategory()
                 ) {
             if(cate.getParentId() == parentId)
                 lsCate.add(cate);
@@ -76,7 +99,7 @@ public class CacheCommonManager {
 
     public String getArticleCateName(String ids)
     {
-        List<ArticleCategory> cateList = findArticleCategory();
+        List<ArticleCategory> cateList = findCacheArticleCategory();
         String name = "";
         for (ArticleCategory cate: cateList
                 ) {
@@ -90,6 +113,38 @@ public class CacheCommonManager {
             }
         }
         return name;
+    }
+
+    public List<ImageCategory> findCacheImageCategory()
+    {
+        String key = "cache_imagecategory_all";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<ImageCategory>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<ImageCategory> ls = findImageCategory();
+                if (ls != null && ls.size()>0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSeconds);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findImageCategory();
     }
 
     public List<ImageCategory> findImageCategory()
@@ -110,7 +165,7 @@ public class CacheCommonManager {
 
     public String getImageCategoryName(Integer id)
     {
-        List<ImageCategory> list = findImageCategory();
+        List<ImageCategory> list = findCacheImageCategory();
         for (ImageCategory cate: list
                 ) {
             if(id == cate.getId())
@@ -119,6 +174,38 @@ public class CacheCommonManager {
             }
         }
         return "";
+    }
+
+    public List<VideoCategory> findCacheVideoCategory()
+    {
+        String key = "cache_videocategory_all";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<VideoCategory>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<VideoCategory> ls = findVideoCategory();
+                if (ls != null && ls.size()>0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSeconds);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findVideoCategory();
     }
 
     public List<VideoCategory> findVideoCategory()
@@ -139,7 +226,7 @@ public class CacheCommonManager {
 
     public String getVideoCategoryName(Integer id)
     {
-        List<VideoCategory> list = findVideoCategory();
+        List<VideoCategory> list = findCacheVideoCategory();
         for (VideoCategory cate: list
                 ) {
             if(id == cate.getId())

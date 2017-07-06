@@ -1,11 +1,16 @@
 package com.fct.web.admin.http.cache;
 
 import com.fct.finance.data.entity.PayPlatform;
+import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.OrderGoods;
 import com.fct.mall.interfaces.MallService;
+import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SerializationUtils;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +29,55 @@ public class CacheOrderManager {
     @Autowired
     private  CacheFinanceManager cacheFinanceManager;
 
+    @Autowired
+    private JedisPool jedisPool;
+
+    private int expireSecond = 60 * 30;
+
+    public List<OrderGoods> findCacheOrderGoods(String orderId)
+    {
+        String key = "cache_ordergoods_all_"+orderId;
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<OrderGoods>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<OrderGoods> ls = findOrderGoods(orderId);
+                if (ls != null && ls.size() > 0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSecond);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findOrderGoods(orderId);
+    }
+
     public List<OrderGoods> findOrderGoods(String orderId)
     {
         if(StringUtils.isEmpty(orderId))
             return new ArrayList<>();
-        return mallService.findOrderGoods(orderId);
+        try {
+            return mallService.findOrderGoods(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return new ArrayList();
     }
 
     public Map<Integer,String> getStatus()
@@ -80,7 +129,7 @@ public class CacheOrderManager {
 
     public List<PayPlatform> getPayPlatform()
     {
-        return cacheFinanceManager.getPayPlatform();
+        return cacheFinanceManager.findCachePayPlatform();
     }
 
     public String getPayPlatformName(String code)

@@ -145,7 +145,7 @@ public class CouponController extends BaseController {
             if(id >0 ) {
                 coupon = promotionService.getCouponPolicy(id);
 
-                for (Goods g:cacheGoodsManager.findGoodsByIds(coupon.getProductIds())
+                for (Goods g:cacheGoodsManager.findCacheGoods(coupon.getProductIds())
                      ) {
                     if(!StringUtils.isEmpty(goodsName))
                     {

@@ -72,11 +72,13 @@ public class DiscountManager {
     {
         String ids = "";
         for (Integer id:discountIds
-             ) {
-            ids += id + ",";
+                ) {
+            if(!StringUtils.isEmpty(ids))
+            {
+                ids += ",";
+            }
+            ids += id;
         }
-
-        ids = ids.substring(ids.length()-1);
 
         String sql = "select * from Discount where id in (" + ids + ")";
         return jt.query(sql, new Object[]{}, new BeanPropertyRowMapper<Discount>(Discount.class));

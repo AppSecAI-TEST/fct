@@ -31,9 +31,9 @@ public class CacheGoodsManager {
 
     private int expireSecond = 60 * 30;
 
-    private List<GoodsCategory> findGoodsCategory()
+    public List<GoodsCategory> findCacheGoodsCategory()
     {
-        String key = "cache_goods_cate";
+        String key = "cache_goodscate_all";
         Jedis jedis = null;
         try{
             jedis = jedisPool.getResource();
@@ -44,7 +44,7 @@ public class CacheGoodsManager {
             }
             else
             {
-                List<GoodsCategory> lsCategory = mallService.findGoodsCategory(-1, "", "");
+                List<GoodsCategory> lsCategory = findGoodsCategory();
                 if (lsCategory != null && lsCategory.size() > 0) {
                     jedis.set(key.getBytes(),SerializationUtils.serialize(lsCategory));
                     jedis.expire(key,expireSecond);
@@ -60,6 +60,21 @@ public class CacheGoodsManager {
         finally {
             jedis.close();
         }
+        return findGoodsCategory();
+    }
+    public List<GoodsCategory> findGoodsCategory()
+    {
+        try
+        {
+            List<GoodsCategory> lsCategory = mallService.findGoodsCategory(-1, "", "");
+            if (lsCategory != null && lsCategory.size() > 0) {
+                return lsCategory;
+            }
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return new ArrayList<>();
     }
 
@@ -67,7 +82,7 @@ public class CacheGoodsManager {
     {
         List<GoodsCategory> lsCate = new ArrayList<>();
 
-        for (GoodsCategory cate:findGoodsCategory()
+        for (GoodsCategory cate:findCacheGoodsCategory()
                 ) {
             if(cate.getParentId() ==0)
                 lsCate.add(cate);
@@ -79,12 +94,44 @@ public class CacheGoodsManager {
     {
         List<GoodsCategory> lsCate = new ArrayList<>();
 
-        for (GoodsCategory cate:findGoodsCategory()
+        for (GoodsCategory cate:findCacheGoodsCategory()
                 ) {
-            if(cate.getParentId() == parentId)
+            if(cate.getParentId().equals(parentId))
                 lsCate.add(cate);
         }
         return lsCate;
+    }
+
+    public List<GoodsGrade> findCacheGoodsGrade()
+    {
+        String key = "cache_goodsgrade_all";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<GoodsGrade>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<GoodsGrade> ls = findGoodsGrade();
+                if (ls != null && ls.size() > 0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSecond);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findGoodsGrade();
     }
 
     public List<GoodsGrade> findGoodsGrade()
@@ -105,7 +152,7 @@ public class CacheGoodsManager {
 
     public String getGoodsCateName(String ids)
     {
-        List<GoodsCategory> cateList = findGoodsCategory();
+        List<GoodsCategory> cateList = findCacheGoodsCategory();
         String name = "";
         for (GoodsCategory cate: cateList
                 ) {
@@ -123,15 +170,47 @@ public class CacheGoodsManager {
 
     public String getGoodsGradeName(Integer id)
     {
-        List<GoodsGrade> gradeList = findGoodsGrade();
+        List<GoodsGrade> gradeList = findCacheGoodsGrade();
         for (GoodsGrade grade: gradeList
              ) {
-            if(id == grade.getId())
+            if(id.equals(grade.getId()))
             {
                 return grade.getName();
             }
         }
         return "";
+    }
+
+    public List<GoodsMaterial> findCacheGoodsMaterial()
+    {
+        String key = "cache_goodsmaterial_all";
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<GoodsMaterial>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<GoodsMaterial> ls = findGoodsMaterial();
+                if (ls != null && ls.size() > 0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSecond);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findGoodsMaterial();
     }
 
     public List<GoodsMaterial> findGoodsMaterial()
@@ -154,7 +233,7 @@ public class CacheGoodsManager {
         if(StringUtils.isEmpty(materialid))
             return "";
 
-        List<GoodsMaterial> list = findGoodsMaterial();
+        List<GoodsMaterial> list = findCacheGoodsMaterial();
         String name = "";
         for (GoodsMaterial m: list
                 ) {
@@ -170,6 +249,38 @@ public class CacheGoodsManager {
         return name;
     }
 
+    public Goods getCacheGoods(Integer id)
+    {
+        String key = "cache_goods_"+id;
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (Goods) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                Goods goods = getGoods(id);
+                if (goods != null) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(goods));
+                    jedis.expire(key,expireSecond);
+                }
+                return goods;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return getGoods(id);
+    }
+
     public Goods getGoods(Integer id)
     {
         try {
@@ -180,6 +291,38 @@ public class CacheGoodsManager {
             Constants.logger.error(exp.toString());
         }
         return new Goods();
+    }
+
+    public List<Goods> findCacheGoods(String ids)
+    {
+        String key = "cache_goodslist_"+ids;
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            byte[] object = jedis.get((key).getBytes());
+            if(object != null)
+            {
+                return (List<Goods>) SerializationUtils.deserialize(object);
+            }
+            else
+            {
+                List<Goods> ls = findGoodsByIds(ids);
+                if (ls != null && ls.size()>0) {
+                    jedis.set(key.getBytes(),SerializationUtils.serialize(ls));
+                    jedis.expire(key,expireSecond);
+                }
+                return ls;
+            }
+
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+        return findGoodsByIds(ids);
     }
 
     public List<Goods> findGoodsByIds(String ids)

@@ -65,8 +65,8 @@ public class GoodsController extends BaseController {
         page =ConvertUtils.toPageIndex(page);
 
         List<GoodsCategory> lsCategory = cacheGoodsManager.findGoodsCategoryByParent();//这样引用出错
-        List<GoodsGrade> lsGrade = cacheGoodsManager.findGoodsGrade();
-        List<Artist> artistList = cacheArtistManager.findArtist();
+        List<GoodsGrade> lsGrade = cacheGoodsManager.findCacheGoodsGrade();
+        List<Artist> artistList = cacheArtistManager.findCacheArtist();
         Integer pageSize = 30;
         StringBuilder sb = new StringBuilder();
         sb.append("?page=%d");
@@ -147,8 +147,8 @@ public class GoodsController extends BaseController {
             goods.setMaterialId("");
         }
         List<GoodsCategory> categoryList = cacheGoodsManager.findGoodsCategoryByParent();
-        List<GoodsGrade> gradeList = cacheGoodsManager.findGoodsGrade();
-        List<Artist> artistList = cacheArtistManager.findArtist();
+        List<GoodsGrade> gradeList = cacheGoodsManager.findCacheGoodsGrade();
+        List<Artist> artistList = cacheArtistManager.findCacheArtist();
 
         model.addAttribute("materialName",materialName);
         model.addAttribute("gradeList", gradeList);

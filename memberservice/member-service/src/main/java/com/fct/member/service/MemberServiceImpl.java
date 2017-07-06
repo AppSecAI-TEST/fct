@@ -131,6 +131,11 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return memberAddressManager.findAll(memberId);
     }
 
+    public MemberAddress getDefaultAddress(Integer memberId)
+    {
+        return memberAddressManager.findByDefault(memberId);
+    }
+
     public void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                          String bankName,String bankAccount)
     {

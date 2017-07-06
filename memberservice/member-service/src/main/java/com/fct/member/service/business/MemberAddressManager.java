@@ -71,4 +71,9 @@ public class MemberAddressManager {
         }
         return memberAddressRepository.findByMemberId(memberId);
     }
+
+    public MemberAddress findByDefault(Integer memberId)
+    {
+        return memberAddressRepository.findDefault(memberId);
+    }
 }

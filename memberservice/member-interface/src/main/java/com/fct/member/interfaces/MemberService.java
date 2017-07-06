@@ -44,6 +44,8 @@ public interface MemberService {
 
     List<MemberAddress> findMemberAddress(Integer memberId);
 
+    MemberAddress getDefaultAddress(Integer memberId);
+
     void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                               String bankName,String bankAccount);
 

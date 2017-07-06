@@ -79,8 +79,8 @@ public class DiscountProductDTOManager {
         sql += String.format(" WHERE p.productId=%d and d.endtime>='%s' and d.AuditStatus=1 limit 1",
                 productId, DateUtils.format(new Date()));
 
-        DiscountProduct product = jt.queryForObject(sql,new Object[]{},
-                new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
+        DiscountProduct product = jt.queryForObject(sql,new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class),
+                new Object[]{});
 
 
         if(product != null) {

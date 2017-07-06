@@ -6,8 +6,8 @@ import com.fct.promotion.service.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by jon on 2017/5/12.
@@ -61,7 +61,7 @@ public class CouponSpareCodeManager {
 
     private Integer getNewCode()
     {
-        return (int) ((Math.random()*9+1)*10000);
+        return new Random().nextInt(99999999);
     }
 
 

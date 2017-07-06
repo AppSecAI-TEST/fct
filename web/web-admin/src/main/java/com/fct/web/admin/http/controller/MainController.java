@@ -33,8 +33,6 @@ public class MainController {
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);
 
-        memberService.deleteFavourite(1,1,1);
-
         //model.addAttribute("password", StringHelper.md5("123456"));
         return "/main/login";
     }
@@ -73,6 +71,7 @@ public class MainController {
         password =ConvertUtils.toString(password);
 
         try {
+
             SysUserLogin user = memberService.loginSystemUser(username,password, HttpUtils.getIp(request),
                     12);
             if(user !=null)

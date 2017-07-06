@@ -1,14 +1,14 @@
 package com.fct.message.service.qcloud;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Random;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 class SmsSenderUtil {
 

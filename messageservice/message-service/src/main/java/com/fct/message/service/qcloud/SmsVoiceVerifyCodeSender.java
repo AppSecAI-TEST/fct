@@ -1,12 +1,12 @@
 package com.fct.message.service.qcloud;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-
-import org.json.JSONObject;
 
 public class SmsVoiceVerifyCodeSender {
 	int appid;

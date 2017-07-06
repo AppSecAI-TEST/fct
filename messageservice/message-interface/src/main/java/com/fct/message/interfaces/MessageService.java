@@ -44,13 +44,13 @@ public interface MessageService {
     /// 获取异常消息
     /// </summary>
     /// <returns></returns>
-    PageResponse<MessageQueue> findAll(String typeId, Integer status, String body,Integer pageIndex, Integer pageSize);
+    PageResponse<MessageQueue> findAll(String typeId, Integer status, String body, Integer pageIndex, Integer pageSize);
 
-    void sendSMS(String cellPhone,String content,String ip,String action);
+    void sendSMS(String cellPhone, String content, String ip, String action);
 
-    String getVerifyCode(String sessionId,String cellPhone);
+    String getVerifyCode(String sessionId, String cellPhone);
 
-    void sendVerifyCode(String sessionId,String cellPhone,String content,String ip,String action);
+    void sendVerifyCode(String sessionId, String cellPhone, String content, String ip, String action);
 
-    int checkVerifyCode(String sessionId,String cellPhone,String code);
+    int checkVerifyCode(String sessionId, String cellPhone, String code);
 }

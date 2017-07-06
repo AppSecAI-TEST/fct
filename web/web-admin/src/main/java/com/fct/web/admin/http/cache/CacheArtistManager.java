@@ -120,8 +120,6 @@ public class CacheArtistManager {
         return new ArrayList<>();
     }
 
-
-
     public String getArtistName(String ids)
     {
         List<Artist> artistList = findCacheArtist();

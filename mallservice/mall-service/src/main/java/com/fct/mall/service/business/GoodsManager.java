@@ -401,20 +401,19 @@ public class GoodsManager {
         goodsRepository.save(g);
     }
 
-    public List<Goods> findByArtistOrMaterial(Integer artistId,Integer materialId, int top)
+    public List<Goods> findByGuess(String goodsId,String categoryCode, Integer gradeId, Integer materialId,
+                                   Integer artistId,int top)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("select * from Goods where 1=1");
+        if (!StringUtils.isEmpty(goodsId)) {
+            sb.append(" AND id not in ("+ goodsId +")");
+        }
         List<Object> param = new ArrayList<>();
-        if (materialId>0) {
-            sb.append(" AND materialId like ?");
-            param.add(","+ materialId +",");
-        }
-        if (artistId>0) {
-            sb.append(" AND artistIds like ?");
-            param.add(","+artistId +",");
-        }
+        String condition = getContion("",categoryCode,gradeId,materialId,artistId,0,
+                0,1,param);
+        sb.append(condition);
         sb.append(" order by sellCount desc limit "+top);
-        return jt.query(sb.toString(), param.toArray(), new BeanPropertyRowMapper<Goods>(Goods.class));
+        return jt.query(sb.toString(), new Object[]{}, new BeanPropertyRowMapper<Goods>(Goods.class));
     }
 }

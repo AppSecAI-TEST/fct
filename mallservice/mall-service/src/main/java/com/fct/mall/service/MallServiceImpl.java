@@ -76,6 +76,12 @@ public class MallServiceImpl implements MallService {
         goodsManager.delete(id);
     }
 
+    public List<Goods> findGoodsByGuess(String goodsId,String categoryCode, Integer gradeId, Integer materialId,
+                                        Integer artistId,int top)
+    {
+        return goodsManager.findByGuess(goodsId,categoryCode,gradeId, materialId,artistId,top);
+    }
+
     public List<GoodsCategory> findGoodsCategory(Integer parentId, String name, String code) {
         return goodsCategoryManager.findAll(name, code, parentId);
     }
@@ -293,14 +299,6 @@ public class MallServiceImpl implements MallService {
     public List<GoodsMaterial> findMaterialByGoods(String materialIds)
     {
         return goodsMaterialManager.findByGoods(materialIds);
-    }
-
-    public List<Goods> findGoodsByMaterial(Integer materialId,int top) {
-        return goodsManager.findByArtistOrMaterial(0,materialId,top);
-    }
-
-    public List<Goods> findGoodsByArtist(Integer artistId,int top) {
-        return goodsManager.findByArtistOrMaterial(artistId,0,top);
     }
 
     public  void deleteGoodsMaterial(Integer id)

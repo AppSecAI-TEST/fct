@@ -26,6 +26,9 @@ public interface MallService {
 
     void deleteGoods(Integer id);
 
+    List<Goods> findGoodsByGuess(String goodsId,String categoryCode, Integer gradeId, Integer materialId,
+                                 Integer artistId,int top);
+
     List<GoodsCategory> findGoodsCategory(Integer parentId,String name, String code);
 
     GoodsCategory getGoodsCategory(Integer id);
@@ -125,10 +128,6 @@ public interface MallService {
     void deleteGoodsMaterial(Integer id);
 
     List<GoodsMaterial> findMaterialByGoods(String materialIds);
-
-    List<Goods> findGoodsByMaterial(Integer materialId,int top);
-
-    List<Goods> findGoodsByArtist(Integer artistId,int top);
 
     PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId,Integer status, Integer pageIndex, Integer pageSize);
 }

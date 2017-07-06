@@ -3,7 +3,7 @@ package com.fct.web.pay.http.controller;
 import com.fct.core.utils.CookieUtil;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.web.pay.config.FctConfig;
-import com.fct.web.pay.http.cache.CacheMemberManager;
+import com.fct.web.pay.http.cache.CacheManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ import java.net.URLEncoder;
 public class BaseController {
 
     @Autowired
-    private CacheMemberManager cacheMemberManager;
+    private CacheManager cacheManager;
 
     public MemberLogin currentUser;
 
@@ -50,7 +50,7 @@ public class BaseController {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
-        currentUser = cacheMemberManager.getMemberLogin(token);
+        currentUser = cacheManager.getCacheMemberLogin(token);
         if (currentUser == null) {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;

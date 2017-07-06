@@ -10,6 +10,7 @@ import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.Orders;
 import com.fct.mall.interfaces.MallService;
 import com.fct.pay.interfaces.MobilePayService;
+import com.fct.web.pay.http.cache.CacheManager;
 import com.fct.web.pay.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,9 @@ public class MobileController extends BaseController{
     @Autowired
     private MallService mallService;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     /***
      *
      * 支付选择
@@ -54,14 +58,14 @@ public class MobileController extends BaseController{
         try {
             switch (tradetype) {
                 case "buy":
-                    Orders orders = mallService.getOrders(tradeid);
+                    Orders orders = cacheManager.getCacheOrders(tradeid);
                     payStatus = orders.getStatus();
                     payAmount = orders.getCashAmount();
                     memberId = orders.getMemberId();
 
                     break;
                 case "recharge":
-                    RechargeRecord rechargeRecord = financeService.getRechargeRecord(Integer.valueOf(tradeid));
+                    RechargeRecord rechargeRecord = cacheManager.getCacheRechargeRecord(Integer.valueOf(tradeid));
                     payStatus = rechargeRecord.getStatus();
                     memberId = rechargeRecord.getMemberId();
                     payAmount = rechargeRecord.getPayAmount();
@@ -285,7 +289,7 @@ public class MobileController extends BaseController{
             switch (payOrder.getTradeType())
             {
                 case "buy":
-                    Orders orders = mallService.getOrders(tradeid);
+                    Orders orders = cacheManager.getCacheOrders(tradeid);
                     remark=orders.getOrderGoods().get(0).getName();
                     if(orders.getOrderGoods().size()>1)
                     {
@@ -295,7 +299,7 @@ public class MobileController extends BaseController{
                     gourl = fctConfig.getUrl() +"/my/order/detail?orderid="+payOrder.getOrderId();
                     break;
                 case "recharge":
-                    RechargeRecord rechargeRecord = financeService.getRechargeRecord(Integer.valueOf(payOrder.getTradeId()));
+                    RechargeRecord rechargeRecord = cacheManager.getCacheRechargeRecord(Integer.valueOf(payOrder.getTradeId()));
                     remark = String.format("您已成功充值%d元（包含赠送金额%d元）",
                             rechargeRecord.getAmount(),rechargeRecord.getGiftAmount());
                     gourl = fctConfig.getUrl() +"/my/cash/recharge/record";

@@ -414,6 +414,6 @@ public class GoodsManager {
                 0,1,param);
         sb.append(condition);
         sb.append(" order by sellCount desc limit "+top);
-        return jt.query(sb.toString(), new Object[]{}, new BeanPropertyRowMapper<Goods>(Goods.class));
+        return jt.query(sb.toString(), param.toArray(), new BeanPropertyRowMapper<Goods>(Goods.class));
     }
 }

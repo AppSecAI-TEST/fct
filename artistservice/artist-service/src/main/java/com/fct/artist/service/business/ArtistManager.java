@@ -94,6 +94,18 @@ public class ArtistManager {
         artistRepository.save(artist);
     }
 
+    public void addFollowCount(Integer id,Integer count)
+    {
+        if(id==null || id<=0)
+        {
+            throw  new IllegalArgumentException("id 为空");
+        }
+        Artist artist = artistRepository.findOne(id);
+        artist.setFollowCount(artist.getGoodsCount()+count);
+        artist.setUpdateTime(new Date());
+        artistRepository.save(artist);
+    }
+
     public PageResponse<Artist> findAll(String name, Integer status, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();

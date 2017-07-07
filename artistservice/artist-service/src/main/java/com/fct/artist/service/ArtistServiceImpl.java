@@ -56,6 +56,11 @@ public class ArtistServiceImpl implements ArtistService {
         artistManager.updateStatus(id);
     }
 
+    public void addArtistFollowCount(Integer id,Integer count)
+    {
+        artistManager.addFollowCount(id,count);
+    }
+
     public PageResponse<ArtistComment> findArtistComment(Integer artistId, Integer memberId, String username, Integer status,
                                                   Integer replyId, Integer pageIndex, Integer pageSize)
     {

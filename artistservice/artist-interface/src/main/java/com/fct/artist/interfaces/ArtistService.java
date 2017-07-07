@@ -20,6 +20,8 @@ public interface ArtistService {
 
     void updateArtistStatus(Integer id);
 
+    void addArtistFollowCount(Integer id,Integer count);
+
     PageResponse<ArtistComment> findArtistComment(Integer artistId,Integer memberId,String username, Integer status,
                                                   Integer replyId,Integer pageIndex, Integer pageSize);
 

@@ -69,7 +69,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     public List<ArtistComment> findReplyComment(Integer commentId,int top)
     {
-        return artistCommentManager.findByComment(commentId);
+        return artistCommentManager.findByComment(commentId,top);
     }
     public Integer saveArtistComment(ArtistComment artistComment)
     {

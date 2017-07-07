@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -108,7 +109,8 @@ public class MobileController extends BaseController{
      * */
     @RequestMapping(value = "/savepay", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String savePay(HttpServletRequest request,String tradeid, String tradetype, String platform) {
+    public String savePay(HttpServletRequest request,String tradeid,
+                          String tradetype, String platform) {
 
         tradeid = ConvertUtils.toString(tradeid);
         tradetype =ConvertUtils.toString(tradetype);
@@ -122,6 +124,9 @@ public class MobileController extends BaseController{
 
         if(tradetype == "wxpay_fctwap" && StringUtils.isEmpty(currentUser.getOpenId()))
         {
+            //先清除用户登陆缓存数据，在跳转至授权页面。
+            cacheManager.removeCacheMemberLogin(request);
+
             return AjaxUtil.goUrl(fctConfig.getUrl()+"/auth/wxlogin","");
         }
         String payurl = "";

@@ -6,7 +6,6 @@ import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.Orders;
 import com.fct.mall.interfaces.MallService;
 import com.fct.member.data.entity.MemberLogin;
-import com.fct.member.data.entity.SysUserLogin;
 import com.fct.member.interfaces.MemberService;
 import com.fct.web.pay.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class CacheManager {
@@ -34,7 +32,6 @@ public class CacheManager {
     private JedisPool jedisPool;
 
     private int expireSecond = 60 * 24 * 60; //1天
-
 
     public MemberLogin getCacheMemberLogin(String token)
     {
@@ -68,9 +65,22 @@ public class CacheManager {
         return getMemberLogin(token);
     }
 
-    public void removeCacheMemberLogin(HttpServletRequest request, HttpServletResponse response)
+    public void removeCacheMemberLogin(HttpServletRequest request)
     {
-        CookieUtil.delCookie(request,response,"fct_auth","fangcun.com");
+        String token = CookieUtil.getCookieByName(request,"fct_auth");
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            jedis.del(token.getBytes());
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        finally {
+            jedis.close();
+        }
+
     }
 
     private MemberLogin getMemberLogin(String token) {

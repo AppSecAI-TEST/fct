@@ -25,6 +25,8 @@ public interface ArtistService {
     PageResponse<ArtistComment> findArtistComment(Integer artistId,Integer memberId,String username, Integer status,
                                                   Integer replyId,Integer pageIndex, Integer pageSize);
 
+    List<ArtistComment> findReplyComment(Integer commentId);
+
     Integer saveArtistComment(ArtistComment artistComment);
 
     ArtistComment getArtistComment(Integer id);

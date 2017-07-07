@@ -78,8 +78,16 @@ public class ArtistCommentManager {
         artistCommentRepository.save(artistComment);
     }
 
+    public List<ArtistComment> findByComment(Integer commentId) {
+        List<Object> param = new ArrayList<>();
+        String condition= getCondition(0,0,"",1,commentId,param);
+        String sql = String.format("select * from ArtistComment where 1=1 %s order by id desc",condition);
+        return jt.query(sql, param.toArray(), new BeanPropertyRowMapper<>(ArtistComment.class));
+
+    }
+
     public PageResponse<ArtistComment> findAll(Integer artistId, Integer memberId, String username, Integer status,
-                                                         Integer replyId, Integer pageIndex, Integer pageSize)
+                                               Integer replyId, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 

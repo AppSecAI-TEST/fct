@@ -67,6 +67,10 @@ public class ArtistServiceImpl implements ArtistService {
         return artistCommentManager.findAll(artistId,memberId,username,status,replyId,pageIndex,pageSize);
     }
 
+    public List<ArtistComment> findReplyComment(Integer commentId)
+    {
+        return artistCommentManager.findByComment(commentId);
+    }
     public Integer saveArtistComment(ArtistComment artistComment)
     {
         return artistCommentManager.save(artistComment);

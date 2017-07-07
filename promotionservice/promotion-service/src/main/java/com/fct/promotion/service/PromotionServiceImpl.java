@@ -43,159 +43,396 @@ public class PromotionServiceImpl implements PromotionService {
     private CouponSpareCodeManager couponSpareCodeManager;
 
     public CouponPolicy saveCouponPolicy(CouponPolicy policy) {
-        return couponPolicyManager.add(policy);
+        try {
+            return couponPolicyManager.add(policy);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void auditCouponPolicy(Integer policyId, Boolean pass, Integer userId)
     {
-        couponPolicyManager.audit(policyId,pass,userId);
+        try {
+            couponPolicyManager.audit(policyId,pass,userId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     //获取优惠券策略对象
     public CouponPolicy getCouponPolicy(Integer policyId)
     {
-        return couponPolicyManager.findById(policyId);
+        try {
+            return couponPolicyManager.findById(policyId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<CouponPolicy> findCouponPolicy(Integer typeId,Integer fetchType,Integer status,String startTime,
                                                String endTime,Integer pageIndex, Integer pageSize)
     {
-        return couponPolicyManager.findAll(typeId,fetchType,status,startTime,endTime,pageIndex,pageSize);
+        try {
+            return couponPolicyManager.findAll(typeId,fetchType,status,startTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<CouponPolicy> findCanReceiveCouponPolicy(Integer productId)
     {
-        return couponPolicyManager.findByCanReceive(productId);
+        try {
+            return couponPolicyManager.findByCanReceive(productId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Integer getReceiveCountByProduct(Integer productId)
     {
-        return couponPolicyManager.canReceiveCountByProduct(productId);
+        try {
+            return couponPolicyManager.canReceiveCountByProduct(productId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public List<Integer> findReceivedPolicyId(Integer memberId,List<Integer> policyIds)
     {
-        return couponCodeManager.findReceivedPolicyId(memberId,policyIds);
+        try {
+
+            return couponCodeManager.findReceivedPolicyId(memberId,policyIds);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<CouponCodeDTO> findMemberCouponCode(Integer policyId,Integer memberId,String code,Integer status,
                                                     Boolean isValid,Integer pageIndex, Integer pageSize)
     {
-        return couponCodeDTOManager.findMemberCouponCode(policyId,memberId,code,status,
-                isValid,pageIndex,pageSize);
+        try {
+            return couponCodeDTOManager.findMemberCouponCode(policyId,memberId,code,status,
+                    isValid,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Integer getMemberCouponCodeCount(Integer policyId,Integer memberId,String code,Integer status,
                                             Boolean isValid)
     {
-        return couponCodeDTOManager.getMemberCouponCodeCount(policyId,memberId,code,status,
-                isValid);
+        try {
+            return couponCodeDTOManager.getMemberCouponCodeCount(policyId,memberId,code,status,
+                    isValid);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public String receiveCouponCode(Integer memberId,Integer policyId)
     {
-        return couponCodeManager.receive(memberId,policyId);
+        try {
+            return couponCodeManager.receive(memberId,policyId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+          throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public CouponCodeDTO getCouponCodeDTOByOrder(Integer memberId, List<OrderProductDTO> productList)
     {
-        return couponCodeDTOManager.findByMemberId(memberId,productList,"");
+        try {
+            return couponCodeDTOManager.findByMemberId(memberId,productList,"");
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public CouponCodeDTO validCouponCode(Integer memberId,List<OrderProductDTO> productList,String couponCode)
     {
-        return couponCodeDTOManager.findByMemberId(memberId,productList,couponCode);
+        try {
+            return couponCodeDTOManager.findByMemberId(memberId,productList,couponCode);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public CouponCodeDTO getCouponCodeDTOByCode(String code)
     {
-        return couponCodeDTOManager.findByCode(code);
+        try {
+            return couponCodeDTOManager.findByCode(code);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void useCouponCode(String code)
     {
-        couponCodeManager.setCodeUsed(code);
+        try {
+            couponCodeManager.setCodeUsed(code);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void cancelUseCouponCode(String code)
     {
-        couponCodeManager.cancelCodeUsed(code);
+        try {
+            couponCodeManager.cancelCodeUsed(code);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void saveDiscount(Discount discount)
     {
-        //无法进入
-        if(discount.getId() != null && discount.getId()>0)
-        {
-            discountManager.update(discount);
+        try {
+            //无法进入
+            if(discount.getId() != null && discount.getId()>0)
+            {
+                discountManager.update(discount);
+            }
+            else {
+                discountManager.add(discount);
+            }
         }
-        else {
-            discountManager.add(discount);
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
         }
     }
 
     public Discount getDiscountById(Integer discountId)
     {
-        return discountManager.findById(discountId);
+        try {
+            return discountManager.findById(discountId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public DiscountProductDTO getDiscountByProduct(Integer productId)
     {
-       return discountProductDTOManager.findByProductId(productId);
+        try {
+            return discountProductDTOManager.findByProductId(productId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void auditDiscount(Integer discountId,Boolean pass,Integer userId)
     {
-        discountManager.audit(discountId,pass,userId);
+        try {
+            discountManager.audit(discountId,pass,userId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<Discount> findDiscount(String name,String goodsName,Integer status, String startTime, String endTime, Integer pageIndex,
                                                Integer pageSize)
     {
-        return discountManager.findAll(name,goodsName,status,startTime,endTime,pageIndex,pageSize);
+        try {
+            return discountManager.findAll(name,goodsName,status,startTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<DiscountProduct> findDiscountProduct(Integer discountId)
     {
-        return discountProductManager.findByDiscountId(discountId);
+        try {
+            return discountProductManager.findByDiscountId(discountId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public DisCountDTO getDisCountDTOById(Integer discountId)
     {
-        DisCountDTO dto = new DisCountDTO();
-        dto.setDiscount(discountManager.findById(discountId));
-        dto.setProductList(discountProductManager.findByDiscountId(discountId));
-        return dto;
+        try {
+            DisCountDTO dto = new DisCountDTO();
+            dto.setDiscount(discountManager.findById(discountId));
+            dto.setProductList(discountProductManager.findByDiscountId(discountId));
+            return dto;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<DiscountProductDTO> findDiscountProductDTO(List<Integer> productIds, int filterNoBegin)
     {
-        return discountProductDTOManager.findByProduct(productIds,filterNoBegin);
+        try {
+            return discountProductDTOManager.findByProduct(productIds,filterNoBegin);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Integer useCouponCodeDiscount(String orderId,Integer memberId,Integer memberGradeId,List<OrderProductDTO> products,
                                   String couponCode)
     {
-        return orderManager.use(orderId,memberId,products,couponCode,memberGradeId);
+        try {
+            return orderManager.use(orderId,memberId,products,couponCode,memberGradeId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public DiscountCouponDTO getPromotion(Integer memberId, List<OrderProductDTO> products, String couponCode)
     {
-        return discountProductDTOManager.getDiscountCoupon(memberId,products,couponCode);
+        try {
+            return discountProductDTOManager.getDiscountCoupon(memberId,products,couponCode);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void couponCodeExpirseTask()
     {
-        couponCodeManager.setStatusExpire();
+        try {
+            couponCodeManager.setStatusExpire();
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void generateSpareCodeTask()
     {
-        couponSpareCodeManager.task();
+        try {
+            couponSpareCodeManager.task();
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void generateCouponCodeForSystemTask()
     {
-        couponPolicyManager.task();
+        try {
+            couponPolicyManager.task();
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 }

@@ -15,7 +15,7 @@ public interface MemberService {
     Member registerMember(String cellPhone, String userName, String password);
 
     /*普通登录和快捷登录*/
-    MemberLogin loginMember(String cellPhone,String password,String ip,Integer expireDay);
+    MemberLogin loginMember(String cellPhone,String password,String platform,String ip,Integer expireDay);
 
     void logoutMember(String token);
 

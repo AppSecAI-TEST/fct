@@ -42,177 +42,484 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
 
     public PayOrder createPayOrder(PayOrder payOrder) {
 
-        return payOrderManager.create(payOrder);
+        try
+        {
+            return payOrderManager.create(payOrder);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayOrder getPayOrder(String orderId){
-        return  payOrderManager.findOne(orderId);
+        try
+        {
+            return  payOrderManager.findOne(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayOrder getPayOrderByTrade(String tradeType, String tradeId)
     {
-        return  payOrderManager.findByTrade(tradeType,tradeId);
+        try
+        {
+            return  payOrderManager.findByTrade(tradeType,tradeId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayOrder paySuccess(String orderId, String platform, String notifyData){
-        return  payOrderManager.paySuccess(orderId,platform,notifyData);
+
+        try
+        {
+            return  payOrderManager.paySuccess(orderId,platform,notifyData);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void payTradeNotify(String jsonMQPayTrade){
 
-        payOrderManager.tradeNotify(jsonMQPayTrade);
+        try
+        {
+            payOrderManager.tradeNotify(jsonMQPayTrade);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<PayOrder> findPayRecord(Integer memberId, String cellPhone, String orderId, String platform,String payOrderId, String tradeId,
                                                 String tradeType,Integer status, Integer timeType,String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return  payOrderManager.findAll(memberId,cellPhone,orderId,platform,payOrderId,tradeId,tradeType,status,
-                timeType,beginTime,endTime,pageIndex,pageSize);
+        try
+        {
+            return  payOrderManager.findAll(memberId,cellPhone,orderId,platform,payOrderId,tradeId,tradeType,status,
+                    timeType,beginTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
+
 
     public MemberAccount getMemberAccount(Integer memberId)
     {
-        return memberAccountManager.findById(memberId);
+        try
+        {
+            return memberAccountManager.findById(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<MemberAccount> findMemberAccount(String cellPhone, Integer orderBy, Integer pageIndex, Integer pageSize)
     {
-        return  memberAccountManager.findAll(cellPhone,orderBy,pageIndex,pageSize);
+        try
+        {
+            return  memberAccountManager.findAll(cellPhone,orderBy,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<MemberAccountHistory> findMemberAccountHistory(Integer memberId, String cellPhone, String tradeId, String tradeType,
                                                                        String startTime,String endTime,Integer pageIndex, Integer pageSize)
     {
-        return memberAccountHistoryManager.findAll(memberId,cellPhone,tradeId,tradeType,startTime,endTime,pageIndex,pageSize);
+        try
+        {
+            return memberAccountHistoryManager.findAll(memberId,cellPhone,tradeId,tradeType,startTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public RefundRecord createRefundRecord(RefundRecord refund)
     {
-        return refundRecordManager.create(refund);
+        try
+        {
+            return refundRecordManager.create(refund);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public RefundRecord getRefundRecord(Integer id)
     {
-        return refundRecordManager.findById(id);
+        try
+        {
+            return refundRecordManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public RefundRecord getRefundRecordByTrade(String tradeType,String tradeId)
     {
-        return refundRecordManager.findByTradeId(tradeType,tradeId);
+        try
+        {
+            return refundRecordManager.findByTradeId(tradeType,tradeId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void refundConfirm(Integer omsOperaterId,String ids)
     {
-        refundRecordManager.confirm(omsOperaterId,ids);
+        try
+        {
+            refundRecordManager.confirm(omsOperaterId,ids);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void refundClose(Integer omsOperaterId,Integer refundId,String remark)
     {
-        refundRecordManager.close(omsOperaterId,refundId,remark);
+        try
+        {
+            refundRecordManager.close(omsOperaterId,refundId,remark);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void refundSuccess(Integer refundId,String notifyData)
     {
-        refundRecordManager.success(refundId,notifyData);
+        try
+        {
+            refundRecordManager.success(refundId,notifyData);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<RefundRecord> findRefundRecord(Integer memberId, String cellPhone, String payOrderId,String tradeId, String tradeType,
                                                        String payPlatform, Integer method,Integer status, String beginTime, String endTime,
                                                        Integer pageIndex, Integer pageSize)
     {
-        return  refundRecordManager.findAll(memberId,cellPhone,payOrderId,tradeId,tradeType,payPlatform,method,
+        try
+        {
+            return  refundRecordManager.findAll(memberId,cellPhone,payOrderId,tradeId,tradeType,payPlatform,method,
                 status,beginTime,endTime, pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
     public void applyWithdraw(WithdrawRecord withdrawRecord)
     {
-        withdrawRecordManager.apply(withdrawRecord);
+        try
+        {
+            withdrawRecordManager.apply(withdrawRecord);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void withdrawSuccess(Integer omsOperaterId,Integer id)
     {
-        withdrawRecordManager.updateStatus(omsOperaterId,id,1,"");
+        try
+        {
+            withdrawRecordManager.updateStatus(omsOperaterId,id,1,"");
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void withdrawFail(Integer omsOperaterId,Integer id,String desc)
     {
-        withdrawRecordManager.updateStatus(omsOperaterId,id,2,desc);
+        try
+        {
+            withdrawRecordManager.updateStatus(omsOperaterId,id,2,desc);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<WithdrawRecord> findWithdrawRecord(Integer memberId, String cellPhone, Integer status,
                                                    String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return  withdrawRecordManager.findAll(memberId,cellPhone,status,beginTime,endTime,pageIndex,
-                pageSize);
+        try
+        {
+            return  withdrawRecordManager.findAll(memberId,cellPhone,status,beginTime,endTime,pageIndex,
+                    pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Integer createSettleRecord(SettleRecord settleRecord)
     {
-        return  settleRecordManager.create(settleRecord);
+        try
+        {
+            return  settleRecordManager.create(settleRecord);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
 
     public void settleConfirm(Integer omsOperaterId,String ids)
     {
-        settleRecordManager.updateStatus(omsOperaterId,1,ids,"");
+        try
+        {
+            settleRecordManager.updateStatus(omsOperaterId,1,ids,"");
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
 
     public void settleRefuse(Integer omsOperaterId,Integer id,String remark)
     {
-        settleRecordManager.updateStatus(omsOperaterId,3,id.toString(),remark);
+        try
+        {
+            settleRecordManager.updateStatus(omsOperaterId,3,id.toString(),remark);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
 
     public void settleTask()
     {
-        settleRecordManager.task();
+        try
+        {
+            settleRecordManager.task();
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
-
-
 
     public SettleRecord getSettleRecord(Integer recordId)
     {
-        return settleRecordManager.findById(recordId);
+        try
+        {
+            return settleRecordManager.findById(recordId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
 
     public PageResponse<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                                String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return  settleRecordManager.findAll(memberId,cellPhone,tradeType,tradeId,status,beginTime,endTime,
-                pageIndex,pageSize);
+        try
+        {
+            return  settleRecordManager.findAll(memberId,cellPhone,tradeType,tradeId,status,beginTime,endTime,
+                    pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<PayPlatform> findPayPlatform(String payment)
     {
-        return  payPlatformManager.findAll(payment);
+        try
+        {
+            return  payPlatformManager.findAll(payment);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
 
     public Integer createRechargeRecord(RechargeRecord record)
     {
-        return rechargeRecordManager.create(record);
+        try
+        {
+            return rechargeRecordManager.create(record);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
 
     public RechargeRecord getRechargeRecord(Integer id)
     {
-        return rechargeRecordManager.findById(id);
+        try
+        {
+            return rechargeRecordManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void rechargeExpiredTask()
     {
-        rechargeRecordManager.handleExpired();
+        try
+        {
+            rechargeRecordManager.handleExpired();
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void updateRechargePayPlatform(Integer id,String payPlatform)
     {
-        rechargeRecordManager.updatePayPlatform(id,payPlatform);
+        try
+        {
+            rechargeRecordManager.updatePayPlatform(id,payPlatform);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void rechargeSuccess(Integer id, String payOrderId, String payPlatform, String payTime, Integer payStatus)
     {
-        rechargeRecordManager.paySuccess(id,payOrderId,payPlatform,payTime,payStatus);
+        try
+        {
+            rechargeRecordManager.paySuccess(id,payOrderId,payPlatform,payTime,payStatus);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
 
@@ -220,12 +527,31 @@ public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceSer
                                                            Integer status,Integer timeType,String beginTime, String endTime,
                                                            Integer pageIndex, Integer pageSize)
     {
-        return rechargeRecordManager.findAll(memberId,cellPhone,payPlayform,payOrderId,status,timeType,beginTime,
-                endTime,pageIndex,pageSize);
+        try
+        {
+            return rechargeRecordManager.findAll(memberId,cellPhone,payPlayform,payOrderId,status,timeType,beginTime,
+                    endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public  void giftPoints(String tradeId,String tradeType,Integer memberId,Integer points)
     {
-        memberAccountManager.giftPoints(tradeId,tradeType,memberId,points);
+        try
+        {
+            memberAccountManager.giftPoints(tradeId,tradeType,memberId,points);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.fct.artist.data.entity.ArtistLive;
 import com.fct.artist.interfaces.ArtistService;
 import com.fct.artist.interfaces.PageResponse;
 import com.fct.artist.service.business.*;
+import org.hibernate.boot.spi.InFlightMetadataCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,104 +34,277 @@ public class ArtistServiceImpl implements ArtistService {
 
     public PageResponse<Artist> findArtist(String name, Integer status, Integer pageIndex, Integer pageSize)
     {
-        return  artistManager.findAll(name,status,pageIndex,pageSize);
+        try {
+            return artistManager.findAll(name, status, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<Artist> findArtistByGoodsId(Integer goodsId)
     {
-        return artistManager.findByGoodsId(goodsId);
+        try {
+            return artistManager.findByGoodsId(goodsId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveArtist(Artist artist)
     {
-        artistManager.save(artist);
+        try {
+            artistManager.save(artist);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public Artist getArtist(Integer id)
     {
-        return artistManager.findById(id);
+        try {
+            return artistManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateArtistStatus(Integer id)
     {
-        artistManager.updateStatus(id);
+        try {
+            artistManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void addArtistFollowCount(Integer id,Integer count)
     {
-        artistManager.addFollowCount(id,count);
+        try {
+            artistManager.addFollowCount(id,count);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<ArtistComment> findArtistComment(Integer artistId, Integer memberId, String username, Integer status,
                                                   Integer replyId, Integer pageIndex, Integer pageSize)
     {
-        return artistCommentManager.findAll(artistId,memberId,username,status,replyId,pageIndex,pageSize);
+        try {
+            return artistCommentManager.findAll(artistId,memberId,username,status,replyId,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<ArtistComment> findReplyComment(Integer commentId,int top)
     {
-        return artistCommentManager.findByComment(commentId,top);
+        try {
+            return artistCommentManager.findByComment(commentId,top);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
     public Integer saveArtistComment(ArtistComment artistComment)
     {
-        return artistCommentManager.save(artistComment);
+        try {
+            return artistCommentManager.save(artistComment);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public ArtistComment getArtistComment(Integer id)
     {
-        return artistCommentManager.findById(id);
+        try {
+            return artistCommentManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateArtistCommentStatus(Integer id)
     {
-        artistCommentManager.updateStatus(id);
+        try {
+            artistCommentManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void saveArtistGoods(List<Integer> artistId, Integer goodsId)
     {
-        artistGoodsManager.save(artistId,goodsId);
+        try {
+            artistGoodsManager.save(artistId,goodsId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public Integer saveArtistLive(ArtistLive live)
     {
-        return artistLiveManager.save(live);
+        try {
+            return artistLiveManager.save(live);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public ArtistLive getArtistLive(Integer id)
     {
-        return artistLiveManager.findByArtist(id);
+        try {
+            return artistLiveManager.findByArtist(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<ArtistLive> findArtistLive(Integer artistId,Integer status,String startTime,String endTime,
                                             Integer pageIndex, Integer pageSize)
     {
-        return artistLiveManager.findAll(artistId,status,startTime,endTime,pageIndex,pageSize);
+        try {
+            return artistLiveManager.findAll(artistId,status,startTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateArtistLiveStatus(Integer id)
     {
-        artistLiveManager.updateStatus(id);
+        try {
+            artistLiveManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public Integer saveArtistDynamic(ArtistDynamic artistDynamic)
     {
-        return artistDynamicManager.save(artistDynamic);
+        try {
+            return artistDynamicManager.save(artistDynamic);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public void updateArtistDynamicStatus(Integer id)
     {
-        artistDynamicManager.updateStatus(id);
+        try {
+            artistDynamicManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public ArtistDynamic getArtistDynamic(Integer id)
     {
-        return artistDynamicManager.findById(id);
+        try {
+            return artistDynamicManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<ArtistDynamic> findArtistDynamic(Integer artistId,String content,Integer status,String startTime,String endTime,
                                                   Integer pageIndex, Integer pageSize)
     {
-        return artistDynamicManager.findAll(artistId,content,status,startTime,endTime,pageIndex,pageSize);
+        try {
+            return artistDynamicManager.findAll(artistId, content, status, startTime, endTime, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
 }

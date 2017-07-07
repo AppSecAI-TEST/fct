@@ -108,28 +108,33 @@ public class MobileController extends BaseController{
      * */
     @RequestMapping(value = "/savepay", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String savePay(HttpServletRequest request,String tradeid, String tradetype, String platform,
-                                               String openid) {
+    public String savePay(HttpServletRequest request,String tradeid, String tradetype, String platform) {
 
         tradeid = ConvertUtils.toString(tradeid);
         tradetype =ConvertUtils.toString(tradetype);
         platform = ConvertUtils.toString(platform);
 
+        if(StringUtils.isEmpty(tradeid) || StringUtils.isEmpty(tradetype) ||
+                StringUtils.isEmpty(platform))
+        {
+            return AjaxUtil.alert("非法提交。");
+        }
+
+        if(tradetype == "wxpay_fctwap" && StringUtils.isEmpty(currentUser.getOpenId()))
+        {
+            return AjaxUtil.goUrl(fctConfig.getUrl()+"/auth/wxlogin","");
+        }
         String payurl = "";
-
-        PayOrder payOrder = new PayOrder();
-
+        PayOrder payOrder = null;
         try
         {
-            String cellphone ="";
             BigDecimal accountAmount =new BigDecimal(0);
             BigDecimal payAmount = new BigDecimal(0);
             BigDecimal totalAmount = new BigDecimal(0);
             BigDecimal discountAmount = new BigDecimal(0);
-            Integer memberid = 0;
             Integer points =0;
             String desc="";
-            Date expiredTime = new Date();
+            Date expiredTime = null;
             String showUrl="";
             switch (tradetype)
             {
@@ -150,8 +155,6 @@ public class MobileController extends BaseController{
                     //保存支付方式
                     mallService.updateOrderPayPlatform(orders.getOrderId(),platform);
 
-                    memberid = orders.getMemberId();
-                    cellphone = orders.getCellPhone();
                     accountAmount = orders.getAccountAmount();
                     payAmount = orders.getCashAmount(); //现金应支付
                     totalAmount = orders.getTotalAmount();
@@ -182,8 +185,6 @@ public class MobileController extends BaseController{
                     //保存支付方式
                     financeService.updateRechargePayPlatform(record.getId(),platform);
 
-                    memberid = record.getMemberId();
-                    cellphone = record.getCellPhone();
                     payAmount = record.getPayAmount();
                     desc="在线充值";
                     showUrl = fctConfig.getUrl()+"/recharge";
@@ -194,8 +195,9 @@ public class MobileController extends BaseController{
             String callback = String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
                     tradeid,tradetype);
 
-            payOrder.setCellPhone(cellphone);
-            payOrder.setMemberId(memberid);
+            payOrder = new PayOrder();
+            payOrder.setCellPhone(currentUser.getCellPhone());
+            payOrder.setMemberId(currentUser.getMemberId());
             payOrder.setTradeId(tradeid);
             payOrder.setTradeType(tradetype);
             payOrder.setAccountAmount(accountAmount);
@@ -226,7 +228,7 @@ public class MobileController extends BaseController{
                         break;
 
                 case "wxpay_fctwap":
-                    payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),openid,payOrder.getPayAmount(),
+                    payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),currentUser.getOpenId(),payOrder.getPayAmount(),
                             payOrder.getDescription(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
             }
         }
@@ -238,6 +240,10 @@ public class MobileController extends BaseController{
         {
             Constants.logger.error(exp.toString());
             return AjaxUtil.alert("访问出错！由于系统或网络造成的原因，请稍候再试。");
+        }
+        if(payOrder == null)
+        {
+            return AjaxUtil.alert("支付出错啦，请稍候再试！");
         }
         if(!StringUtils.isEmpty(payurl)) {
             payurl = "/mobile/pay?orderid=" + payOrder.getOrderId() + "&payurl=" + URLEncoder.encode(payurl);

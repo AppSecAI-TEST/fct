@@ -31,13 +31,35 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctwap";
         }
-        return wxpayManager.requestUnifiedOrderService(payment,payOrderNo, openId, total_fee, body,notifyUrl,
-                userIp, expireTime);
+        try {
+            return wxpayManager.requestUnifiedOrderService(payment, payOrderNo, openId, total_fee, body, notifyUrl,
+                    userIp, expireTime);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
     }
 
     public PayNotify wxpayNotify(Map<String, String> mapParam, String xmlContent)
     {
-        return wxpayManager.payNotify(mapParam,xmlContent);
+        try {
+            return wxpayManager.payNotify(mapParam, xmlContent);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public String wxpayApp(String payment,String payOrderNo, BigDecimal total_fee, String body,
@@ -47,7 +69,18 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctapp";
         }
-        return wxpayManager.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
+        try {
+            return wxpayManager.requestAppPay(payment, payOrderNo, total_fee, body, notifyUrl, createIP, expireTime);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
     }
 
     public PayNotify wxpayWapRefund(String payment,String payOrderId,String refundId,
@@ -60,11 +93,15 @@ public class MobilePayServiceImpl implements MobilePayService {
         try {
             return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
         }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
         catch (Exception exp)
         {
-            exp.printStackTrace();
+            Constants.logger.error(exp.toString());
         }
-        return new PayNotify();
+        return null;
     }
 
     public PayNotify wxpayAppRefund(String payment,String payOrderId,String refundId,
@@ -74,7 +111,19 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "wxpay_fctapp";
         }
-        return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
+        try {
+            return wxpayManager.requestRefundService(payment, payOrderId, refundId, payAmount, refundAmount);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+
     }
 
     public String unionpayWap(String payment,String orderId, BigDecimal payAmount, String desc, Date expireTime,
@@ -84,22 +133,66 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "unionpay_fctwap";
         }
-        return unionPayManager.createWapPayUrl(payment,orderId,payAmount,desc,expireTime,notifyUrl,callbackUrl);
+        try {
+            return unionPayManager.createWapPayUrl(payment,orderId,payAmount,desc,expireTime,notifyUrl,callbackUrl);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
     }
 
     public PayNotify unionpayCallBack(Map<String, String> map)
     {
-        return unionPayManager.callBack(map);
+        try {
+            return unionPayManager.callBack(map);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayNotify unionpayNotify(Map<String, String> map)
     {
-        return unionPayManager.notify(map);
+        try {
+            return unionPayManager.notify(map);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayNotify unionpayRefundNotify(Map<String, String> map)
     {
-        return unionPayManager.refundNotify(map);
+        try {
+            return unionPayManager.refundNotify(map);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayNotify unionpayWapRefund(String payment,String refundId, String payOrderId, BigDecimal payAmount, BigDecimal refundAmount)
@@ -108,8 +201,18 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "unionpay_fctwap";
         }
-
-        return unionPayManager.refund(payment,refundId,payOrderId,payAmount,refundAmount);
+        try {
+            return unionPayManager.refund(payment,refundId,payOrderId,payAmount,refundAmount);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PayNotify unionpayAppRefund(String payment,String refundId, String payOrderId, BigDecimal payAmount, BigDecimal refundAmount)

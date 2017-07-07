@@ -6,6 +6,7 @@ import com.fct.message.data.repository.MessageQueueRepository;
 import com.fct.message.interfaces.MessageService;
 import com.fct.message.interfaces.PageResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.boot.spi.InFlightMetadataCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,10 +36,16 @@ public class MessageServiceImpl implements MessageService {
 
     public void create(MessageQueue message) {
 
-        message.setStatus(0);
-        message.setRequestCount(0);
-        message.setCreateTime(new Date());
-        messageQueueRepository.save(message);
+        try {
+            message.setStatus(0);
+            message.setRequestCount(0);
+            message.setCreateTime(new Date());
+            messageQueueRepository.save(message);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
     public MessageQueue getMessage(Integer messageId)
     {
@@ -46,7 +53,14 @@ public class MessageServiceImpl implements MessageService {
         {
             throw new IllegalArgumentException("消息id不存在");
         }
-        return messageQueueRepository.findOne(messageId);
+        try {
+            return messageQueueRepository.findOne(messageId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return  null;
     }
 
     public void send(String typeId,String targetModule,String sourceAppName,String jsonBody,String remark)
@@ -64,116 +78,205 @@ public class MessageServiceImpl implements MessageService {
             throw new IllegalArgumentException("消息体为空。");
         }
 
-        MessageQueue message = new MessageQueue();
-        message.setTypeId(typeId);
-        message.setTargetModule(targetModule);
-        message.setSourceAppName(sourceAppName);
-        message.setBody(jsonBody);
-        message.setRemark(remark);
-        message.setStatus(0);
-        message.setRequestCount(0);
-        message.setCreateTime(new Date());
+        try {
+            MessageQueue message = new MessageQueue();
+            message.setTypeId(typeId);
+            message.setTargetModule(targetModule);
+            message.setSourceAppName(sourceAppName);
+            message.setBody(jsonBody);
+            message.setRemark(remark);
+            message.setStatus(0);
+            message.setRequestCount(0);
+            message.setCreateTime(new Date());
 
-        messageQueueRepository.save(message);
+            messageQueueRepository.save(message);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void complete(Integer id) {
 
-        MessageQueue messageQueue = messageQueueRepository.findOne(id);
-        messageQueue.setStatus(1);
-        messageQueue.setRequestCount(1);
-        messageQueue.setProcessTime(new Date());
-        messageQueueRepository.save(messageQueue);
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("消息id不存在");
+        }
+        try {
+            MessageQueue messageQueue = messageQueueRepository.findOne(id);
+            messageQueue.setStatus(1);
+            messageQueue.setRequestCount(1);
+            messageQueue.setProcessTime(new Date());
+            messageQueueRepository.save(messageQueue);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void fail(Integer id, String message) {
-        MessageQueue msg = messageQueueRepository.findOne(id);
-        if(msg.getRequestCount()>=3)
+        if(id<=0)
         {
-            msg.setStatus(-1);  //异常不在处理。
+            throw new IllegalArgumentException("消息id不存在");
         }
-        msg.setRequestCount(msg.getRequestCount()+1);
-        msg.setFailMessage(message);
-        msg.setProcessTime(new Date());
-        messageQueueRepository.saveAndFlush(msg);
+        try {
+            MessageQueue msg = messageQueueRepository.findOne(id);
+            if(msg.getRequestCount()>=3)
+            {
+                msg.setStatus(-1);  //异常不在处理。
+            }
+            msg.setRequestCount(msg.getRequestCount()+1);
+            msg.setFailMessage(message);
+            msg.setProcessTime(new Date());
+            messageQueueRepository.saveAndFlush(msg);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void resume(Integer id) {
-        messageQueueRepository.resume(id);
+        if(id<=0)
+        {
+            throw new IllegalArgumentException("消息id不存在");
+        }
+        try {
+            messageQueueRepository.resume(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<MessageQueue> find(String typeId) {
-        return messageQueueRepository.findByTypeId(typeId);
+
+        if(StringUtils.isEmpty(typeId))
+        {
+            throw new IllegalArgumentException("消息类型不存在");
+        }
+        try {
+            return messageQueueRepository.findByTypeId(typeId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<MessageQueue> findAll(String typeId, Integer status,String body, Integer pageIndex, Integer pageSize) {
 
-        List<Object> param = new ArrayList<>();
-        String condition ="";
-        if (StringUtils.isEmpty(typeId)) {
-            condition +=" AND typeId=?";
-            param.add(typeId);
+        try {
+            List<Object> param = new ArrayList<>();
+            String condition = "";
+            if (StringUtils.isEmpty(typeId)) {
+                condition += " AND typeId=?";
+                param.add(typeId);
+            }
+            if (status > -1) {
+                condition += " AND status=" + status;
+            }
+            if (!StringUtils.isEmpty(body)) {
+                condition += " AND body like ?";
+                param.add("%" + body + "%");
+            }
+
+            String table = "MessageQueue";
+            String field = "*";
+            String orderBy = "Id Desc";
+
+            String sql = "SELECT Count(0) FROM MessageQueue WHERE 1=1 " + condition;
+            Integer count = jt.queryForObject(sql, param.toArray(), Integer.class);
+
+            sql = PageUtil.getPageSQL(table, field, condition, orderBy, pageIndex, pageSize);
+
+            List<MessageQueue> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MessageQueue>(MessageQueue.class));
+
+            int end = pageIndex + 1;
+            Boolean hasmore = true;
+            if (pageIndex * pageSize >= count) {
+                end = pageIndex;
+                hasmore = false;
+            }
+
+            PageResponse<MessageQueue> pageResponse = new PageResponse<>();
+            pageResponse.setTotalCount(count);
+            pageResponse.setCurrent(end);
+            pageResponse.setElements(ls);
+            pageResponse.setHasMore(hasmore);
+
+            return pageResponse;
         }
-        if(status > -1)
+        catch (Exception exp)
         {
-            condition +=" AND status="+status;
+            Constants.logger.error(exp.toString());
         }
-        if(!StringUtils.isEmpty(body))
-        {
-            condition +=" AND body like ?";
-            param.add("%"+body+"%");
-        }
-
-        String table="MessageQueue";
-        String field ="*";
-        String orderBy = "Id Desc";
-
-        String sql = "SELECT Count(0) FROM MessageQueue WHERE 1=1 "+condition;
-        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
-
-        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
-
-        List<MessageQueue> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<MessageQueue>(MessageQueue.class));
-
-        int end = pageIndex+1;
-        Boolean hasmore = true;
-        if(pageIndex*pageSize >= count)
-        {
-            end = pageIndex;
-            hasmore = false;
-        }
-
-        PageResponse<MessageQueue> pageResponse = new PageResponse<>();
-        pageResponse.setTotalCount(count);
-        pageResponse.setCurrent(end);
-        pageResponse.setElements(ls);
-        pageResponse.setHasMore(hasmore);
-
-        return pageResponse;
-
+        return null;
     }
 
     public void sendSMS(String cellPhone,String content,String ip,String action)
     {
-        smsRecordManager.send(cellPhone,content,ip,action);
+        try {
+            smsRecordManager.send(cellPhone,content,ip,action);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void sendVerifyCode(String sessionId,String cellPhone,String content,String ip,String action)
     {
-        String code = verifyCodeManager.create(sessionId,cellPhone);
+        try {
+            String code = verifyCodeManager.create(sessionId,cellPhone);
 
-        content = content.replace("{code}",code);
+            content = content.replace("{code}",code);
 
-        smsRecordManager.send(cellPhone,content,ip,action);
+            smsRecordManager.send(cellPhone,content,ip,action);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public String getVerifyCode(String sessionId,String cellPhone)
     {
-        return verifyCodeManager.create(sessionId,cellPhone);
+        try {
+            return verifyCodeManager.create(sessionId,cellPhone);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
     }
 
     public int checkVerifyCode(String sessionId,String cellPhone,String code)
     {
-        return verifyCodeManager.check(sessionId,cellPhone,code);
+        try {
+            return verifyCodeManager.check(sessionId,cellPhone,code);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 }

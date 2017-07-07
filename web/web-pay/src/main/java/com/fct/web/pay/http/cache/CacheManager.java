@@ -1,5 +1,6 @@
 package com.fct.web.pay.http.cache;
 
+import com.fct.core.utils.CookieUtil;
 import com.fct.finance.data.entity.RechargeRecord;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.Orders;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class CacheManager {
@@ -62,6 +66,11 @@ public class CacheManager {
             jedis.close();
         }
         return getMemberLogin(token);
+    }
+
+    public void removeCacheMemberLogin(HttpServletRequest request, HttpServletResponse response)
+    {
+        CookieUtil.delCookie(request,response,"fct_auth","fangcun.com");
     }
 
     private MemberLogin getMemberLogin(String token) {

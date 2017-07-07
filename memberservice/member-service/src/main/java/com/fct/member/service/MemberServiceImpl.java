@@ -5,6 +5,7 @@ import com.fct.member.data.entity.*;
 import com.fct.member.interfaces.MemberDTO;
 import com.fct.member.interfaces.PageResponse;
 import com.fct.member.service.business.*;
+import org.hibernate.boot.spi.InFlightMetadataCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -54,149 +55,398 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 //    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
     {
-        return memberManager.register(cellPhone,userName,password);
+        try {
+            return memberManager.register(cellPhone, userName, password);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
     public void logoutMember(String token)
     {
-        memberLoginManager.logOut(token);
+        try {
+            memberLoginManager.logOut(token);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
     /*普通登录和快捷登录*/
-    public MemberLogin loginMember(String cellPhone, String password, String ip,Integer expireDay)
+    public MemberLogin loginMember(String cellPhone, String password, String platform,String ip,Integer expireDay)
     {
-        if(StringUtils.isEmpty(password))
-        {
-            return memberLoginManager.quickLogin(cellPhone,ip,expireDay);
+        try {
+            if(StringUtils.isEmpty(password))
+            {
+                return memberLoginManager.quickLogin(cellPhone,platform,ip,expireDay);
+            }
+            return memberLoginManager.login(cellPhone,password,platform,ip,expireDay);
         }
-        return memberLoginManager.login(cellPhone,password,ip,expireDay);
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberLogin getMemberLogin(String token)
     {
-        return memberLoginManager.findByToken(token);
+        try {
+            return memberLoginManager.findByToken(token);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Member getMember(Integer memberId)
     {
-        return memberManager.findById(memberId);
+        try {
+            return memberManager.findById(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberDTO getMemberDTO(Integer memberId)
     {
-        return memberInfoManager.findByMemberId(memberId);
+        try {
+
+            return memberInfoManager.findByMemberId(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     /*修改密码*/
     public void updateMemberPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword)
     {
-        memberManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
+        try {
+            memberManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void forgetPassword(String cellPhone,String password)
     {
-        memberManager.forgetPassword(cellPhone,password);
+        try {
+            memberManager.forgetPassword(cellPhone,password);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void lockMember(Integer memberId)
     {
-        memberManager.lock(memberId);
+        try {
+            memberManager.lock(memberId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<Member> findMember(String cellPhone,Integer authStatus, String beginTime, String endTime, Integer pageIndex, Integer pageSize)
     {
-        return memberManager.findAll(cellPhone,authStatus,beginTime,endTime,pageIndex,pageSize);
+        try {
+            return memberManager.findAll(cellPhone, authStatus, beginTime, endTime, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateMemberInfo(MemberInfo info)
     {
-        memberInfoManager.save(info);
+        try {
+            memberInfoManager.save(info);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public MemberInfo getMemberInfo(Integer memberId)
     {
-        return memberInfoManager.findById(memberId);
+        try {
+            return memberInfoManager.findById(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveMemberAddress(MemberAddress address)
     {
-        memberAddressManager.save(address);
+        try {
+            memberAddressManager.save(address);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public MemberAddress getMemberAddress(Integer id)
     {
-        return memberAddressManager.findById(id);
+        try {
+            return memberAddressManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<MemberAddress> findMemberAddress(Integer memberId)
     {
-        return memberAddressManager.findAll(memberId);
+        try {
+            return memberAddressManager.findAll(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberAddress getDefaultAddress(Integer memberId)
     {
-        return memberAddressManager.findByDefault(memberId);
+        try {
+            return memberAddressManager.findByDefault(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                          String bankName,String bankAccount)
     {
-        memberInfoManager.authentication(memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
+        try {
+            memberInfoManager.authentication(memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void verifyAuthentication(Integer memberId)
     {
-        memberManager.verifyAuthStatus(memberId);
+        try {
+            memberManager.verifyAuthStatus(memberId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void saveMemberBankInfo(MemberBankInfo bankInfo)
     {
-        memberBankInfoManager.save(bankInfo);
+        try {
+            memberBankInfoManager.save(bankInfo);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public MemberBankInfo getMemberBankInfo(Integer id)
     {
-        return memberBankInfoManager.findById(id);
+        try {
+            return memberBankInfoManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<MemberBankInfo> findMemberBankInfo(String cellPhone,String bankName,Integer status,Integer pageIndex,
                                                    Integer pageSize)
     {
-        return memberBankInfoManager.findAll(cellPhone,bankName,status,pageIndex,pageSize);
+        try {
+            return memberBankInfoManager.findAll(cellPhone,bankName,status,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void createInviteCode(Integer memberId)
     {
-        inviteCodeManager.create(memberId);
+        try {
+            inviteCodeManager.create(memberId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void addInviteCodeCount(Integer memberId,Integer count)
     {
-        memberManager.addInviteCount(memberId,count);
+        try {
+            memberManager.addInviteCount(memberId,count);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<InviteCode> findInviteCode(String code,Integer ownerId, String ownerCellPhone,String toCellphone,
                                                    int pageIndex, int pageSize)
     {
-        return inviteCodeManager.findAll(code,ownerId,ownerCellPhone,toCellphone,pageIndex,pageSize);
+        try {
+            return inviteCodeManager.findAll(code,ownerId,ownerCellPhone,toCellphone,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberStore applyStore(Integer memberId,String inviteCode)
     {
-        return memberStoreManager.apply(memberId,inviteCode);
+        try {
+            return memberStoreManager.apply(memberId,inviteCode);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateStoreStatus(Integer id)
     {
-        memberStoreManager.updateStatus(id);
+        try {
+            memberStoreManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize)
     {
-        return memberStoreManager.findAll(cellPhone,status,pageIndex,pageSize);
+        try {
+            return memberStoreManager.findAll(cellPhone,status,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberAuth saveMemberAuth(MemberAuth auth)
     {
-        return memberAuthManager.save(auth);
+        try {
+            return memberAuthManager.save(auth);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public MemberAuth getMemberAuth(String platform)
@@ -206,57 +456,157 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
 
     public void createSystemUser(SystemUser user)
     {
-        systemUserManager.create(user);
+        try {
+            systemUserManager.create(user);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public SysUserLogin loginSystemUser(String userName,String password,String ip,Integer expireHour)
     {
-        return sysUserLoginManager.login(userName,password,ip,expireHour);
+        try {
+            return sysUserLoginManager.login(userName,password,ip,expireHour);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void logoutSysUser(String token)
     {
-        sysUserLoginManager.logOut(token);
+        try {
+            sysUserLoginManager.logOut(token);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public SysUserLogin getSysUserLogin(String token)
     {
-        return sysUserLoginManager.findByToken(token);
+
+        try {
+            return sysUserLoginManager.findByToken(token);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void lockSystemUser(Integer userId)
     {
-        systemUserManager.lock(userId);
+        try {
+            systemUserManager.lock(userId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void updateSystemUserPassword(Integer memberId,String oldPassword,String newPassword,String reNewPassword)
     {
-        systemUserManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
+        try {
+            systemUserManager.updatePassword(memberId,oldPassword,newPassword,reNewPassword);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<SystemUser> findSystemUser(String userName, Integer pageIndex, Integer pageSize)
     {
-        return systemUserManager.findAll(userName,pageIndex,pageSize);
+        try {
+            return systemUserManager.findAll(userName,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveFavourite(Integer memberId,Integer favType,Integer relatedId)
     {
-        memberFavouriteManager.create(memberId,favType,relatedId);
+        try {
+            memberFavouriteManager.create(memberId,favType,relatedId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void deleteFavourite(Integer memberId,Integer favType,Integer relatedId)
     {
-        memberFavouriteManager.delete(memberId,favType,relatedId);
+        try {
+            memberFavouriteManager.delete(memberId,favType,relatedId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public int getFavouriteCount(Integer memberId,Integer favType,Integer relatedId)
     {
-        return memberFavouriteManager.getCount(memberId,favType,relatedId);
+        try {
+            return memberFavouriteManager.getCount(memberId,favType,relatedId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public PageResponse<MemberFavourite> findFavourite(Integer memberId,Integer favType,
                                                 Integer pageIndex, Integer pageSize)
     {
-        return memberFavouriteManager.findAll(memberId,favType,pageIndex,pageSize);
+        try {
+            return memberFavouriteManager.findAll(memberId,favType,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 }

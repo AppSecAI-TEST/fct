@@ -29,8 +29,10 @@ public class MemberLoginManager {
     @Autowired
     private MemberStoreManager memberStoreManager;
 
+    @Autowired
+    private MemberAuthManager memberAuthManager;
 
-    public MemberLogin login(String cellPhone, String password,String ip,Integer expireDay)
+    public MemberLogin login(String cellPhone, String password,String platform,String ip,Integer expireDay)
     {
         //普通登陆，用户名+密码
         Member member =  memberManager.login(cellPhone,password);
@@ -39,10 +41,10 @@ public class MemberLoginManager {
             throw new IllegalArgumentException("用户户或密码错误。");
         }
 
-        return login(member,ip,expireDay);
+        return login(member,platform,ip,expireDay);
     }
 
-    private MemberLogin login(Member member,String ip,Integer expireDay)
+    private MemberLogin login(Member member,String platform,String ip,Integer expireDay)
     {
         if(StringUtils.isEmpty(ip))
         {
@@ -73,20 +75,21 @@ public class MemberLoginManager {
         login.setUserName(member.getUserName());
         login.setShopId(store!=null ?store.getId() :0);
         login.setGradeId(member.getGradeId());
+        login.setOpenId(memberAuthManager.getOpenId(member.getId(),platform));
 
         memberLoginRepository.save(login);
 
         return login;
     }
 
-    public MemberLogin quickLogin(String cellPhone,String ip,Integer expireDay)
+    public MemberLogin quickLogin(String cellPhone,String platform,String ip,Integer expireDay)
     {
         Member member = memberManager.findByCellPhone(cellPhone);
         if(member ==  null)
         {
             member = memberManager.register(cellPhone,cellPhone,cellPhone.substring(5));
         }
-        return login(member,ip,expireDay);
+        return login(member,platform,ip,expireDay);
     }
 
     public void logOut(String token)

@@ -69,6 +69,16 @@ public class MemberLogin implements Serializable {
     /// </summary>
     private Date loginTime;
 
+    /**
+    * openid
+    * **/
+    private String openId;
+
+    /***
+     * 登陆平台{wap,app}
+     * */
+    private String loginPlatform;
+
     /// <summary>
     /// 过期时间
     /// </summary>

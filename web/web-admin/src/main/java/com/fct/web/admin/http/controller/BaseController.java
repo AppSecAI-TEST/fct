@@ -29,30 +29,6 @@ public class BaseController {
     @Autowired
     private FctConfig config;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @ModelAttribute
     public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 

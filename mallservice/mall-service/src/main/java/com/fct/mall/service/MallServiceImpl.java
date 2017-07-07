@@ -48,261 +48,789 @@ public class MallServiceImpl implements MallService {
     public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer materialId,
                                          Integer artistId, Integer minVolume, Integer maxVolume, Integer status,
                                          Integer pageIndex, Integer pageSize) {
-        return goodsManager.find(name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
-                pageIndex, pageSize);
+        try {
+            return goodsManager.find(name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
+                    pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Goods getGoods(Integer id) {
-        return goodsManager.findById(id);
+        try {
+            return goodsManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<Goods> findGoodsByIds(String ids) {
-        return goodsManager.findByIds(ids);
+        try {
+            return goodsManager.findByIds(ids);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveGoods(Goods goods) {
-        goodsManager.save(goods);
+
+        try {
+            goodsManager.save(goods);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void setGoodsSortIndex(Integer id, Integer sortIndex) {
-        goodsManager.updateSortIndex(id, sortIndex);
+
+        try {
+            goodsManager.updateSortIndex(id, sortIndex);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void setGoodsStatus(Integer id, Integer status) {
-        goodsManager.updateStatus(id, status);
+        try {
+
+            goodsManager.updateStatus(id, status);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void deleteGoods(Integer id) {
-        goodsManager.delete(id);
+        try {
+            goodsManager.delete(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<Goods> findGoodsByGuess(String goodsId,String categoryCode, Integer gradeId, Integer materialId,
                                         Integer artistId,int top)
     {
-        return goodsManager.findByGuess(goodsId,categoryCode,gradeId, materialId,artistId,top);
+        try {
+            return goodsManager.findByGuess(goodsId,categoryCode,gradeId, materialId,artistId,top);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<GoodsCategory> findGoodsCategory(Integer parentId, String name, String code) {
-        return goodsCategoryManager.findAll(name, code, parentId);
+
+        try {
+            return goodsCategoryManager.findAll(name, code, parentId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public GoodsCategory getGoodsCategory(Integer id) {
-        return goodsCategoryManager.findById(id);
+
+        try {
+            return goodsCategoryManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveGoodsCategory(GoodsCategory category) {
-        goodsCategoryManager.save(category);
+
+        try {
+            goodsCategoryManager.save(category);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw  exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void setGoodsCategorySortIndex(Integer id, Integer sortIndex) {
-        goodsCategoryManager.saveSortIndex(id, sortIndex);
+
+        try {
+            goodsCategoryManager.saveSortIndex(id, sortIndex);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw  exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void deleteGoodsCategory(Integer id) {
-        goodsCategoryManager.delete(id);
+
+        try {
+            goodsCategoryManager.delete(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw  exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<GoodsGrade> findGoodsGrade() {
-        return goodsGradeManager.findAll("");
+
+        try {
+            return goodsGradeManager.findAll("");
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public GoodsGrade getGoodsGrade(Integer id) {
-        return goodsGradeManager.findById(id);
+
+        try {
+            return goodsGradeManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveGoodsGrade(GoodsGrade grade) {
-        goodsGradeManager.save(grade);
+
+        try {
+            goodsGradeManager.save(grade);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void setGoodsGradeSortIndex(Integer id, Integer sortIndex) {
-        goodsGradeManager.saveSortIndex(id, sortIndex);
+        try {
+            goodsGradeManager.saveSortIndex(id, sortIndex);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void deleteGoodsGrade(Integer id) {
-        goodsGradeManager.delete(id);
+
+        try {
+            goodsGradeManager.delete(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void saveShoppingCart(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount) {
-        shoppingCartManager.add(memberId, shopId, goodsId, goodsSpecId, buyCount);
+
+        try {
+            shoppingCartManager.add(memberId, shopId, goodsId, goodsSpecId, buyCount);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<ShoppingCart> findShoppingCart(Integer memberId, Integer shopId) {
-        return shoppingCartManager.find(memberId, shopId);
+
+        try {
+            return shoppingCartManager.find(memberId, shopId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void deleteShoppingCart(Integer memberId, Integer shopId, Integer cartId) {
-        shoppingCartManager.delete(memberId, shopId, cartId);
+
+        try {
+            shoppingCartManager.delete(memberId, shopId, cartId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public int getShoopingCartCount(Integer memberId)
     {
-        return shoppingCartManager.getCount(memberId);
+        try {
+            return shoppingCartManager.getCount(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
     }
 
     public OrderGoodsResponse getSubmitOrderGoods(Integer memberId, List<OrderGoodsDTO> lsGoods)
     {
-        return orderGoodsManager.findFinalGoods(memberId,lsGoods);
+        try {
+            return orderGoodsManager.findFinalGoods(memberId,lsGoods);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+
     }
 
     public String createOrder(Integer memberId, String userName, Integer shopId, Integer points, BigDecimal accountAmount,
                               List<OrderGoodsDTO> lsOrderGoods, String couponCode, String remark, Integer receiverId) {
-        return ordersManager.create(memberId, userName, shopId, points, accountAmount,
-                lsOrderGoods, couponCode, remark, receiverId);
+
+        try {
+            return ordersManager.create(memberId, userName, shopId, points, accountAmount,
+                    lsOrderGoods, couponCode, remark, receiverId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
     }
 
     public PageResponse<Orders> findOrders(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
                                            Integer status, String payPlatform, String payOrderId, Integer timeType, String beginTime,
                                            String endTime, Integer pageIndex, Integer pageSize) {
-        return ordersManager.findAll(memberId, cellPhone, orderId, shopId, goodsName, status, payPlatform, payOrderId,
-                timeType, beginTime, endTime, pageIndex, pageSize);
+
+        try {
+            return ordersManager.findAll(memberId, cellPhone, orderId, shopId, goodsName, status, payPlatform, payOrderId,
+                    timeType, beginTime, endTime, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public Orders getOrders(String orderId) {
-        return ordersManager.findById(orderId);
+
+        try {
+            return ordersManager.findById(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void offPaySuccess(String orderId, String payPlatform, Integer operatorId) {
-        ordersManager.offPaySuccess(orderId, payPlatform, operatorId);
+
+        try {
+            ordersManager.offPaySuccess(orderId, payPlatform, operatorId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void updateOrderPayPlatform(String orderId,String payPlatform)
     {
-        ordersManager.updatePayPlatform(orderId,payPlatform);
+        try {
+            ordersManager.updatePayPlatform(orderId,payPlatform);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void orderExpiredTask()
     {
-        ordersManager.handleExpire();
+        try {
+            ordersManager.handleExpire();
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void cancelOrders(String orderId, Integer memberId, Integer operatorId) {
-        ordersManager.cancel(orderId, memberId, operatorId);
+
+        try {
+            ordersManager.cancel(orderId, memberId, operatorId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void orderDeliver(String orderId, String expressPlatform, String expressNo, Integer operatorId) {
-        ordersManager.saveDeliver(orderId, expressPlatform, expressNo, operatorId);
+
+        try {
+            ordersManager.saveDeliver(orderId, expressPlatform, expressNo, operatorId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<OrderGoods> findOrderGoods(String orderId) {
-        return orderGoodsManager.findByOrderId(orderId);
+        try {
+            return orderGoodsManager.findByOrderId(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveOrderReciver(OrderReceiver or) {
-        orderReceiverManager.save(or);
+
+        try {
+            orderReceiverManager.save(or);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public OrderReceiver getOrderReceiver(String orderId) {
-        return orderReceiverManager.findByOrderId(orderId);
+
+        try {
+            return orderReceiverManager.findByOrderId(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void delayExpiresTime(String orderId, Integer hour, Integer operatorId) {
-        ordersManager.delayExpiresTime(orderId, hour, operatorId);
+
+        try {
+            ordersManager.delayExpiresTime(orderId, hour, operatorId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void delayFinishTime(String orderId, Integer day, Integer operatorId) {
-        ordersManager.delayFinishTime(orderId, day, operatorId);
+
+        try {
+            ordersManager.delayFinishTime(orderId, day, operatorId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void orderPaySuccess(String orderId, String payOrderId, String payPlatform, Integer payStatus, String payTime) {
-        ordersManager.paySuccess(orderId, payOrderId, payPlatform, payStatus, payTime);
+
+        try {
+            ordersManager.paySuccess(orderId, payOrderId, payPlatform, payStatus, payTime);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void orderFinishTask()
     {
-        ordersManager.finishTask();
+        try {
+            ordersManager.finishTask();
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void orderFinishByMember(Integer memberid,String orderId)
     {
-        ordersManager.finishByMember(memberid,orderId);
+        try {
+            ordersManager.finishByMember(memberid,orderId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void createOrderRefund(Integer memberId, String orderId, Integer orderGoodsId, Integer isReceived,
                                   Integer serviceType, Integer refundMethod, String refundReason, String description, String images) {
-        orderRefundManager.apply(memberId, orderId, orderGoodsId, isReceived, serviceType,
-                refundMethod, refundReason, description, images);
+
+        try {
+            orderRefundManager.apply(memberId, orderId, orderGoodsId, isReceived, serviceType,
+                    refundMethod, refundReason, description, images);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void handleOrderRefund(String action, Integer memberId, Integer refundId, Integer refundMethod,
                                   String description, String images, Integer operatorId) {
-        switch (action) {
-            case "close":
-                orderRefundManager.close(refundId, memberId, description, images);
-                break;
-            case "accept":
-                orderRefundManager.agreeApply(refundId, refundMethod, description, images, operatorId);
-                break;
-            case "agree":
-                orderRefundManager.agreeRefund(refundId, description, images, operatorId);
-                break;
-            case "refuse":
-                orderRefundManager.refuseApply(refundId, description, images, operatorId);
-                break;
-            case "express":
-                orderRefundManager.expressByMember(refundId, memberId, description, images);
-                break;
+
+        try {
+            switch (action) {
+                case "close":
+                    orderRefundManager.close(refundId, memberId, description, images);
+                    break;
+                case "accept":
+                    orderRefundManager.agreeApply(refundId, refundMethod, description, images, operatorId);
+                    break;
+                case "agree":
+                    orderRefundManager.agreeRefund(refundId, description, images, operatorId);
+                    break;
+                case "refuse":
+                    orderRefundManager.refuseApply(refundId, description, images, operatorId);
+                    break;
+                case "express":
+                    orderRefundManager.expressByMember(refundId, memberId, description, images);
+                    break;
+            }
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
         }
 
     }
 
     public OrderRefund getOrderRefund(Integer refundId) {
-        return orderRefundManager.findById(refundId);
+
+        try {
+
+            return orderRefundManager.findById(refundId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public OrderRefund getOrderRefundByOrderGoodsId(Integer memberId, String orderId, Integer orderGoodId) {
-        return orderRefundManager.findByOrderGoodsId(memberId, orderId, orderGoodId);
+
+        try {
+            return orderRefundManager.findByOrderGoodsId(memberId, orderId, orderGoodId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public PageResponse<OrderRefundDTO> findOrderRefund(String orderId, String goodsName, Integer orderGoodsId, Integer memberId,
                                                         Integer status, String beginTime, String endTime, Integer pageIndex, Integer pageSize) {
-        return orderRefundManager.findAll(orderId, goodsName, orderGoodsId, memberId, status, beginTime, endTime, pageIndex, pageSize);
+
+        try {
+            return orderRefundManager.findAll(orderId, goodsName, orderGoodsId, memberId, status, beginTime, endTime, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void refundSuccess(Integer refundId, String description) {
-        orderRefundManager.refundSuccess(refundId, description);
+
+        try {
+            orderRefundManager.refundSuccess(refundId, description);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void createOrderCommment(String orderId,Integer anonymous, Integer logisticsScore,
                                     Integer saleScore,List<OrderComment> commentList) {
-        orderCommentManager.createMutil(orderId,anonymous,logisticsScore,saleScore,commentList);
+
+        try {
+            orderCommentManager.createMutil(orderId,anonymous,logisticsScore,saleScore,commentList);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void replyOrderComment(Integer id, String replyContent) {
-        orderCommentManager.reply(id, replyContent);
+
+        try {
+            orderCommentManager.reply(id, replyContent);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public void updateOrderCommentStatus(Integer id, Integer status) {
-        orderCommentManager.updateStatus(id, status);
+
+        try {
+            orderCommentManager.updateStatus(id, status);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<OrderComment> findOrderComment(Integer goodsId, Integer memberId, String cellphone, String orderId,
                                                        Integer status, String beinTime, String endTime, Integer pageIndex, Integer pageSize) {
-        return orderCommentManager.findAll(goodsId, memberId, cellphone, orderId, status, beinTime, endTime, pageIndex, pageSize);
+
+        try {
+            return orderCommentManager.findAll(goodsId, memberId, cellphone, orderId, status, beinTime, endTime, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void saveMaterial(GoodsMaterial goodsMaterial) {
-        goodsMaterialManager.save(goodsMaterial);
+
+        try {
+            goodsMaterialManager.save(goodsMaterial);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public GoodsMaterial getMaterial(Integer id) {
-        return goodsMaterialManager.findById(id);
+
+        try {
+
+            return goodsMaterialManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public void updateMaterialStatus(Integer id) {
-        goodsMaterialManager.updateStatus(id);
+
+        try {
+            goodsMaterialManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public PageResponse<GoodsMaterial> findMaterial(Integer goodsId, String name, Integer typeId, Integer status, Integer pageIndex, Integer pageSize) {
-        return goodsMaterialManager.findAll(goodsId, name, typeId, status, pageIndex, pageSize);
+
+        try {
+            return goodsMaterialManager.findAll(goodsId, name, typeId, status, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public List<GoodsMaterial> findMaterialByGoods(String materialIds)
     {
-        return goodsMaterialManager.findByGoods(materialIds);
+        try {
+            return goodsMaterialManager.findByGoods(materialIds);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
     }
 
     public  void deleteGoodsMaterial(Integer id)
     {
-        goodsMaterialManager.delete(id);
+        try {
+            goodsMaterialManager.delete(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 }

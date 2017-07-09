@@ -175,12 +175,22 @@
                     <path>/job-tasktracker</path>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<configuration>-->
+                    <!--<warName>job-tasktracker</warName>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.5</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <warName>job-tasktracker</warName>
+                    <mainClass>com.jobservice.tasktracker.TaskTrackerStarter</mainClass>
+                    <finalName>
+                        fct-tasktracker
+                    </finalName>
                 </configuration>
             </plugin>
         </plugins>

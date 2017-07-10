@@ -380,7 +380,7 @@ public class OrdersManager {
         {
             cartSql += " AND GoodsSpecId in ("+ goodsSpecIds +")";
         }
-        jt.execute(cartSql);
+        jt.update(cartSql);
 
         return order.getOrderId();
 

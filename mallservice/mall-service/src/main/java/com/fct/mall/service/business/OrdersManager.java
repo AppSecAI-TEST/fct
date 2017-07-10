@@ -374,13 +374,13 @@ public class OrdersManager {
         //insert、
         orderReceiverManager.save(orderReceiver);
         //删除购物车
-        String cartSql = String.format("DELETE FROM ShoppingCart WHERE MemberId=%d AND ShopId=%d GoodsId in ("+goodsIds+") ",
+        String cartSql = String.format("DELETE FROM ShoppingCart WHERE MemberId=%d AND ShopId=%d AND GoodsId in ("+goodsIds+") ",
                 memberId, shopId);
         if(!StringUtils.isEmpty(goodsSpecIds))
         {
             cartSql += " AND GoodsSpecId in ("+ goodsSpecIds +")";
         }
-        jt.update(cartSql);
+        jt.execute(cartSql);
 
         return order.getOrderId();
 

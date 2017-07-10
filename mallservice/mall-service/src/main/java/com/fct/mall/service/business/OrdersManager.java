@@ -220,11 +220,13 @@ public class OrdersManager {
                 orderGoods.setPrice(spec.getSalePrice());
                 orderGoods.setGoodsSpecId(spec.getId());
                 orderGoods.setCommission(spec.getCommission());
+                orderGoods.setGoodsSpecId(spec.getId());
             }
             else
             {
                 orderGoods.setPrice(g.getSalePrice());
                 orderGoods.setCommission(g.getCommission());
+                orderGoods.setGoodsSpecId(0);
             }
             orderGoods.setGoodsId(goodsDTO.getGoodsId());
             orderGoods.setPromotionPrice(p != null ? p.getDiscountPrice() : orderGoods.getPrice());
@@ -269,14 +271,14 @@ public class OrdersManager {
             String sql = "";
             if (orderGoods.getGoodsSpecId() > 0)
             {
-                sql = String.format("UPDATE GoodsSpecification SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d;",
+                sql = String.format("UPDATE GoodsSpecification SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d ",
                         orderGoods.getBuyCount(), orderGoods.getGoodsSpecId(),orderGoods.getBuyCount());
 
                 jt.update(sql);
 
             }
             //减去产品库存
-            sql = String.format("UPDATE Goods SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d;",
+            sql = String.format("UPDATE Goods SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d ",
                     orderGoods.getBuyCount(), orderGoods.getGoodsId(),orderGoods.getBuyCount());
 
             jt.update(sql);
@@ -371,9 +373,8 @@ public class OrdersManager {
         orderReceiver.setOrderId(order.getOrderId());
         //insert、
         orderReceiverManager.save(orderReceiver);
-
         //删除购物车
-        String cartSql = String.format("DELETE ShoppingCart WHERE MemberId=%d AND ShopId=%d GoodsId in ("+goodsIds+") ",
+        String cartSql = String.format("DELETE FROM ShoppingCart WHERE MemberId=%d AND ShopId=%d GoodsId in ("+goodsIds+") ",
                 memberId, shopId);
         if(!StringUtils.isEmpty(goodsSpecIds))
         {

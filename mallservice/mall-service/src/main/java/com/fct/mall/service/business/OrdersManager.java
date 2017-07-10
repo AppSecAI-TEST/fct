@@ -232,7 +232,7 @@ public class OrdersManager {
             orderGoods.setImg(g.getDefaultImage());
             orderGoods.setCommission(orderGoods.getCommission());
             orderGoods.setOrderId(orderId);
-            
+
             orderGoods.setCouponAmount(new BigDecimal(0));
 
             //商品使用优惠券面额
@@ -345,7 +345,7 @@ public class OrdersManager {
         order.setShopId(shopId);
         order.setPoints(points);
         order.setAccountAmount(accountAmount);
-        order.setCashAmount(orderCashAmount.divide(autoPay)); //实际现金支付
+        order.setCashAmount(orderCashAmount.subtract(autoPay)); //实际现金支付
         order.setPayAmount(orderCashAmount);    //应付金额
         order.setTotalAmount(orderTotalAmount);
         order.setCouponCode(couponCode);

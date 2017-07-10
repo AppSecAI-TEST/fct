@@ -8,7 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <artifactId>common-service</artifactId>
 
@@ -121,12 +121,22 @@
                     <path>/common-service</path>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<configuration>-->
+                    <!--<warName>common-service</warName>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.5</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <warName>common-service</warName>
+                    <mainClass>com.fct.common.service.StartupApplication</mainClass>
+                    <finalName>
+                        common-service
+                    </finalName>
                 </configuration>
             </plugin>
         </plugins>

@@ -227,7 +227,7 @@ public class OrdersManager {
                 orderGoods.setCommission(g.getCommission());
             }
             orderGoods.setGoodsId(goodsDTO.getGoodsId());
-            //orderGoods.setPromotionPrice(p.getDiscountPrice());
+            orderGoods.setPromotionPrice(p != null ? p.getDiscountPrice() : orderGoods.getPrice());
             orderGoods.setBuyCount(goodsDTO.getBuyCount());
             orderGoods.setImg(g.getDefaultImage());
             orderGoods.setCommission(orderGoods.getCommission());

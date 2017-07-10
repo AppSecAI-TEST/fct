@@ -232,6 +232,8 @@ public class OrdersManager {
             orderGoods.setImg(g.getDefaultImage());
             orderGoods.setCommission(orderGoods.getCommission());
             orderGoods.setOrderId(orderId);
+            
+            orderGoods.setCouponAmount(new BigDecimal(0));
 
             //商品使用优惠券面额
             if (cc != null && couponTotalPrice.doubleValue() > cc.getFullAmount().doubleValue())

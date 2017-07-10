@@ -51,7 +51,7 @@ public class MemberFavouriteManager {
     public int getCount(Integer memberId,Integer favType,Integer relatedId)
     {
         if(memberId>0) {
-            memberFavouriteRepository.getCountByMember(memberId,favType,relatedId);
+            return memberFavouriteRepository.getCountByMember(memberId,favType,relatedId);
         }
         return memberFavouriteRepository.getCountByType(favType,relatedId);
     }

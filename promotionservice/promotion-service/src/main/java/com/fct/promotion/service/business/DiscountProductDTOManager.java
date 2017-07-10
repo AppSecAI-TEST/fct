@@ -86,7 +86,7 @@ public class DiscountProductDTOManager {
         }
         catch (Exception exp)
         {
-            
+
         }
 
         if(product != null) {

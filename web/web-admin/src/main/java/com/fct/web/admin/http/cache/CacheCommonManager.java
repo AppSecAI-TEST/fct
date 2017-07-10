@@ -55,6 +55,12 @@ public class CacheCommonManager {
         {
             Constants.logger.error(exp.toString());
         }
+        finally {
+            if(jedis != null)
+            {
+                jedis.close();
+            }
+        }
         return findArticleCategory();
     }
     private List<ArticleCategory> findArticleCategory() {
@@ -138,6 +144,12 @@ public class CacheCommonManager {
         {
             Constants.logger.error(exp.toString());
         }
+        finally {
+            if(jedis != null)
+            {
+                jedis.close();
+            }
+        }
         return findImageCategory();
     }
 
@@ -195,6 +207,12 @@ public class CacheCommonManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
+        }
+        finally {
+            if(jedis != null)
+            {
+                jedis.close();
+            }
         }
         return findVideoCategory();
     }

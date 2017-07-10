@@ -60,6 +60,12 @@ public class CacheOrderManager {
         {
             Constants.logger.error(exp.toString());
         }
+        finally {
+            if(jedis != null)
+            {
+                jedis.close();
+            }
+        }
         return findOrderGoods(orderId);
     }
 

@@ -57,9 +57,6 @@ public class CacheGoodsManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return findGoodsCategory();
     }
     public List<GoodsCategory> findGoodsCategory()
@@ -127,9 +124,6 @@ public class CacheGoodsManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
         return findGoodsGrade();
     }
@@ -207,9 +201,6 @@ public class CacheGoodsManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return findGoodsMaterial();
     }
 
@@ -275,9 +266,6 @@ public class CacheGoodsManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return getGoods(id);
     }
 
@@ -318,9 +306,6 @@ public class CacheGoodsManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
         return findGoodsByIds(ids);
     }

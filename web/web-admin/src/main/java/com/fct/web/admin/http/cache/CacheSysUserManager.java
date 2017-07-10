@@ -48,9 +48,6 @@ public class CacheSysUserManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return getSysUserLogin(token);
     }
 

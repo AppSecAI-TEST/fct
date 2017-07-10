@@ -59,9 +59,6 @@ public class CacheManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return getMemberLogin(token);
     }
 
@@ -76,9 +73,6 @@ public class CacheManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
 
     }
@@ -121,9 +115,6 @@ public class CacheManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return getOrders(orderId);
     }
 
@@ -164,9 +155,6 @@ public class CacheManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
         return getRechargeRecord(id);
     }

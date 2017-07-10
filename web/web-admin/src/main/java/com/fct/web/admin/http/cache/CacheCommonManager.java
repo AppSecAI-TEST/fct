@@ -55,9 +55,6 @@ public class CacheCommonManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return findArticleCategory();
     }
     private List<ArticleCategory> findArticleCategory() {
@@ -141,9 +138,6 @@ public class CacheCommonManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return findImageCategory();
     }
 
@@ -201,9 +195,6 @@ public class CacheCommonManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
         return findVideoCategory();
     }

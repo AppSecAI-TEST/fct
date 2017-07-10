@@ -55,9 +55,6 @@ public class CacheFinanceManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return findPayPlatform();
     }
 

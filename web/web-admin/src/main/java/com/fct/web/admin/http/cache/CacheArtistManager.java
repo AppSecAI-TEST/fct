@@ -54,9 +54,6 @@ public class CacheArtistManager {
         {
             Constants.logger.error(exp.toString());
         }
-        finally {
-            jedis.close();
-        }
         return getArtist(id);
     }
 
@@ -99,9 +96,6 @@ public class CacheArtistManager {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
-        }
-        finally {
-            jedis.close();
         }
         return findArtist();
     }

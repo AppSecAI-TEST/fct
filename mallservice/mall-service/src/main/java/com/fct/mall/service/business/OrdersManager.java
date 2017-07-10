@@ -369,7 +369,7 @@ public class OrdersManager {
         orderReceiver.setProvince(address.getProvince());
         orderReceiver.setCity(address.getCityId());
         orderReceiver.setRegion(address.getTownId());
-        orderReceiver.setPostCode(address.getPostCode());
+        //orderReceiver.setPostCode(address.getPostCode());
         orderReceiver.setOrderId(order.getOrderId());
         //insert、
         orderReceiverManager.save(orderReceiver);

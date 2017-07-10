@@ -276,6 +276,36 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
+    public void deleteAddress(Integer id, Integer memberId)
+    {
+        try {
+            memberAddressManager.delete(id,memberId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
+
+    public void setDefaultAddress(Integer id,Integer memberId)
+    {
+        try {
+            memberAddressManager.setDefault(id,memberId);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
+
     public void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                          String bankName,String bankAccount)
     {

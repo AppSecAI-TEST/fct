@@ -76,4 +76,18 @@ public class MemberAddressManager {
     {
         return memberAddressRepository.findDefault(memberId);
     }
+
+    public void setDefault(Integer id,Integer meberId)
+    {
+        if(meberId<=0 || id<=0)
+        {
+            throw new IllegalArgumentException("id 为空");
+        }
+        memberAddressRepository.setDefault(id,meberId);
+    }
+
+    public void delete(Integer id,Integer memberId)
+    {
+        memberAddressRepository.delete(id,memberId);
+    }
 }

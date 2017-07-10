@@ -4,6 +4,7 @@ package com.fct.member.interfaces;
 import com.fct.member.data.entity.*;
 import org.springframework.data.domain.Page;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -45,6 +46,10 @@ public interface MemberService {
     List<MemberAddress> findMemberAddress(Integer memberId);
 
     MemberAddress getDefaultAddress(Integer memberId);
+
+    void deleteAddress(Integer id, Integer memberId);
+
+    void setDefaultAddress(Integer id,Integer memberId);
 
     void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                               String bankName,String bankAccount);

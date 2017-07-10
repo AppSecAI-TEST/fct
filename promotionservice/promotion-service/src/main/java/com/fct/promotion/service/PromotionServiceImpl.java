@@ -396,10 +396,6 @@ public class PromotionServiceImpl implements PromotionService {
         try {
             couponCodeManager.setStatusExpire();
         }
-        catch (IllegalArgumentException exp)
-        {
-            throw exp;
-        }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
@@ -411,10 +407,6 @@ public class PromotionServiceImpl implements PromotionService {
         try {
             couponSpareCodeManager.task();
         }
-        catch (IllegalArgumentException exp)
-        {
-            throw exp;
-        }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
@@ -425,10 +417,6 @@ public class PromotionServiceImpl implements PromotionService {
     {
         try {
             couponPolicyManager.task();
-        }
-        catch (IllegalArgumentException exp)
-        {
-            throw exp;
         }
         catch (Exception exp)
         {

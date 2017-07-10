@@ -23,7 +23,7 @@ public class CouponSpareCodeCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "couponSpareCodeCron");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("coupon-sparecode_generate");
         jobTask.setCronExpression("0 */10 * * * ?");    //每隔10分钟执行一次
         jobHandler.raiseJob(jobTask);
     }

@@ -23,7 +23,7 @@ public class RechargeExpiredCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "rechargeExpired");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("recharge-expired");
         jobTask.setCronExpression("0 */30 * * * ?");    //每隔30分钟执行一次
         jobHandler.raiseJob(jobTask);
     }

@@ -23,7 +23,7 @@ public class SettleCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "settle");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("settle");
         jobTask.setCronExpression("0 0 4,17 * * ?");    //每天4点和17点各执行一次，17后财务再确认结算
         jobHandler.raiseJob(jobTask);
     }

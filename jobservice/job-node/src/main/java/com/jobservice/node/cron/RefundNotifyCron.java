@@ -23,7 +23,7 @@ public class RefundNotifyCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "refundNotify");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("refund-notify");
         jobTask.setCronExpression("0 0 2,16 * * ?");    //每天2点与16点各执行一次
         jobHandler.raiseJob(jobTask);
     }

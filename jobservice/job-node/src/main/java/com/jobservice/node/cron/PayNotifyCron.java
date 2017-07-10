@@ -23,7 +23,7 @@ public class PayNotifyCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "payNotify");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("paysuccess_notify");
         jobTask.setCronExpression("*/2 * * * * ?");    //每隔2秒执行一次
         jobHandler.raiseJob(jobTask);
     }

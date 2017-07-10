@@ -23,7 +23,7 @@ public class PayTradeCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "payTrade");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("business_notify_pay");
         jobTask.setCronExpression("0 */10 * * * ?");    //每隔10分钟执行一次
         jobHandler.raiseJob(jobTask);
     }

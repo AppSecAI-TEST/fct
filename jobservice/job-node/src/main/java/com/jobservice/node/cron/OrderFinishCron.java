@@ -23,7 +23,7 @@ public class OrderFinishCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "orderfinish");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("mall-orders-finish");
         jobTask.setCronExpression("0 0 5,18 * * ?");    //每天5点和18点分钟执行一次
         jobHandler.raiseJob(jobTask);
     }

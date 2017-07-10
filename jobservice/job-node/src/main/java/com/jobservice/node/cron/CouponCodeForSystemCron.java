@@ -23,7 +23,7 @@ public class CouponCodeForSystemCron implements InitializingBean {
         Map<String, Object> params = new HashMap<>();
         params.putIfAbsent(ShardConstant.SHARD_VALUE, "couponCodeForSystem");
         jobTask.setParams(params);
-        jobTask.setTaskId(UUID.randomUUID().toString());
+        jobTask.setTaskId("couponcode-forsystem_generate");
         jobTask.setCronExpression("0 */5 * * * ?");    //每隔5分钟执行一次
         jobHandler.raiseJob(jobTask);
     }

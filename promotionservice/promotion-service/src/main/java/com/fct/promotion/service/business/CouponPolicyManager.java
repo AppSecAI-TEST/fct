@@ -181,18 +181,19 @@ public class CouponPolicyManager {
     public List<CouponPolicy> findByCanReceive(Integer productId)
     {
 
-        return jt.query(getReceiveSql(productId), new Object[]{},
+        return jt.query(getReceiveSql(productId,false), new Object[]{},
                 new BeanPropertyRowMapper<CouponPolicy>(CouponPolicy.class));
     }
 
-    private String getReceiveSql(Integer productId)
+    private String getReceiveSql(Integer productId,Boolean selCount)
     {
         if(productId<=0)
         {
             throw new IllegalArgumentException("宝贝为空");
         }
+        String column = selCount ? " Count(0)" : "*";
         StringBuilder sb = new StringBuilder();
-        sb.append("select Count(0) from CouponPolicy where");
+        sb.append("select "+ column +" from CouponPolicy where");
         sb.append(String.format(" AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s'",
                 DateUtils.format(new Date())));
         sb.append(" AND find_in_set("+ productId +",productids)");
@@ -203,7 +204,7 @@ public class CouponPolicyManager {
     public Integer canReceiveCountByProduct(Integer productId)
     {
 
-        return jt.queryForObject(getReceiveSql(productId),Integer.class);
+        return jt.queryForObject(getReceiveSql(productId,true),Integer.class);
     }
 
     void addReceiveCount(Integer policyId)

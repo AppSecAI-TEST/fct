@@ -141,12 +141,13 @@ public class MaterialController extends BaseController {
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(Integer id,String name,String desc,String image)
+    public String save(Integer id,String name,String desc,String image,String intro)
     {
         id = ConvertUtils.toInteger(id);
         name =ConvertUtils.toString(name);
         desc = ConvertUtils.toString(desc);
         image = ConvertUtils.toString(image);
+        intro =ConvertUtils.toString(intro);
 
         GoodsMaterial material =  null;
         if(id>0) {
@@ -159,6 +160,7 @@ public class MaterialController extends BaseController {
         material.setImages(image);
         material.setName(name);
         material.setDescription(desc);
+        material.setIntro(intro);
 
         try {
             mallService.saveMaterial(material);

@@ -1,10 +1,10 @@
 package com.fct.finance.service;
 
 import com.fct.finance.data.entity.*;
+import com.fct.finance.interfaces.FinanceService;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.finance.service.business.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by jon on 2017/4/7.
  */
 @Service(value = "financeService")
-public class FinanceServiceImpl implements com.fct.finance.interfaces.FinanceService {
+public class FinanceServiceImpl implements FinanceService {
     
     @Autowired
     private PayOrderManager payOrderManager;

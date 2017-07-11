@@ -3,6 +3,8 @@ package com.fct.core.utils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class HttpUtils {
 
@@ -75,5 +77,23 @@ public class HttpUtils {
         }
 
         return String.format("http://img.fangcun.com%s@%dw.jpg",path,width);
+    }
+
+    public static String getHost(HttpServletRequest request)
+    {
+        try {
+            URL url = new URL(request.getRequestURL().toString());
+
+            String host = url.getHost();// 获取主机名
+
+            host = host.substring(host.indexOf('.')+1);
+
+            return host;
+        }
+        catch (MalformedURLException exp)
+        {
+
+        }
+        return "";
     }
 }

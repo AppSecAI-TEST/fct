@@ -1,6 +1,6 @@
 server:
-  port: 8089
-  contextPath: /source
+  port: 8087
+  contextPath: /common
   tomcat:
     uri-encoding: UTF-8
 
@@ -14,13 +14,6 @@ redis:
       idel: 300
       total: 300
       waitmillis: 1000
-
-mongo:
-  host:
-    port: 9024
-    url: mongo-m.fct.me
-    db: easemob
-    collectionName: sms_log
 
 mysql:
   connection:

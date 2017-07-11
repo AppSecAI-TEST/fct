@@ -16,13 +16,6 @@ redis:
       total: 300
       waitmillis: 1000
 
-mongo:
-  host:
-    port: 9024
-    url: mongo-m.fct.me
-    db: easemob
-    collectionName: sms_log
-
 mysql:
   connection:
     url: jdbc:mysql://116.62.219.91:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull

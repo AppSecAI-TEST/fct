@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.*;
+import java.util.Enumeration;
 
 @Controller
 @RequestMapping(value = "")
@@ -28,7 +30,7 @@ public class MainController {
     private FctConfig fctConfig;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(String returnurl,Model model) {
+    public String login(HttpServletRequest request,String returnurl,Model model) {
 
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);
@@ -77,7 +79,7 @@ public class MainController {
             if(user !=null)
             {
                 //写入cookie,测试暂时domain为空，不然写入cookie有问题，正式环境需传入 fangcun.com
-                CookieUtil.addCookie(response,"sysuser_token",user.getToken(),"fangcun.com");
+                CookieUtil.addCookie(request,response,"sysuser_token",user.getToken());
             }
         }
         catch (IllegalArgumentException exp)

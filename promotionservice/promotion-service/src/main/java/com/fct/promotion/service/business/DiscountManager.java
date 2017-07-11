@@ -42,11 +42,13 @@ public class DiscountManager {
         return discountRepository.findOne(id);
     }
 
+    @Transactional
     public void add(Discount discount)
     {
         List<DiscountProduct> lst = discount.getProductList();
         checkValid(discount, null);
         discountProductManager.checkValid(discount,lst);
+        discount.setId(null);
         discount.setProductCount(lst.size()); //更新折扣宝贝数量
 
         discount.setLastUpdateTime(new Date());
@@ -63,6 +65,7 @@ public class DiscountManager {
             p.setLastUpdateUserId(discount.getCreateUserId());
             p.setLastUpdateTime(new Date());
             p.setCreateTime(new Date());
+            p.setIsValidForSize(false);
 
             discountProductManager.save(p);
         }

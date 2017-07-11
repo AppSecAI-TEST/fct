@@ -27,8 +27,8 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
-    public static void addCookie(HttpServletResponse response,String name,String value){
-        addCookie(response,name,value,"");
+    public static void addCookie(HttpServletRequest request,HttpServletResponse response,String name,String value){
+        addCookie(response,name,value,HttpUtils.getHost(request));
     }
     /**
      * 修改cookie
@@ -64,7 +64,7 @@ public class CookieUtil {
     }
     public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value)
     {
-        editCookie(request,response,name,value,"");
+        editCookie(request,response,name,value,HttpUtils.getHost(request));
     }
     /**
      * 删除cookie
@@ -92,7 +92,7 @@ public class CookieUtil {
     }
     public static void delCookie(HttpServletRequest request,HttpServletResponse response,String name)
     {
-        delCookie(request,response,name,"");
+        delCookie(request,response,name,HttpUtils.getHost(request));
     }
 
     /**

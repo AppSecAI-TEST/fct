@@ -187,23 +187,24 @@ public class CouponPolicyManager {
 
     private String getReceiveSql(Integer productId,Boolean selCount)
     {
-        if(productId<=0)
-        {
-            throw new IllegalArgumentException("宝贝为空");
-        }
         String column = selCount ? " Count(0)" : "*";
         StringBuilder sb = new StringBuilder();
         sb.append("select "+ column +" from CouponPolicy where");
         sb.append(String.format(" AuditStatus=1 and FetchType=0 and TotalCount>ReceivedCount and EndTime>'%s'",
                 DateUtils.format(new Date())));
-        sb.append(" AND find_in_set("+ productId +",productids)");
+        if(productId>0) {
+            sb.append(" AND find_in_set(" + productId + ",productids)");
+        }
 
         return sb.toString();
     }
 
     public Integer canReceiveCountByProduct(Integer productId)
     {
-
+        if(productId<=0)
+        {
+            throw new IllegalArgumentException("产品为空");
+        }
         return jt.queryForObject(getReceiveSql(productId,true),Integer.class);
     }
 

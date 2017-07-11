@@ -514,6 +514,21 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
+    /**
+     * 主要用于登陆时获取校验证，判断是否恶意点击获取
+     * */
+    public SystemUser getSystemUser(String cellphone)
+    {
+        try {
+            return systemUserManager.findByCellPhone(cellphone);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public void logoutSysUser(String token)
     {
         try {

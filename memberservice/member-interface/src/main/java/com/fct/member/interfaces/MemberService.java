@@ -85,6 +85,8 @@ public interface MemberService {
 
     SysUserLogin getSysUserLogin(String token);
 
+    SystemUser getSystemUser(String cellPhone);
+
     void logoutSysUser(String token);
 
     void lockSystemUser(Integer userId);

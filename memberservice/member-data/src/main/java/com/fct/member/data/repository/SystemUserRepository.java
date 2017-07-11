@@ -18,8 +18,11 @@ public interface SystemUserRepository extends JpaRepository<SystemUser, Integer>
 
     int countByUserName(String userName);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM SystemUser WHERE userName=?1 AND Password=?2 AND locked=0")
+    @Query(nativeQuery = true, value = "SELECT * FROM SystemUser WHERE (userName=?1 OR cellPhone=?1) AND Password=?2 AND locked=0")
     SystemUser login(String userName,String password);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM SystemUser WHERE cellPhone=?1 limit 1")
+    SystemUser findByCellPhone(String cellphone);
 
     @Transactional
     @Modifying

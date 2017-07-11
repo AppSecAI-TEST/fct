@@ -28,22 +28,17 @@ public class SystemUserManager {
     @Autowired
     private JdbcTemplate jt;
 
-    public void create(SystemUser user)
-    {
-        if(StringUtils.isEmpty(user.getCellPhone()))
-        {
+    public void create(SystemUser user) {
+        if (StringUtils.isEmpty(user.getCellPhone())) {
             throw new IllegalArgumentException("手机号码为空。");
         }
-        if(StringUtils.isEmpty(user.getUserName()))
-        {
+        if (StringUtils.isEmpty(user.getUserName())) {
             throw new IllegalArgumentException("用户名为空。");
         }
-        if(StringUtils.isEmpty(user.getPassword()))
-        {
+        if (StringUtils.isEmpty(user.getPassword())) {
             throw new IllegalArgumentException("密码为空。");
         }
-        if(systemUserRepository.countByUserName(user.getUserName())>0)
-        {
+        if (systemUserRepository.countByUserName(user.getUserName()) > 0) {
             throw new IllegalArgumentException("用户名存在。");
         }
         user.setPassword(StringHelper.md5(user.getPassword()));
@@ -53,35 +48,27 @@ public class SystemUserManager {
         systemUserRepository.save(user);
     }
 
-    public void updatePassword(Integer userId,String oldPassword,String newPassword,String reNewPassword)
-    {
-        if(userId<=0)
-        {
+    public void updatePassword(Integer userId, String oldPassword, String newPassword, String reNewPassword) {
+        if (userId <= 0) {
             throw new IllegalArgumentException("用户Id为空。");
         }
-        if(StringUtils.isEmpty(oldPassword))
-        {
+        if (StringUtils.isEmpty(oldPassword)) {
             throw new IllegalArgumentException("旧密码为空.");
         }
-        if(StringUtils.isEmpty(newPassword))
-        {
+        if (StringUtils.isEmpty(newPassword)) {
             throw new IllegalArgumentException("新密码为空");
         }
-        if(StringUtils.isEmpty(reNewPassword))
-        {
+        if (StringUtils.isEmpty(reNewPassword)) {
             throw new IllegalArgumentException("重复密码为空");
         }
         SystemUser user = systemUserRepository.findOne(userId);
-        if(user == null)
-        {
+        if (user == null) {
             throw new IllegalArgumentException("管理员不存在。");
         }
-        if(user.getPassword() != StringHelper.md5(oldPassword))
-        {
+        if (user.getPassword() != StringHelper.md5(oldPassword)) {
             throw new IllegalArgumentException("旧密码不正确。");
         }
-        if(newPassword!=reNewPassword)
-        {
+        if (newPassword != reNewPassword) {
             throw new IllegalArgumentException("新密码与重复密码不一致。");
         }
 
@@ -90,17 +77,22 @@ public class SystemUserManager {
 
     }
 
-    public SystemUser login(String userName,String password)
-    {
-        if(StringUtils.isEmpty(userName))
-        {
+    public SystemUser login(String userName, String password) {
+        if (StringUtils.isEmpty(userName)) {
             throw new IllegalArgumentException("用户名为空.");
         }
-        if(StringUtils.isEmpty(password))
-        {
+        if (StringUtils.isEmpty(password)) {
             throw new IllegalArgumentException("密码为空");
         }
         return systemUserRepository.login(userName, StringHelper.md5(password));
+    }
+
+    public SystemUser findByCellPhone(String cellphone)
+    {
+        if (StringUtils.isEmpty(cellphone)) {
+            throw new IllegalArgumentException("手机号码为空.");
+        }
+        return systemUserRepository.findByCellPhone(cellphone);
     }
 
     public void lock(Integer userId)

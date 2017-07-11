@@ -16,9 +16,9 @@ public class CookieUtil {
      * @param name
      * @param value
      */
-    public static void addCookie(HttpServletResponse response,String name,String value,String domain){
+    public static void addCookie(HttpServletResponse response,String name,String value,String domain,Integer expireMin){
         Cookie cookie = new Cookie(name.trim(), value.trim());
-        cookie.setMaxAge(30 * 60);// 设置为30min,浏览器关闭cookie失效
+        cookie.setMaxAge(expireMin*60);// 设置为30min,浏览器关闭cookie失效
         cookie.setPath("/");
         if(!StringUtils.isEmpty(domain))
         {
@@ -28,7 +28,11 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletRequest request,HttpServletResponse response,String name,String value){
-        addCookie(response,name,value,HttpUtils.getHost(request));
+        addCookie(response,name,value,HttpUtils.getHost(request),30);
+    }
+
+    public static void addCookie(HttpServletRequest request,HttpServletResponse response,String name,String value,Integer expireMin){
+        addCookie(response,name,value,HttpUtils.getHost(request),expireMin);
     }
     /**
      * 修改cookie
@@ -39,7 +43,7 @@ public class CookieUtil {
      * 注意一、修改、删除Cookie时，新建的Cookie除value、maxAge之外的所有属性，例如name、path、domain等，都要与原Cookie完全一样。否则，浏览器将视为两个不同的Cookie不予覆盖，导致修改、删除失败。
      */
     public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value,
-                                  String domain){
+                                  String domain,Integer expireMin){
         Cookie[] cookies = request.getCookies();
         if (null==cookies) {
             System.out.println("没有cookie==============");
@@ -53,7 +57,7 @@ public class CookieUtil {
                     {
                         cookie.setDomain(domain);
                     }
-                    cookie.setMaxAge(30 * 60);// 设置为30min
+                    cookie.setMaxAge(expireMin);// 设置为30min
                     System.out.println("被修改的cookie名字为:"+cookie.getName()+",新值为:"+cookie.getValue());
                     response.addCookie(cookie);
                     break;
@@ -62,9 +66,9 @@ public class CookieUtil {
         }
 
     }
-    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value)
+    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String name,String value,Integer expireMin)
     {
-        editCookie(request,response,name,value,HttpUtils.getHost(request));
+        editCookie(request,response,name,value,HttpUtils.getHost(request),expireMin);
     }
     /**
      * 删除cookie

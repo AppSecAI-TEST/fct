@@ -125,7 +125,7 @@ var JQAjax = {
                 var data = result;
                 if (data.method) {
                     switch (data.method) {
-                        case "func":
+                        case "function":
                             eval(data.func);
                             break;
                         case "remind":

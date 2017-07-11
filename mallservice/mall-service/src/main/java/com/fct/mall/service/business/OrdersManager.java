@@ -359,6 +359,9 @@ public class OrdersManager {
             order.setStatus(Constants.enumOrderStatus.waitPay.getValue());
         }
         order.setRemark(remark);
+        order.setUpdateTime(new Date());
+        order.setSettleId(0);
+        order.setCommentStatus(0);
         order.setCreateTime(new Date());
         ordersRepository.save(order);
 

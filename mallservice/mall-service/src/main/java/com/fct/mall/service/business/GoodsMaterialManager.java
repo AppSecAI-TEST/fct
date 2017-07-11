@@ -34,17 +34,18 @@ public class GoodsMaterialManager {
 
     public void save(GoodsMaterial goodsMaterial) {
 
-        if(StringUtils.isEmpty(goodsMaterial.getDescription()))
-        {
+        if (StringUtils.isEmpty(goodsMaterial.getDescription())) {
             throw new IllegalArgumentException("描述为空");
         }
-        if(StringUtils.isEmpty(goodsMaterial.getName()))
-        {
+        if (StringUtils.isEmpty(goodsMaterial.getName())) {
             throw new IllegalArgumentException("名称为空");
         }
-        if(StringUtils.isEmpty(goodsMaterial.getImages()))
-        {
+        if (StringUtils.isEmpty(goodsMaterial.getImages())) {
             throw new IllegalArgumentException("图片为空");
+        }
+        if (StringUtils.isEmpty(goodsMaterial.getIntro()))
+        {
+            throw new IllegalArgumentException("简单描述为空");
         }
         if(goodsMaterial.getTypeid()==null)
         {

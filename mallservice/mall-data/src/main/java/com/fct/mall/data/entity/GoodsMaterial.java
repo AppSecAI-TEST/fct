@@ -28,6 +28,11 @@ public class GoodsMaterial implements Serializable{
 
     private String images;
 
+    /**
+     * 简单介绍
+     * */
+    private String intro;
+
     private String description;
 
     private Integer status;

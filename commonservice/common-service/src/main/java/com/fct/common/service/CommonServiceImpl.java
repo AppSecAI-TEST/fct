@@ -365,17 +365,17 @@ public class CommonServiceImpl implements CommonService {
         }
     }
 
-    public String oauthUrl(String redirectURI, String scope) {
+    public String oAuthURL(String redirectURI, String scope) {
 
-        return weChat.oauthUrl(redirectURI, scope);
+        return weChat.oAuthURL(redirectURI, scope);
     }
 
-    public String wechatCallback(String code) {
+    public WeChatResponse wechatCallback(String code) {
 
-        return this.wechatCallback(code);
+        return weChat.callback(code);
     }
 
-    public WeChatResponse getUserInfo(String openid) {
+    public WeChatUserResponse getUserInfo(String openid) {
 
         return weChat.getUserInfo(openid);
     }

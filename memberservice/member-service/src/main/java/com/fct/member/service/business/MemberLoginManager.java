@@ -41,10 +41,10 @@ public class MemberLoginManager {
             throw new IllegalArgumentException("用户户或密码错误。");
         }
 
-        return login(member,platform,ip,expireDay);
+        return login(member,platform,memberAuthManager.getOpenId(member.getId(),platform),ip,expireDay);
     }
 
-    private MemberLogin login(Member member,String platform,String ip,Integer expireDay)
+    public MemberLogin login(Member member,String platform,String openId,String ip,Integer expireDay)
     {
         if(StringUtils.isEmpty(ip))
         {
@@ -62,6 +62,10 @@ public class MemberLoginManager {
 
         MemberStore store = memberStoreManager.findByMemberId(member.getId());
 
+        member.setLoginCount(member.getLoginCount()+1);
+        member.setLoginTime(new Date());
+        memberManager.save(member);
+
         MemberLogin login = new MemberLogin();
         login.setCellPhone(member.getCellPhone());
         login.setMemberId(member.getId());
@@ -75,7 +79,9 @@ public class MemberLoginManager {
         login.setUserName(member.getUserName());
         login.setShopId(store!=null ?store.getId() :0);
         login.setGradeId(member.getGradeId());
-        login.setOpenId(memberAuthManager.getOpenId(member.getId(),platform));
+        login.setLoginPlatform(platform);
+        login.setOpenId(openId);
+        login.setLoginCount(member.getLoginCount());
 
         memberLoginRepository.save(login);
 
@@ -87,9 +93,9 @@ public class MemberLoginManager {
         Member member = memberManager.findByCellPhone(cellPhone);
         if(member ==  null)
         {
-            member = memberManager.register(cellPhone,cellPhone,cellPhone.substring(5));
+            member = memberManager.register(cellPhone,cellPhone,cellPhone.substring(5),"",1);
         }
-        return login(member,platform,ip,expireDay);
+        return login(member,platform,memberAuthManager.getOpenId(member.getId(),platform),ip,expireDay);
     }
 
     public void logOut(String token)

@@ -36,4 +36,6 @@ public class MemberAuth implements Serializable {
     private String unionId;
 
     private Date createTime;
+
+    private Date updateTime;
 }

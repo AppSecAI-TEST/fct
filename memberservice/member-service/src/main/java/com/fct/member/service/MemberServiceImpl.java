@@ -51,11 +51,10 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
     private MemberFavouriteManager memberFavouriteManager;
 
     /*注册会员*/
-//    @Transactional
     public Member registerMember(String cellPhone, String userName, String password)
     {
         try {
-            return memberManager.register(cellPhone, userName, password);
+            return memberManager.register(cellPhone, userName, password,"",1);
         }
         catch (IllegalArgumentException exp)
         {
@@ -462,10 +461,28 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
-    public MemberAuth saveMemberAuth(MemberAuth auth)
+    public MemberLogin saveMemberAuth(Integer memberId,String openId,String platform,String nickName,String headImgUrl,
+                              String unionId,Integer sex,String ip,Integer expireDay)
     {
         try {
-            return memberAuthManager.save(auth);
+            return memberAuthManager.create(memberId, openId, platform, nickName, headImgUrl, unionId, sex, ip, expireDay);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public MemberLogin bindMemberAuth(String cellPhone,String platform,String openId, String nickName,String headImgUrl,
+                              String unionId,Integer sex,String ip,Integer expireDay)
+    {
+        try {
+            return memberAuthManager.bind(cellPhone,platform,openId,nickName,headImgUrl,unionId,sex,ip,expireDay);
         }
         catch (IllegalArgumentException exp)
         {

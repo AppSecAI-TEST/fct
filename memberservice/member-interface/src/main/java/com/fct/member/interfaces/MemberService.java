@@ -69,7 +69,11 @@ public interface MemberService {
     PageResponse<InviteCode>  findInviteCode(String code,Integer ownerId, String ownerCellPhone, String toCellphone,
                                              int pageIndex, int pageSize);
 
-    MemberAuth saveMemberAuth(MemberAuth auth);
+    MemberLogin saveMemberAuth(Integer memberId,String openId,String platform,String nickName,String headImgUrl,
+                              String unionId,Integer sex,String ip,Integer expireDay);
+
+    MemberLogin bindMemberAuth(String cellPhone,String platform,String openId, String nickName,String headImgUrl,
+                              String unionId,Integer sex,String ip,Integer expireDay);
 
     MemberAuth getMemberAuth(String platform);
 

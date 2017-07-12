@@ -35,8 +35,9 @@ public class MemberManager {
     @Autowired
     private JdbcTemplate jt;
 
-//    @Transactional
-    public Member register(String cellPhone, String userName, String password)
+    @Transactional
+    public Member register(String cellPhone, String userName, String password,
+                           String headImgUrl,Integer sex)
     {
         if(StringUtils.isEmpty(cellPhone))
         {
@@ -79,6 +80,8 @@ public class MemberManager {
         //同步注册memberInfo
         MemberInfo info = new MemberInfo();
         info.setMemberId(member.getId());
+        info.setHeadPortrait(headImgUrl);
+        info.setSex(sex <=0 ?0 :1);
         memberInfoManager.save(info);
         return member;
     }

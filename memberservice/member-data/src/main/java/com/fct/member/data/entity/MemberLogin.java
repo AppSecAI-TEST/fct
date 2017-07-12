@@ -83,4 +83,9 @@ public class MemberLogin implements Serializable {
     /// 过期时间
     /// </summary>
     private Date expireTime;
+
+    /**
+     * 登录次数
+    * **/
+    private Integer loginCount;
 }

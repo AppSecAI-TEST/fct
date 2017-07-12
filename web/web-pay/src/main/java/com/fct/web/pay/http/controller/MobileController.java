@@ -77,24 +77,13 @@ public class MobileController extends BaseController{
                         {
                             desc += "等多件";
                         }
-                        String showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders.getOrderId();
-                        payOrder = new PayOrder();
-                        payOrder.setCellPhone(currentUser.getCellPhone());
-                        payOrder.setMemberId(currentUser.getMemberId());
-                        payOrder.setTradeId(tradeid);
-                        payOrder.setTradeType(tradetype);
-                        payOrder.setAccountAmount(orders.getAccountAmount());
-                        payOrder.setPayAmount(payAmount);
-                        payOrder.setTotalAmount(orders.getTotalAmount());
-                        payOrder.setDiscountAmount(new BigDecimal(0));
-                        payOrder.setPoints(orders.getPoints());
-                        payOrder.setExpiredTime(orders.getExpiresTime());
-                        payOrder.setPayPlatform("account");
-                        payOrder.setShowUrl(showUrl);
-                        payOrder.setCallbackUrl(callback);
-                        payOrder.setDescription(desc);
 
-                        payOrder = financeService.createPayOrder(payOrder);
+                        String showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders.getOrderId();
+
+                        payOrder = createPay(tradeid,tradetype,orders.getAccountAmount(),payAmount,orders.getTotalAmount(),
+                                new BigDecimal(0),orders.getPoints(),
+                                orders.getExpiresTime(),"account",showUrl,callback,desc);
+
                         if(payOrder == null || payOrder.getStatus() !=1)
                         {
                             return AjaxUtil.alert("支付订单异常。");
@@ -138,6 +127,29 @@ public class MobileController extends BaseController{
         model.addAttribute("tradetype", tradetype);
 
         return "mobile/index";
+    }
+
+    private PayOrder createPay(String tradeid,String tradetype,BigDecimal accountAmount,BigDecimal payAmount,
+                               BigDecimal totalAmount,BigDecimal discountAmount,Integer points,Date expiredTime,
+                               String platform,String showUrl,String callback,String desc)
+    {
+        PayOrder payOrder = new PayOrder();
+        payOrder.setCellPhone(currentUser.getCellPhone());
+        payOrder.setMemberId(currentUser.getMemberId());
+        payOrder.setTradeId(tradeid);
+        payOrder.setTradeType(tradetype);
+        payOrder.setAccountAmount(accountAmount);
+        payOrder.setPayAmount(payAmount);
+        payOrder.setTotalAmount(totalAmount);
+        payOrder.setDiscountAmount(discountAmount);
+        payOrder.setPoints(points);
+        payOrder.setExpiredTime(expiredTime);
+        payOrder.setPayPlatform(platform);
+        payOrder.setShowUrl(showUrl);
+        payOrder.setCallbackUrl(callback);
+        payOrder.setDescription(desc);
+
+        return financeService.createPayOrder(payOrder);
     }
 
     /**
@@ -236,23 +248,9 @@ public class MobileController extends BaseController{
             String callback = String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
                     tradeid,tradetype);
 
-            payOrder = new PayOrder();
-            payOrder.setCellPhone(currentUser.getCellPhone());
-            payOrder.setMemberId(currentUser.getMemberId());
-            payOrder.setTradeId(tradeid);
-            payOrder.setTradeType(tradetype);
-            payOrder.setAccountAmount(accountAmount);
-            payOrder.setPayAmount(payAmount);
-            payOrder.setTotalAmount(totalAmount);
-            payOrder.setDiscountAmount(discountAmount);
-            payOrder.setPoints(points);
-            payOrder.setExpiredTime(expiredTime);
-            payOrder.setPayPlatform(platform);
-            payOrder.setShowUrl(showUrl);
-            payOrder.setCallbackUrl(callback);
-            payOrder.setDescription(desc);
+            payOrder = createPay(tradeid,tradetype,accountAmount,payAmount,totalAmount,discountAmount,points,
+                    expiredTime,platform,showUrl,callback,desc);
 
-            payOrder = financeService.createPayOrder(payOrder);
             if(payOrder == null || payOrder.getStatus() !=0)
             {
                 return AjaxUtil.alert("支付订单异常。");

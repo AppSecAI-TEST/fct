@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.*;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "")
@@ -79,12 +76,15 @@ public class MainController {
 
     @RequestMapping(value = "/main/sendcode", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String sendCode(HttpServletRequest request, HttpServletResponse response,String cellphone)
-    {
+    public String sendCode(HttpServletRequest request, HttpServletResponse response,String cellphone) {
         //String sessionId,String cellPhone,String content,String ip,String action
         //将sessionId写入cookie,1分钟有效;
 
         String sessionId = UUIDUtil.generateUUID();
+        if (StringUtils.isEmpty(cellphone))
+        {
+            return AjaxUtil.alert("手机号码为空。");
+        }
 
         try {
 
@@ -124,6 +124,19 @@ public class MainController {
         password =ConvertUtils.toString(password);
         code = ConvertUtils.toString(code);
 
+        if(StringUtils.isEmpty(cellphone))
+        {
+            return AjaxUtil.alert("手机号码为空");
+        }
+        if(StringUtils.isEmpty(password))
+        {
+            return AjaxUtil.alert("密码为空");
+        }
+        if(StringUtils.isEmpty(code))
+        {
+            return AjaxUtil.alert("验证码为空。");
+        }
+
         try {
 
             String sessionId = CookieUtil.getCookieByName(request,"sessionId");
@@ -131,7 +144,7 @@ public class MainController {
             //String sessionId,String cellPhone,String code
             if(messageService.checkVerifyCode(sessionId,cellphone,code) == 0)
             {
-                return AjaxUtil.alert("校验码不正确");
+                return AjaxUtil.alert("验证码不正确");
             }
 
             SysUserLogin user = memberService.loginSystemUser(cellphone,password, HttpUtils.getIp(request),
@@ -153,7 +166,7 @@ public class MainController {
         }
         if(StringUtils.isEmpty(returnurl))
         {
-            returnurl = "/member";
+            returnurl = "/orders";
         }
         return AjaxUtil.goUrl(returnurl,"登录成功。");
     }

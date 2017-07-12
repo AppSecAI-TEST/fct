@@ -128,6 +128,9 @@ public class PayOrderManager  {
 
             memberAccountHistoryManager.Create(history);
 
+            //写入消息
+            SendMessageQ(pay, Constants.enumPayStatus.success);
+
         }
         else {
             //校验用户是否存在，如不存在则创建memberAccount
@@ -276,7 +279,7 @@ public class PayOrderManager  {
             // 关闭支付订单
             pay.setStatus(Constants.enumPayStatus.exception.getValue());
 
-            payOrderRepository.saveAndFlush(pay); //更新支付记录
+            payOrderRepository.save(pay); //更新支付记录
 
             /*
             //如使用线上第三方平台支付金额
@@ -295,7 +298,7 @@ public class PayOrderManager  {
         {
             // 更新支付为支付成功状态
             pay.setStatus(Constants.enumPayStatus.success.getValue());
-            payOrderRepository.saveAndFlush(pay);
+            payOrderRepository.save(pay);
 
             // 使用虚拟余额或积分支付
             if (pay.getAccountAmount().doubleValue() > 0 || pay.getPoints().doubleValue() > 0)

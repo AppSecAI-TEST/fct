@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -56,6 +55,10 @@ public class MobileController extends BaseController{
         Integer payStatus = 0;
         Integer memberId=0;
 
+        PayOrder payOrder = null;
+        String callback = String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
+                tradeid,tradetype);
+
         try {
             switch (tradetype) {
                 case "buy":
@@ -63,6 +66,40 @@ public class MobileController extends BaseController{
                     payStatus = orders.getStatus();
                     payAmount = orders.getCashAmount();
                     memberId = orders.getMemberId();
+                    //不需要用现金支付
+                    if(payAmount.doubleValue()==0)
+                    {
+                        //保存支付方式（账户支付）
+                        mallService.updateOrderPayPlatform(orders.getOrderId(),"account");
+
+                        String desc="购买"+orders.getOrderGoods().get(0).getName();
+                        if(orders.getOrderGoods().size()>1)
+                        {
+                            desc += "等多件";
+                        }
+                        String showUrl = fctConfig.getUrl()+"/my/order/detail?orderid="+orders.getOrderId();
+                        payOrder = new PayOrder();
+                        payOrder.setCellPhone(currentUser.getCellPhone());
+                        payOrder.setMemberId(currentUser.getMemberId());
+                        payOrder.setTradeId(tradeid);
+                        payOrder.setTradeType(tradetype);
+                        payOrder.setAccountAmount(orders.getAccountAmount());
+                        payOrder.setPayAmount(payAmount);
+                        payOrder.setTotalAmount(orders.getTotalAmount());
+                        payOrder.setDiscountAmount(new BigDecimal(0));
+                        payOrder.setPoints(orders.getPoints());
+                        payOrder.setExpiredTime(orders.getExpiresTime());
+                        payOrder.setPayPlatform("account");
+                        payOrder.setShowUrl(showUrl);
+                        payOrder.setCallbackUrl(callback);
+                        payOrder.setDescription(desc);
+
+                        payOrder = financeService.createPayOrder(payOrder);
+                        if(payOrder == null || payOrder.getStatus() !=1)
+                        {
+                            return AjaxUtil.alert("支付订单异常。");
+                        }
+                    }
 
                     break;
                 case "recharge":
@@ -86,10 +123,9 @@ public class MobileController extends BaseController{
         {
             return errorPage("支付业务订单状态异常");
         }
-        else if(payStatus ==1)
+        else if(payStatus ==1 || (payOrder !=null && payOrder.getStatus()==1))
         {
-            return "redirect:"+String.format("%s/mobile/success?tradeid=%s&tradetype=%s",fctConfig.getPayUrl(),
-                    tradeid,tradetype);
+            return "redirect:"+callback;
         }
         if (memberId != currentUser.getMemberId()) {
             //出错跳转

@@ -12,7 +12,7 @@
         </div>
         <div class="info">
             <div th:text="'订单编号：'+${orderid}"></div>
-            <div th:text="${remark}">您购买的“紫砂壶”正在处理中，请耐心等待并关注订单状态。</div>
+            <div th:text="${remark}">您购买的“宝贝”正在处理中，请耐心等待并关注订单状态。</div>
         </div>
     </section>
     <section class="btn-container">
@@ -21,11 +21,11 @@
                 <a th:href="${gourl}">我的订单</a>
             </li>
             <li>
-                <a href="http://www.fangcun.com">返回首页</a>
+                <a href="http://www.fangcun.com" th:href="${pub.url}">返回首页</a>
             </li>
         </ul>
     </section>
-    <section class="safe">
+    <section class="safe">z
         安全提示：方寸堂不会以订单异常、系统升级为由联系你，请勿泄露银行卡、银行密码。<br>
         如有任何疑问请拨打官方电话：400-888-9988
     </section>

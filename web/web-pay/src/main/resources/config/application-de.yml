@@ -4,7 +4,6 @@ server:
   tomcat:
     uri-encoding: UTF-8
 
-
 redis:
   host:
     url: 127.0.0.1
@@ -15,13 +14,6 @@ redis:
       idel: 300
       total: 300
       waitmillis: 1000
-
-mongo:
-  host:
-    port: 9024
-    url: mongo-m.fct.me
-    db: easemob
-    collectionName: sms_log
 
 spring:
   http:
@@ -43,6 +35,6 @@ spring:
 fct:
   domain:
     url: http://test.fangcun.com
-    imageurl: http://img.fangcun.com
-    staticurl:
+    imageurl: http://www.fccdn.cn
+    staticurl: http://static.fangcun.com
     payurl: http://test.pay.fangcun.com

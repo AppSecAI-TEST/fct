@@ -4,7 +4,6 @@ import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;
-import com.fct.member.interfaces.MemberService;
 import com.fct.message.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,7 @@ public class MemberController extends BaseController {
      * @return
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public ReturnValue<MemberLogin> login(String cellphone, String password,
+    public ReturnValue<MemberLogin> login(String cellphone, String password, String platform,
                                           String session_id, String captcha,
                                           String ip, Integer expire_day) {
 
@@ -55,7 +54,7 @@ public class MemberController extends BaseController {
             return  response;
         }
 
-        MemberLogin member = memberService.loginMember(cellphone, password, ip, expire_day);
+        MemberLogin member = memberService.loginMember(cellphone, password, platform, ip, expire_day);
         response.setData(member);
 
         return  response;

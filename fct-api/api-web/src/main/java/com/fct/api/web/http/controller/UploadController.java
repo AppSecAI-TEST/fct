@@ -1,10 +1,10 @@
 package com.fct.api.web.http.controller;
 
+import com.fct.api.web.config.FctConfig;
 import com.fct.common.data.entity.ImageSource;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
-import com.fct.core.utils.HttpUtils;
 import com.fct.core.utils.ReturnValue;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,9 @@ public class UploadController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private FctConfig fctConfig;
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public ReturnValue<Object> uploadImages(HttpServletRequest request){
@@ -83,7 +86,7 @@ public class UploadController {
                 //非编辑器模式，上传的图片
                 if(!StringUtils.isEmpty(action))
                 {
-                    response.setUrl(HttpUtils.thumbnail(response.getUrl()));
+                    response.setUrl(fctConfig.thumbnail(response.getUrl(),200));
                 }
 
                 responseEntity.setData(response);

@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller.mall;
 
+import com.fct.api.web.http.cache.ProductCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by z on 17-6-23.
@@ -24,18 +28,48 @@ public class ShoppingCartController extends BaseController {
     @Autowired
     MallService mallService;
 
+    @Autowired
+    private ProductCache productCache;
+
     /**获取购物车列表
      *
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ReturnValue<List<ShoppingCart>> findCartProducts() {
+    public ReturnValue<Map<String, Object>> findCartProducts() {
 
         MemberLogin member = this.memberAuth();
 
-        List<ShoppingCart> shoppingCarts = mallService.findShoppingCart(member.getMemberId(),0);
-        ReturnValue<List<ShoppingCart>> response = new ReturnValue<>();
-        response.setData(shoppingCarts);
+        Map<String, Object> result = new HashMap<>();
+
+        List<ShoppingCart> lsCart = mallService.findShoppingCart(member.getMemberId(),0);
+        List<Map<String, Object>> lsMap = new ArrayList<>();
+        String productIds = "";
+        if (lsCart != null) {
+            for (ShoppingCart cart:lsCart) {
+
+                productIds += (productIds != "" ? "," : "") + cart.getGoodsId();
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", cart.getId());
+                map.put("goodsId", cart.getGoodsId());
+                map.put("name", cart.getGoods().getName());
+                map.put("img", getImgUrl(cart.getGoods().getImg()));
+                map.put("promotionPrice", cart.getGoods().getPromotionPrice());
+                map.put("price", cart.getGoods().getPrice());
+                map.put("specId", cart.getGoodsSpecId());
+                map.put("specName", cart.getGoods().getSpecName());
+                map.put("stockCount", cart.getGoods().getBuyCount());
+                map.put("buyCount", cart.getBuyCount());
+                lsMap.add(map);
+            }
+        }
+
+        result.put("cartList", lsMap);
+        result.put("likeList", productCache.guessProducts(productIds, 4));
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(result);
 
         return response;
     }
@@ -48,7 +82,7 @@ public class ShoppingCartController extends BaseController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ReturnValue saveCartProduct(Integer product_id, Integer spec_id, Integer buy_number) {
+    public ReturnValue<Integer> saveCartProduct(Integer product_id, Integer spec_id, Integer buy_number) {
 
         product_id = ConvertUtils.toInteger(product_id);
         spec_id = ConvertUtils.toInteger(spec_id);
@@ -56,7 +90,13 @@ public class ShoppingCartController extends BaseController {
 
         MemberLogin member = this.memberAuth();
         mallService.saveShoppingCart(member.getMemberId(), 0, product_id, spec_id, buy_number);
-        return new ReturnValue(200, "添加成功");
+
+
+        ReturnValue<Integer> response = new ReturnValue<>();
+        //返回用户当前购物车数量
+        response.setData(mallService.getShoopingCartCount(member.getMemberId()));
+
+        return response;
 
     }
 

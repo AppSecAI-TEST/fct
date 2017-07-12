@@ -32,5 +32,6 @@
     <dubbo:reference id="mallService" interface="com.fct.mall.interfaces.MallService" timeout="5000" check="false"/>
     <dubbo:reference id="artistservice" interface="com.fct.artist.interfaces.ArtistService" timeout="5000" check="false"/>
     <dubbo:reference id="messageService" interface="com.fct.message.interfaces.MessageService" timeout="5000" check="false"/>
+    <dubbo:reference id="promotionService" interface="com.fct.promotion.interfaces.PromotionService" timeout="5000" check="false"/>
     <dubbo:reference id="commonService" interface="com.fct.common.interfaces.CommonService" timeout="5000" check="false"/>
 </beans>

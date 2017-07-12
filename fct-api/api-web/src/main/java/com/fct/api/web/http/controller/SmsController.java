@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-
 /**
  * Created by z on 17-6-26.
  */
@@ -23,23 +21,26 @@ public class SmsController {
     public ReturnValue sendCaptcha(String cellphone, String session_id, String ip, String action) {
 
         String content = this.getContent(action);
-        if (content == "") {
+        if (content == null) {
             return new ReturnValue(404, "请求来源错误");
         }
 
-        messageService.sendVerifyCode(session_id, cellphone, content, ip, action);
+        messageService.sendVerifyCode(session_id,cellphone,content,
+                ip,action);
 
         return new ReturnValue(200, "验证码发送成功");
     }
 
     protected String getContent(String action) {
 
-        Map<String, String> dict = new HashMap<>();
-        dict.put("login", "快捷登录验证码：{code}");
-        dict.put("register", "注册验证码：{code}");
-        dict.put("forget_password", "找回密码验证码：{code}");
+        switch (action) {
+            case "login":
+                return "{code}为您的登录验证码，5分钟内有效！";
+            case "forget_password":
+                return "{code}为您的找回密码验证码，5分钟内有效！";
+            default:
+                return null;
 
-        return dict.containsKey(action) ? dict.get(action) : "";
-
+        }
     }
 }

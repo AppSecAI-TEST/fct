@@ -4,13 +4,18 @@ import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
+import com.fct.finance.data.entity.MemberAccount;
+import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.OrderGoods;
 import com.fct.mall.data.entity.Orders;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.OrderGoodsDTO;
 import com.fct.mall.interfaces.OrderGoodsResponse;
 import com.fct.mall.interfaces.PageResponse;
+import com.fct.member.data.entity.MemberAddress;
 import com.fct.member.data.entity.MemberLogin;
+import com.fct.promotion.interfaces.dto.OrderProductDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by z on 17-6-29.
@@ -29,7 +37,9 @@ public class OrderController extends BaseController {
 
     @Autowired
     private MallService mallService;
-    private OrderGoods orderGoods;
+
+    @Autowired
+    private FinanceService financeService;
 
     /**获取订单列表
      *
@@ -71,14 +81,87 @@ public class OrderController extends BaseController {
      * @return
      */
     @RequestMapping(value = "order-products", method = RequestMethod.GET)
-    public ReturnValue<OrderGoodsResponse> getOrderProducts(String orderProductInfo) {
+    public ReturnValue<Map<String, Object>> getOrderProducts(String orderProductInfo) {
 
         MemberLogin member = this.memberAuth();
-        List<OrderGoodsDTO> orderProductIds = JsonConverter.toObject(orderProductInfo, List.class);
+
+        List<Map<String, Object>> lsMap = JsonConverter.toObject(orderProductInfo, List.class);
+        List<OrderGoodsDTO> orderProductIds = new ArrayList<>();
+        for (Map<String, Object> map:lsMap) {
+
+            OrderGoodsDTO orderGoodsDTO = new OrderGoodsDTO();
+            orderGoodsDTO.setGoodsId(ConvertUtils.toInteger(map.get("goodsId")));
+            orderGoodsDTO.setSpecId(ConvertUtils.toInteger(map.get("specId")));
+            orderGoodsDTO.setBuyCount(ConvertUtils.toInteger(map.get("buyCount")));
+
+            orderProductIds.add(orderGoodsDTO);
+        }
+
         OrderGoodsResponse lsOrderGoods = mallService.getSubmitOrderGoods(member.getMemberId(), orderProductIds);
 
-        ReturnValue<OrderGoodsResponse> response = new ReturnValue<>();
-        response.setData(lsOrderGoods);
+        //优惠券使用List<OrderProductDTO
+        List<OrderProductDTO> lsOrderProduct = new ArrayList<>();
+        if (lsOrderGoods != null
+                && lsOrderGoods.getItems() != null
+                && StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
+
+            for (OrderGoods orderGoods:lsOrderGoods.getItems()) {
+
+                //设置图片
+                orderGoods.setImg(this.getImgUrl(orderGoods.getImg()));
+
+                OrderProductDTO productDTO = new OrderProductDTO();
+                productDTO.setProductId(orderGoods.getGoodsId());
+                productDTO.setSizeId(orderGoods.getGoodsSpecId());
+                productDTO.setCount(orderGoods.getBuyCount());
+                productDTO.setRealPrice(orderGoods.getPrice());
+                productDTO.setDiscountId(0);
+                productDTO.setSingleCount(0);
+                productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
+                lsOrderProduct.add(productDTO);
+            }
+        }
+
+        //积分余额
+        Integer points = 0;
+        BigDecimal availableAmount = new BigDecimal(0);
+        MemberAccount account = financeService.getMemberAccount(member.getMemberId());
+        if (account != null) {
+            points = account.getPoints();
+            availableAmount = account.getAvailableAmount();
+        }
+        //收货地址
+        Map<String, Object> addressMap = new HashMap<>();
+        MemberAddress address = memberService.getDefaultAddress(member.getMemberId());
+        if (address != null) {
+            addressMap.put("id", address.getId());
+            addressMap.put("name", address.getName());
+            addressMap.put("cellPhone", address.getCellPhone());
+            addressMap.put("province", address.getProvince());
+            addressMap.put("cityId", address.getCityId());
+            addressMap.put("townId", address.getTownId());
+            addressMap.put("address", address.getAddress());
+            addressMap.put("postCode", address.getPostCode());
+        }
+
+        //优惠券封装
+        Map<String, Object> couponMap = new HashMap<>();
+        if (!StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
+
+            couponMap.put("couponCode", lsOrderGoods.getCouponCode());
+            couponMap.put("couponAmount", lsOrderGoods.getCouponAmount());
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("goodsList", lsOrderGoods.getItems());
+        result.put("couponGoodsList", lsOrderProduct);
+        result.put("coupon", couponMap);
+        result.put("points", points);
+        result.put("availableAmount", availableAmount);
+        result.put("address", addressMap);
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(result);
 
         return  response;
     }
@@ -94,7 +177,7 @@ public class OrderController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ReturnValue saveOrder(Integer points, BigDecimal accountAmount,
+    public ReturnValue<String> saveOrder(Integer points, BigDecimal accountAmount,
                                  String orderGoodsInfo, String couponCode,
                                  String remark, Integer addressId) {
 
@@ -105,14 +188,31 @@ public class OrderController extends BaseController {
         addressId = ConvertUtils.toInteger(addressId);
 
         //orderGoodsInfo传json列表，如[{goodsId:1,SpecId:1,buyCount:2}...]
-        List<OrderGoodsDTO>  orderProductIds = JsonConverter.toObject(orderGoodsInfo, List.class);
+        List<Map<String, Object>> lsMap = JsonConverter.toObject(orderGoodsInfo, List.class);
+        List<OrderGoodsDTO> orderProductIds = new ArrayList<>();
+        for (Map<String, Object> map:lsMap) {
+
+            OrderGoodsDTO orderGoodsDTO = new OrderGoodsDTO();
+            orderGoodsDTO.setGoodsId(ConvertUtils.toInteger(map.get("goodsId")));
+            orderGoodsDTO.setSpecId(ConvertUtils.toInteger(map.get("specId")));
+            orderGoodsDTO.setBuyCount(ConvertUtils.toInteger(map.get("buyCount")));
+
+            orderProductIds.add(orderGoodsDTO);
+        }
 
         MemberLogin member = this.memberAuth();
-        mallService.createOrder(member.getMemberId(), member.getUserName(),
+        String orderId = mallService.createOrder(member.getMemberId(), member.getUserName(),
                 0, points, accountAmount, orderProductIds, couponCode,
                 remark, addressId);
 
-        return new ReturnValue(200, "订单创建成功");
+        if (StringUtils.isEmpty(orderId))
+        {
+            return new ReturnValue<String>(404, "订单创建失败");
+        }
+
+        ReturnValue<String> response = new ReturnValue(200, "订单创建成功");
+        response.setData(orderId);
+        return response;
     }
 
     /**取消订单

@@ -44,13 +44,18 @@ public final class DefaultExceptionHandler implements HandlerExceptionResolver {
             logger.info(Exceptions.getStackTraceAsString(ex));
             return JsonModelAndViewBuilder.build(new ErrorMessage(404,ex.getMessage()));
         }
+        else if (ex instanceof NullPointerException) {
+            response.setStatus(200);
+
+            return JsonModelAndViewBuilder.build(new ErrorMessage(404,"数据不存在"));
+        }
         else if (ex instanceof BaseException) {
             response.setStatus(200);
 
             return JsonModelAndViewBuilder.build(new ErrorMessage(1000,ex.getMessage()));
         }
         else {
-            response.setStatus(500);
+            response.setStatus(200);
             logger.info(request.getHeader("request-id") + " " + request.getMethod() + request.getServletPath());
             logger.info(request.getQueryString());
             try {
@@ -60,7 +65,7 @@ public final class DefaultExceptionHandler implements HandlerExceptionResolver {
             }
             logger.info(getHeaderParam(request));
             logger.info(Exceptions.getStackTraceAsString(ex));
-            return JsonModelAndViewBuilder.build(new ErrorMessage("内部错误"));
+            return JsonModelAndViewBuilder.build(new ErrorMessage(500,"内部错误"));
         }
     }
 

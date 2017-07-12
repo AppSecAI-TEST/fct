@@ -1,11 +1,9 @@
 package com.fct.api.web.http.controller.mall;
 
-import com.fct.api.web.config.FctConfig;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
-import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.GoodsGrade;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.PageResponse;
@@ -25,8 +23,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/")
 public class MallController extends BaseController{
-
-    protected Boolean verifyLogin = false;
 
     @Autowired
     private MallService mallService;
@@ -49,16 +45,6 @@ public class MallController extends BaseController{
         Integer pageSize = ConvertUtils.toInteger(page_size);
         pageSize = pageSize > 0 ? pageSize : 20;
 
-        List<GoodsCategory> categories = mallService.findGoodsCategory(0, "", "");
-        List<Map<String,String>> lsCate = new ArrayList<>();
-        for (GoodsCategory cate: categories) {
-            Map<String,String> map = new HashMap<>();
-            map.put("name",cate.getName());
-            map.put("code",cate.getCode());
-
-            lsCate.add(map);
-        }
-
         List<GoodsGrade> goodsGrades = mallService.findGoodsGrade();
         List<Map<String,Object>> lsGrade = new ArrayList<>();
         for (GoodsGrade grade:goodsGrades) {
@@ -69,13 +55,13 @@ public class MallController extends BaseController{
             lsGrade.add(map);
         }
 
-        PageResponse<Goods> goodsList = mallService.findGoods("", categoryId, levelId, 0,
+        PageResponse<Goods> lsGoods = mallService.findGoods("", categoryId, levelId, 0,
                 0,0,0,1,pageIndex, pageSize);
-        PageResponse<Map<String, Object>> productList = new PageResponse<>();
-        if (goodsList.getElements().size() > 0) {
+        PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
+        if (lsGoods != null && lsGoods.getTotalCount() > 0) {
 
-            List<Map<String, Object>> lsGoods = new ArrayList<>();
-            for (Goods goods : goodsList.getElements()) {
+            List<Map<String, Object>> lsMap = new ArrayList<>();
+            for (Goods goods : lsGoods.getElements()) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", goods.getId());
                 map.put("categoryCode", goods.getCategoryCode());
@@ -88,19 +74,18 @@ public class MallController extends BaseController{
                 map.put("viewCount", goods.getViewCount());
                 map.put("commentCount", goods.getCommentCount());
 
-                lsGoods.add(map);
+                lsMap.add(map);
             }
 
-            productList.setElements(lsGoods);
-            productList.setCurrent(goodsList.getCurrent());
-            productList.setTotalCount(goodsList.getTotalCount());
-            productList.setHasMore(goodsList.isHasMore());
+            pageMaps.setElements(lsMap);
+            pageMaps.setCurrent(lsGoods.getCurrent());
+            pageMaps.setTotalCount(lsGoods.getTotalCount());
+            pageMaps.setHasMore(lsGoods.isHasMore());
         }
 
         Map<String,Object> map = new HashMap<>();
-        map.put("categoryList",lsCate);
         map.put("goodsGradeList",lsGrade);
-        map.put("goodsList", productList);
+        map.put("goodsList", pageMaps);
 
         ReturnValue<Map<String,Object>> response = new ReturnValue<>();
         response.setData(map);

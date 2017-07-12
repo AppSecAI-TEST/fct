@@ -74,4 +74,10 @@ public class FctConfig {
     {
         return videoUrl;
     }
+
+    public String thumbnail(String path,int size)
+    {
+        return String.format("%s%s@%dw.jpg",
+                this.imageUrl,path,size);
+    }
 }

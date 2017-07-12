@@ -3,6 +3,7 @@ package com.fct.common.interfaces;
 import com.fct.common.data.entity.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CommonService {
 
@@ -60,5 +61,13 @@ public interface CommonService {
     void saveVideoCategory (VideoCategory category);
 
     void deleteVideoCategory(Integer id);
+
+    String oauthUrl(String redirectURI, String scope);
+
+    String wechatCallback(String code);
+
+    WeChatResponse getUserInfo(String openid);
+
+    WeChatShareResponse jsShare(String url);
 
 }

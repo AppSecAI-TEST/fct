@@ -1,11 +1,9 @@
 package com.fct.common.service;
 
 import com.fct.common.data.entity.*;
-import com.fct.common.interfaces.CommonService;
-import com.fct.common.interfaces.FileRequest;
-import com.fct.common.interfaces.ImageResponse;
-import com.fct.common.interfaces.PageResponse;
+import com.fct.common.interfaces.*;
 import com.fct.common.service.business.*;
+import com.fct.common.service.oauth.WeChat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +26,9 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private VideoCategoryManager videoCategoryManager;
+
+    @Autowired
+    private WeChat weChat;
 
     public PageResponse<Article> findArticle(String title, String categoryCode, Integer status, String startTime,
                                       String endTime, Integer pageIndex, Integer pageSize)
@@ -362,5 +363,25 @@ public class CommonServiceImpl implements CommonService {
         {
             Constants.logger.error(exp.toString());
         }
+    }
+
+    public String oauthUrl(String redirectURI, String scope) {
+
+        return weChat.oauthUrl(redirectURI, scope);
+    }
+
+    public String wechatCallback(String code) {
+
+        return this.wechatCallback(code);
+    }
+
+    public WeChatResponse getUserInfo(String openid) {
+
+        return weChat.getUserInfo(openid);
+    }
+
+    public WeChatShareResponse jsShare(String url) {
+
+        return weChat.jsShare(url);
     }
 }

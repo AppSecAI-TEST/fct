@@ -27,3 +27,8 @@ aliyun:
     accesskeyId: LTAId0h3QAgdPmXT
     accesskeySecret: cLMJrTzs1APvyXehfjOQUsYq66A3Wc
     endpoint: http://oss-cn-shanghai.aliyuncs.com/
+
+oauth:
+  wechat:
+    appId: wx39f1f76373754d3c
+    appSecret: 5acae7250a2c8ba316aa4fb16b1d0146

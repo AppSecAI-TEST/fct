@@ -98,7 +98,7 @@ public class WeChat {
             WeChatUserResponse weChatResponse = new WeChatUserResponse();
             weChatResponse.setOpenid(openId);
             weChatResponse.setNickname(ConvertUtils.toString(result.get("nickname")));
-            weChatResponse.setSex(ConvertUtils.toInteger(result.get("sex")) == 2 ? 1 : 0);
+            weChatResponse.setSex(ConvertUtils.toInteger(result.get("sex")) == 2 ? 0 : 1);
             weChatResponse.setHeadimgurl(ConvertUtils.toString(result.get("headimgurl")));
             weChatResponse.setUnionid(ConvertUtils.toString(result.get("unionid")));
             weChatResponse.setContry(ConvertUtils.toString(result.get("contry")));

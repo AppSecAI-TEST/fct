@@ -22,6 +22,7 @@
         <h3>欢迎使用 管理后台</h3>
 
         <form class="m-t" role="form" action="" id="loginform">
+            <input type="hidden" th:value="${host}" name="host">
             <input type="hidden" name="returnurl" th:value="${returnurl}">
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="手机号码" name="cellphone" required="">

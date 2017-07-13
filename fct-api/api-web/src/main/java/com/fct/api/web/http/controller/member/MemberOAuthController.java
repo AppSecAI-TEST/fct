@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by z on 17-7-12.
  */
 @RestController
-@RequestMapping(value = "oauth")
+@RequestMapping(value = "/member/oauth")
 public class MemberOAuthController extends BaseController {
 
     @Autowired
@@ -34,6 +34,7 @@ public class MemberOAuthController extends BaseController {
     public ReturnValue<String> getOAuthUrl(String callback_url) {
 
         String url = commonService.oAuthURL(callback_url, "snsapi_userinfo");
+
         ReturnValue<String> response = new ReturnValue<>();
         response.setData(url);
 

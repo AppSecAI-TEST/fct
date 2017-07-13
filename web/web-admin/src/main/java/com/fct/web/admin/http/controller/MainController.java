@@ -1,5 +1,7 @@
 package com.fct.web.admin.http.controller;
 
+import com.fct.common.data.entity.Article;
+import com.fct.common.interfaces.CommonService;
 import com.fct.core.exceptions.Exceptions;
 import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 @Controller
@@ -33,8 +37,14 @@ public class MainController {
     @Autowired
     private FctConfig fctConfig;
 
+    @Autowired
+    private CommonService commonService;
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request,String returnurl,Model model) {
+
+
+        String ss = commonService.oAuthURL("ss","s");
 
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);
@@ -79,9 +89,11 @@ public class MainController {
     public String sendCode(HttpServletRequest request, HttpServletResponse response,String cellphone) {
         //String sessionId,String cellPhone,String content,String ip,String action
         //将sessionId写入cookie,1分钟有效;
+        cellphone = ConvertUtils.toString(cellphone);
 
         String sessionId = UUIDUtil.generateUUID();
-        if (StringUtils.isEmpty(cellphone))
+        if (StringUtils.isEmpty(cellphone) || !org.apache.commons.lang3.StringUtils.isNumeric(cellphone)
+                || cellphone.length()!=11)
         {
             return AjaxUtil.alert("手机号码为空。");
         }
@@ -94,7 +106,7 @@ public class MainController {
                 return AjaxUtil.alert("手机号码不存在。");
             }
 
-            CookieUtil.addCookie(request,response,"sessionId",sessionId,1);
+            CookieUtil.addCookie(request,response,"sessionId",sessionId,5);
 
             CookieUtil.addCookie(request,response,"sendCodeTime",
                     DateUtils.format(DateUtils.addMinute(new Date(),1)),1);
@@ -109,6 +121,7 @@ public class MainController {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
+            AjaxUtil.alert("系统出错或网络异常。");
         }
 
         return AjaxUtil.eval("time = 60;setInterval(ChangeTime, 1000);JQbox.alert('发送成功');");
@@ -166,7 +179,7 @@ public class MainController {
         }
         if(StringUtils.isEmpty(returnurl))
         {
-            returnurl = "/orders";
+            returnurl = "/order";
         }
         return AjaxUtil.goUrl(returnurl,"登录成功。");
     }

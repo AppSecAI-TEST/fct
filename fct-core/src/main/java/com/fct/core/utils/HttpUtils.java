@@ -86,9 +86,12 @@ public class HttpUtils {
 
             String host = url.getHost();// 获取主机名
 
-            host = host.substring(host.indexOf('.')+1);
+            int start = host.lastIndexOf('.');//倒数第二个"."后的位置
+            String domain = host.substring(0,start);
+            domain = domain.substring(domain.lastIndexOf('.'));
+            domain += host.substring(start);
 
-            return host;
+            return domain;
         }
         catch (MalformedURLException exp)
         {

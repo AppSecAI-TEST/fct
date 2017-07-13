@@ -4,12 +4,6 @@ server:
   tomcat:
     uri-encoding: UTF-8
 
-mysql:
-  connection:
-    url: jdbc:mysql://116.62.219.91:3306/fct?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&rewriteBatchedStatements=TRUE&zeroDateTimeBehavior=convertToNull
-    username: fct
-    password: lf6pQJW2wguBq5hZ
-
 pay:
   wxpay_fctwap:
     key:  40030613ae6f219923c3634e047abe4e

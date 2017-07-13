@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Created by jon on 2017/4/7.
  */
 @EnableAutoConfiguration
+@Configuration
 public class RedisConfig {
 
     @Bean

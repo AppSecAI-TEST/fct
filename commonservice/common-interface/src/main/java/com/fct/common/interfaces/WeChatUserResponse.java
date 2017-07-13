@@ -2,11 +2,13 @@ package com.fct.common.interfaces;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * Created by z on 17-7-12.
  */
 @Data
-public class WeChatUserResponse {
+public class WeChatUserResponse implements Serializable {
 
     //用户的唯一标识
     private String openid;

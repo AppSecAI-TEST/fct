@@ -8,17 +8,17 @@ pay:
   wxpay_fctwap:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1405964802
-    notifyurl:  http://pay.fangcun.com/mobile/wxpay/notify
-    cert_path:  /usr/local/fct/cert/wxpay/fctwap/1405964802_cert.p12
+    notifyurl:  http://test.pay.fangcuntang.com/mobile/wxpay/notify
+    cert_path:  /usr/local/cert/wxpay/fctwap/1405964802_cert.p12
     cert_password:  1405964802
-    appid:  wx5b63ee784fa7fc96
-    appsecret:  d70744148ac1f943f844caa175f8ee73
+    appid:  wx39f1f76373754d3c
+    appsecret:  5acae7250a2c8ba316aa4fb16b1d0146
 
   wxpay_fctapp:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1442883002
-    notifyurl:  http://pay.fangcun.com/mobile/wxpay/appnotify
-    cert_path:  /usr/local/fct/cert/wxpay/fctapp/1442883002_cert.p12
+    notifyurl:  http://teste.pay.fangcuntang.com/mobile/wxpay/appnotify
+    cert_path:  /usr/local/cert/wxpay/fctapp/1442883002_cert.p12
     cert_password:  1442883002
     appid:  wx7c866f046dab34b8
     appsecret:  7b6d038c11400a323bbd7f7849021159
@@ -26,22 +26,22 @@ pay:
   alipay_fctapp:
     partner:  2088621198090730
     key:  alhanc3pys7dm7o1vqdmtv5bzjj1kpvj
-    selleraccount:  pay@fct.com
+    selleraccount:  pay@fangcun.com
     notifyurl:  http://pay.fangcun.com/mobile/alipay/appnotify
-    privatekey_path:  /cert/alipay/rsa_private_key.pem
-    publickey_path:  /cert/alipay/rsa_public_key.pem
+    privatekey_path:  /usr/local/cert/alipay/rsa_private_key.pem
+    publickey_path:  /usr/local/cert/alipay/rsa_public_key.pem
 
   unionpay_fctwap:
     meriId: 777290058148557
     frontTransUrl: https://gateway.test.95516.com/gateway/api/frontTransReq.do?
     backTransUrl: https://gateway.test.95516.com/gateway/api/backTransReq.do?
-    encryptCert_path:  /usr/local/fct/cert/unionpay/fctwap/acp_test_enc.cer
-    signCert_path:  /usr/local/fct/cert/unionpay/fctwap/700000000000001_acp.pfx
+    encryptCert_path:  /usr/local/cert/unionpay/fctwap/acp_test_enc.cer
+    signCert_path:  /usr/local/cert/unionpay/fctwap/700000000000001_acp.pfx
     signCert_pwd: 000000
-    validateCert_dir: /usr/local/fct/cert/unionpay/fctwap
-    backUrl:  http://pay.fangcun.com/mobile/unionpay/notify
-    frontUrl: http://pay.fangcun.com/mobile/unionpay/callback
-    refund_backUrl: http://pay.fangcun.com/mobile/unionpay/refundnotify
+    validateCert_dir: /usr/local/cert/unionpay/fctwap
+    backUrl:  http://test.pay.fangcuntang.com/mobile/unionpay/notify
+    frontUrl: http://test.pay.fangcuntang.com/mobile/unionpay/callback
+    refund_backUrl: http://test.pay.fangcuntang.com/mobile/unionpay/refundnotify
 
   platform_ids:
     wxpay_appids: wxpay_fctwap#wx5b63ee784fa7fc96|wxpay_fctapp#wx7c866f046dab34b8

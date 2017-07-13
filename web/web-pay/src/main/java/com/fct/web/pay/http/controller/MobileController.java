@@ -116,7 +116,7 @@ public class MobileController extends BaseController{
         {
             return "redirect:"+callback;
         }
-        if (memberId != currentUser.getMemberId()) {
+        if (!memberId.equals(currentUser.getMemberId())) {
             //出错跳转
             return errorPage("非法用户操作");
         }

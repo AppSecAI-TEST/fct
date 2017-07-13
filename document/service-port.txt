@@ -8,3 +8,4 @@ promotionservice    8086    20806
 commonservice       8087    20807
 artistservice       8088    20808
 
+nohup java -Dspring.profiles.active=de -jar fct-jobtracker.jar > jobtracker.out 2>&1 &

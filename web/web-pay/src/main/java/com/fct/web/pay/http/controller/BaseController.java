@@ -35,6 +35,7 @@ public class BaseController {
 
         currentUser = new MemberLogin();
         currentUser.setMemberId(1);
+        currentUser.setCellPhone("13816619868");
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);

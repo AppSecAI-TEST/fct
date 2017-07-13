@@ -22,6 +22,12 @@ public class SettlementController extends BaseController {
     @Autowired
     private FinanceService financeService;
 
+    /**结算列表
+     *
+     * @param page_index
+     * @param page_size
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET)
     public ReturnValue<PageResponse<SettleRecord>> findWithdraws(Integer page_index, Integer page_size) {
 
@@ -38,4 +44,5 @@ public class SettlementController extends BaseController {
 
         return response;
     }
+
 }

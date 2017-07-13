@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +51,12 @@ public class RechargeController extends BaseController {
         return response;
     }
 
+    /**保存用户充值申请
+     *
+     * @param pay_amount
+     * @param gift_amount
+     * @return
+     */
     @RequestMapping(method = RequestMethod.POST)
     public ReturnValue saveRecharge(BigDecimal pay_amount, BigDecimal gift_amount) {
 
@@ -68,13 +76,29 @@ public class RechargeController extends BaseController {
         return new ReturnValue(200, "充值成功");
     }
 
+    /**充值申请数据
+     *
+     * @return
+     */
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public ReturnValue<List<Map<String, Object>>> createRecharge()
+    public ReturnValue<Map<Integer, String>> createRecharge()
     {
         MemberLogin member = this.memberAuth();
 
-        //充值数据
+        Map<Integer, String> map = new HashMap<>();
+        map.put(500, "送500,可得1000元。");
+        map.put(1000, "送1000,可得2000元。");
+        map.put(2000, "送2000,可得4000元。");
+        map.put(3000, "送3000,可得6000元。");
+        map.put(5000, "送5000,可得10000元。");
+        map.put(6000, "送6000,可得12000元。");
+        map.put(8000, "送8000,可得16000元。");
+        map.put(10000, "送10000,可得20000元。");
 
-        return new ReturnValue<List<Map<String, Object>>>();
+        //充值数据
+        ReturnValue<Map<Integer, String>> response = new ReturnValue<>();
+        response.setData(map);
+
+        return response;
     }
 }

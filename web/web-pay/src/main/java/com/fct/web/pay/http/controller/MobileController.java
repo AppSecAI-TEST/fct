@@ -335,9 +335,15 @@ public class MobileController extends BaseController{
         String gourl ="";
         try {
             PayOrder payOrder = financeService.getPayOrderByTrade(tradetype,tradeid);
-            if(payOrder == null ||payOrder.getPayTime() == null)
+            if(payOrder == null)
             {
                 return errorPage("支付参数错误，非法请求。");
+            }
+            if(payOrder.getStatus() ==3){
+                return errorPage("支付余额不足本次交易，所发生的现金系统将会在3个工作日内返回。");
+            }
+            if(payOrder.getStatus() != 1) {
+                return errorPage("支付过程中发生错误：code:"+payOrder.getStatus());
             }
             switch (payOrder.getTradeType())
             {

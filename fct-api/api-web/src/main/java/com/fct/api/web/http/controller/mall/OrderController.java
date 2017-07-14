@@ -32,7 +32,7 @@ import java.util.Map;
  * Created by z on 17-6-29.
  */
 @RestController
-@RequestMapping(value = "orders")
+@RequestMapping(value = "/mall/orders")
 public class OrderController extends BaseController {
 
     @Autowired
@@ -59,7 +59,7 @@ public class OrderController extends BaseController {
             order_id = "";
         }
 
-        status = ConvertUtils.toInteger(status);
+        status = ConvertUtils.toInteger(status, -1);
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
 
@@ -71,6 +71,25 @@ public class OrderController extends BaseController {
 
         ReturnValue<PageResponse<Orders>> response = new ReturnValue<>();
         response.setData(lsOrder);
+
+        return  response;
+    }
+
+    /**订单详情
+     *
+     * @param order_id
+     * @return
+     */
+    @RequestMapping(value = "{order_id}", method = RequestMethod.GET)
+    public ReturnValue<Orders> getOrder(@PathVariable("order_id") String order_id) {
+
+        order_id = ConvertUtils.toString(order_id);
+
+        MemberLogin member = this.memberAuth();
+        Orders orders = mallService.getOrders(order_id);
+
+        ReturnValue<Orders> response = new ReturnValue<>();
+        response.setData(orders);
 
         return  response;
     }
@@ -220,20 +239,6 @@ public class OrderController extends BaseController {
      * @param order_id
      * @return
      */
-    @RequestMapping(value = "{order_id}", method = RequestMethod.GET)
-    public ReturnValue<Orders> getOrder(@PathVariable("order_id") String order_id) {
-
-        order_id = ConvertUtils.toString(order_id);
-
-        MemberLogin member = this.memberAuth();
-        Orders orders = mallService.getOrders(order_id);
-
-        ReturnValue<Orders> response = new ReturnValue<>();
-        response.setData(orders);
-
-        return  response;
-    }
-
     @RequestMapping(value = "{order_id}/cancel", method = RequestMethod.POST)
     public ReturnValue cancelOrder(@PathVariable("order_id") String order_id) {
 

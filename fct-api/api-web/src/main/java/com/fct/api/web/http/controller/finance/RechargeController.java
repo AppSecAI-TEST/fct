@@ -8,6 +8,7 @@ import com.fct.finance.interfaces.FinanceService;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ import java.util.Map;
  * Created by z on 17-6-30.
  */
 @RestController
-@RequestMapping(value = "recharges")
+@RequestMapping(value = "/finance/recharges")
 public class RechargeController extends BaseController {
 
     @Autowired
@@ -35,7 +36,7 @@ public class RechargeController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<RechargeRecord>> findRecharges(Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<RechargeRecord>> findRecharge(Integer page_index, Integer page_size) {
 
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
@@ -47,6 +48,28 @@ public class RechargeController extends BaseController {
 
         ReturnValue<PageResponse<RechargeRecord>> response = new ReturnValue<>();
         response.setData(lsRecharge);
+
+        return response;
+    }
+
+    /**充值详情
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ReturnValue<RechargeRecord> getRecharge(@PathVariable("id") Integer id) {
+
+        MemberLogin member = this.memberAuth();
+
+        RechargeRecord recharge = financeService.getRechargeRecord(id);
+        if (recharge != null && !recharge.getMemberId().equals(member.getMemberId())) {
+
+            return new ReturnValue<RechargeRecord>(404, "请求错误");
+        }
+
+        ReturnValue<RechargeRecord> response = new ReturnValue<>();
+        response.setData(recharge);
 
         return response;
     }

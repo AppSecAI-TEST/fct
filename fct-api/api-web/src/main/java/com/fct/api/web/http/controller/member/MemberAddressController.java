@@ -15,7 +15,7 @@ import java.util.List;
  * Created by z on 17-7-10.
  */
 @RestController
-@RequestMapping(value = "address")
+@RequestMapping(value = "/member/address")
 public class MemberAddressController extends BaseController {
 
 

@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by z on 17-7-11.
  */
 @RestController
-@RequestMapping(value = "wiki")
+@RequestMapping(value = "/wiki")
 public class WikiController extends BaseController {
 
     @Autowired

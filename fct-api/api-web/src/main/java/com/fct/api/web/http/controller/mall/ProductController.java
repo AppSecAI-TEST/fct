@@ -8,6 +8,7 @@ import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.interfaces.MallService;
+import com.fct.mall.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.DiscountProductDTO;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(value = "/mall/products")
 public class ProductController extends BaseController {
 
     @Autowired
@@ -42,6 +43,30 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductCache productCache;
+
+    /**获取可分享的产品
+     *
+     * @param category_code
+     * @param name
+     * @param page_index
+     * @param page_size
+     * @return
+     */
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public ReturnValue<PageResponse<Goods>> findShareProduct(String category_code, String name,
+                                                      Integer page_index, Integer page_size) {
+
+        page_index = ConvertUtils.toPageIndex(page_index);
+        page_size = ConvertUtils.toInteger(page_size, 20);
+
+        PageResponse<Goods> pageResponse = mallService.findGoods(name, category_code, 0,
+                0, 0, 0, 0, 1, page_index, page_size);
+
+        ReturnValue<PageResponse<Goods>> response = new ReturnValue<>();
+        response.setData(pageResponse);
+
+        return response;
+    }
 
     /**获取产品详情
      *

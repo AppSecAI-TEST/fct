@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by z on 17-7-3.
  */
 @RestController
-@RequestMapping(value = "/products/categories")
+@RequestMapping(value = "/mall/products/categories")
 public class ProductCategoryController extends BaseController {
 
     @Autowired

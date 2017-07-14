@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by z on 17-6-30.
  */
 @RestController
-@RequestMapping(value = "settlements")
+@RequestMapping(value = "/finance/settlements")
 public class SettlementController extends BaseController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class SettlementController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<SettleRecord>> findWithdraws(Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<SettleRecord>> findWithdraw(Integer page_index, Integer page_size) {
 
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);

@@ -19,7 +19,7 @@ import java.util.List;
  * Created by z on 17-6-30.
  */
 @RestController
-@RequestMapping(value = "coupons")
+@RequestMapping(value = "/promotion/coupons")
 public class CouponController extends BaseController {
 
     @Autowired
@@ -70,7 +70,7 @@ public class CouponController extends BaseController {
     @RequestMapping(value = "by-member", method = RequestMethod.GET)
     public ReturnValue<List<CouponCodeDTO>> findMemberCoupons(Integer status) {
 
-        status = ConvertUtils.toInteger(status);
+        status = ConvertUtils.toInteger(status,-1);
 
         MemberLogin member = this.memberAuth();
         List<CouponCodeDTO> lsCoupon = promotionService.findMemberCouponCode(0, member.getMemberId(),

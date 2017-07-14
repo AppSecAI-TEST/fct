@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by z on 17-6-23.
  */
 @RestController
-@RequestMapping(value = "carts")
+@RequestMapping(value = "/mall/carts")
 public class ShoppingCartController extends BaseController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class ShoppingCartController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ReturnValue<Map<String, Object>> findCartProducts() {
 
         MemberLogin member = this.memberAuth();
@@ -81,7 +81,7 @@ public class ShoppingCartController extends BaseController {
      * @param buy_number
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ReturnValue<Integer> saveCartProduct(Integer product_id, Integer spec_id, Integer buy_number) {
 
         product_id = ConvertUtils.toInteger(product_id);

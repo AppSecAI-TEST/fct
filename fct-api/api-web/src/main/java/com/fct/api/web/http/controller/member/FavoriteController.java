@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by z on 17-7-5.
  */
 @RestController
-@RequestMapping(value = "favorites")
+@RequestMapping(value = "/member/favorites")
 public class FavoriteController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)

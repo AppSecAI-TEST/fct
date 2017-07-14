@@ -20,7 +20,7 @@ import java.util.Map;
  * Created by z on 17-6-30.
  */
 @RestController
-@RequestMapping(value = "/materials")
+@RequestMapping(value = "/mall/materials")
 public class ProductMaterialController extends BaseController {
 
     @Autowired

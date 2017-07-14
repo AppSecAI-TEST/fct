@@ -21,7 +21,7 @@ import java.util.Map;
  * Created by z on 17-6-23.
  */
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/mall")
 public class MallController extends BaseController{
 
     @Autowired

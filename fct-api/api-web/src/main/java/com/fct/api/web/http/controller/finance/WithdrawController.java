@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by z on 17-6-30.
  */
 @RestController
-@RequestMapping(value = "withdraws")
+@RequestMapping(value = "/finance/withdraws")
 public class WithdrawController extends BaseController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class WithdrawController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<WithdrawRecord>> findWithdraws(Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<WithdrawRecord>> findWithdraw(Integer page_index, Integer page_size) {
 
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);

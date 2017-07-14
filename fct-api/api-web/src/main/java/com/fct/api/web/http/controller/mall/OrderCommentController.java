@@ -27,8 +27,8 @@ import java.util.Map;
  *
  */
 @RestController
-@RequestMapping(value = "/order/comments")
-public class ProductCommentController extends BaseController {
+@RequestMapping(value = "/mall/order/comments")
+public class OrderCommentController extends BaseController {
 
     @Autowired
     private MallService mallService;
@@ -62,11 +62,11 @@ public class ProductCommentController extends BaseController {
      * @param express_score
      * @param has_anonymous
      * @param sale_score
-     * @param productInfo
+     * @param product_info
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ReturnValue saveComment(String order_id, Integer express_score, Integer has_anonymous, Integer sale_score, String productInfo) {
+    public ReturnValue saveComment(String order_id, Integer express_score, Integer has_anonymous, Integer sale_score, String product_info) {
         //[{goodsId:1, descScore:5, content:xxx, picture:xxxx},...]
 
         order_id = ConvertUtils.toString(order_id);
@@ -76,7 +76,7 @@ public class ProductCommentController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
-        List<OrderComment> lsComment = JsonConverter.toObject(productInfo, List.class);
+        List<OrderComment> lsComment = JsonConverter.toObject(product_info, List.class);
 
         mallService.createOrderCommment(order_id, has_anonymous, express_score, sale_score, lsComment);
 

@@ -10,7 +10,7 @@ redis:
     port: 6379
     test:
       onborrow: true
-    max:
+    max:`                                                                                                                                                                                                                                                                                                           `
       idel: 300
       total: 300
       waitmillis: 1000

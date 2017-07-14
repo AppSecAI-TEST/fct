@@ -1,0 +1,17 @@
+server:
+  port: 8089
+  contextPath: /payweb
+  tomcat:
+    uri-encoding: UTF-8
+
+redis:
+  host:
+    url: 127.0.0.1
+    port: 6379
+    test:
+      onborrow: true
+    max:
+      idel: 300
+      total: 300
+      waitmillis: 1000
+

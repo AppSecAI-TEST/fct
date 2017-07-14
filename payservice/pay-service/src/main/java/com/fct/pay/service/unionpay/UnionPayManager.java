@@ -191,7 +191,7 @@ public class UnionPayManager {
         {
             //Response.Write("商户端验证返回报文签名成功\n");
             String respcode = map.get("respCode"); //00、A6为成功，其余为失败。其他字段也可按此方式获取。
-            if(respcode =="00") {
+            if(respcode.equals("00")) {
                 //交易成功，请填写自己的业务代码
                 notify.setHasError(false);
                 notify.setPayOrderNo(map.get("orderId"));

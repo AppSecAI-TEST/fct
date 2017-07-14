@@ -12,12 +12,12 @@ import javax.transaction.Transactional;
  */
 public interface CouponSpareCodeRepository extends JpaRepository<CouponSpareCode, Integer> {
 
-    @Query(nativeQuery = true, value = "select * from CouponSpareCode where Status =0 order by Id limit 1")
+    @Query(nativeQuery = true, value = "select * from CouponSpareCode where status =0 order by Id limit 1")
     CouponSpareCode getTopOne();
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true, value = "update CouponSpareCode set Status =1 where code=?1")
+    @Query(nativeQuery = true, value = "update CouponSpareCode set status =1 where code=?1")
     void updateByCode(String code);
 
     @Query(nativeQuery = true, value = "select * from CouponSpareCode where code =?1 and status=1 limit 1")

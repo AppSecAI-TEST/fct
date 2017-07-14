@@ -23,6 +23,6 @@ public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Inte
     @Query(nativeQuery = true, value = "update CouponPolicy set GenerateStatus=1 where Id=?1")
     void updateGenerateStatus(Integer policyId);
 
-    @Query(nativeQuery = true, value = "select * from CouponPolicy where FetchType = 1 and Status = 1 and GenerateStatus = 0 order by id desc limit 100")
+    @Query(nativeQuery = true, value = "select * from CouponPolicy where FetchType = 1 and auditStatus = 1 and GenerateStatus = 0 order by id desc limit 100")
     List<CouponPolicy> findNeedGenerate();
 }

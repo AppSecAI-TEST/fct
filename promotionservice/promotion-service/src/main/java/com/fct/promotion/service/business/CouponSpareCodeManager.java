@@ -1,5 +1,6 @@
 package com.fct.promotion.service.business;
 
+import com.fct.core.utils.StringHelper;
 import com.fct.promotion.data.entity.CouponSpareCode;
 import com.fct.promotion.data.repository.CouponSpareCodeRepository;
 import com.fct.promotion.service.Constants;
@@ -55,15 +56,7 @@ public class CouponSpareCodeManager {
     Integer getCount()
     {
         return couponSpareCodeRepository.getCount();
-
     }
-
-
-    private Integer getNewCode()
-    {
-        return new Random().nextInt(99999999);
-    }
-
 
     int limitCount = 100000;
 
@@ -81,7 +74,7 @@ public class CouponSpareCodeManager {
             int i = 0;
             while (i < count)
             {
-                String code = getNewCode().toString();
+                String code = StringHelper.getRandomNumber(8);
                 try
                 {
                     //数据库唯一键约束保证券码不重复

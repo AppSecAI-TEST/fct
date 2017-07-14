@@ -94,17 +94,28 @@ public class StringHelper {
     {
         Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
         Long seconds = DateUtils.compareDate(new Date(),time);
-        Integer ranCode = new Random().nextInt(99999);
         return DateUtils.getNowDateStr("yyMMdd")+padLeft(seconds.toString(),5,"0")+
-                ranCode;
+                getRandomString(5);
     }
 
     public static String generatePayOrderId()
     {
         Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
         Long seconds = DateUtils.compareDate(new Date(),time);
-        Integer ranCode = new Random().nextInt(99999);
         return padLeft(seconds.toString(),5,"1")+DateUtils.getNowDateStr("yyMMdd")+
-                ranCode;
+                getRandomString(5);
+    }
+
+    public static String getRandomNumber(int length)
+    {
+        String bound = "";
+        for(int i=0;i<length;i++)
+        {
+            bound +="9";
+        }
+
+        Integer ranCode = new Random().nextInt(Integer.valueOf(bound));
+
+        return String.format("%0"+length+"d", ranCode);
     }
 }

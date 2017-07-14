@@ -1,6 +1,7 @@
 package com.fct.message.service;
 
 import com.fct.core.utils.DateUtils;
+import com.fct.core.utils.StringHelper;
 import com.fct.message.data.entity.VerifyCode;
 import com.fct.message.data.repository.VerifyCodeRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -86,11 +87,10 @@ public class VerifyCodeManager {
         }
         else
         {
-            Integer ranCode = new Random().nextInt(999999);
             vc = new VerifyCode();
             vc.setSessionId(sessionId);
             vc.setCellPhone(cellPhone);
-            vc.setCode(ranCode.toString());
+            vc.setCode(StringHelper.getRandomNumber(6));
             vc.setExpireTime(DateUtils.addMinute(new Date(),5));
             vc.setCreateTime(new Date());
 

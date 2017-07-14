@@ -28,7 +28,6 @@ public class RefundNotifyTask {
     /**
      * 原路退款至第三方支付平台，每天2点与16点各执行一次
      * */
-
     @Scheduled(cron = "0 0 2,16 * * ?")
     public void doWork()
     {

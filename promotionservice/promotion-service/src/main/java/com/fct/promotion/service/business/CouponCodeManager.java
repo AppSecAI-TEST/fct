@@ -210,6 +210,8 @@ public class CouponCodeManager {
             obj.setStatus(0);
             obj.setCode(code);
             obj.setCreateTime(new Date());
+            obj.setLastUpdateTime(new Date());
+            obj.setMemberId(0);
             this.save(obj);
 
         }

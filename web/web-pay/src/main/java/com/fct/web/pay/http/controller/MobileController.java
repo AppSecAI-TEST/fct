@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -302,10 +303,14 @@ public class MobileController extends BaseController{
         {
             return errorPage("支付参数错误，非法请求。");
         }
-        payurl = URLDecoder.decode(payurl);
+
         try {
             PayOrder payOrder = financeService.getPayOrder(orderid);
             if(payOrder !=null && payOrder.getStatus()==0) {
+                if(!payOrder.getPayPlatform().contains("unionpay"))
+                {
+                    payurl = URLDecoder.decode(payurl);
+                }
                 model.addAttribute("payurl", payurl);
                 model.addAttribute("platform", payOrder.getPayPlatform());
             }

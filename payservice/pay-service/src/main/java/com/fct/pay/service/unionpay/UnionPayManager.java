@@ -36,8 +36,12 @@ public class UnionPayManager {
         SDKConfig.setBackTransUrl(config.get("backTransUrl"));
         SDKConfig.setEncryptCertPath(config.get("encryptCert_path"));
         SDKConfig.setSignCertPath(Constants.getProjectPath()+config.get("signCert_path"));
-        //SDKConfig.setSignCertPwd(config.get("signCert_pwd"));
-        SDKConfig.setSignCertPwd("000000");
+        String signCertpwd = config.get("signCert_pwd");
+        if(signCertpwd == "0")
+            signCertpwd = "000000";
+
+        SDKConfig.setSignCertPwd(signCertpwd);
+
         SDKConfig.setValidateCertDir(Constants.getProjectPath()+config.get("validateCert_dir"));
         SDKConfig.setBackUrl(config.get("backUrl"));
         SDKConfig.setFrontUrl(config.get("frontUrl"));
@@ -187,13 +191,20 @@ public class UnionPayManager {
         {
             //Response.Write("商户端验证返回报文签名成功\n");
             String respcode = map.get("respCode"); //00、A6为成功，其余为失败。其他字段也可按此方式获取。
-            //交易成功，请填写自己的业务代码
-            notify.setHasError(false);
-            notify.setPayOrderNo(map.get("orderId"));
-            notify.setExtandProperties(map);
-            notify.setPayPlatform(payment);
+            if(respcode =="00") {
+                //交易成功，请填写自己的业务代码
+                notify.setHasError(false);
+                notify.setPayOrderNo(map.get("orderId"));
+                notify.setExtandProperties(map);
+                notify.setPayPlatform(payment);
 
-            LogUtil.writeMessage("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
+                LogUtil.writeMessage("支付订单（" + notify.getPayOrderNo() + "）处理成功。");
+            }
+            else
+            {
+                notify.setHasError(true);
+                notify.setErrorMessage("银联无线支付平台支付失败： "+respcode);
+            }
         }
         else
         {

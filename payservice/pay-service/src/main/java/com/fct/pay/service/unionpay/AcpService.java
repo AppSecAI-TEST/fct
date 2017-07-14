@@ -65,15 +65,24 @@ public class AcpService {
 		
 		try {
 			// 验证签名需要用银联发给商户的公钥证书.
+
+			LogUtil.writeLog("准备校验签名....");
+
 			return SecureUtil.validateSignBySoft(CertUtil
 					.getValidateKey(certId), SecureUtil.base64Decode(stringSign
 					.getBytes(encoding)), SecureUtil.sha1X16(stringData,
 					encoding));
 		} catch (UnsupportedEncodingException e) {
 			LogUtil.writeErrorLog(e.getMessage(), e);
+
+			LogUtil.writeLog("准备校验签名UnsupportedEncodingException...."+e.toString());
+
 		} catch (Exception e) {
 			LogUtil.writeErrorLog(e.getMessage(), e);
+
+			LogUtil.writeLog("准备校验签名Exception...."+e.toString());
 		}
+		LogUtil.writeLog("准备校验签名结束....");
 		return false;
 	}
 	

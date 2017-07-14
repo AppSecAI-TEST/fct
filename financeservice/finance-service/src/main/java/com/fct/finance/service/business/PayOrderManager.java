@@ -338,7 +338,7 @@ public class PayOrderManager  {
     {
         MQPaySuccess mq = new MQPaySuccess();
 
-        mq.setPay_time(pay.getPayTime().toString());
+        mq.setPay_time(DateUtils.format(pay.getPayTime()));
         mq.setPay_status(payStatus.getValue()==1 ? 200 :1000);
         mq.setPay_orderid(pay.getOrderId());
         mq.setPay_platform(pay.getPayPlatform());

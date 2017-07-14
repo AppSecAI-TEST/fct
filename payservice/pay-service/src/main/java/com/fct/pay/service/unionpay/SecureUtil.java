@@ -15,6 +15,7 @@
  */
 package com.fct.pay.service.unionpay;
 
+import com.fct.core.json.JsonConverter;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;

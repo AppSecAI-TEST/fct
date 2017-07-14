@@ -81,19 +81,21 @@ public class UnionpayController {
         }
     }
 
-    @RequestMapping(value = "/callback", method = RequestMethod.GET)
+    @RequestMapping(value = "/callback", method = RequestMethod.POST)
     public String callback(HttpServletRequest request,HttpServletResponse response) {
 
         String successUrl = "";
         try
         {
-            Map<String, String> dicParam = Constants.getAllRequestParam(request,true);
-
-            if (dicParam != null && dicParam.size()>0)
+            if (request.getInputStream() != null)
             {
-                Constants.logger.info("unionpayMobileCallbackXML:" + JsonConverter.toJson(dicParam));
+                BufferedReader br=new BufferedReader(new InputStreamReader(request.getInputStream(),"utf-8"));
 
-                PayNotify payNotify = mobilePayService.unionpayCallBack(dicParam);
+                String requestXml = br.readLine();
+
+                Constants.logger.info("unionpayMobileCallbackXML:" + requestXml);
+
+                PayNotify payNotify = mobilePayService.unionpayCallBack(Constants.getRequestData(requestXml,true));
 
                 if (payNotify != null && !payNotify.getHasError())
                 {

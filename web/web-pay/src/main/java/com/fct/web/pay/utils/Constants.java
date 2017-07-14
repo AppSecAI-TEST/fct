@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,6 +80,7 @@ public class Constants {
                     String value = temp[1];
                     if (urlDecode) {
                         value = new String(value.getBytes("utf-8"), "utf-8");
+                        value = URLDecoder.decode(value,"utf-8");
                     }
                     sArray.put(temp[0], value);
                 }

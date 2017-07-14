@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -336,6 +335,10 @@ public class MobileController extends BaseController{
         String gourl ="";
         try {
             PayOrder payOrder = financeService.getPayOrderByTrade(tradetype,tradeid);
+            if(payOrder == null ||payOrder.getPayTime() == null)
+            {
+                return errorPage("支付参数错误，非法请求。");
+            }
             switch (payOrder.getTradeType())
             {
                 case "buy":

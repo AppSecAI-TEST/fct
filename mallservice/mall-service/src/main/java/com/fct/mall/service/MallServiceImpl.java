@@ -402,6 +402,18 @@ public class MallServiceImpl implements MallService {
         return null;
     }
 
+    public Orders getAloneOrders(String orderId)
+    {
+        try {
+            return ordersManager.findOne(orderId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public void offPaySuccess(String orderId, String payPlatform, Integer operatorId) {
 
         try {

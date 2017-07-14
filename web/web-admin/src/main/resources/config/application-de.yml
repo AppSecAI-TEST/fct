@@ -36,7 +36,7 @@ spring:
     mode: HTML5
 fct:
   domain:
-    url: http://www.fangcun.com
+    url: http://test.fangcuntang.com
     imageurl: http://fct-nick.img-cn-shanghai.aliyuncs.com
     videourl: http://video.fangcun.com
     staticurl:

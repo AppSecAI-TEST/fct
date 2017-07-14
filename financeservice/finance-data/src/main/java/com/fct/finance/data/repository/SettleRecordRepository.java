@@ -17,5 +17,6 @@ public interface SettleRecordRepository extends JpaRepository<SettleRecord, Inte
 
     Integer countByTradeIdAndTradeType(String tradeId, String tradeType);
 
+    @Query(nativeQuery = true, value = "select * from SettleRecord where status=?1")
     List<SettleRecord> findByStatus(Integer status);
 }

@@ -503,6 +503,11 @@ public class OrdersManager {
         return order;
     }
 
+    public Orders findOne(String orderId)
+    {
+        return ordersRepository.findOne(orderId);
+    }
+
     //后台管理员设置为已支付（线下行为）
     public void offPaySuccess(String orderId, String payPlatform, Integer operatorId)
     {

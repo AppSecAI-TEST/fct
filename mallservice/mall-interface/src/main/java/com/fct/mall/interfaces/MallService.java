@@ -68,6 +68,8 @@ public interface MallService {
 
     Orders getOrders(String orderId);
 
+    Orders getAloneOrders(String orderId);
+
     void offPaySuccess(String orderId, String payPlatform, Integer operatorId);
 
     void cancelOrders(String orderId,Integer memberId,Integer operatorId);

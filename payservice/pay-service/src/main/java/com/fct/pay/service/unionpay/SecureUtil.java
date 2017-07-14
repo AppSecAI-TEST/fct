@@ -15,6 +15,7 @@
  */
 package com.fct.pay.service.unionpay;
 
+import com.fct.core.json.JsonConverter;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -219,6 +220,7 @@ public class SecureUtil {
 		Signature st = Signature.getInstance(BC_PROV_ALGORITHM_SHA1RSA, "BC");
 		st.initVerify(publicKey);
 		st.update(srcData);
+		LogUtil.writeLog("mySignature:"+ JsonConverter.toJson(st));
 		return st.verify(signData);
 	}
 

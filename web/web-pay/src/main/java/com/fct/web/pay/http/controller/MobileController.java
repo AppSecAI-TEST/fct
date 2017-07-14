@@ -170,7 +170,7 @@ public class MobileController extends BaseController{
             return AjaxUtil.alert("非法提交。");
         }
 
-        if(tradetype.equals("wxpay_fctwap") && StringUtils.isEmpty(currentUser.getOpenId()))
+        if(platform.equals("wxpay_fctwap") && StringUtils.isEmpty(currentUser.getOpenId()))
         {
             //先清除用户登陆缓存数据，在跳转至授权页面。
             cacheManager.removeCacheMemberLogin(request);

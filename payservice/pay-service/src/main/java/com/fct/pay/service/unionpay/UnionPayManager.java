@@ -37,7 +37,7 @@ public class UnionPayManager {
         SDKConfig.setEncryptCertPath(config.get("encryptCert_path"));
         SDKConfig.setSignCertPath(Constants.getProjectPath()+config.get("signCert_path"));
         String signCertpwd = config.get("signCert_pwd");
-        if(signCertpwd == "0")
+        if(signCertpwd.equals("0") || signCertpwd.length()<5)
             signCertpwd = "000000";
 
         SDKConfig.setSignCertPwd(signCertpwd);

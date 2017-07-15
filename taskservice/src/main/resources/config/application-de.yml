@@ -1,6 +1,6 @@
 server:
   port: 8089
-  contextPath: /payweb
+  contextPath: /task-service
   tomcat:
     uri-encoding: UTF-8
 

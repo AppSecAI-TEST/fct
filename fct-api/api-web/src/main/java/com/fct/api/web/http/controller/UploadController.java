@@ -18,8 +18,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/upload")
-public class UploadController {
+public class UploadController extends BaseController {
 
     @Autowired
     private CommonService commonService;
@@ -38,40 +36,40 @@ public class UploadController {
     @Autowired
     private FctConfig fctConfig;
 
-    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    @RequestMapping(value = "image", method = RequestMethod.POST)
     public ReturnValue<Object> uploadImages(HttpServletRequest request){
+
+        this.memberAuth();
+
         List<byte[]> fileList = Lists.newArrayList();
         List<ImageSource> imgList = new ArrayList<>();
 
-        List<MultipartFile> files = ((MultipartHttpServletRequest) request)
-                .getFiles("file");
+        MultipartFile multipartFile = ((MultipartHttpServletRequest) request)
+                .getFile("file");
         String action = request.getParameter("action");
         ReturnValue<Object> responseEntity =  new ReturnValue<>();
 
         try{
-            if(files!=null&&files.size()>0){
-                for(MultipartFile multipartFile: files){
+            if(multipartFile!=null){
+                byte[] bytes = multipartFile.getBytes();
+                String originalName = multipartFile.getOriginalFilename();
 
-                    byte[] bytes = multipartFile.getBytes();
-                    String originalName = multipartFile.getOriginalFilename();
-                    File f = new File(originalName);
+                ImageSource img = new ImageSource();
+                BufferedImage sourceImg = ImageIO.read(multipartFile.getInputStream());
 
-                    ImageSource img = new ImageSource();
-                    BufferedImage sourceImg = ImageIO.read(new FileInputStream(f));
+                Float length = new Float(multipartFile.getSize() / 1024.0); // 源图大小
 
-                    Float length = new Float(f.length() / 1024.0); // 源图大小
+                img.setCategoryId(0);
+                img.setWidth(sourceImg.getWidth());// 源图宽度
+                img.setHeight(sourceImg.getHeight());// 源图高度
+                img.setFileLength(length);
+                img.setOriginalName(originalName);
 
-                    img.setCategoryId(0);
-                    img.setWidth(sourceImg.getWidth());// 源图宽度
-                    img.setHeight(sourceImg.getHeight());// 源图高度
-                    img.setFileLength(length);
-                    img.setOriginalName(originalName);
+                fileList.add(bytes);
+                imgList.add(img);
 
-                    fileList.add(bytes);
-                    imgList.add(img);
-
-                }
             }
+
 
             FileRequest fileRequest = new FileRequest();
             fileRequest.setFiles(fileList);
@@ -82,7 +80,6 @@ public class UploadController {
 
             if(responseList != null) {
                 ImageResponse response =responseList.get(0);
-                String imgUrl = "";
                 //非编辑器模式，上传的图片
                 if(!StringUtils.isEmpty(action))
                 {
@@ -93,7 +90,8 @@ public class UploadController {
             }
 
         }catch (IOException e){
-            e.printStackTrace();
+
+            return new ReturnValue<>(404, "上传失败");
         }
 
         return responseEntity;

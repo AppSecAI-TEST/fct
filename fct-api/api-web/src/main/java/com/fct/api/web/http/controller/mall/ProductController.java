@@ -194,4 +194,22 @@ public class ProductController extends BaseController {
 
         return response;
     }
+
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public ReturnValue<PageResponse<Map<String, Object>>> findShareProduct(String name, String code, Integer sort_index,
+                                                              Integer page_index, Integer page_size) {
+        name = ConvertUtils.toString(name);
+        code = ConvertUtils.toString(code);
+        sort_index = ConvertUtils.toInteger(sort_index, 0);
+        page_index = ConvertUtils.toPageIndex(page_index);
+        page_size = ConvertUtils.toInteger(page_size, 20);
+
+        PageResponse<Map<String, Object>> pageMaps = productCache.findShareGoods(name, code,
+                sort_index, page_index, page_size);
+
+        ReturnValue<PageResponse<Map<String, Object>>> response = new ReturnValue<>();
+        response.setData(pageMaps);
+
+        return  response;
+    }
 }

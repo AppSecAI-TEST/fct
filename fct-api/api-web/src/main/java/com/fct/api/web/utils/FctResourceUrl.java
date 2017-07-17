@@ -26,6 +26,15 @@ public class FctResourceUrl {
         return String.format("%s%s",fctConfig.getImageUrl(),url);
     }
 
+    public String thumbnail(String url, int size)
+    {
+        if(StringUtils.isEmpty(url))
+        {
+            url = "";
+        }
+        return String.format("%s@%dw.jpg", getImageUrl(url), size);
+    }
+
     public List<String> getMutilImageUrl(String url)
     {
         if(StringUtils.isEmpty(url))

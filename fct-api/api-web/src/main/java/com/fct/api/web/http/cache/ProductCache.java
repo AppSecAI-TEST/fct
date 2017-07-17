@@ -3,11 +3,13 @@ package com.fct.api.web.http.cache;
 import com.fct.api.web.utils.FctResourceUrl;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.mall.data.entity.Goods;
+import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,74 @@ public class ProductCache {
     @Autowired
     private MallService mallService;
 
+    public PageResponse<Map<String, Object>> findShareGoods(String name, String code, Integer sortIndex, Integer pageIndex, Integer pageSize) {
+
+        PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
+
+        PageResponse<Goods> pageResponse = mallService.shareGoods(name, code, sortIndex, pageIndex, pageSize);
+
+        if (pageResponse != null && pageResponse.getTotalCount() > 0) {
+            List<Map<String, Object>> lsMap = new ArrayList<>();
+            for (Goods goods:pageResponse.getElements()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", goods.getId());
+                map.put("name", goods.getName());
+                map.put("defaultImage", fctResourceUrl.getImageUrl(goods.getDefaultImage()));
+                if (goods.getSpecification() == null) {
+                    map.put("price", goods.getSalePrice());
+                    map.put("commission", goods.getCommission());
+                } else {
+                    BigDecimal minPrice = new BigDecimal(0);
+                    BigDecimal maxPrice = new BigDecimal(0);
+                    BigDecimal minCommission = new BigDecimal(0);
+                    BigDecimal maxCommission = new BigDecimal(0);
+
+                    for (GoodsSpecification specification: goods.getSpecification()) {
+
+                        if (minPrice.doubleValue() <= 0) {
+
+                            minPrice = specification.getSalePrice();
+                            minCommission = specification.getCommission();
+                        }else if (minPrice.doubleValue() > specification.getSalePrice().doubleValue()) {
+
+                            minPrice = specification.getSalePrice();
+                            minCommission = specification.getCommission();
+                        }
+
+                        if (maxPrice.doubleValue() < specification.getSalePrice().doubleValue()) {
+
+                            maxPrice = specification.getSalePrice();
+                            maxCommission = specification.getCommission();
+                        }
+                    }
+
+                    Map<BigDecimal, BigDecimal> priceMap = new HashMap<>();
+                    priceMap.put(minPrice, maxPrice);
+                    map.put("price", priceMap);
+
+                    priceMap = new HashMap<>();
+                    priceMap.put(minCommission, maxCommission);
+                    map.put("commission", priceMap);
+                }
+
+                lsMap.add(map);
+            }
+
+            pageMaps.setElements(lsMap);
+            pageMaps.setCurrent(pageResponse.getCurrent());
+            pageMaps.setTotalCount(pageResponse.getTotalCount());
+            pageMaps.setHasMore(pageResponse.isHasMore());
+        }
+
+        return pageMaps;
+    }
+
+    /**通过分类code获取产品列表
+     *
+     * @param code
+     * @param skip
+     * @return
+     */
     public List<Map<String, Object>> guessProductsByCategoryCode(String code, int skip) {
         PageResponse<Goods> pageResponse = mallService.findGoods("", code, 0,
                 0, 0, 0, 0, 1, 1, skip);
@@ -35,6 +105,17 @@ public class ProductCache {
 
         return this.listGoodsMap(pageResponse.getElements(), false, false);
     }
+
+    /**PC首页产品
+     *
+     * @param skip
+     * @return
+     */
+    public List<Map<String, Object>> pcHomeProducts(int skip) {
+
+        return this.findGuessProducts("", 0, 0, skip, false, true);
+    }
+
 
     /**艺术家作品列表
      *

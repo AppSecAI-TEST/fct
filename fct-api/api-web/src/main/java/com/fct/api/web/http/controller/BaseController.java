@@ -18,7 +18,7 @@ import java.util.List;
 public class BaseController {
 
     @Autowired
-    private FctResourceUrl fctResourceUrl;
+    public FctResourceUrl fctResourceUrl;
 
     @Autowired
     public MemberService memberService;
@@ -35,13 +35,13 @@ public class BaseController {
     {
         if (StringUtils.isEmpty(this.authToken))
         {
-            throw new IllegalArgumentException("非法请求");
+            throw new IllegalArgumentException("登录授权已过期，请重新登录");
         }
 
         MemberLogin member = memberService.getMemberLogin(this.authToken);
         if (member == null)
         {
-            throw new IllegalArgumentException("非法请求");
+            throw new IllegalArgumentException("登录授权已过期，请重新登录");
         }
 
         return member;

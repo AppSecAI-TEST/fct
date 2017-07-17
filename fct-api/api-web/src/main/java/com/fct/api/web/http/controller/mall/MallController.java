@@ -1,6 +1,13 @@
 package com.fct.api.web.http.controller.mall;
 
+import com.fct.api.web.http.cache.ArticleCache;
+import com.fct.api.web.http.cache.ProductCache;
 import com.fct.api.web.http.controller.BaseController;
+import com.fct.artist.data.entity.Artist;
+import com.fct.artist.interfaces.ArtistService;
+import com.fct.common.data.entity.Article;
+import com.fct.common.data.entity.ArticleCategory;
+import com.fct.common.interfaces.CommonService;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
@@ -12,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +34,15 @@ public class MallController extends BaseController{
 
     @Autowired
     private MallService mallService;
+
+    @Autowired
+    private ProductCache productCache;
+
+    @Autowired
+    private ArticleCache articleCache;
+
+    @Autowired
+    private ArtistService artistService;
 
     /**首页数据获取
      *
@@ -91,5 +108,60 @@ public class MallController extends BaseController{
         response.setData(map);
 
         return  response;
+    }
+
+    /**获取PC首页数据
+     *
+     * @param article_code
+     * @param article_count
+     * @param product_count
+     * @param artist_count
+     * @return
+     */
+    @RequestMapping(value = "pc-home", method = RequestMethod.GET)
+    public ReturnValue<Map<String, Object>> getPcHome(String article_code, Integer article_count, Integer product_count, Integer artist_count)
+    {
+
+        article_code = ConvertUtils.toString(article_code);
+        article_count = ConvertUtils.toInteger(article_count, 4);
+        product_count = ConvertUtils.toInteger(product_count, 10);
+        artist_count = ConvertUtils.toInteger(artist_count, 7);
+
+        //产品列表
+        //name,defaultImage,intro
+        List<Map<String, Object>> lsProduct = productCache.pcHomeProducts(product_count);
+
+        //艺术家列表
+        //name,heand, intro
+        com.fct.artist.interfaces.PageResponse<Artist> pageArtist =
+                artistService.findArtist("", 1, 1, artist_count);
+
+        List<Map<String, Object>> lsArtist = new ArrayList<>();
+        if (pageArtist != null && pageArtist.getTotalCount() > 0) {
+
+            for (Artist artist : pageArtist.getElements()) {
+                Map<String, Object> mapArtist = new HashMap<>();
+                mapArtist.put("id", artist.getId());
+                mapArtist.put("name", artist.getName());
+                mapArtist.put("headPortrait", fctResourceUrl.thumbnail(artist.getHeadPortrait(), 100));
+                mapArtist.put("intro", artist.getIntro());
+
+                lsArtist.add(mapArtist);
+            }
+        }
+
+        //文章列表
+        PageResponse<Map<String, Object>> pageArticle = articleCache.findPageArticle(article_code,
+                1, article_count);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("productList", lsProduct);
+        map.put("artistList", lsArtist);
+        map.put("articleList", pageArticle != null ? pageArticle.getElements() : null);
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
+
+        return response;
     }
 }

@@ -12,7 +12,10 @@ public interface MallService {
 
     PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId,Integer materialId,
                                   Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
-                                  Integer orderType,Integer pageIndex, Integer pageSize);
+                                  Integer pageIndex, Integer pageSize);
+
+    PageResponse<Goods> shareGoods(String name, String categoryCode, Integer orderType,
+                                   Integer pageIndex, Integer pageSize);
 
     Goods getGoods(Integer id);
 

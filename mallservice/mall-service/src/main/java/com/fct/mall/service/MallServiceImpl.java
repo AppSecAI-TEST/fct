@@ -47,10 +47,24 @@ public class MallServiceImpl implements MallService {
 
     public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer materialId,
                                          Integer artistId, Integer minVolume, Integer maxVolume, Integer status,
-                                         Integer orderType,Integer pageIndex, Integer pageSize) {
+                                         Integer pageIndex, Integer pageSize) {
         try {
-            return goodsManager.find(name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
-                    orderType,pageIndex, pageSize);
+            return goodsManager.find(false,name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
+                    -1,pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public PageResponse<Goods> shareGoods(String name, String categoryCode, Integer orderType,
+                                   Integer pageIndex, Integer pageSize)
+    {
+        try {
+            return goodsManager.find(true,name, categoryCode, 0, 0, 0, 0,
+                    0, 1, orderType,pageIndex, pageSize);
         }
         catch (Exception exp)
         {

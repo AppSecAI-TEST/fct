@@ -6,6 +6,7 @@ import com.fct.mall.data.entity.Goods;
 import com.fct.mall.data.entity.GoodsSpecification;
 import com.fct.mall.data.repository.GoodsRepository;
 import com.fct.mall.interfaces.PageResponse;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -239,9 +240,9 @@ public class GoodsManager {
     }
 
     //查询列表 categorycode= catecode+cateid,
-    public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId,Integer materialId,
-                                    Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
-                                    Integer orderType,Integer pageIndex, Integer pageSize)
+    public PageResponse<Goods> find(Boolean joinSpec,String name, String categoryCode, Integer gradeId, Integer materialId,
+                                    Integer artistId, Integer minVolume, Integer maxVolume, Integer status,
+                                    Integer orderType, Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
@@ -278,6 +279,13 @@ public class GoodsManager {
         {
             end = pageIndex;
             hasmore = false;
+        }
+        if(joinSpec)
+        {
+            for (Goods g:ls
+                 ) {
+                g.setSpecification(goodsSpecificationManager.findByGoodsId(g.getId()));
+            }
         }
         PageResponse<Goods> p = new PageResponse<>();
         p.setTotalCount(count);

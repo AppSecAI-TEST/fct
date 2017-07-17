@@ -95,7 +95,7 @@ public class StringHelper {
         Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
         Long seconds = DateUtils.compareDate(new Date(),time);
         return DateUtils.getNowDateStr("yyMMdd")+padLeft(seconds.toString(),5,"0")+
-                getRandomString(5);
+                getRandomNumber(5);
     }
 
     public static String generatePayOrderId()
@@ -103,7 +103,7 @@ public class StringHelper {
         Date time = DateUtils.parseString(DateUtils.getTodayBegin(),"yyyy-MM-dd");
         Long seconds = DateUtils.compareDate(new Date(),time);
         return padLeft(seconds.toString(),5,"1")+DateUtils.getNowDateStr("yyMMdd")+
-                getRandomString(5);
+                getRandomNumber(5);
     }
 
     public static String getRandomNumber(int length)

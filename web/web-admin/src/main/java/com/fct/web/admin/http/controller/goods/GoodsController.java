@@ -95,7 +95,7 @@ public class GoodsController extends BaseController {
         try {
 
             pageResponse = mallService.findGoods(name, catecode, gradeid, materialid, artistid,
-                    0, 0, status, page, pageSize);
+                    0, 0, status,-1, page, pageSize);
         }
         catch (Exception exp)
         {
@@ -334,7 +334,7 @@ public class GoodsController extends BaseController {
         disabled = ConvertUtils.toString(disabled);
 
         PageResponse<Goods> pageResponse = mallService.findGoods(q, cateid, 0, 0, 0,
-                0, 0, 1, 1, 25);
+                0, 0, 1, 0,1, 25);
 
         StringBuilder sb = new StringBuilder();
 

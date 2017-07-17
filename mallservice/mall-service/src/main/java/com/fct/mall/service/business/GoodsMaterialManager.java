@@ -89,10 +89,11 @@ public class GoodsMaterialManager {
             throw new IllegalArgumentException("id为空");
         }
         //检查商品是否有选择泥料，如有则提示。建议只隐藏。
-        PageResponse<Goods> pageResponse = goodsManager.find("","",0,id,0,
-                0,0,-1,1,10);
 
-        if(pageResponse.getTotalCount()>0)
+        List<Goods> lsGoods = goodsManager.findByGuess("","",0,id,
+                0,1);
+
+        if(lsGoods != null && lsGoods.size()>0)
             throw new IllegalArgumentException("该泥料中存在宝贝，建议状态设置为隐藏。");
 
         goodsMaterialRepository.delete(id);

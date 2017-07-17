@@ -47,10 +47,10 @@ public class MallServiceImpl implements MallService {
 
     public PageResponse<Goods> findGoods(String name, String categoryCode, Integer gradeId, Integer materialId,
                                          Integer artistId, Integer minVolume, Integer maxVolume, Integer status,
-                                         Integer pageIndex, Integer pageSize) {
+                                         Integer orderType,Integer pageIndex, Integer pageSize) {
         try {
             return goodsManager.find(name, categoryCode, gradeId, materialId, artistId, minVolume, maxVolume, status,
-                    pageIndex, pageSize);
+                    orderType,pageIndex, pageSize);
         }
         catch (Exception exp)
         {

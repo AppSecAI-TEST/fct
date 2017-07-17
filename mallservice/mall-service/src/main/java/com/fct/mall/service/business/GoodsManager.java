@@ -241,13 +241,28 @@ public class GoodsManager {
     //查询列表 categorycode= catecode+cateid,
     public PageResponse<Goods> find(String name, String categoryCode, Integer gradeId,Integer materialId,
                                     Integer artistId,Integer minVolume,Integer maxVolume,Integer status,
-                                    Integer pageIndex, Integer pageSize)
+                                    Integer orderType,Integer pageIndex, Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
 
         String table="Goods";
         String field ="*";
-        String orderBy = "sortIndex asc";
+        String orderBy = "";
+        switch (orderType)
+        {
+            case 0:
+                orderBy = "sortIndex Desc";   //综合
+                break;
+            case 1:
+                orderBy = "commentCount Desc";   //人气由高到低
+                break;
+            case 2:
+                orderBy = "commission Desc";   //佣金由高到低
+                break;
+            default:
+                orderBy = "id asc";  //综合
+                break;
+        }
         String condition= getContion(name,categoryCode,gradeId,materialId,artistId,minVolume,maxVolume,status,param);
 
         String sql = "SELECT Count(0) FROM Goods WHERE 1=1 "+condition;

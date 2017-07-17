@@ -1,6 +1,7 @@
 package com.fct.web.pay.http.controller;
 
 import com.fct.core.utils.CookieUtil;
+import com.fct.core.utils.StringHelper;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.web.pay.config.FctConfig;
 import com.fct.web.pay.http.cache.CacheManager;
@@ -31,11 +32,13 @@ public class BaseController {
 
         //获取cookie
 
-        //initUser(request,response);
+        initUser(request,response);
 
-        currentUser = new MemberLogin();
-        currentUser.setMemberId(1);
-        currentUser.setCellPhone("13816619868");
+        if(currentUser == null) {
+            currentUser = new MemberLogin();
+        }
+        /*currentUser.setMemberId(1);
+        currentUser.setCellPhone("13816619868");*/
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);
@@ -43,7 +46,16 @@ public class BaseController {
 
     void initUser(HttpServletRequest request, HttpServletResponse response)throws Exception
     {
-        String token = CookieUtil.getCookieByName(request,"fct_auth");
+        String sessionId = request.getParameter("sessionid");
+        String token = "";
+        if(!StringUtils.isEmpty(sessionId))
+        {
+            CookieUtil.addCookie(request,response,"fct_sessionid",sessionId);
+            token = sessionId;
+        }
+        else {
+            token = CookieUtil.getCookieByName(request, "fct_sessionid");
+        }
         String returnUrl = request.getHeader("Referer");
         returnUrl = !StringUtils.isEmpty(returnUrl) ? "?redirecturl="+returnUrl : "";
         if(StringUtils.isEmpty(token))

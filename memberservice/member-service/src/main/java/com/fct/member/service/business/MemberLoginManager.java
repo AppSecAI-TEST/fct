@@ -38,7 +38,7 @@ public class MemberLoginManager {
         Member member =  memberManager.login(cellPhone,password);
         if(member == null)
         {
-            throw new IllegalArgumentException("用户户或密码错误。");
+            throw new IllegalArgumentException("用户名或密码错误。");
         }
 
         return login(member,platform,memberAuthManager.getOpenId(member.getId(),platform),ip,expireDay);

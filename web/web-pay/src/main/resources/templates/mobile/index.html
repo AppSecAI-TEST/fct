@@ -9,7 +9,7 @@
     <div class="pay-container bodyContent" id="pay">
         <section class="tips">
             <div class="title">
-                <img th:src="${pub.staticPath('/static/img/check.png')}" class="check"><span>订单提交成功，请尽快前往付款。</span>
+                <img th:src="${pub.staticPath('/static/img/pay/check.png')}" class="check"><span>订单提交成功，请尽快前往付款。</span>
             </div>
             <div class="text">
                 应付金额：<span class="pri" th:text="'￥'+${payamount}">￥999999.00</span>
@@ -22,7 +22,7 @@
                 <ul class="way-list">
                     <li>
                         <label for="weipay">
-                            <img th:src="${pub.staticPath('/static/img/wxpay.png')}"><span class="line">
+                            <img th:src="${pub.staticPath('/static/img/pay/wxpay.png')}"><span class="line">
                     <span class="txt">微信支付</span>
                     <input type="radio" class="" name="platform" value="wxpay_fctwap" id="weipay">
                   </span>
@@ -30,7 +30,7 @@
                     </li>
                     <li>
                         <label for="unionpay">
-                            <img th:src="${pub.staticPath('/static/img/unionpay.png')}"><span class="line" style="border-bottom:0px;">
+                            <img th:src="${pub.staticPath('/static/img/pay/unionpay.png')}"><span class="line" style="border-bottom:0px;">
                     <span class="txt">银联支付</span>
                     <input type="radio" class="" name="platform" value="unionpay_fctwap" id="unionpay">
                   </span>

@@ -3,15 +3,11 @@ package com.fct.web.admin.http.controller;
 import com.fct.member.data.entity.SysUserLogin;
 import com.fct.web.admin.config.FctConfig;
 import com.fct.web.admin.http.cache.CacheSysUserManager;
-import com.fct.web.admin.utils.Constants;
 import com.fct.core.utils.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

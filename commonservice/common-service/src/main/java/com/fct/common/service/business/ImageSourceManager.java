@@ -96,6 +96,7 @@ public class ImageSourceManager {
 
                 ImageResponse imageResponse = new ImageResponse();
                 imageResponse.setUrl(imageSource.getUrl());
+                imageResponse.setFullUrl(response.getUrl());
                 imageResponse.setName(imageSource.getOriginalName());
                 imageResponse.setGuid(imageSource.getGuid());
                 lsResponse.add(imageResponse);

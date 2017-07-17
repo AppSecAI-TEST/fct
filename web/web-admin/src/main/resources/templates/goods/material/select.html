@@ -76,7 +76,7 @@
             for(var key in arrData) {
                 var json = eval('(' + arrData[key] + ')');
                 arrId.push(json.id);
-                arrName.push(name);
+                arrName.push(json.name);
 
             }
             $("#input_materialId").val(arrId.join());

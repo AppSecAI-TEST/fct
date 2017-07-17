@@ -1,7 +1,5 @@
 package com.fct.web.admin.http.controller;
 
-import com.fct.common.data.entity.Article;
-import com.fct.common.interfaces.CommonService;
 import com.fct.core.exceptions.Exceptions;
 import com.fct.core.utils.*;
 import com.fct.member.data.entity.SysUserLogin;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 
 @Controller
@@ -37,14 +33,9 @@ public class MainController {
     @Autowired
     private FctConfig fctConfig;
 
-    @Autowired
-    private CommonService commonService;
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request,String returnurl,Model model) {
 
-
-        String ss = commonService.oAuthURL("ss","s");
 
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);

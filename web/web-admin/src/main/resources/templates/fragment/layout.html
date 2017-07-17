@@ -13,7 +13,7 @@
     <link rel="shortcut icon" href="favicon.ico" />
     <link href="//static/css/bootstrap.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/bootstrap.min.css')}" />
     <link href="//static/css/font-awesome.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/font-awesome.min.css')}" />
-    <link href="//static/css/style.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/style.min.css')}" />
+    <link href="//static/css/admin.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/admin.min.css')}" />
     <link href="//static/css/dropzone.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/dropzone.css')}" />
 
     <!--/* Per-page placeholder for additional links */-->
@@ -44,46 +44,46 @@
         </div>
     </div>
 
-<script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
-<script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
-<script src="//static/js/plugins/jtools.js" th:src="${pub.staticPath('/static/js/plugins/jtools.js')}"></script>
-<!--菜单高亮-->
-<script type="application/javascript">
-
-    var fct_imageUrl = "[[${pub.imageUrl}]]";
-
-    $(function () {
-
-        var current_slide = "[[${slide_menu}]]";
-
-        var arr =  current_slide.split('_');
-        var slideName = "#slide_" + arr[0];
-        $(slideName).addClass('active');
-        $(slideName+" ul").children('li').each(
-            function (i,t) {
-                var view = $(t).attr('data-view');
-                if (view == arr[1]) {
-                    $(t).addClass('active');
-                }
-            }
-        );
-
-        $(".upPassword").click(function () {
-            JQbox.open({
-                title:"更新密码",
-                width: 500,
-                url: '/sys/users/uppwd'
-            });
-        });
-    })
-</script>
-
-<script src="//static/js/plugins/layer/layer.js" th:src="@{/static/js/plugins/layer/layer.js}"></script>
-<script src="//static/js/hplus.min.js?v=4.0.0" th:src="@{/static/js/hplus.min.js}"></script>
+        <script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
+        <script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
+        <script src="//static/js/plugins/jtools.js" th:src="${pub.staticPath('/static/js/plugins/jtools.js')}"></script>
+        <script src="//static/js/plugins/layer/layer.js" th:src="@{/static/js/plugins/layer/layer.js}"></script>
         <script src="//static/js/plugins/icheck.min.js" th:src="@{/static/js/plugins/icheck.min.js}"></script>
-<script src="//static/js/fct.js" th:src="@{/static/js/fct.js}"></script>
+        <script src="//static/js/fct.js" th:src="@{/static/js/fct.js}"></script>
+        <!--菜单高亮-->
+        <script type="application/javascript">
 
-<th:block th:replace="${scripts}" />
+            var fct_imageUrl = "[[${pub.imageUrl}]]";
+
+            $(function () {
+
+                var current_slide = "[[${slide_menu}]]";
+
+                var arr =  current_slide.split('_');
+                var slideName = "#slide_" + arr[0];
+                $(slideName).addClass('active');
+                $(slideName+" ul").children('li').each(
+                    function (i,t) {
+                        var view = $(t).attr('data-view');
+                        if (view == arr[1]) {
+                            $(t).addClass('active');
+                        }
+                    }
+                );
+
+                $(".upPassword").click(function () {
+                    JQbox.open({
+                        title:"更新密码",
+                        width: 500,
+                        url: '/sys/users/uppwd'
+                    });
+                });
+            })
+        </script>
+
+        <script src="//static/js/hplus.min.js?v=4.0.0" th:src="@{/static/js/hplus.min.js}"></script>
+
+        <th:block th:replace="${scripts}" />
 
 </body>
 </html>

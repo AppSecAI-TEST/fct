@@ -36,5 +36,5 @@ fct:
   domain:
     url: http://test.fangcuntang.com
     imageurl: http://www.fccdn.cn
-    staticurl:
+    staticurl: http://fangcuntang.oss-cn-shanghai.aliyuncs.com
     payurl: http://test.pay.fangcuntang.com

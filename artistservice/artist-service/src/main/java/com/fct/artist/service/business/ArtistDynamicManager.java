@@ -73,9 +73,11 @@ public class ArtistDynamicManager {
         //将置顶的动态取消
         artistDynamicRepository.cancleTop(dynamic.getArtistId());
         //重新设置
-        dynamic.setIsTop(1);
-        dynamic.setUpdateTime(new Date());
-        artistDynamicRepository.save(dynamic);
+        if(dynamic.getIsTop() ==0) {
+            dynamic.setIsTop(1);
+            dynamic.setUpdateTime(new Date());
+            artistDynamicRepository.save(dynamic);
+        }
     }
 
     public ArtistDynamic findById(Integer id)

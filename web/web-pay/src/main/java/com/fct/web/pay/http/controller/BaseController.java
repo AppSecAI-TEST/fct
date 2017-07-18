@@ -33,7 +33,7 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        //initUser(request,response);
 
         if(currentUser == null) {
             currentUser = new MemberLogin();
@@ -55,7 +55,7 @@ public class BaseController {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
-        currentUser = cacheManager.getCacheMemberLogin(CryptAES.AES_Decrypt("fct1688",token));
+        currentUser = cacheManager.getCacheMemberLogin(CryptAES.AES_Decrypt("7ZaDZOl4mNujVkZN",token));
         if (currentUser == null) {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;

@@ -267,6 +267,21 @@ public class ArtistServiceImpl implements ArtistService {
         return 0;
     }
 
+    public void setArtistDynamicTop(Integer id)
+    {
+        try {
+            artistDynamicManager.setTop(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
+
     public void updateArtistDynamicStatus(Integer id)
     {
         try {

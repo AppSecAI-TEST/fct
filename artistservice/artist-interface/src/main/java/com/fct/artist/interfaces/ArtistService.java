@@ -48,6 +48,8 @@ public interface ArtistService {
 
     void updateArtistDynamicStatus(Integer id);
 
+    void setArtistDynamicTop(Integer id);
+
     ArtistDynamic getArtistDynamic(Integer id);
 
     PageResponse<ArtistDynamic> findArtistDynamic(Integer artistId,String content,Integer status,String startTime,String endTime,

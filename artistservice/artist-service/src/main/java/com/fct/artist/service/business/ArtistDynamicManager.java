@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +57,24 @@ public class ArtistDynamicManager {
         }
         ArtistDynamic dynamic = artistDynamicRepository.findOne(id);
         dynamic.setStatus(1-dynamic.getStatus());
+        dynamic.setUpdateTime(new Date());
+        artistDynamicRepository.save(dynamic);
+    }
+
+    @Transactional
+    public void setTop(Integer id)
+    {
+        if(id==null || id<=0)
+        {
+            throw  new IllegalArgumentException("id 为空");
+        }
+
+        ArtistDynamic dynamic = artistDynamicRepository.findOne(id);
+
+        //将置顶的动态取消
+        artistDynamicRepository.cancleTop(dynamic.getArtistId());
+        //重新设置
+        dynamic.setIsTop(1);
         dynamic.setUpdateTime(new Date());
         artistDynamicRepository.save(dynamic);
     }

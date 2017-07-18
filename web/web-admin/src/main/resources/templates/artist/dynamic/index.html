@@ -88,10 +88,11 @@
                                 </td>
                                 <td th:text="${#dates.format(dyn.updateTime, 'yyyy-MM-dd HH:mm')}">
                                 <td>
-                                    <a href="javascript:;" th:if="${dyn.status eq 1}" th:attr="data-id=${dyn.id}" class="statusClick" data-action="pass"><i class="fa fa-check text-navy"></i> 已审核</a>
-                                    <a href="javascript:;" th:if="${dyn.status eq 0}" th:attr="data-id=${dyn.id}" class="statusClick" data-actio="refuse"><i class="fa fa-close text-navy"></i> 待审核</a>
+                                    <a href="javascript:;" th:if="${dyn.status eq 1}" th:attr="data-id=${dyn.id}" class="statusClick" data-action="audi"><i class="fa fa-check text-navy"></i> 已审核</a>
+                                    <a href="javascript:;" th:if="${dyn.status eq 0}" th:attr="data-id=${dyn.id}" class="statusClick" data-action="audi"><i class="fa fa-close text-navy"></i> 待审核</a>
                                 </td>
                                 <td>
+                                    <a href="javascript:;" th:attr="data-id=${dyn.id}" class="statusClick" data-action="top"><th:block th:if="${dyn.isTop eq 0} ? '设为置顶' : '取消置顶'"></th:block></a>
                                     <a href="javascript:;" th:attr="data-id=${dyn.id}" class="btn btn-xs btn-outline btn-default update" >查看修改</a>
                                 </td>
                             </tr>
@@ -120,6 +121,7 @@
 
         $(".statusClick").click(function () {
             var id = $(this).attr("data-id");
+            var action = $(this).attr("data-action");
             var mythis = this;
             layer.confirm("确认要执行此操作？", {
                 btn: ['确定', '取消'], //按钮
@@ -127,7 +129,7 @@
             }, function () {
                 JQAjax.post(mythis, {
                     form:"",
-                    url: "/artist/dynamic/upstatus?action=audi&id="+ id,
+                    url: "/artist/dynamic/upstatus?action="+action+"&id="+ id,
                     wait:true
                 });
             }, function () {

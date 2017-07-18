@@ -173,6 +173,9 @@ public class DynamicController extends BaseController{
                 case "audi":
                     artistService.updateArtistDynamicStatus(id);
                     break;
+                case "top":
+                    artistService.setArtistDynamicTop(id);
+                    break;
             }
         }
         catch (IllegalArgumentException exp)

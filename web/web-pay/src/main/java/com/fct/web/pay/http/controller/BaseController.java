@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
@@ -55,7 +56,7 @@ public class BaseController {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
-        currentUser = cacheManager.getCacheMemberLogin(CryptAES.AES_Decrypt("7ZaDZOl4mNujVkZN",token));
+        currentUser = cacheManager.getCacheMemberLogin(CryptAES.AES_Decrypt("7ZaDZOl4mNujVkZN", URLDecoder.decode(token)));
         if (currentUser == null) {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;

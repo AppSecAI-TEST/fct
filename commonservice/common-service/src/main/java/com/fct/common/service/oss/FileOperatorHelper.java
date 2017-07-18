@@ -57,13 +57,13 @@ public class FileOperatorHelper {
      * 上传文件
      * @return
      */
-    public UploadResponse uploadFile(byte[] file,String fileName){
+    public UploadResponse uploadFile(byte[] file,String fileFolder,String fileName){
         try {
             OSSRequestBuilder builder = OSSRequestBuilder.builder();
             OSSRequest request = builder.bucketName(bucketName).
                     ossClient(ossClient).
                     file(file).
-                    key(buildKey(fileName)).
+                    key(buildKey(fileFolder,fileName)).
                     build();
             Future<UploadResponse> future = pool.submit(new OSS(request));
             UploadResponse response = future.get();
@@ -138,7 +138,7 @@ public class FileOperatorHelper {
         }
     }
 
-    private String buildKey(String fileName){
-        return KeyBuilder.buildKey(fileName);
+    private String buildKey(String fileFolder,String fileName){
+        return KeyBuilder.buildKey(fileFolder,fileName);
     }
 }

@@ -37,7 +37,7 @@ spring:
 fct:
   domain:
     url: http://test.fangcuntang.com
-    imageurl: http://fct-nick.img-cn-shanghai.aliyuncs.com
+    imageurl: http://cdn.fangcun.com
     videourl: http://video.fangcun.com
-    staticurl: http://fangcuntang.oss-cn-shanghai.aliyuncs.com
+    staticurl: http://cdn.fangcun.com
 

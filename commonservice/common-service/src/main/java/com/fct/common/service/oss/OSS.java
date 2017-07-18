@@ -60,7 +60,7 @@ public final class OSS implements Callable<UploadResponse>{
     private String writeUrl(String bucketName, String key, String endpoint){
         StringBuffer sb = new StringBuffer();
         String[] splits = endpoint.split("http://");
-        splits[1] = "img-cn-shanghai.aliyuncs.com/";
+        splits[1] = "oss-cn-shanghai.aliyuncs.com/";
         sb.append("http://").
                 append(bucketName).
                 append(".").

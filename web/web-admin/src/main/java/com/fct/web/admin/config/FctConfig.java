@@ -57,7 +57,7 @@ public class FctConfig {
         {
             path = "";
         }
-        return String.format("%s%s?x-oss-process=image/resize,m_lfit,w_120,limit_0/auto-orient,0/quality,q_90",imageUrl,path);
+        return String.format("%s%s!120",imageUrl,path);
     }
 
     public String staticPath (String  path) {

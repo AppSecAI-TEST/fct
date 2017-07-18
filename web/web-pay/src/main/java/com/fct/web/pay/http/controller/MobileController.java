@@ -197,7 +197,7 @@ public class MobileController extends BaseController{
                     {
                         return AjaxUtil.alert("支付业务订单状态异常。");
                     }
-                    if(orders.getMemberId() != currentUser.getMemberId()) {
+                    if(!orders.getMemberId().equals(currentUser.getMemberId())) {
                         return AjaxUtil.alert("非法用户操作。");
                     }
                     if(DateUtils.compareDate(orders.getExpiresTime(),new Date())<=0)

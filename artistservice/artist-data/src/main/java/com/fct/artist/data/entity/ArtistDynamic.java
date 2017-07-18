@@ -50,6 +50,11 @@ public class ArtistDynamic implements Serializable {
     private Integer status;
 
     /**
+     * 是否置顶
+     * */
+    private Integer isTop;
+
+    /**
      * 创建时间
      * */
     private Date createTime;

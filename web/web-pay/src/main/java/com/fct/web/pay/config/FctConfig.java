@@ -57,7 +57,7 @@ public class FctConfig {
         {
             path = "";
         }
-        return String.format("%s%s@200w.jpg",imageUrl,path);
+        return String.format("%s%s!120",imageUrl,path);
     }
 
     public String staticPath (String  path) {

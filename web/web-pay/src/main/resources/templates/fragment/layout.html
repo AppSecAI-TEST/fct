@@ -3,7 +3,7 @@
 
 <head th:fragment="header(title)">
     <!--/*  Title will be replaced by their respective titles in the calling template. */-->
-    <title th:replace="${title}">方寸堂-支付</title>
+    <title th:replace="${title}">方寸网-支付</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="//static/css/pay.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/pay.css')}" />
@@ -13,7 +13,7 @@
 
     <th:block th:replace="${content}" />
 
-    <script src="//static/js/plugins/layer_mobile/layer.js" th:src="${pub.staticPath('/static/js/plugins/layer_mobile/layer.js')}"></script>
+    <script src="//static/js/plugins/layer/mobile/layer.js" th:src="${pub.staticPath('/static/js/plugins/layer/mobile/layer.js')}"></script>
     <script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
     <script src="//static/js/fctmobile.js" th:src="${pub.staticPath('/static/js/fctmobile.js')}"></script>
 

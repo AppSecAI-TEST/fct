@@ -5,6 +5,7 @@ import com.fct.core.utils.StringHelper;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.web.pay.config.FctConfig;
 import com.fct.web.pay.http.cache.CacheManager;
+import com.fct.web.pay.utils.CryptAES;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
@@ -32,7 +34,7 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        //initUser(request,response);
 
         if(currentUser == null) {
             currentUser = new MemberLogin();
@@ -46,16 +48,7 @@ public class BaseController {
 
     void initUser(HttpServletRequest request, HttpServletResponse response)throws Exception
     {
-        String sessionId = request.getParameter("sessionid");
-        String token = "";
-        if(!StringUtils.isEmpty(sessionId))
-        {
-            CookieUtil.addCookie(request,response,"fct_sessionid",sessionId);
-            token = sessionId;
-        }
-        else {
-            token = CookieUtil.getCookieByName(request, "fct_sessionid");
-        }
+        String token = CookieUtil.getCookieByName(request, "fct_auth");
         String returnUrl = request.getHeader("Referer");
         returnUrl = !StringUtils.isEmpty(returnUrl) ? "?redirecturl="+returnUrl : "";
         if(StringUtils.isEmpty(token))
@@ -63,7 +56,7 @@ public class BaseController {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;
         }
-        currentUser = cacheManager.getCacheMemberLogin(token);
+        currentUser = cacheManager.getCacheMemberLogin(CryptAES.AES_Decrypt("7ZaDZOl4mNujVkZN", URLDecoder.decode(token)));
         if (currentUser == null) {
             response.sendRedirect(fctConfig.getUrl() + "/login"+returnUrl); // 跳到登录页面
             return;

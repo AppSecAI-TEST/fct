@@ -1,7 +1,6 @@
 package com.fct.artist.service.business;
 
 import com.fct.artist.data.entity.ArtistDynamic;
-import com.fct.artist.data.entity.ArtistLive;
 import com.fct.artist.data.repository.ArtistDynamicRepository;
 import com.fct.artist.interfaces.PageResponse;
 import com.fct.core.utils.PageUtil;
@@ -11,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +60,26 @@ public class ArtistDynamicManager {
         artistDynamicRepository.save(dynamic);
     }
 
+    @Transactional
+    public void setTop(Integer id)
+    {
+        if(id==null || id<=0)
+        {
+            throw  new IllegalArgumentException("id 为空");
+        }
+
+        ArtistDynamic dynamic = artistDynamicRepository.findOne(id);
+
+        //将置顶的动态取消
+        artistDynamicRepository.cancleTop(dynamic.getArtistId());
+        //重新设置
+        if(dynamic.getIsTop() ==0) {
+            dynamic.setIsTop(1);
+            dynamic.setUpdateTime(new Date());
+            artistDynamicRepository.save(dynamic);
+        }
+    }
+
     public ArtistDynamic findById(Integer id)
     {
         if(id==null || id<=0)
@@ -76,7 +96,7 @@ public class ArtistDynamicManager {
 
         String table="ArtistDynamic";
         String field ="*";
-        String orderBy = "Id Desc";
+        String orderBy = "isTop Desc,Id Desc";
         String condition= getCondition(artistId,content,status,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM ArtistDynamic WHERE 1=1 "+condition;

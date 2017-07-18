@@ -70,6 +70,9 @@ public class UploadController {
             }
 
             FileRequest fileRequest = new FileRequest();
+            if(!StringUtils.isEmpty(action)) {
+                fileRequest.setFileFolder("editor");    //编辑器图片
+            }
             fileRequest.setFiles(fileList);
             fileRequest.setImages(imgList);
             fileRequest.setUserMetaData(new HashedMap());

@@ -156,7 +156,7 @@ public class MainController {
             if(user !=null)
             {
                 //写入cookie,测试暂时domain为空，不然写入cookie有问题，正式环境需传入 fangcun.com
-                CookieUtil.addCookie(request,response,"sysuser_token",user.getToken());
+                CookieUtil.addCookie(request,response,"sysuser_token",user.getToken(),720);
             }
         }
         catch (IllegalArgumentException exp)

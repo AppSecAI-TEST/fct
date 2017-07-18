@@ -23,9 +23,9 @@ mysql:
 
 aliyun:
   oss:
-    bucketName: fct-nick
-    accesskeyId: LTAId0h3QAgdPmXT
-    accesskeySecret: cLMJrTzs1APvyXehfjOQUsYq66A3Wc
+    bucketName: fangcuntang
+    accesskeyId: LTAIhVymglNdvlXM
+    accesskeySecret: Ml6DD0eNolZWB45w0OTTCPlprX4uHg
     endpoint: http://oss-cn-shanghai.aliyuncs.com/
 
 oauth:

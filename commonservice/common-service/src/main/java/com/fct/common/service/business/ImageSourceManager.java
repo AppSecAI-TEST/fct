@@ -69,13 +69,18 @@ public class ImageSourceManager {
         }
         List<ImageResponse> lsResponse = new ArrayList<>();
 
+        String fileFolder = fileRequest.getFileFolder();
+        if(StringUtils.isEmpty(fileFolder)) {
+            fileFolder ="images";
+        }
+
         try {
             for(int i = 0; i< fileRequest.getFiles().size(); i++){
 
                 ImageSource imageSource = fileRequest.getImages().get(i);
                 byte[] fileByte = fileRequest.getFiles().get(i);
 
-                UploadResponse response =  fileOperatorHelper.uploadFile(fileByte,
+                UploadResponse response =  fileOperatorHelper.uploadFile(fileByte,fileFolder,
                         imageSource.getOriginalName());
 
                 String suffix = imageSource.getOriginalName().split("\\.")[1];

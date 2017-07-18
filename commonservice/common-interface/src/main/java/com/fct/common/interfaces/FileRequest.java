@@ -18,4 +18,6 @@ public class FileRequest implements Serializable {
     private List<ImageSource> images;
 
     private Map<String, String> userMetaData;
+
+    private String fileFolder;
 }

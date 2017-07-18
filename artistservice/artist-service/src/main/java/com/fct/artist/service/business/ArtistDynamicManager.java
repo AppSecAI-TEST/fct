@@ -1,7 +1,6 @@
 package com.fct.artist.service.business;
 
 import com.fct.artist.data.entity.ArtistDynamic;
-import com.fct.artist.data.entity.ArtistLive;
 import com.fct.artist.data.repository.ArtistDynamicRepository;
 import com.fct.artist.interfaces.PageResponse;
 import com.fct.core.utils.PageUtil;
@@ -95,7 +94,7 @@ public class ArtistDynamicManager {
 
         String table="ArtistDynamic";
         String field ="*";
-        String orderBy = "Id Desc";
+        String orderBy = "isTop Desc,Id Desc";
         String condition= getCondition(artistId,content,status,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM ArtistDynamic WHERE 1=1 "+condition;

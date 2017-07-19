@@ -30,6 +30,8 @@ public class VodHandlerFactory {
             case GETLIST:
                 handler = new VodGetVideosHandler(requestType, manager, builder);
                 break;
+            case GETPLAYINFO:
+                handler = new VodGetPlayInfoHandler(requestType, manager, builder);
         }
         return handler;
     }

@@ -91,11 +91,6 @@ public class VodUploadHandler extends VodOperatorAdapter implements VodHandler{
     }
 
     @Override
-    public void setAccessKeySecret(String accessKeySecret) {
-        this.accessKeySecret = accessKeySecret;
-    }
-
-    @Override
     public void handle() {
         upload();
     }

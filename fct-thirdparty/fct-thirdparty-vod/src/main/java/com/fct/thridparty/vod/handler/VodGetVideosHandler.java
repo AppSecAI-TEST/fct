@@ -20,10 +20,6 @@ public class VodGetVideosHandler extends VodOperatorAdapter implements VodHandle
         this.builder = builder;
     }
 
-    @Override
-    public void setAccessKeySecret(String accessKeySecret) {
-        this.accessKeySecret = accessKeySecret;
-    }
 
     public void getVods(){
         call();

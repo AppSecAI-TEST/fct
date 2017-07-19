@@ -6,6 +6,7 @@ import com.aliyun.vod.upload.resp.UploadVideoResponse;
 import com.fct.thridparty.vod.AliyunVod;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.response.VodResponse;
+import com.fct.thridparty.vod.response.VodUploadResponse;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
@@ -18,8 +19,8 @@ import java.util.Map;
  */
 public class UploadTest {
 
-    private String accessKeyId = "LTAI07UgXOHTbHd6";
-    private String accessKeySecret = "j2PAwnos4tLfBXyOUzrF4bormfc3vt";
+    private String accessKeyId = "LTAIhVymglNdvlXM";
+    private String accessKeySecret = "Ml6DD0eNolZWB45w0OTTCPlprX4uHg";
 
     /**
      * 阿里云官网的上传例子
@@ -58,13 +59,13 @@ public class UploadTest {
     @Test
     public void selfUploadVodTest(){
         Map<String, Object> selfParam = Maps.newHashMap();
-        File file = new File("/User/ningyang/desktop/xx.mp4");
-        selfParam.putIfAbsent("title", "视频1");
+        File file = new File("/Users/nick/Desktop/xx.mp4");
+        selfParam.putIfAbsent("title", "视频测试");
         selfParam.putIfAbsent("file", file);
-        selfParam.put("coverUrl", "http://cover.sample.com/sample.jpg");
+        selfParam.put("coverUrl", "http://img.wdjky.com/0fd117f2398341500369243475.jpg");
         selfParam.put("tags","运动");
         selfParam.put("description","描述");
-        selfParam.put("cateId",2);
+        selfParam.put("cateId", 990982960);
         //selfParam.put("callbackUrl","http://callback.sample.com"); 如果有服务器回调地址可以填入, 不过我自己实现了回调不过是同步的不是异步的
         //对于视频上传AliyunVod对象的链式调用不需要设置Action和签名, 因为封装了阿里云自己的实现
         VodResponse response = new AliyunVod(RequestType.UPLOAD, accessKeyId, accessKeySecret).
@@ -72,6 +73,10 @@ public class UploadTest {
                                     withSelfParam(selfParam).
                                     run().
                                     response();
-        System.out.println(response.getCode() + " : " + response.getMessage());
+        if(response instanceof VodUploadResponse){
+            VodUploadResponse uploadResponse = (VodUploadResponse) response;
+            System.out.println(uploadResponse.getCode() + " : " + uploadResponse.getMessage() + " : " + uploadResponse.getVideoId());
+        }
+
     }
 }

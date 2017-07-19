@@ -4,6 +4,7 @@ import com.fct.thirdparty.http.HttpRequestExecutorManager;
 import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.AliyunVod;
 import com.fct.thridparty.vod.RequestType;
+import com.fct.thridparty.vod.response.VodPlayUrlInfoResponse;
 import com.fct.thridparty.vod.response.VodResponse;
 import com.google.common.collect.Maps;
 import com.squareup.okhttp.ConnectionPool;
@@ -24,8 +25,8 @@ import static com.fct.thridparty.vod.Action.GetVideoPlayAuth;
 public class VodTest {
 
     private HttpRequestExecutorManager manager;
-    private String accessKeyId = "LTAI07UgXOHTbHd6";
-    private String accessKeySecret = "j2PAwnos4tLfBXyOUzrF4bormfc3vt";
+    private String accessKeyId = "LTAIhVymglNdvlXM";
+    private String accessKeySecret = "Ml6DD0eNolZWB45w0OTTCPlprX4uHg";
 
     @Before
     public void init(){
@@ -48,7 +49,7 @@ public class VodTest {
     @Test
     public void getVodTest(){
         Map<String, Object> selfParam = Maps.newHashMap();
-        selfParam.putIfAbsent("VideoId", "212411251515");
+        selfParam.putIfAbsent("VideoId", "26b568c311c04a2c8315f5701e961d07");
         VodResponse response = new AliyunVod(manager, RequestType.GET, accessKeyId, accessKeySecret).
                                 buildRequest().
                                 withSelfParam(selfParam).
@@ -136,5 +137,27 @@ public class VodTest {
                 run().
                 response();
         System.out.println(response.getCode() + " : " + response.getMessage());
+    }
+
+    /**
+     * 获取视频播放地址
+     */
+    @Test
+    public void getPlayUrl(){
+        Map<String, Object> selfParam = Maps.newHashMap();
+        selfParam.putIfAbsent("VideoId", "26b568c311c04a2c8315f5701e961d07");
+        VodResponse response = new AliyunVod(manager, RequestType.GETPLAYINFO, accessKeyId, accessKeySecret).
+                buildRequest().
+                withSelfParam(selfParam).
+                action(Action.GetPlayInfo).
+                signature().
+                run().
+                response();
+        if(response instanceof VodPlayUrlInfoResponse){
+            VodPlayUrlInfoResponse vodPlayUrlInfoResponse = (VodPlayUrlInfoResponse) response;
+            System.out.println(vodPlayUrlInfoResponse.getCode() + " : " + vodPlayUrlInfoResponse.getMessage() + ":" +
+                    vodPlayUrlInfoResponse.getVideoBase().getCoverURL() + " : " + vodPlayUrlInfoResponse.getPlayInfoList().getPlayInfo()[3].getPlayURL());
+        }
+
     }
 }

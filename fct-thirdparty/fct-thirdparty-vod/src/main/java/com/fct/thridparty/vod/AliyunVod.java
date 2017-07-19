@@ -4,6 +4,7 @@ import com.fct.thirdparty.http.HttpRequestExecutorManager;
 import com.fct.thridparty.vod.callback.Callback;
 import com.fct.thridparty.vod.factory.VodHandlerFactory;
 import com.fct.thridparty.vod.handler.VodHandler;
+import com.fct.thridparty.vod.operator.AbstractVodOperator;
 import com.fct.thridparty.vod.response.VodResponse;
 import com.fct.thridparty.vod.utils.SignatureGenerator;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class AliyunVod {
 
-    private VodHandler handler;
+    private AbstractVodOperator handler;
     private HttpRequestExecutorManager manager;
     private RequestType requestType;
     private String accessKeyId;
@@ -36,7 +37,7 @@ public class AliyunVod {
     }
 
     protected void init(){
-        handler = VodHandlerFactory.getHandler(requestType, manager);
+        handler = (AbstractVodOperator) VodHandlerFactory.getHandler(requestType, manager);
         handler.commonParam(accessKeyId);
         handler.setAccessKeySecret(accessKeySecret);
     }

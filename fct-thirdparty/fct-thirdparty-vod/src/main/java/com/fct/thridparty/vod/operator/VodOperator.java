@@ -14,4 +14,6 @@ public interface VodOperator {
     void getVods();
 
     void updateVod();
+
+    void getPlayUrl();
 }

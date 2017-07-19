@@ -43,10 +43,6 @@ public class VodDeleteHandler extends VodOperatorAdapter implements VodHandler{
         return this;
     }
 
-    public void setAccessKeySecret(String accessKeySecret) {
-        this.accessKeySecret = accessKeySecret;
-    }
-
     public void handle() {
         deleteVod();
     }

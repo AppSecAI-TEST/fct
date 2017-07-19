@@ -125,7 +125,7 @@ public class MemberManager {
         }
 
         member.setPassword(StringHelper.md5(newPassword));
-        memberRepository.saveAndFlush(member);
+        memberRepository.save(member);
     }
 
     public void forgetPassword(String cellPhone,String password)

@@ -39,7 +39,7 @@ public class CouponCodeDTOManager {
 
         String sql = PageUtil.getPageSQL(tables,fields,condition,orderby,pageIndex,pageSize);
 
-        return jt.query(sql,new Object[]{}, new BeanPropertyRowMapper<CouponCodeDTO>(CouponCodeDTO.class));
+        return jt.query(sql,param.toArray(), new BeanPropertyRowMapper<CouponCodeDTO>(CouponCodeDTO.class));
 
     }
 
@@ -81,7 +81,7 @@ public class CouponCodeDTOManager {
 
         if (isValid)
         {
-            sb.append(" and p.StartTime<='?' and p.EndTime>='?'");
+            sb.append(" and p.StartTime<=? and p.EndTime>=?");
             param.add(DateUtils.format(new Date()));
             param.add(DateUtils.format(new Date()));
         }

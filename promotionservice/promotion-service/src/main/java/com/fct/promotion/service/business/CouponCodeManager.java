@@ -80,11 +80,13 @@ public class CouponCodeManager {
     }
 
     void setCodeUsing(String code) {
-        String sql = String.format("update CouponCode set Status =1,UseTime=now(),LastUpdateTime=now() where code='%s' and Status=0",
-                code);
-
+        String sql = "update CouponCode set Status =1,UseTime=?,LastUpdateTime=? where code=? and Status=0";
+        List<Object> param = new ArrayList<>();
+        param.add(DateUtils.format(new Date()));
+        param.add(DateUtils.format(new Date()));
+        param.add(code);
         synchronized (syncObj) {
-            int count = jt.update(sql);
+            int count = jt.update(sql,param.toArray());
             if (count < 1) {
                 throw new IllegalArgumentException("优惠券使用出错");
             }
@@ -92,10 +94,13 @@ public class CouponCodeManager {
     }
 
     public void setCodeUsed(String code) {
-        String sql = String.format("update CouponCode set Status =2,LastUpdateTime=now() where code='%s' and Status=1", code);
+        String sql = "update CouponCode set Status =2,LastUpdateTime=? where code=? and Status=1";
+        List<Object> param = new ArrayList<>();
+        param.add(DateUtils.format(new Date()));
+        param.add(code);
 
         synchronized (syncObj) {
-            int count = jt.update(sql);
+            int count = jt.update(sql,param.toArray());
             if (count < 1) {
                 throw new IllegalArgumentException("优惠券使用成功出错");
             }
@@ -103,10 +108,12 @@ public class CouponCodeManager {
     }
 
     public void cancelCodeUsed(String code) {
-        String sql = String.format("update CouponCode set Status =0,LastUpdateTime=now() where code='%s' and Status!=0", code);
-
+        String sql = "update CouponCode set Status =0,LastUpdateTime=? where code=? and Status!=0";
+        List<Object> param = new ArrayList<>();
+        param.add(DateUtils.format(new Date()));
+        param.add(code);
         synchronized (syncObj) {
-            int count = jt.update(sql);
+            int count = jt.update(sql,param.toArray());
             if (count < 1) {
                 throw new IllegalArgumentException("优惠券取消使用成功出错");
             }

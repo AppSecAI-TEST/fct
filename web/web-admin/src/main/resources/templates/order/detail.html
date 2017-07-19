@@ -113,7 +113,7 @@
                     <div class="text-right m-t">
                         <th:block th:if="${orders.status eq 0}">
                             <button class="btn btn-primary orderStatus" type="button" data-action="pay">确认付款</button>
-                            <button class="btn btn-primary delaytime" type="button" data-action="close">延长关闭时间</button>
+                            <button class="btn btn-primary delaytime" type="button">延长关闭时间</button>
                             <button class="btn btn-danger orderStatus" type="button" data-action="close">关闭订单</button>
                         </th:block>
                         <button class="btn btn-primary" th:if="${orders.status eq 1}" id="deliveryClick">发货</button>
@@ -125,6 +125,7 @@
         </div>
     </div>
 </div>
+<script type="application/javascript" th:src="${pub.staticPath('/static/js/plugins/city/jquery.cityselect.js')}" class="script"></script>
 <script type="application/javascript" class="script">
     $(function () {
         $(".orderStatus").click(function () {
@@ -159,11 +160,10 @@
                 url: '/order/receiver?orderid=[[${orders.orderId}]]'
             });
         });
-        $(".orderStatus").click(function () {
-            var action = $(this).attr("data-action");
+        $(".delaytime").click(function () {
             JQbox.prompt(this, {
                 title: '延长关闭时间',
-                url: "/order/delaytime?action="+ action +"&orderid=[[${orders.orderId}]]&password=",
+                url: "/order/delaytime?action=close&orderid=[[${orders.orderId}]]&password=",
             });
         });
     })

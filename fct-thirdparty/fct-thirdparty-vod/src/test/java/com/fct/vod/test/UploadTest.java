@@ -3,7 +3,6 @@ package com.fct.vod.test;
 import com.aliyun.vod.upload.impl.UploadVideoImpl;
 import com.aliyun.vod.upload.req.UploadVideoRequest;
 import com.aliyun.vod.upload.resp.UploadVideoResponse;
-import com.fct.thridparty.vod.Action;
 import com.fct.thridparty.vod.AliyunVod;
 import com.fct.thridparty.vod.RequestType;
 import com.fct.thridparty.vod.response.VodResponse;

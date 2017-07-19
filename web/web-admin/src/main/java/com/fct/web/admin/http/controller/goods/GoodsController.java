@@ -162,14 +162,15 @@ public class GoodsController extends BaseController {
     @ResponseBody
     public String save(HttpServletRequest request,String artistId,String materialId, @RequestParam(required = false) String ext_id,
                        @RequestParam(required = false) String ext_name,@RequestParam(required = false) String ext_code,@RequestParam(required = false) String ext_marketPrice,
-                       @RequestParam(required = false) String ext_salePrice,@RequestParam(required = false) String ext_commission,@RequestParam(required = false) String ext_stockCount)
+                       @RequestParam(required = false) String ext_salePrice,@RequestParam(required = false) String ext_commission,
+                       @RequestParam(required = false) String ext_stockCount,String videoId)
     {
+        videoId = ConvertUtils.toString(videoId);
         String categorycode = ConvertUtils.toString(request.getParameter("categorycode"));
         String content = ConvertUtils.toString(request.getParameter("content"));
         String name = ConvertUtils.toString(request.getParameter("name"));
         String subTitle = ConvertUtils.toString(request.getParameter("subTitle"));
         String defaultImage = ConvertUtils.toString(request.getParameter("defaultImage"));
-        String videoId = ConvertUtils.toString(request.getParameter("videoId"));
         String videoImg = ConvertUtils.toString(request.getParameter("videoImg"));
         String code = ConvertUtils.toString(request.getParameter("code"));
         BigDecimal marketPrice = ConvertUtils.toBigDeciaml(request.getParameter("marketPrice"));

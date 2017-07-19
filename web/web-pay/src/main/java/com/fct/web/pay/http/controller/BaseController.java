@@ -34,7 +34,7 @@ public class BaseController {
 
         //获取cookie
 
-        //initUser(request,response);
+        initUser(request,response);
 
         if(currentUser == null) {
             currentUser = new MemberLogin();

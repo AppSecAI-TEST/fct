@@ -92,7 +92,8 @@ public class MemberStoreManager {
         StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(cellPhone))
         {
-            sb.append("  AND cellPhone=? OR id="+cellPhone);
+            sb.append("  AND (cellPhone=? OR id=?)");
+            param.add(cellPhone);
             param.add(cellPhone);
         }
         if(status>-1)

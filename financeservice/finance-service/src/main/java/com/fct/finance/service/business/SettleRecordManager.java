@@ -1,5 +1,6 @@
 package com.fct.finance.service.business;
 
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
@@ -94,7 +95,7 @@ public class SettleRecordManager {
         param.add(status);
         param.add(desc);
         param.add(omsOperaterId);
-        param.add(new Date());
+        param.add(DateUtils.format(new Date()));
 
         jt.update(sql,param.toArray());
     }

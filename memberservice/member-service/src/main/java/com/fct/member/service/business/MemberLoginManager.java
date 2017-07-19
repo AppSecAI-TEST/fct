@@ -6,9 +6,12 @@ import com.fct.member.data.entity.*;
 import com.fct.member.data.repository.MemberLoginRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,6 +34,9 @@ public class MemberLoginManager {
 
     @Autowired
     private MemberAuthManager memberAuthManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public MemberLogin login(String cellPhone, String password,String platform,String ip,Integer expireDay)
     {

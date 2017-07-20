@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class MemberLogin implements Serializable {
 
     @Id

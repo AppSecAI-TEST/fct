@@ -72,7 +72,7 @@ public class CommentController extends BaseController {
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
 
-        return "artist/comment";
+        return "artist/comment/index";
     }
 
     @RequestMapping(value = "/upstatus", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
@@ -103,5 +103,61 @@ public class CommentController extends BaseController {
         }
 
         return AjaxUtil.reload("处理成功。");
+    }
+
+    @RequestMapping(value = "/savereply", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveReply(Integer id,Integer replyid,Integer memberid,String username,String content)
+    {
+        id = ConvertUtils.toInteger(id);
+        replyid = ConvertUtils.toInteger(replyid);
+        memberid = ConvertUtils.toInteger(memberid);
+        username = ConvertUtils.toString(username);
+        content =ConvertUtils.toString(content);
+
+        try {
+            artistService.replyArtistComment(id,replyid,memberid,username,content);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            return AjaxUtil.alert(exp.getMessage());
+        }
+        catch (Exception exp)
+        {
+            //这里没有写进文件
+            Constants.logger.error(Exceptions.getStackTraceAsString(exp));
+            return AjaxUtil.alert("系统或网络错误，请稍候再试。");
+        }
+
+        return AjaxUtil.reload("保存成功。");
+    }
+
+    @RequestMapping(value = "/reply", method = RequestMethod.GET)
+    public String reply(Integer id,Integer replyid, Model model) {
+
+        id = ConvertUtils.toInteger(id);
+        replyid = ConvertUtils.toInteger(replyid);
+
+        ArtistComment comment = null;
+
+        try {
+            if(id>0) {
+                comment = artistService.getArtistComment(id);
+            }
+        }
+        catch (Exception exp)
+        {
+            //这里没有写进文件
+            Constants.logger.error(Exceptions.getStackTraceAsString(exp));
+        }
+        if(comment == null) {
+            comment = new ArtistComment();
+        }
+
+        model.addAttribute("comment", comment);
+        model.addAttribute("id", id);
+        model.addAttribute("replyid", replyid);
+
+        return "artist/comment/reply";
     }
 }

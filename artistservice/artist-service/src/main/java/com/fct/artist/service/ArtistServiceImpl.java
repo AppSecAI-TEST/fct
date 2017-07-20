@@ -153,10 +153,10 @@ public class ArtistServiceImpl implements ArtistService {
         return null;
     }
 
-    public Integer replyArtistComment(Integer id,Integer memberId,String userName,String content)
+    public Integer replyArtistComment(Integer id,Integer replyId,Integer memberId,String userName,String content)
     {
         try {
-            return artistCommentManager.reply(id,memberId,userName,content);
+            return artistCommentManager.reply(id,replyId,memberId,userName,content);
         }
         catch (IllegalArgumentException exp)
         {

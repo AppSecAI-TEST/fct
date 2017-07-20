@@ -58,7 +58,7 @@ public class ArtistCommentManager {
         return artistComment.getId();
     }
 
-    public Integer reply(Integer id,Integer memberId,String userName,String content)
+    public Integer reply(Integer id,Integer replyId,Integer memberId,String userName,String content)
     {
 
         if(memberId <=0)
@@ -74,20 +74,31 @@ public class ArtistCommentManager {
             throw new IllegalArgumentException("内容为空");
         }
 
-        ArtistComment artistComment = findById(id);
-
-        if(artistComment == null || artistComment.getArtistId()<=0)
+        ArtistComment comment = null;
+        if(id>0)
         {
-            throw new IllegalArgumentException("艺人不正确");
+            comment = findById(id);
+        }else
+        {
+            comment = new ArtistComment();
+            comment.setCreateTime(new Date());
+            comment.setReplyId(replyId);
         }
 
-        ArtistComment comment = new ArtistComment();
-        comment.setArtistId(artistComment.getId());
+        if(replyId>0)
+        {
+            ArtistComment artistComment = findById(replyId);
+
+            if(artistComment == null || artistComment.getArtistId()<=0)
+            {
+                throw new IllegalArgumentException("艺人不正确");
+            }
+            comment.setArtistId(artistComment.getArtistId());
+        }
+
         comment.setMemberId(memberId);
         comment.setUserName(userName);
-        comment.setReplyId(id);
         comment.setContent(content);
-        comment.setCreateTime(new Date());
         comment.setStatus(1);
         comment.setUpdateTime(new Date());
         artistCommentRepository.save(comment);

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="ibox float-e-margins">
+    <div class="ibox-content" style="border-style:none;">
+        <div class="alert alert-danger alert-dismissable dn" id="valid_remind"></div>
+        <form class="form-horizontal m-t" id="submitForm">
+            <input type="hidden" name="id" th:value="${id}">
+            <input type="hidden" name="replyid" th:value="${replyid}">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">艺人会员Id：</label>
+                <div class="col-sm-7">
+                    <input name="memberid" th:value="${comment.memberId}" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">艺人用户名：</label>
+                <div class="col-sm-7">
+                    <input name="username" th:value="${comment.userName}" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">内容：</label>
+                <div class="col-sm-9">
+                    <textarea name="content" th:text="${comment.content}" class="form-control" style="height: 50px;"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 col-sm-offset-3">
+                    <button class="btn btn-primary" type="button" id="btnClick">确认保存</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    $("#btnClick").click(function () {
+        JQAjax.post(this, {
+            form:"submitForm",
+            url: '/artist/comment/savereply',
+            wait:true
+        });
+    });
+
+</script>
+
+</html>

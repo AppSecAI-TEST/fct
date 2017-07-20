@@ -31,7 +31,7 @@ public interface ArtistService {
 
     Integer saveArtistComment(ArtistComment artistComment);
 
-    Integer replyArtistComment(Integer id,Integer memberId,String userName,String content);
+    Integer replyArtistComment(Integer id,Integer replyId,Integer memberId,String userName,String content);
 
     ArtistComment getArtistComment(Integer id);
 

@@ -152,6 +152,23 @@ public class ArtistServiceImpl implements ArtistService {
         }
         return null;
     }
+
+    public Integer replyArtistComment(Integer id,Integer memberId,String userName,String content)
+    {
+        try {
+            return artistCommentManager.reply(id,memberId,userName,content);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return 0;
+    }
+
     public Integer saveArtistComment(ArtistComment artistComment)
     {
         try {

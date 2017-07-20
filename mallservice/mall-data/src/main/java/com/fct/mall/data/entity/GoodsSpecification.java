@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class GoodsSpecification implements Serializable{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

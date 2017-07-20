@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrderGoods implements Serializable{
 
     @Id

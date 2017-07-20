@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class VerifyCode implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

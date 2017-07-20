@@ -8,16 +8,9 @@
             <input type="hidden" name="id" th:value="${id}">
             <input type="hidden" name="replyid" th:value="${replyid}">
             <div class="form-group">
-                <label class="col-sm-2 control-label">艺人会员Id：</label>
-                <div class="col-sm-7">
-                    <input name="memberid" th:value="${comment.memberId}" type="text" class="form-control" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">艺人用户名：</label>
-                <div class="col-sm-7">
-                    <input name="username" th:value="${comment.userName}" type="text" class="form-control" />
+                <label class="col-sm-3 control-label">艺人memberId：</label>
+                <div class="col-sm-5">
+                    <input name="memberid" th:value="${comment.memberId}" type="number" class="form-control" />
                 </div>
             </div>
 

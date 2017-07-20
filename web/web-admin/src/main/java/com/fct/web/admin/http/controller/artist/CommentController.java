@@ -7,6 +7,9 @@ import com.fct.artist.interfaces.PageResponse;
 import com.fct.core.exceptions.Exceptions;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.PageUtil;
+import com.fct.member.interfaces.MemberDTO;
+import com.fct.web.admin.http.cache.CacheArtistManager;
+import com.fct.web.admin.http.cache.CacheMenberManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.core.utils.AjaxUtil;
 import com.fct.web.admin.utils.Constants;
@@ -27,6 +30,12 @@ public class CommentController extends BaseController {
 
     @Autowired
     private ArtistService artistService;
+
+    @Autowired
+    private CacheMenberManager cacheMenberManager;
+
+    @Autowired
+    private CacheArtistManager cacheArtistManager;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(String name,Integer status,Integer artistid,Integer page, Model model) {
@@ -68,6 +77,7 @@ public class CommentController extends BaseController {
         query.put("status", status);
 
         model.addAttribute("query", query);
+        model.addAttribute("cache", cacheArtistManager);
         model.addAttribute("lsComment", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,pageUrl));
@@ -107,16 +117,20 @@ public class CommentController extends BaseController {
 
     @RequestMapping(value = "/savereply", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String saveReply(Integer id,Integer replyid,Integer memberid,String username,String content)
+    public String saveReply(Integer id,Integer replyid,Integer memberid,String content)
     {
         id = ConvertUtils.toInteger(id);
         replyid = ConvertUtils.toInteger(replyid);
         memberid = ConvertUtils.toInteger(memberid);
-        username = ConvertUtils.toString(username);
         content =ConvertUtils.toString(content);
 
+        MemberDTO member = cacheMenberManager.getCacheMember(memberid);
+        if(member == null)
+        {
+            return AjaxUtil.alert("memberid不存在");
+        }
         try {
-            artistService.replyArtistComment(id,replyid,memberid,username,content);
+            artistService.replyArtistComment(id,replyid,memberid,member.getUserName(),content);
         }
         catch (IllegalArgumentException exp)
         {

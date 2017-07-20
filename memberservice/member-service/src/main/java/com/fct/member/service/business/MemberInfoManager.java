@@ -44,6 +44,24 @@ public class MemberInfoManager {
         memberInfoRepository.save(info);
     }
 
+    public void updateInfo(Integer memberId,String headPortrait,String userName,Integer sex,String birthday,String weixin)
+    {
+        Member member = memberManager.findById(memberId);
+        if(member.getUserName().equals(member.getCellPhone()))
+        {
+            member.setUserName(userName);
+
+            memberManager.save(member);
+        }
+        MemberInfo info = memberInfoRepository.findOne(memberId);
+        info.setHeadPortrait(headPortrait);
+        info.setSex(sex>0 ? 1 :0);
+        info.setBirthday(DateUtils.parseString(birthday,"yyyy-MM-dd"));
+        info.setWeixin(weixin);
+        memberInfoRepository.save(info);
+
+    }
+
     public MemberInfo findById(Integer memberId)
     {
         if(memberId<=0)
@@ -96,6 +114,7 @@ public class MemberInfoManager {
         info.setRealName(name);
         info.setIdentityCardImg(identityCardImg);
         info.setIdentityCardNo(identityCardNo);
+        info.setBirthday(DateUtils.parseString(info.getIdentityCardNo().substring(6,14),"yyyyMMdd"));
         memberInfoRepository.save(info);
 
         MemberBankInfo bank = memberBankInfoManager.findOne(memberId);

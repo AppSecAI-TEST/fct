@@ -35,7 +35,7 @@ public interface MemberService {
 
     PageResponse<Member> findMember(String cellPhone,Integer authStatus,String beginTime,String endTime,Integer pageIndex,Integer pageSize);  //分页按条件查询
 
-    void updateMemberInfo(MemberInfo info);
+    void updateMemberInfo(Integer memberId,String headPortrait,String username,Integer sex,String birthday,String weixin);
 
     MemberInfo getMemberInfo(Integer memberId);
 

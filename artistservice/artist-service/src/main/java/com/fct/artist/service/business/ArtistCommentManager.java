@@ -1,5 +1,6 @@
 package com.fct.artist.service.business;
 
+import com.fct.artist.data.entity.Artist;
 import com.fct.artist.data.entity.ArtistComment;
 import com.fct.artist.data.repository.ArtistCommentRepository;
 import com.fct.artist.interfaces.PageResponse;
@@ -55,6 +56,45 @@ public class ArtistCommentManager {
         artistComment.setUpdateTime(new Date());
         artistCommentRepository.save(artistComment);
         return artistComment.getId();
+    }
+
+    public Integer reply(Integer id,Integer memberId,String userName,String content)
+    {
+
+        if(memberId <=0)
+        {
+            throw new IllegalArgumentException("会员id不正确。");
+        }
+        if(StringUtils.isEmpty(userName))
+        {
+            throw new IllegalArgumentException("用户名为空");
+        }
+        if(StringUtils.isEmpty(content))
+        {
+            throw new IllegalArgumentException("内容为空");
+        }
+
+        ArtistComment artistComment = findById(id);
+
+        if(artistComment == null || artistComment.getArtistId()<=0)
+        {
+            throw new IllegalArgumentException("艺人不正确");
+        }
+
+        ArtistComment comment = new ArtistComment();
+        comment.setArtistId(artistComment.getId());
+        comment.setMemberId(memberId);
+        comment.setUserName(userName);
+        comment.setReplyId(id);
+        comment.setContent(content);
+        comment.setCreateTime(new Date());
+        comment.setStatus(1);
+        comment.setUpdateTime(new Date());
+        artistCommentRepository.save(comment);
+
+        //可以考虑发条短信通知。
+
+        return comment.getId();
     }
 
     public ArtistComment findById(Integer id)
@@ -146,7 +186,7 @@ public class ArtistCommentManager {
         }
         if(replyId>0)
         {
-            sb.append(" AND replayId="+replyId);
+            sb.append(" AND replyId="+replyId);
         }
         return sb.toString();
     }

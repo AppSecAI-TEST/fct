@@ -9,5 +9,7 @@ public enum  Action {
     GetVideoInfo,
     UpdateVideoInfo,
     DeleteVideo,
-    GetVideoList
+    GetVideoList,
+    GetPlayInfo
+
 }

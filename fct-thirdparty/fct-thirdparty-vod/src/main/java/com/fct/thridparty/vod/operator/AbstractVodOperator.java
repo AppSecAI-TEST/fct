@@ -31,6 +31,10 @@ public abstract class AbstractVodOperator implements VodOperator, VodHandler{
     protected Map<String, Object> selfParam;
     protected Map<String, Object> allParam;
 
+    public void setAccessKeySecret(String accessKeySecret) {
+        this.accessKeySecret = accessKeySecret;
+    }
+
     public abstract void buildRequest();
 
     public VodAPIRequest getRequest(){
@@ -40,7 +44,6 @@ public abstract class AbstractVodOperator implements VodOperator, VodHandler{
     protected void setSignature(String signature){
         vodAPIRequest.setSignature(signature);
         commonParam.put("Signature", signature);
-//        allParam.put("Signature", signature);
     }
 
     /**

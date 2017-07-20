@@ -12,8 +12,6 @@ import java.util.Map;
  */
 public interface VodHandler {
 
-    void setAccessKeySecret(String accessKeySecret);
-
     VodResponse getResponse();
 
     void handle();

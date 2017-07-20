@@ -9,6 +9,7 @@ public enum  RequestType {
     GET, //获取单个视频信息
     DELETE, //批量删除视频
     UPDATE, //更新视频信息
-    GETLIST //获取视频信息列表
+    GETLIST, //获取视频信息列表
+    GETPLAYINFO //获取视频播放地址
 
 }

@@ -6,10 +6,8 @@ import com.fct.thirdparty.http.builder.RequestBuilder;
 import com.fct.thirdparty.http.entity.JsonNodeResponseWrapper;
 import com.fct.thirdparty.http.util.JsonConverter;
 import com.fct.thridparty.vod.Action;
-import com.fct.thridparty.vod.response.VodInfoResponse;
-import com.fct.thridparty.vod.response.VodInfosResponse;
-import com.fct.thridparty.vod.response.VodPlayAuthResponse;
-import com.fct.thridparty.vod.response.VodResponse;
+import com.fct.thridparty.vod.request.VodAPIPlayUrlRequest;
+import com.fct.thridparty.vod.response.*;
 import com.fct.thridparty.vod.utils.SignatureGenerator;
 import com.google.common.collect.Maps;
 import com.squareup.okhttp.Request;
@@ -58,6 +56,11 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
 
     @Override
     public void updateVod() {
+        //do nothing
+    }
+
+    @Override
+    public void getPlayUrl(){
         //do nothing
     }
 
@@ -121,9 +124,9 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
                 switch (requestType){
                     case GET:
                         if(Action.GetVideoPlayAuth.name().equalsIgnoreCase(vodAPIRequest.getAction()))
-                            targetClass = VodInfoResponse.class;
-                        else
                             targetClass = VodPlayAuthResponse.class;
+                        else
+                            targetClass = VodInfoResponse.class;
                         break;
                     case GETLIST:
                         targetClass = VodInfosResponse.class;
@@ -131,6 +134,9 @@ public abstract class VodOperatorAdapter extends AbstractVodOperator {
                     case DELETE:
                     case UPDATE:
                         targetClass = VodResponse.class;
+                        break;
+                    case GETPLAYINFO:
+                        targetClass = VodPlayUrlInfoResponse.class;
                 }
                 response = JsonConverter.toObject(JsonConverter.toJson(node), targetClass);
                 //增加回调功能

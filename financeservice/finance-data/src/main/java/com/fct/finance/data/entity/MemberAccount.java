@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class MemberAccount implements Serializable {
 
     //会会Id

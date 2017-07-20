@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class VideoCategory implements Serializable {
 
     @Id

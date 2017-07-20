@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Entity
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrderRefund implements Serializable{
 
     @Id

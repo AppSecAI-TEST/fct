@@ -22,6 +22,8 @@ public interface ArtistService {
 
     void addArtistFollowCount(Integer id,Integer count);
 
+    void addArtistViewCount(Integer id,Integer count);
+
     PageResponse<ArtistComment> findArtistComment(Integer artistId,Integer memberId,String username, Integer status,
                                                   Integer replyId,Integer pageIndex, Integer pageSize);
 

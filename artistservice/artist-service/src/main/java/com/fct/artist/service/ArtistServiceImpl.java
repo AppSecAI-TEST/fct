@@ -98,6 +98,21 @@ public class ArtistServiceImpl implements ArtistService {
         }
     }
 
+    public void addArtistViewCount(Integer id,Integer count)
+    {
+        try {
+            artistManager.addViewCount(id,count);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
+
     public void addArtistFollowCount(Integer id,Integer count)
     {
         try {

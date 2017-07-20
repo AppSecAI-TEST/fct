@@ -101,7 +101,19 @@ public class ArtistManager {
             throw  new IllegalArgumentException("id 为空");
         }
         Artist artist = artistRepository.findOne(id);
-        artist.setFollowCount(artist.getGoodsCount()+count);
+        artist.setFollowCount(artist.getFollowCount()+count);
+        artist.setUpdateTime(new Date());
+        artistRepository.save(artist);
+    }
+
+    public void addViewCount(Integer id,Integer count)
+    {
+        if(id==null || id<=0)
+        {
+            throw  new IllegalArgumentException("id 为空");
+        }
+        Artist artist = artistRepository.findOne(id);
+        artist.setViewCount(artist.getViewCount()+count);
         artist.setUpdateTime(new Date());
         artistRepository.save(artist);
     }

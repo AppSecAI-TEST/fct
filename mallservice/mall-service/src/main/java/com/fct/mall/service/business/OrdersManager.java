@@ -390,7 +390,7 @@ public class OrdersManager {
     }
 
     private String getCondition(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
-                                Integer status, String payPaltform, String payOrderId, Integer timeType, String beginTime,
+                                Integer status,Integer commentStatus, String payPaltform, String payOrderId, Integer timeType, String beginTime,
                                 String endTime,List<Object> param)
     {
         StringBuilder sb = new StringBuilder();
@@ -435,6 +435,10 @@ public class OrdersManager {
             sb.append(" AND status="+status);
         }
 
+        if (commentStatus>-1) {
+            sb.append(" AND commentStatus="+commentStatus);
+        }
+
         String timeColumn = "createTime";
         if (timeType>2) {
             timeColumn = "payTime";
@@ -462,7 +466,7 @@ public class OrdersManager {
         String table="Orders";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,payPaltform,payOrderId,
+        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,-1,payPaltform,payOrderId,
                 timeType,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
@@ -478,6 +482,48 @@ public class OrdersManager {
         {
             end = pageIndex;
             hasmore = false;
+        }
+
+        PageResponse<Orders> pageResponse = new PageResponse<>();
+        pageResponse.setTotalCount(count);
+        pageResponse.setCurrent(end);
+        pageResponse.setElements(ls);
+        pageResponse.setHasMore(hasmore);
+
+        return pageResponse;
+    }
+
+    public PageResponse<Orders> findByApi(Integer memberId,String orderId, Integer shopId, String goodsName,
+                                          Integer status,Integer commentStatus,Integer pageIndex, Integer pageSize)
+    {
+        //定义一个Expression
+        //Expression<String> exp = root.get("orderId");
+        List<Object> param = new ArrayList<>();
+
+        String table="Orders";
+        String field ="*";
+        String orderBy = "createTime Desc";
+        String condition= getCondition(memberId,"",orderId,shopId,goodsName,status,commentStatus,
+                "","",0,"","",param);
+
+        String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<Orders> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Orders>(Orders.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        for (Orders order:ls
+             ) {
+            order.setOrderGoods(orderGoodsManager.findByOrderId(order.getOrderId()));
         }
 
         PageResponse<Orders> pageResponse = new PageResponse<>();

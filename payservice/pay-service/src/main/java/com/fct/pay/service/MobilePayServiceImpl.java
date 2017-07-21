@@ -2,6 +2,7 @@ package com.fct.pay.service;
 
 import com.fct.pay.interfaces.MobilePayService;
 import com.fct.pay.interfaces.PayNotify;
+import com.fct.pay.service.alipay.AlipayManager;
 import com.fct.pay.service.unionpay.UnionPayManager;
 import com.fct.pay.service.wxpay.WxpayManager;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,9 @@ public class MobilePayServiceImpl implements MobilePayService {
 
     @Autowired
     private UnionPayManager unionPayManager;
+
+    @Autowired
+    private AlipayManager alipayManager;
 
     public String wxpayWap(String payment,String payOrderNo, String openId, BigDecimal total_fee, String body,
                     String notifyUrl, String userIp, Date expireTime)
@@ -228,6 +232,80 @@ public class MobilePayServiceImpl implements MobilePayService {
 
     public PayNotify alipayAppNotify(Map<String, String> map)
     {
+        return null;
+    }
+
+    public String alipayWap(String payment, String payOrderNo, BigDecimal amount, String title, Date expireTime,
+                     String notifyUrl)
+    {
+        if(StringUtils.isEmpty(payment))
+        {
+            payment = "alipay_fct";
+        }
+        try {
+            return alipayManager.createWapPayUrl(payment,payOrderNo,title,amount,expireTime);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public PayNotify alipayNotify(Map<String, String> map)
+    {
+        try {
+            return alipayManager.notify(map);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public PayNotify alipayCallback(Map<String, String> map)
+    {
+        try {
+            return alipayManager.callback(map);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public PayNotify refund(String payment,String payOrderId,String refundId,BigDecimal refundAmount,
+                            String refundReason)
+    {
+        if(StringUtils.isEmpty(payment))
+        {
+            payment = "alipay_fct";
+        }
+        try {
+            return alipayManager.refund(payment,payOrderId,refundId,refundAmount,refundReason);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return null;
     }
 }

@@ -174,6 +174,44 @@ public class ArtistCommentManager {
         return p;
     }
 
+    public PageResponse<ArtistComment> findByAPI(Integer artistId, Integer memberId,Integer pageIndex, Integer pageSize)
+    {
+        List<Object> param = new ArrayList<>();
+
+        String table="ArtistComment";
+        String field ="*";
+        String orderBy = "Id Desc";
+        String condition= getCondition(artistId,memberId,"",1,0,param);
+
+        String sql = "SELECT Count(0) FROM ArtistComment WHERE 1=1 "+condition;
+        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
+
+        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
+
+        List<ArtistComment> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<>(ArtistComment.class));
+
+        int end = pageIndex+1;
+        Boolean hasmore = true;
+        if(pageIndex*pageSize >= count)
+        {
+            end = pageIndex;
+            hasmore = false;
+        }
+
+        for (ArtistComment comment:ls
+             ) {
+            //默认回复内容取3条
+            comment.setReplyComment(findByComment(comment.getId(),3));
+        }
+        PageResponse<ArtistComment> p = new PageResponse<>();
+        p.setTotalCount(count);
+        p.setCurrent(end);
+        p.setElements(ls);
+        p.setHasMore(hasmore);
+
+        return p;
+    }
+
     private String getCondition(Integer artistId, Integer memberId, String username, Integer status,
                                 Integer replyId,List<Object> param)
     {

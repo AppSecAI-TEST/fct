@@ -41,4 +41,14 @@ public interface MobilePayService {
 
     PayNotify alipayAppNotify(Map<String, String> map);
 
+    String alipayWap(String payment, String payOrderNo, BigDecimal amount, String title, Date expireTime,
+                            String notifyUrl);
+
+    PayNotify alipayNotify(Map<String, String> map);
+
+    PayNotify alipayCallback(Map<String, String> map);
+
+    PayNotify refund(String payment,String payOrderId,String refundId,BigDecimal refundAmount,
+                     String refundReason);
+
 }

@@ -404,6 +404,19 @@ public class MallServiceImpl implements MallService {
         return null;
     }
 
+    public PageResponse<Orders> findOrdersByAPI(Integer memberId,String orderId, Integer shopId, String goodsName,
+                                         Integer status,Integer commentStatus,Integer pageIndex, Integer pageSize)
+    {
+        try {
+            return ordersManager.findByApi(memberId, orderId, shopId, goodsName, status,commentStatus, pageIndex, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public Orders getOrders(String orderId) {
 
         try {

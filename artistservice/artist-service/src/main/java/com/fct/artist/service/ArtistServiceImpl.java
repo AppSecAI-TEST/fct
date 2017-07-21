@@ -141,6 +141,18 @@ public class ArtistServiceImpl implements ArtistService {
         return null;
     }
 
+    public PageResponse<ArtistComment> findArtistCommentByAPI(Integer artistId, Integer memberId,Integer pageIndex, Integer pageSize)
+    {
+        try {
+            return artistCommentManager.findByAPI(artistId,memberId,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public List<ArtistComment> findReplyComment(Integer commentId,int top)
     {
         try {

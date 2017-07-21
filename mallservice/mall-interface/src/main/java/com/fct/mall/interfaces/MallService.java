@@ -69,6 +69,9 @@ public interface MallService {
                             Integer status,String payPlatform,String payOrderId,Integer timeType,String beginTime,
                             String endTime,Integer pageIndex, Integer pageSize);
 
+    PageResponse<Orders> findOrdersByAPI(Integer memberId,String orderId, Integer shopId, String goodsName,
+                                   Integer status,Integer commentStatus,Integer pageIndex, Integer pageSize);
+
     Orders getOrders(String orderId);
 
     Orders getAloneOrders(String orderId);

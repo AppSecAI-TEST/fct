@@ -54,4 +54,15 @@ public class PayConfig {
     {
         this.unionpay_fctwap = unionpay_fctwap;
     }
+
+
+    private Map<String, String> alipay_fct = new HashMap<>();
+
+    public Map<String, String> getAlipay_fct() {
+        return alipay_fct;
+    }
+
+    public void setAlipay_fct(Map<String, String> alipay_fct) {
+        this.alipay_fct = alipay_fct;
+    }
 }

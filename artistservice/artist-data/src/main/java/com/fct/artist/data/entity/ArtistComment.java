@@ -3,12 +3,10 @@ package com.fct.artist.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -58,4 +56,7 @@ public class ArtistComment implements Serializable {
      * 更新时间
      * */
     private Date updateTime;
+
+    @Transient
+    List<ArtistComment> replyComment;
 }

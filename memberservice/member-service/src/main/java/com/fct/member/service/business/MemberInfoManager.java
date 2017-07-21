@@ -54,9 +54,13 @@ public class MemberInfoManager {
             memberManager.save(member);
         }
         MemberInfo info = memberInfoRepository.findOne(memberId);
-        info.setHeadPortrait(headPortrait);
+        if(!StringUtils.isEmpty(headPortrait)) {
+            info.setHeadPortrait(headPortrait);
+        }
         info.setSex(sex>0 ? 1 :0);
-        info.setBirthday(DateUtils.parseString(birthday,"yyyy-MM-dd"));
+        if(!StringUtils.isEmpty(birthday)) {
+            info.setBirthday(DateUtils.parseString(birthday, "yyyy-MM-dd"));
+        }
         info.setWeixin(weixin);
         memberInfoRepository.save(info);
 

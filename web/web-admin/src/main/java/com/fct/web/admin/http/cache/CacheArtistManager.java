@@ -1,6 +1,7 @@
 package com.fct.web.admin.http.cache;
 
 import com.fct.artist.data.entity.Artist;
+import com.fct.artist.data.entity.ArtistComment;
 import com.fct.artist.interfaces.ArtistService;
 import com.fct.artist.interfaces.PageResponse;
 import com.fct.mall.data.entity.GoodsCategory;
@@ -75,6 +76,15 @@ public class CacheArtistManager {
             Constants.logger.error(exp.toString());
         }
         return new Artist();
+    }
+
+    public String getArtistName(Integer id)
+    {
+        Artist artist = getCacheArtist(id);
+        if(artist != null){
+            return artist.getName();
+        }
+        return "";
     }
 
     public List<Artist> findCacheArtist()

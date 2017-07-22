@@ -1,9 +1,7 @@
 package com.fct.mall.service.business;
 
 import com.fct.core.json.JsonConverter;
-import com.fct.mall.data.entity.Goods;
-import com.fct.mall.data.entity.GoodsSpecification;
-import com.fct.mall.data.entity.OrderGoods;
+import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrderGoodsRepository;
 import com.fct.mall.interfaces.OrderGoodsDTO;
 import com.fct.mall.interfaces.OrderGoodsResponse;
@@ -32,7 +30,13 @@ public class OrderGoodsManager {
     private GoodsManager goodsManager;
 
     @Autowired
+    private OrdersManager ordersManager;
+
+    @Autowired
     private GoodsSpecificationManager goodsSpecificationManager;
+
+    @Autowired
+    private OrderRefundManager orderRefundManager;
 
     @Autowired
     private PromotionService promotionService;
@@ -54,6 +58,31 @@ public class OrderGoodsManager {
         return orderGoodsRepository.findByOrderId(orderId);
     }
 
+    public List<OrderGoods> findByOrderId(String orderId,Integer orderStatus)
+    {
+        List<OrderGoods> lsGoods =  findByOrderId(orderId);
+
+        for (OrderGoods g:lsGoods
+                ) {
+
+            if(orderStatus ==0 || orderStatus ==4)
+            {
+                g.setStatus(-1);
+            }
+            else
+            {
+                OrderRefund refund = orderRefundManager.findByStatus(g.getId());
+                if(refund == null){
+                    g.setStatus(0);
+                }else {
+                    g.setStatus(refund.getStatus());
+                    g.setStatusName(orderRefundManager.getStatusName(refund.getStatus()));
+                }
+            }
+        }
+        return lsGoods;
+    }
+
     public OrderGoods findById(Integer id)
     {
         if(id<=0)
@@ -61,6 +90,25 @@ public class OrderGoodsManager {
             throw new IllegalArgumentException("id为空");
         }
         return orderGoodsRepository.findOne(id);
+    }
+
+    public OrderGoods findByApplyRefund(Integer id)
+    {
+        OrderGoods orderGoods = findById(id);
+        if(orderGoods == null)
+        {
+            throw new IllegalArgumentException("无效的订单商品");
+        }
+        Orders orders = ordersManager.findOne(orderGoods.getOrderId());
+        if(orders == null)
+        {
+            throw new IllegalArgumentException("无效的订单");
+        }
+        if(orders.getStatus() == 0 || orders.getStatus() ==4)
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+        return orderGoods;
     }
 
     public OrderGoodsResponse findFinalGoods(Integer memberId, List<OrderGoodsDTO> lsGoods)

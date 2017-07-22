@@ -54,7 +54,7 @@ public class OrderCommentManager {
             throw new IllegalArgumentException("动态分不正确");
         }
 
-        Orders orders = ordersManager.findById(orderId);
+        Orders orders = ordersManager.findOne(orderId);
         if(orders.getCommentStatus() ==1)
         {
             throw  new IllegalArgumentException("已评论过。");

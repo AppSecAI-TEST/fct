@@ -527,6 +527,18 @@ public class MallServiceImpl implements MallService {
         return null;
     }
 
+    public OrderGoods getOrderGoods(Integer orderGoodsId)
+    {
+        try {
+            return orderGoodsManager.findByApplyRefund(orderGoodsId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public void saveOrderReciver(OrderReceiver or) {
 
         try {

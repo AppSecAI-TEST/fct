@@ -544,7 +544,7 @@ public class OrdersManager {
         }
         Orders order = ordersRepository.findOne(orderId);
         order.setOrderReceiver(orderReceiverManager.findByOrderId(orderId));
-        order.setOrderGoods(orderGoodsManager.findByOrderId(orderId));
+        order.setOrderGoods(orderGoodsManager.findByOrderId(orderId,order.getStatus()));
 
         return order;
     }

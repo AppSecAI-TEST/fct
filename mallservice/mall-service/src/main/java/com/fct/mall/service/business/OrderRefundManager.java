@@ -47,7 +47,7 @@ public class OrderRefundManager {
 
     private void agreeRefund(OrderRefund refund)
     {
-        Orders orders = ordersManager.findById(refund.getOrderId());
+        Orders orders = ordersManager.findOne(refund.getOrderId());
         OrderGoods g = orderGoodsManager.findById(refund.getOrderGoodsId());
 
         BigDecimal orderAccountAmount = orders.getAccountAmount();
@@ -517,6 +517,34 @@ public class OrderRefundManager {
             throw new IllegalArgumentException("订单宝贝为空");
         }
         return orderRefundRepository.getRefund(memberId,orderId,orderGoodsId);
+    }
+
+    public OrderRefund findByStatus(Integer orderGoodsId)
+    {
+        return orderRefundRepository.findByStatus(orderGoodsId);
+    }
+
+    public String getStatusName(Integer status)
+    {
+        switch (status)
+        {
+            case 0:
+                return "等待处理";
+            case 1:
+                return "接受申请";
+            case 2:
+                return "等待寄送";
+            case 3:
+                return "同意处理";
+            case 4:
+                return "退款成功";
+            case 5:
+                return "拒绝处理";
+            case 6:
+                return "关闭退款";
+
+        }
+        return "";
     }
 
 

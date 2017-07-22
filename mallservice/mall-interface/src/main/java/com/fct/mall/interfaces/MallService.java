@@ -110,6 +110,8 @@ public interface MallService {
 
     OrderRefund getOrderRefund(Integer refundId);
 
+    OrderGoods getOrderGoods(Integer orderGoodsId);
+
     OrderRefund getOrderRefundByOrderGoodsId(Integer memberId,String orderId,Integer orderGoodId);
 
     PageResponse<OrderRefundDTO> findOrderRefund(String orderId,String goodsName, Integer orderGoodsId,Integer memberId,Integer status,

@@ -15,4 +15,8 @@ public interface OrderRefundRepository  extends JpaRepository<OrderRefund, Integ
     @Query(nativeQuery = true,
             value = "select * from OrderRefund where memberid=?1 and orderId=?2 and orderGoodsId=?3")
     OrderRefund getRefund(Integer memberId, String orderId, Integer orderGoodsId);
+
+    @Query(nativeQuery = true,
+            value = "select * from OrderRefund where orderGoodsId=?1 limit 1")
+    OrderRefund findByStatus(Integer orderGoodsId);
 }

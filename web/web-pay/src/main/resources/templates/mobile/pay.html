@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<script type="text/javascript" th:if="${platform eq 'wxpay_fctwap'}">
+<script type="text/javascript" th:if="${#strings.contains(platform,'wxpay')}">
     document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
         WeixinJSBridge.invoke('getBrandWCPayRequest',[[${payurl}]],function (res) {
             // 返回 res.err_msg,取值
@@ -27,13 +27,17 @@
     }, false);
 </script>
 
-<th:block th:if="${platform eq 'unionpay_fctwap'}">
+<th:block th:if="${#strings.contains(platform,'unionpay')}">
     <form id="pay_form" th:action="${payurl}" method="post">
 
     </form>
     <script>
         document.getElementById("pay_form").submit();
     </script>
+</th:block>
+
+<th:block th:if="${#strings.contains(platform,'alipay')}" th:utext="${payurl}">
+
 </th:block>
 
 </body>

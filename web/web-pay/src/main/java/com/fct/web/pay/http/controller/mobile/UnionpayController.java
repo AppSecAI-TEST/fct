@@ -131,7 +131,7 @@ public class UnionpayController {
         }
         catch (IOException exp)
         {
-            Constants.logger.error("微信支付完成页面处理过程中发生错误。" + exp);
+            Constants.logger.error("银联支付完成页面处理过程中发生错误。" + exp);
         }
 
         return "mobile/unionpay/callback";

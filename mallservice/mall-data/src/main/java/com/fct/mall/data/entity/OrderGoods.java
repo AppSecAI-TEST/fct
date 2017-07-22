@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -86,4 +83,16 @@ public class OrderGoods implements Serializable{
     /// 内容（快照）
     /// </summary>
     private String content;
+
+    /**
+     * 冗余退款状态
+     * */
+    @Transient
+    private Integer status;
+
+    /**
+     * 冗余退款状态名称
+     * */
+    @Transient
+    private String statusName;
 }

@@ -86,7 +86,7 @@ public interface FinanceService {
     PageResponse<SettleRecord> findSettleRecord(Integer memberId, String cellPhone, String tradeType, String tradeId, Integer status,
                                         String beginTime, String endTime, Integer pageIndex, Integer pageSize);
     //获取支付平台方式
-    List<PayPlatform> findPayPlatform(String payment);
+    List<PayPlatform> findPayPlatform(String type,String webSite,Integer status);
 
     Integer createRechargeRecord(RechargeRecord record);
 

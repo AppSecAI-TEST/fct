@@ -456,7 +456,7 @@ public class OrdersManager {
 
     //获取订单列表
     public PageResponse<Orders> findAll(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
-                                        Integer status, String payPaltform, String payOrderId, Integer timeType, String beginTime,
+                                        Integer status, String payPlatform, String payOrderId, Integer timeType, String beginTime,
                                         String endTime, Integer pageIndex, Integer pageSize)
     {
         //定义一个Expression
@@ -466,7 +466,7 @@ public class OrdersManager {
         String table="Orders";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,-1,payPaltform,payOrderId,
+        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,-1,payPlatform,payOrderId,
                 timeType,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
@@ -544,7 +544,7 @@ public class OrdersManager {
         }
         Orders order = ordersRepository.findOne(orderId);
         order.setOrderReceiver(orderReceiverManager.findByOrderId(orderId));
-        order.setOrderGoods(orderGoodsManager.findByOrderId(orderId));
+        order.setOrderGoods(orderGoodsManager.findByOrderId(orderId,order.getStatus()));
 
         return order;
     }

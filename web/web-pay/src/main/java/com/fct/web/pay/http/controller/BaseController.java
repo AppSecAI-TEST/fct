@@ -39,8 +39,8 @@ public class BaseController {
         if(currentUser == null) {
             currentUser = new MemberLogin();
         }
-        /*currentUser.setMemberId(1);
-        currentUser.setCellPhone("13816619868");*/
+        //currentUser.setMemberId(5);
+        //currentUser.setCellPhone("18616311580");
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);

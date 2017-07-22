@@ -164,4 +164,5 @@ $RECYCLE.BIN/
 
 # not exclude below jars
 !aliyun-java-vod-upload-1.0.2.jar
+!alipay-sdk-java20170615110434.jar
 

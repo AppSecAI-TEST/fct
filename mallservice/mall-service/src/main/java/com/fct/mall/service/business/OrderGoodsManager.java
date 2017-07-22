@@ -65,19 +65,19 @@ public class OrderGoodsManager {
         for (OrderGoods g:lsGoods
                 ) {
 
-            if(orderStatus ==0 || orderStatus ==4)
-            {
-                g.setStatus(-1);
-            }
-            else
+            if(orderStatus ==1 || orderStatus ==2 || orderStatus ==3)
             {
                 OrderRefund refund = orderRefundManager.findByStatus(g.getId());
                 if(refund == null){
-                    g.setStatus(0);
+                    g.setStatus(orderStatus ==3 ? -2 : -1);    //可进行退款操作
                 }else {
-                    g.setStatus(refund.getStatus());
+                    g.setStatus(refund.getId());
                     g.setStatusName(orderRefundManager.getStatusName(refund.getStatus()));
                 }
+            }
+            else
+            {
+                g.setStatus(-2);    //不可进行任何操作
             }
         }
         return lsGoods;

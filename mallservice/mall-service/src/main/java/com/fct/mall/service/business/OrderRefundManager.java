@@ -171,6 +171,7 @@ public class OrderRefundManager {
         OrderGoods goods = orderGoodsManager.findById(refund.getOrderGoodsId());
         List<OrderRefundMessage> lsMessage = orderRefundMessageManager.findByRefund(refundId);
 
+        refund.setStatusName(getStatusName(refund.getStatus()));
         refund.setOrderGoods(goods);
         refund.setRefundMessage(lsMessage);
         return refund;

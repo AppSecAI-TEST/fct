@@ -74,4 +74,7 @@ public class OrderRefund implements Serializable{
 
     @Transient
     private OrderGoods orderGoods;
+
+    @Transient
+    private String statusName;
 }

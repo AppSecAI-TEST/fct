@@ -174,7 +174,11 @@ public class PayOrderManager  {
 
             //可提现金额=当前提现金额-扣除的充值金额
             rechargeAmount =  account.getWithdrawAmount().subtract(rechargeAmount);
-
+            if(rechargeAmount.doubleValue()<0)
+            {
+                //数据异常。
+                throw new IllegalArgumentException("余额不匹配。");
+            }
             account.setWithdrawAmount(rechargeAmount);
         }
     }

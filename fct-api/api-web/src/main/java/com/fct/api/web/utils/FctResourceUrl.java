@@ -32,7 +32,7 @@ public class FctResourceUrl {
         {
             url = "";
         }
-        return String.format("%s@%dw.jpg", getImageUrl(url), size);
+        return String.format("%s!%d", getImageUrl(url), size);
     }
 
     public List<String> getMutilImageUrl(String url)

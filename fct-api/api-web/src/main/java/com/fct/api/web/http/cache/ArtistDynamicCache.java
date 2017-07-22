@@ -38,6 +38,7 @@ public class ArtistDynamicCache {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", dynamic.getId());
+                map.put("isTop", dynamic.getIsTop());
                 map.put("content", dynamic.getContent());
                 map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages()));
                 map.put("videoImage", fctResourceUrl.getImageUrl(dynamic.getVideoImg()));

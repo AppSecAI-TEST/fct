@@ -13,6 +13,7 @@ import com.fct.mall.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.member.interfaces.MemberDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +74,9 @@ public class OrderCommentController extends BaseController {
         express_score = ConvertUtils.toInteger(express_score);
         has_anonymous = ConvertUtils.toInteger(has_anonymous);
         sale_score = ConvertUtils.toInteger(sale_score);
+        if (StringUtils.isEmpty(order_id)) {
+            return new ReturnValue(404, "订单号不存在");
+        }
 
         MemberLogin member = this.memberAuth();
 

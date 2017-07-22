@@ -87,6 +87,11 @@ public class ShoppingCartController extends BaseController {
         product_id = ConvertUtils.toInteger(product_id);
         spec_id = ConvertUtils.toInteger(spec_id);
         buy_number = ConvertUtils.toInteger(buy_number);
+        if (product_id < 1)
+            return new ReturnValue<>(404, "产品有误");
+
+        if (buy_number < 1)
+            return new ReturnValue<>(404, "购买数量不能小于1");
 
         MemberLogin member = this.memberAuth();
         mallService.saveShoppingCart(member.getMemberId(), 0, product_id, spec_id, buy_number);
@@ -107,6 +112,9 @@ public class ShoppingCartController extends BaseController {
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.POST)
     public ReturnValue deleteCartProduct(@PathVariable("id") Integer id) {
+
+        if (id < 1)
+            return new ReturnValue(404, "购物车记录不存在");
 
         MemberLogin member = this.memberAuth();
         mallService.deleteShoppingCart(member.getMemberId(), 0, id);

@@ -35,6 +35,9 @@ public class MemberAddressController extends BaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ReturnValue<MemberAddress> getAddress(@PathVariable("id") Integer id) {
 
+        if (id < 1)
+            return new ReturnValue<>(404, "收货地址不存在");
+
         MemberLogin member = this.memberAuth();
 
         MemberAddress address = memberService.getMemberAddress(id);
@@ -52,6 +55,9 @@ public class MemberAddressController extends BaseController {
     @RequestMapping(value = "{id}/default", method = RequestMethod.POST)
     public ReturnValue saveDefault(@PathVariable("id") Integer id) {
 
+        if (id < 1)
+            return new ReturnValue<>(404, "收货地址不存在");
+
         MemberLogin member = this.memberAuth();
         memberService.setDefaultAddress(id, member.getMemberId());
 
@@ -60,6 +66,9 @@ public class MemberAddressController extends BaseController {
 
     @RequestMapping(value = "{id}/delete", method = RequestMethod.POST)
     public ReturnValue saveDelete(@PathVariable("id") Integer id) {
+
+        if (id < 1)
+            return new ReturnValue<>(404, "收货地址不存在");
 
         MemberLogin member = this.memberAuth();
 

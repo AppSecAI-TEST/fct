@@ -60,6 +60,12 @@ public class RechargeController extends BaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ReturnValue<RechargeRecord> getRecharge(@PathVariable("id") Integer id) {
 
+        id = ConvertUtils.toInteger(id);
+        if (id < 1) {
+
+            return  new ReturnValue<>(404, "充值记录不存在");
+        }
+
         MemberLogin member = this.memberAuth();
 
         RechargeRecord recharge = financeService.getRechargeRecord(id);
@@ -85,6 +91,11 @@ public class RechargeController extends BaseController {
 
         pay_amount = ConvertUtils.toBigDeciaml(pay_amount);
         gift_amount = ConvertUtils.toBigDeciaml(gift_amount);
+        if (pay_amount.doubleValue() < 1) {
+
+            return new ReturnValue(404, "充值金额不能小于1000元");
+        }
+
 
         MemberLogin member = this.memberAuth();
 

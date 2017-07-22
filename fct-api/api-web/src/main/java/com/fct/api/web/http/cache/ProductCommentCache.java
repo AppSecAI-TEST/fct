@@ -44,8 +44,8 @@ public class ProductCommentCache {
                 Map<String, Object> map = new HashMap<>();
                 MemberDTO member = memberCache.getMember(comment.getMemberId());
 
-                map.put("id", comment.getId());
-                map.put("userName", member.getUserName());
+                map.put("id", comment.getIsAnonymous() != 1 ? 0 : comment.getId());
+                map.put("userName", comment.getIsAnonymous() != 1 ? "匿名" : member.getUserName());
                 map.put("headPortrait", fctResourceUrl.getImageUrl(member.getHeadPortrait()));
                 map.put("descScore", comment.getDescScore());
                 map.put("content", comment.getContent());

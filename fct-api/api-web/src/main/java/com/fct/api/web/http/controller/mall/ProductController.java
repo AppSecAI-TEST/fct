@@ -44,30 +44,6 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductCache productCache;
 
-    /**获取可分享的产品
-     *
-     * @param category_code
-     * @param name
-     * @param page_index
-     * @param page_size
-     * @return
-     */
-    @RequestMapping(value = "share", method = RequestMethod.GET)
-    public ReturnValue<PageResponse<Goods>> findShareProduct(String category_code, String name,
-                                                      Integer page_index, Integer page_size) {
-
-        page_index = ConvertUtils.toPageIndex(page_index);
-        page_size = ConvertUtils.toInteger(page_size, 20);
-
-        PageResponse<Goods> pageResponse = mallService.findGoods(name, category_code, 0,
-                0, 0, 0, 0, 1, page_index, page_size);
-
-        ReturnValue<PageResponse<Goods>> response = new ReturnValue<>();
-        response.setData(pageResponse);
-
-        return response;
-    }
-
     /**获取产品详情
      *
      * @param id
@@ -77,6 +53,10 @@ public class ProductController extends BaseController {
     public ReturnValue<Map<String, Object>> getProduct(@PathVariable("id") Integer id) {
 
         id= ConvertUtils.toInteger(id);
+        if (id < 1) {
+            return new ReturnValue<>(404, "产品不存在");
+        }
+
         Integer favoriteState = 0;
         Integer cartProductCount = 0;
         Integer hasCoupon = 0;
@@ -186,6 +166,9 @@ public class ProductController extends BaseController {
     public ReturnValue<List<Map<String, Object>>> getProductsByArtistId(Integer artist_id) {
 
         artist_id = ConvertUtils.toInteger(artist_id);
+        if (artist_id < 1) {
+            return new ReturnValue<>(404, "艺术家不存在");
+        }
 
         ReturnValue<List<Map<String, Object>>> response = new ReturnValue<>();
         List<Map<String, Object>> lsMaps = productCache.artistProducts(artist_id, 100);
@@ -203,6 +186,12 @@ public class ProductController extends BaseController {
         sort_index = ConvertUtils.toInteger(sort_index, 0);
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size, 20);
+
+        MemberLogin member = this.memberAuth();
+        if (member.getShopId() < 1) {
+
+            return new ReturnValue<>(404, "没有权限使用此功能");
+        }
 
         PageResponse<Map<String, Object>> pageMaps = productCache.findShareGoods(name, code,
                 sort_index, page_index, page_size);

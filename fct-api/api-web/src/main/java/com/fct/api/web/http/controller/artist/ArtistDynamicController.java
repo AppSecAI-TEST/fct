@@ -27,6 +27,12 @@ public class ArtistDynamicController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public ReturnValue<PageResponse<Map<String, Object>>> findDynamic(@PathVariable("artist_id") Integer artist_id,
                                                                       Integer page_index, Integer page_size) {
+
+        if (artist_id < 1) {
+
+            return new ReturnValue(404, "艺术家不存在");
+        }
+
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size, 20);
 

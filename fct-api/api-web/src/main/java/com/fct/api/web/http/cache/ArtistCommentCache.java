@@ -37,15 +37,14 @@ public class ArtistCommentCache {
      * @param pageSize
      * @return
      */
-    public PageResponse<Map<String, Object>> findPageArtistComment(Integer artistId, Integer pageIndex, Integer pageSize) {
+    public PageResponse<Map<String, Object>> findPageArtistComment(Integer artistId, Integer memberId, Integer pageIndex, Integer pageSize) {
 
-        PageResponse<ArtistComment> lsComment = artistService.findArtistComment(artistId, 0, "",
-                1, 0, pageIndex, pageSize);
+        PageResponse<ArtistComment> lsComment = artistService.findArtistCommentByAPI(artistId, memberId, pageIndex, pageSize);
 
         PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
         if (lsComment != null && lsComment.getTotalCount() > 0) {
 
-            pageMaps.setElements(getFormatCommetns(lsComment.getElements(), false));
+            pageMaps.setElements(getFormatCommetns(lsComment.getElements()));
             pageMaps.setCurrent(lsComment.getCurrent());
             pageMaps.setTotalCount(lsComment.getTotalCount());
             pageMaps.setHasMore(lsComment.isHasMore());
@@ -54,25 +53,12 @@ public class ArtistCommentCache {
         return pageMaps;
     }
 
-    /**获取评论回复
-     *
-     * @param artistId
-     * @param replayId
-     * @return
-     */
-    private List<Map<String, Object>> getReplays(Integer artistId, Integer replayId) {
-
-        return getFormatCommetns(artistService.findReplyComment(replayId, 0), true);
-    }
-
     /**格式化内容
      *
      * @param comments
      * @return
      */
-    private List<Map<String, Object>> getFormatCommetns(List<ArtistComment> comments, Boolean hasReplay) {
-
-        hasReplay = ConvertUtils.toBoolean(hasReplay);
+    private List<Map<String, Object>> getFormatCommetns(List<ArtistComment> comments) {
 
         List<Map<String, Object>> lsMaps = new ArrayList<>();
         if (comments == null)
@@ -88,7 +74,7 @@ public class ArtistCommentCache {
             map.put("userName", member.getUserName());
             map.put("headPortrait", fctResourceUrl.getImageUrl(member.getHeadPortrait()));
             map.put("content", comment.getContent());
-            map.put("replyContent", getReplays(comment.getArtistId(), comment.getReplyId()));
+            map.put("replyContent", getFormatCommetns(comment.getReplyComment()));
             map.put("createTime", DateUtils.formatDate(comment.getCreateTime(),"yyyy-MM-dd"));
 
             lsMaps.add(map);

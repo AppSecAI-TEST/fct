@@ -34,6 +34,10 @@ public class MemberOAuthController extends BaseController {
     public ReturnValue<String> getOAuthUrl(String callback_url) {
 
         String url = commonService.oAuthURL(callback_url, "snsapi_userinfo");
+        if (StringUtils.isEmpty(url)) {
+
+            return new ReturnValue<>(404, "请求微信服务异常");
+        }
 
         ReturnValue<String> response = new ReturnValue<>();
         response.setData(url);
@@ -70,6 +74,10 @@ public class MemberOAuthController extends BaseController {
         member = memberService.saveMemberAuth(memberId, weChat.getOpenid(),
                 platform, nickname, headimgurl, unionid, sex, ip, expire_day);
 
+        if(StringUtils.isEmpty(member.getHeadPortrait())) {
+            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
+        }
+
         ReturnValue<MemberLogin> response = new ReturnValue<>();
         response.setData(member);
 
@@ -104,6 +112,11 @@ public class MemberOAuthController extends BaseController {
         if (user == null) return new ReturnValue(404, "授权已失效，请重新授权");
          MemberLogin member = memberService.bindMemberAuth(cellphone, platform, openid, user.getNickname(),
                  user.getHeadimgurl(), user.getUnionid(), user.getSex(), ip, expire_day);
+
+        if(StringUtils.isEmpty(member.getHeadPortrait())) {
+
+            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
+        }
 
         response.setData(member);
         return response;

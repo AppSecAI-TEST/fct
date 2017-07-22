@@ -8,7 +8,6 @@ import com.fct.artist.interfaces.ArtistService;
 import com.fct.artist.interfaces.PageResponse;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
-import com.fct.mall.interfaces.MallService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +28,6 @@ public class ArtistController extends BaseController {
 
     @Autowired
     private ArtistService artistService;
-
-    @Autowired
-    private MallService mallService;
 
     @Autowired
     private ArtistDynamicCache artistDynamicCache;
@@ -95,6 +91,10 @@ public class ArtistController extends BaseController {
     public ReturnValue<Map<String, Object>> getArtist(@PathVariable("id") Integer id,
                                                       Integer page_index, Integer page_size) {
         id = ConvertUtils.toInteger(id);
+        if (id < 1) {
+            return new ReturnValue<>(404, "艺术家不存在");
+        }
+
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size, 20);
 
@@ -103,11 +103,15 @@ public class ArtistController extends BaseController {
         if (artist != null) {
             map.put("id", artist.getId());
             map.put("name", artist.getName());
-            map.put("followCount", artist.getFollowCount());
+            //因为网站现在人气不高，占时用浏览数代替关注数
+            map.put("followCount", artist.getViewCount());
             map.put("banner", getImgUrl(artist.getBanner()));
             //动态
             map.put("dynamicList", artistDynamicCache.findPageArtistDynamic(id, page_index, page_size));
         }
+
+        //添加浏览量
+        artistService.addArtistFollowCount(id, 1);
 
         ReturnValue<Map<String, Object>> response = new ReturnValue<>();
         response.setData(map);
@@ -116,7 +120,7 @@ public class ArtistController extends BaseController {
     }
 
     /**
-     * 通过产品的所有艺术家
+     * 产品的所有艺术家
      *
      * @param product_id
      * @return
@@ -125,6 +129,9 @@ public class ArtistController extends BaseController {
     public ReturnValue<List<Map<String, Object>>> getArtistsByProductId(Integer product_id) {
 
         product_id = ConvertUtils.toInteger(product_id);
+        if (product_id < 1) {
+            return new ReturnValue<>(404, "产品不存在");
+        }
 
         //根据产品ID获取艺人列表
         List<Artist> lsArtist = artistService.findArtistByGoodsId(product_id);

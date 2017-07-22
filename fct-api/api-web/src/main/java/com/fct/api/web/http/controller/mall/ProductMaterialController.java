@@ -7,6 +7,7 @@ import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.interfaces.MallService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,13 @@ public class ProductMaterialController extends BaseController {
 
         ids = ConvertUtils.toString(ids);
         product_id = ConvertUtils.toInteger(product_id);
+        if (StringUtils.isEmpty(ids)) {
+            return new ReturnValue<>(404, "泥料不存在");
+        }
+
+        if (product_id < 1) {
+            return new ReturnValue<>(404, "产品不存在");
+        }
 
         List<GoodsMaterial> lsMaterial = mallService.findMaterialByGoods(ids);
 

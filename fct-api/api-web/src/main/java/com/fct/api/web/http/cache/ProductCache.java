@@ -41,7 +41,7 @@ public class ProductCache {
                 map.put("id", goods.getId());
                 map.put("name", goods.getName());
                 map.put("defaultImage", fctResourceUrl.getImageUrl(goods.getDefaultImage()));
-                if (goods.getSpecification() == null) {
+                if (goods.getSpecification() == null || goods.getSpecification().size() < 1) {
                     map.put("price", goods.getSalePrice());
                     map.put("commission", goods.getCommission());
                 } else {
@@ -69,13 +69,15 @@ public class ProductCache {
                         }
                     }
 
-                    Map<BigDecimal, BigDecimal> priceMap = new HashMap<>();
-                    priceMap.put(minPrice, maxPrice);
-                    map.put("price", priceMap);
+                    List lsPrice = new ArrayList();
+                    lsPrice.add(minPrice);
+                    lsPrice.add(maxPrice);
+                    map.put("price", lsPrice);
 
-                    priceMap = new HashMap<>();
-                    priceMap.put(minCommission, maxCommission);
-                    map.put("commission", priceMap);
+                    lsPrice = new ArrayList();
+                    lsPrice.add(minCommission);
+                    lsPrice.add(maxCommission);
+                    map.put("commission", lsPrice);
                 }
 
                 lsMap.add(map);

@@ -9,6 +9,7 @@ import com.fct.mall.interfaces.OrderRefundDTO;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,20 +29,28 @@ public class RefundController extends BaseController {
 
     /**用户退款列表
      *
-     * @param order_product_id
+     * @param keyword
      * @param page_index
      * @param page_size
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<OrderRefundDTO>> findRefund(String order_product_id, Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<OrderRefundDTO>> findRefund(String keyword, Integer page_index, Integer page_size) {
 
         MemberLogin member = this.memberAuth();
+
+        String orderId = "";
+        String goodsName = "";
+
+        if (StringUtils.isNumeric(keyword))
+            orderId = ConvertUtils.toString(keyword);
+        else
+            goodsName = ConvertUtils.toString(keyword);
 
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
 
-        PageResponse<OrderRefundDTO> pageResponse = mallService.findOrderRefund("", order_product_id, 0,
+        PageResponse<OrderRefundDTO> pageResponse = mallService.findOrderRefund(orderId, goodsName, 0,
                 member.getMemberId(), -1, "", "", page_index, page_size);
 
         ReturnValue<PageResponse<OrderRefundDTO>> response = new ReturnValue<>();
@@ -57,6 +66,10 @@ public class RefundController extends BaseController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ReturnValue<OrderRefund> getRefund(@PathVariable("id") Integer id) {
+
+        if (id < 1) {
+            return new ReturnValue<>(404, "退换货记录不存在");
+        }
 
         OrderRefund refund = mallService.getOrderRefund(id);
 
@@ -80,6 +93,16 @@ public class RefundController extends BaseController {
     public ReturnValue saveRefund(String order_id, Integer order_product_id, Integer service_type,
                                   String reason, String description, String images) {
 
+        if (StringUtils.isEmpty(order_id))
+            return new ReturnValue(404, "订单不存在");
+
+        if (order_product_id < 1)
+            return new ReturnValue(404, "订单产品不存在");
+
+        if (StringUtils.isEmpty(description) || description.length() < 3)
+            return new ReturnValue(404, "请说明退换货原因");
+
+
         MemberLogin member = this.memberAuth();
 
         mallService.createOrderRefund(member.getMemberId(), order_id, order_product_id,
@@ -100,6 +123,9 @@ public class RefundController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
+        if (id < 1)
+            return new ReturnValue(404, "退换货记录不存在");
+
         mallService.handleOrderRefund("express", member.getMemberId(), id,
                 1, description, images, 0);
 
@@ -118,6 +144,6 @@ public class RefundController extends BaseController {
         mallService.handleOrderRefund("close", member.getMemberId(), id,
                 1, "", "", 0);
 
-        return new ReturnValue(200, "退货关闭成功");
+        return new ReturnValue(200, "退换货关闭成功");
     }
 }

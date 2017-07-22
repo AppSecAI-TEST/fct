@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nick on 2017/6/5.
@@ -47,6 +48,11 @@ public class UploadController extends BaseController {
         MultipartFile multipartFile = ((MultipartHttpServletRequest) request)
                 .getFile("file");
         String action = request.getParameter("action");
+        if (StringUtils.isEmpty(this.uploadAction(action))) {
+
+            return new ReturnValue<>(404, "上传的类型不存在");
+        }
+
         ReturnValue<Object> responseEntity =  new ReturnValue<>();
 
         try{
@@ -72,6 +78,9 @@ public class UploadController extends BaseController {
 
 
             FileRequest fileRequest = new FileRequest();
+            if (!StringUtils.isEmpty(action)) {
+                fileRequest.setFileFolder(action);
+            }
             fileRequest.setFiles(fileList);
             fileRequest.setImages(imgList);
             fileRequest.setUserMetaData(new HashMap<>());
@@ -95,5 +104,20 @@ public class UploadController extends BaseController {
         }
 
         return responseEntity;
+    }
+
+    private String uploadAction(String action) {
+
+        switch (action) {
+
+            case "idcard":
+                return  "身份证";
+
+            case "head":
+                return "用户头像";
+
+            default:
+                return "";
+        }
     }
 }

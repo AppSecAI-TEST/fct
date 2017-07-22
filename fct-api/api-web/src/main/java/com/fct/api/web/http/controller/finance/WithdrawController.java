@@ -60,6 +60,12 @@ public class WithdrawController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     public ReturnValue saveWithdraw(BigDecimal amount, String remark) {
 
+        amount = ConvertUtils.toBigDeciaml(amount);
+        remark = ConvertUtils.toString(remark);
+        if (amount.doubleValue() < 100) {
+            return new ReturnValue(404, "提现金额不能小于100元");
+        }
+
         MemberLogin member = this.memberAuth();
 
         if (member.getAuthStatus() != 1) {

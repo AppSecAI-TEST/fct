@@ -44,6 +44,10 @@ public class ArticleController extends BaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ReturnValue<Map<String, Object>> getArticle(@PathVariable("id") Integer id) {
 
+        if (id < 1) {
+            return new ReturnValue<>(404, "文章不存在");
+        }
+
         ReturnValue<Map<String, Object>> response = new ReturnValue<>();
         response.setData(articleCache.getArticle(id));
 

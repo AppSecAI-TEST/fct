@@ -1,14 +1,20 @@
 package com.fct.api.web.http.controller.member;
 
 import com.fct.api.web.http.controller.BaseController;
+import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberInfo;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.message.interfaces.MessageService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** 用户类
@@ -37,6 +43,9 @@ public class MemberController extends BaseController {
                                           String session_id, String captcha,
                                           String ip, Integer expire_day) {
 
+        if (StringUtils.isEmpty(cellphone) || cellphone.length() != 11)
+            return new ReturnValue<>(404, "请输入正确的手机号");
+
         ReturnValue<MemberLogin> response = new ReturnValue<>();
         if (session_id.length() > 0 && captcha.length() > 0) {
             password = "";
@@ -55,6 +64,11 @@ public class MemberController extends BaseController {
         }
 
         MemberLogin member = memberService.loginMember(cellphone, password, platform, ip, expire_day);
+        if (StringUtils.isEmpty(member.getHeadPortrait())) {
+            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
+        } else {
+            member.setHeadPortrait(fctResourceUrl.getImageUrl(member.getHeadPortrait()));
+        }
         response.setData(member);
 
         return  response;
@@ -68,15 +82,18 @@ public class MemberController extends BaseController {
      * @return
      */
     @RequestMapping(value = "update-info", method = RequestMethod.POST)
-    public ReturnValue updateInfo(String username, Integer gender, String weixin) {
+    public ReturnValue updateInfo(String username, String avatar, Integer gender, String birthday, String weixin) {
+
+        avatar = ConvertUtils.toString(avatar);
+        username = ConvertUtils.toString(username);
+        gender = ConvertUtils.toInteger(gender, 0);
+        birthday = ConvertUtils.toString(birthday);
+        weixin = ConvertUtils.toString(weixin);
 
         MemberLogin member = this.memberAuth();
-        MemberInfo memberInfo = memberService.getMemberInfo(member.getMemberId());
-        memberInfo.setSex(gender);
-        memberInfo.setWeixin(weixin);
-        memberService.updateMemberInfo(memberInfo);
+        memberService.updateMemberInfo(member.getMemberId(), avatar, username, gender, birthday, weixin);
 
-        return new ReturnValue<>();
+        return new ReturnValue<>(200, "修改成功");
     }
 
     /**修改密码
@@ -136,9 +153,35 @@ public class MemberController extends BaseController {
         return new ReturnValue();
     }
 
+    @RequestMapping(value = "info", method = RequestMethod.GET)
+    public ReturnValue<Map<String, Object>> getMemberInfo() {
+
+        MemberLogin member = this.memberAuth();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberId", member.getMemberId());
+        map.put("cellPhone", member.getCellPhone());
+        map.put("userName", member.getUserName());
+        map.put("headPortrait", StringUtils.isEmpty(member.getHeadPortrait())
+                ? "" : fctResourceUrl.getImageUrl(member.getHeadPortrait()));
+
+
+        MemberInfo info = memberService.getMemberInfo(member.getMemberId());
+        if (info != null) {
+
+            map.put("sex", info.getSex());
+            map.put("birthday", info.getBirthday());
+            map.put("weixin", info.getWeixin());
+        }
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
+
+        return response;
+    }
+
     @RequestMapping(value = "get-by-token", method = RequestMethod.GET)
-    public ReturnValue<MemberLogin> getByToken()
-    {
+    public ReturnValue<MemberLogin> getByToken() {
         MemberLogin member = this.memberAuth();
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();

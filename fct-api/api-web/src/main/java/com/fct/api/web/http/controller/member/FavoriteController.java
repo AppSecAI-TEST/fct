@@ -24,6 +24,8 @@ public class FavoriteController extends BaseController {
         from_type = ConvertUtils.toInteger(from_type);
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
+        if (from_type < 1)
+            return new ReturnValue<>(404, "请带入收藏类型");
 
         MemberLogin member = this.memberAuth();
 
@@ -40,6 +42,8 @@ public class FavoriteController extends BaseController {
 
         from_id = ConvertUtils.toInteger(from_id);
         from_type = ConvertUtils.toInteger(from_type);
+        if (from_id < 1)
+            return new ReturnValue<>(404, "收藏的产品或艺术家不存在");
 
         MemberLogin member = this.memberAuth();
 

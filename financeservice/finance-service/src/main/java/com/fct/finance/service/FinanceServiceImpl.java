@@ -433,11 +433,11 @@ public class FinanceServiceImpl implements FinanceService {
         return null;
     }
 
-    public List<PayPlatform> findPayPlatform(String payment)
+    public List<PayPlatform> findPayPlatform(String type,String webSite,Integer status)
     {
         try
         {
-            return  payPlatformManager.findAll(payment);
+            return  payPlatformManager.findAll(type,webSite,status);
         }
         catch (Exception exp)
         {

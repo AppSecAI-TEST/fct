@@ -106,16 +106,16 @@ public class UnionPayManager {
         Map<String, String> submitFromData = AcpService.sign(param,SDKConfig.getEncoding());  //报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
 
         //获取请求银联的前台地址：对应属性文件acp_sdk.properties文件中的acpsdk.frontTransUrl
-        /*String html = AcpService.createAutoFormHtml(SDKConfig.getFrontUrl(), submitFromData,SDKConfig.getEncoding());   //生成自动跳转的Html表单
+        //String html = AcpService.createAutoFormHtml(SDKConfig.getFrontUrl(), submitFromData,SDKConfig.getEncoding());   //生成自动跳转的Html表单
 
-        LogUtil.writeLog("打印请求HTML，此为请求报文，为联调排查问题的依据："+html);*/
+        /*LogUtil.writeLog("打印请求HTML，此为请求报文，为联调排查问题的依据："+html);*/
         //将生成的html写到浏览器中完成自动跳转打开银联支付页面；这里调用signData之后，将html写到浏览器跳转到银联页面之前均不能对html中的表单项的名称和值进行修改，如果修改会导致验签不通过
         //SDKUtil.sign(param,SDKConfig.getEncoding());
 
-        String url = SDKConfig.getFrontTransUrl() + SDKUtil.createLinkString(submitFromData, false,true);
+        String html = SDKConfig.getFrontTransUrl() + SDKUtil.createLinkString(submitFromData, false,true);
 
-        LogUtil.writeMessage("unionpay_mobile_url:" + url);
-        return url;
+        LogUtil.writeMessage("unionpay_mobile_url:" + html);
+        return html;
     }
 
     /// <summary>

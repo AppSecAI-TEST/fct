@@ -24,15 +24,20 @@ public class PayPlatformManager {
     @Autowired
     private JdbcTemplate jt;
 
-    public List<PayPlatform> findAll(String payment)
+    public List<PayPlatform> findAll(String type,String website,Integer status)
     {
         StringBuilder sb = new StringBuilder();
         List<Object> param = new ArrayList<>();
-        sb.append("SELECT * FROM PayPlatform WHERE status=1 ");
-        if(!StringUtils.isEmpty(payment))
+        sb.append("SELECT * FROM PayPlatform WHERE status="+status);
+        if(!StringUtils.isEmpty(type))
         {
-            sb.append(" and code like ?");
-            param.add("%"+ payment +"%");
+            sb.append(" and type=?");
+            param.add(type);
+        }
+        if(!StringUtils.isEmpty(website))
+        {
+            sb.append(" and website=?");
+            param.add(type);
         }
 
         sb.append("order by sortIndex asc");

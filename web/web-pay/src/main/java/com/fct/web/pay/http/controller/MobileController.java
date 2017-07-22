@@ -5,6 +5,7 @@ import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.HttpUtils;
 import com.fct.finance.data.entity.PayOrder;
+import com.fct.finance.data.entity.PayPlatform;
 import com.fct.finance.data.entity.RechargeRecord;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.Orders;
@@ -21,10 +22,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "mobile")
@@ -47,7 +52,7 @@ public class MobileController extends BaseController{
      * 支付选择
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(String tradeid, String tradetype, Model model)
+    public String index(HttpServletRequest request,String tradeid, String tradetype, Model model)
     {
         tradeid = ConvertUtils.toString(tradeid);
         tradetype =ConvertUtils.toString(tradetype);
@@ -121,7 +126,14 @@ public class MobileController extends BaseController{
             return errorPage("非法用户操作");
         }
 
-        //model.addAttribute("platformList", financeService.findPayPlatform("wap"));
+        String userAgent = request.getHeader("user-agent").toLowerCase();
+        if(userAgent.indexOf("micromessenger")>-1){//微信客户端
+            model.addAttribute("weixin",1);
+        }
+
+        List<PayPlatform> platformList = financeService.findPayPlatform("wap","fangcun",1);
+        model.addAttribute("platformList", platformList);
+        model.addAttribute("length",platformList.size());
         model.addAttribute("payamount", payAmount);
         model.addAttribute("tradeid", tradeid);
         model.addAttribute("tradetype", tradetype);
@@ -177,7 +189,6 @@ public class MobileController extends BaseController{
 
             return AjaxUtil.goUrl(fctConfig.getUrl()+"/auth/wxlogin","");
         }
-        String payurl = "";
         PayOrder payOrder = null;
         try
         {
@@ -250,26 +261,6 @@ public class MobileController extends BaseController{
 
             payOrder = createPay(tradeid,tradetype,accountAmount,payAmount,totalAmount,discountAmount,points,
                     expiredTime,platform,showUrl,callback,desc);
-
-            if(payOrder == null || payOrder.getStatus() !=0)
-            {
-                return AjaxUtil.alert("支付订单异常。");
-            }
-            switch (platform)
-            {
-                case "alipay_fctwap":
-                        /*retUrl = APIClient.PayMobileService.AlipayCreatePayUrl(payMethod,record.OrderNo, record.CashAmount, record.MemberId.ToString(), record.Description, "",
-                                payExpire.ConvertToInt32(0), "", showUrl, "");
-                        break;*/
-                    case "unionpay_fctwap":
-                        payurl = mobilePayService.unionpayWap(platform,payOrder.getOrderId(),payOrder.getPayAmount(),
-                                payOrder.getDescription(),expiredTime,"","");
-                        break;
-
-                case "wxpay_fctwap":
-                    payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),currentUser.getOpenId(),payOrder.getPayAmount(),
-                            payOrder.getDescription(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
-            }
         }
         catch (IllegalArgumentException exp)
         {
@@ -280,13 +271,14 @@ public class MobileController extends BaseController{
             Constants.logger.error(exp.toString());
             return AjaxUtil.alert("访问出错！由于系统或网络造成的原因，请稍候再试。");
         }
+
         if(payOrder == null)
         {
             return AjaxUtil.alert("支付出错啦，请稍候再试！");
         }
-        if(!StringUtils.isEmpty(payurl)) {
-            payurl = "/mobile/pay?orderid=" + payOrder.getOrderId() + "&payurl=" + URLEncoder.encode(payurl);
-        }
+
+        String payurl = "/mobile/pay?orderid=" + payOrder.getOrderId();
+
         return AjaxUtil.goUrl(payurl,"");
     }
 
@@ -294,30 +286,46 @@ public class MobileController extends BaseController{
      * 支付提交成功，需触发本页相关js，再跳转至微信支付或银联支付
      * */
     @RequestMapping(value = "/pay", method = RequestMethod.GET)
-    public String pay(String payurl,String orderid,Model model) {
-        payurl = ConvertUtils.toString(payurl);
+    public String pay(HttpServletRequest request,String orderid,Model model) {
         orderid = ConvertUtils.toString(orderid);
 
-        if(StringUtils.isEmpty(payurl) || StringUtils.isEmpty(orderid))
+        if(StringUtils.isEmpty(orderid) || StringUtils.isEmpty(orderid))
         {
             return errorPage("支付参数错误，非法请求。");
         }
-
+        String payurl = "";
+        String platform = "";
         try {
             PayOrder payOrder = financeService.getPayOrder(orderid);
-            if(payOrder !=null && payOrder.getStatus()==0) {
-                if(!payOrder.getPayPlatform().contains("unionpay"))
-                {
-                    payurl = URLDecoder.decode(payurl);
-                }
-                model.addAttribute("payurl", payurl);
-                model.addAttribute("platform", payOrder.getPayPlatform());
+
+            if(payOrder == null || payOrder.getStatus() !=0)
+            {
+                return errorPage("支付订单异常。");
+            }
+            platform = payOrder.getPayPlatform();
+            Date expiredTime = payOrder.getExpiredTime();
+            switch (payOrder.getPayPlatform())
+            {
+                case "alipay_fctwap":
+                    payurl = mobilePayService.alipayWap(platform, payOrder.getOrderId(), payOrder.getPayAmount(),
+                            payOrder.getDescription(), expiredTime,"");
+                    break;
+                case "unionpay_fctwap":
+                    payurl = mobilePayService.unionpayWap(platform,payOrder.getOrderId(),payOrder.getPayAmount(),
+                            payOrder.getDescription(),expiredTime,"","");
+                    break;
+
+                case "wxpay_fctwap":
+                    payurl =  mobilePayService.wxpayWap(platform,payOrder.getOrderId(),currentUser.getOpenId(),payOrder.getPayAmount(),
+                            payOrder.getDescription(),"", HttpUtils.getIp(request), payOrder.getExpiredTime());
             }
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
         }
+        model.addAttribute("payurl", payurl);
+        model.addAttribute("platform",platform);
 
         return "/mobile/pay";
     }

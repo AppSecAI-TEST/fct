@@ -242,6 +242,8 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "alipay_fct";
         }
+        //wap与app是统一的配置
+        payment = payment.replace("wap","");
         try {
             return alipayManager.createWapPayUrl(payment,payOrderNo,title,amount,expireTime);
         }
@@ -295,6 +297,8 @@ public class MobilePayServiceImpl implements MobilePayService {
         {
             payment = "alipay_fct";
         }
+        //wap与app是统一的配置
+        payment = payment.replace("wap","");
         try {
             return alipayManager.refund(payment,payOrderId,refundId,refundAmount,refundReason);
         }

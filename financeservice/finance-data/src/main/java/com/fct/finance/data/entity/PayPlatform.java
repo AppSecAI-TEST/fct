@@ -25,6 +25,21 @@ public class PayPlatform implements Serializable {
     /// </summary>
     private String name;
 
+    /**
+     * 前端使用该属性
+     * */
+    private String showName;
+
+    /**
+     * app,wap
+     * */
+    private String type;
+
+    /**
+     * website
+     * */
+    private String webSite;
+
     /// <summary>
     /// alipay_fctapp、wxpay_fctapp、wxpa_fctywap、unionpay_fctwap、unionpay_fctapp、offline
     /// </summary>

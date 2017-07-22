@@ -27,10 +27,10 @@ public class PayNotifyTask {
 
     /**
      *
-     * 支付成功，通知业务方进行处理，每隔2秒执行一次
+     * 支付成功，通知业务方进行处理，每隔3秒执行一次
      * */
 
-    @Scheduled(cron = "*/2 * * * * ?")
+    @Scheduled(cron = "*/3 * * * * ?")
     public void doWork()
     {
         try {

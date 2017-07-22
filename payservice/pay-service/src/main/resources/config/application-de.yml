@@ -28,8 +28,8 @@ pay:
       notifyurl:  http://test.pay.fangcuntang.com/mobile/alipay/notify
       returnurl:  http://test.pay.fangcuntang.com/mobile/alipay/callback
       appnotifyurl:  http://test.pay.fangcun.com/mobile/alipay/appnotify
-      privatekey_path:  /usr/local/cert/alipay/private_key.txt
-      publickey_path:  /usr/local/cert/alipay/public_key.txt
+      privatekey_path:  /usr/local/cert/alipay/fct/private_key.txt
+      publickey_path:  /usr/local/cert/alipay/fct/public_key.txt
 
   unionpay_fctwap:
     meriId: 777290058148557

@@ -41,6 +41,7 @@ public class AlipayManager {
         SDKConfig.setCHARSET("UTF-8");
         SDKConfig.setFORMAT("json");
         SDKConfig.setSIGNTYPE("RSA2");
+        SDKConfig.setURL("https://openapi.alipaydev.com/gateway.do");
 
         Map<String, String> config = payConfig.getAlipay_fct();
 
@@ -108,8 +109,7 @@ public class AlipayManager {
         String payUrl = "";
         try {
             // 调用SDK生成表单
-            Map<String,String> params = client.pageExecute(alipay_request).getParams();
-            payUrl = SDKUtil.createLinkString(params,false,true);
+            payUrl = client.pageExecute(alipay_request).getBody();
 
         } catch (AlipayApiException e) {
             // TODO Auto-generated catch block

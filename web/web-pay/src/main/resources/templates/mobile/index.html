@@ -20,21 +20,12 @@
             <input type="hidden" name="tradetype" th:value="${tradetype}">
             <section class="ways">
                 <ul class="way-list">
-                    <li>
-                        <label for="weipay">
-                            <img th:src="${pub.staticPath('/static/img/pay/wxpay.png')}"><span class="line">
-                    <span class="txt">微信支付</span>
-                    <input type="radio" class="" name="platform" value="wxpay_fctwap" id="weipay">
-                  </span>
-                        </label>
-                    </li>
-                    <li>
-                        <label for="unionpay">
-                            <img th:src="${pub.staticPath('/static/img/pay/unionpay.png')}"><span class="line" style="border-bottom:0px;">
-                    <span class="txt">银联支付</span>
-                    <input type="radio" class="" name="platform" value="unionpay_fctwap" id="unionpay">
-                  </span>
-
+                    <li th:each="platform,platformStat:${platformList}">
+                        <label th:attr="for=${platform.code}" th:with="pcode = ${#strings.arraySplit(platform.code,'_')}">
+                            <img th:src="${pub.staticPath('/static/img/pay/'+pcode[0]+'.png')}"><span class="line" th:style="${platformStat.index+1 eq length} ? 'border-bottom:0px;'">
+                                <span class="txt" th:text="${platform.showName}"></span>
+                                <input type="radio" class="" name="platform" th:value="${platform.code}" th:id="${platform.code}">
+                            </span>
                         </label>
                     </li>
                 </ul>

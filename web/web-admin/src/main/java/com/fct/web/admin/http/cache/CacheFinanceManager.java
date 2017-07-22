@@ -68,7 +68,7 @@ public class CacheFinanceManager {
     public List<PayPlatform> findPayPlatform()
     {
         try {
-            return financeService.findPayPlatform("");
+            return financeService.findPayPlatform("","",-1);
         }
         catch (Exception exp)
         {

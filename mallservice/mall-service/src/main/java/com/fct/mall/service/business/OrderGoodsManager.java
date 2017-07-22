@@ -71,7 +71,7 @@ public class OrderGoodsManager {
                 if(refund == null){
                     g.setStatus(orderStatus ==3 ? -2 : -1);    //可进行退款操作
                 }else {
-                    g.setStatus(refund.getStatus());
+                    g.setStatus(refund.getId());
                     g.setStatusName(orderRefundManager.getStatusName(refund.getStatus()));
                 }
             }

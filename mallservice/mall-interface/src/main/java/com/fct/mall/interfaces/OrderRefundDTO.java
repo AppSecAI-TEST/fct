@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrderRefundDTO extends OrderRefund implements Serializable{
 
     private Integer goodsId;

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrderGoodsDTO implements Serializable {
 
     private Integer goodsId;

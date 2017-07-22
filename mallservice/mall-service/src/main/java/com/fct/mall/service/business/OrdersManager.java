@@ -6,12 +6,15 @@ import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.PageUtil;
 import com.fct.core.utils.StringHelper;
 import com.fct.finance.data.entity.MemberAccount;
+import com.fct.finance.data.entity.SettleRecord;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrdersRepository;
 import com.fct.mall.interfaces.OrderGoodsDTO;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberAddress;
+import com.fct.member.data.entity.MemberStore;
+import com.fct.member.interfaces.MemberDTO;
 import com.fct.member.interfaces.MemberService;
 import com.fct.message.interfaces.MessageService;
 import com.fct.message.interfaces.model.MQPayRefund;
@@ -867,16 +870,51 @@ public class OrdersManager {
         {
             throw new IllegalArgumentException("非法操作");
         }
-        orders.setStatus(Constants.enumOrderStatus.finished.getValue());
-        orders.setUpdateTime(new Date());
-        ordersRepository.save(orders);
 
         //赠送积分
         //String tradeId,String tradeType,Integer memberId,Integer points
-        Integer points = orders.getCashAmount().intValue();
-        if(points>0) {
-            financeService.giftPoints(orders.getOrderId(), "buy", orders.getMemberId(), points);
+        List<OrderGoods> lsGoods = orderGoodsManager.findByOrderId(orders.getOrderId(),orders.getStatus());
+        BigDecimal commission = new BigDecimal(0);
+        BigDecimal saleAmount = new BigDecimal(0);
+        StringBuilder sb = new StringBuilder();
+        for (OrderGoods g:lsGoods
+                ) {
+            if(g.getStatus() <1 && g.getStatus() >4)
+            {
+                //未处理退款、未有退款申请、拒绝退款、关闭退款。均可进行结算。
+                commission = commission.add(g.getCommission());
+                saleAmount = saleAmount.add(g.getPayAmount());
+
+                sb.append(g.getName()).append("、");
+            }
         }
+        if(saleAmount.doubleValue() >0 ) {
+            //进入结算
+            if(orders.getShopId()>0) {
+                SettleRecord settle = new SettleRecord();
+                settle.setShopId(orders.getShopId());
+                //settle.setMemberId(orders.get);
+                settle.setCellPhone("");
+                settle.setCommission(commission);
+                settle.setSaleAmount(saleAmount);
+                settle.setTradeId(orders.getOrderId());
+                settle.setTradeType("buy");
+                settle.setRemark("销售" + sb.toString() + "进行返佣结算");
+                financeService.createSettleRecord(settle);
+            }
+
+            Integer points = saleAmount.intValue();
+            financeService.giftPoints(orders.getOrderId(), "buy", orders.getMemberId(), points);
+
+            orders.setStatus(Constants.enumOrderStatus.finished.getValue());
+        }
+        else
+        {
+            //所有商品都退款，将订单关闭
+            orders.setStatus(Constants.enumOrderStatus.close.getValue());
+        }
+        orders.setUpdateTime(new Date());
+        ordersRepository.save(orders);
     }
 
     public void finishByMember(Integer memberid,String orderId)

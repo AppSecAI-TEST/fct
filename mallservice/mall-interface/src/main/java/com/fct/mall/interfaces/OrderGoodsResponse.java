@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class OrderGoodsResponse implements Serializable {
 
     private List<OrderGoods> items;

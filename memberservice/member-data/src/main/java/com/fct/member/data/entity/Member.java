@@ -39,6 +39,8 @@ public class Member implements Serializable{
 
     private Integer inviterMemberId;
 
+    private String inviterCellPhone;
+
     private Integer failLoginCount;
 
     private Integer loginCount;

@@ -83,7 +83,7 @@ public class MemberLoginManager {
         login.setLoginTime(new Date());
         login.setToken(UUIDUtil.generateUUID());
         login.setUserName(member.getUserName());
-        login.setShopId(store!=null ?store.getId() :0);
+        login.setShopId(store!=null&&store.getStatus()==1 ?store.getId() :0);
         login.setGradeId(member.getGradeId());
         login.setLoginPlatform(platform);
         login.setOpenId(openId);

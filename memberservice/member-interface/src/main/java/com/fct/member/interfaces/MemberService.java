@@ -81,6 +81,8 @@ public interface MemberService {
 
     void updateStoreStatus(Integer id);
 
+    MemberStore getMemberStore(Integer storeId);
+
     PageResponse<MemberStore> findMemberStore(String cellPhone,Integer status,Integer pageIndex,Integer pageSize);
 
     void createSystemUser(SystemUser user);

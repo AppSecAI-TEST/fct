@@ -62,6 +62,11 @@ public class MemberStoreManager {
             throw new IllegalArgumentException("已有店铺存在。");
         }
 
+        /*
+        member.setInviterMemberId(code.getOwnerId());
+        member.setInviterCellPhone(code.getOwnerCellPhone());
+        memberManager.save(member);*/
+
         code.setStatus(1);//已使用
         code.setToMemberId(memberId);
         code.setToCellPhone(member.getCellPhone());
@@ -73,9 +78,16 @@ public class MemberStoreManager {
         ms.setCreateTime(new Date());
         ms.setCellPhone(member.getCellPhone());
         ms.setStatus(0);
+        ms.setInviterMemberId(code.getOwnerId());
+        ms.setInviterCellPhone(code.getOwnerCellPhone());
         memberStoreRepository.save(ms);
 
         return ms;
+    }
+
+    public MemberStore findById(Integer id)
+    {
+        return memberStoreRepository.findOne(id);
     }
 
     public void updateStatus(Integer id)

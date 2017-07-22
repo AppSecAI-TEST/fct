@@ -876,6 +876,7 @@ public class OrdersManager {
         List<OrderGoods> lsGoods = orderGoodsManager.findByOrderId(orders.getOrderId(),orders.getStatus());
         BigDecimal commission = new BigDecimal(0);
         BigDecimal saleAmount = new BigDecimal(0);
+        Boolean refunding = false;
         StringBuilder sb = new StringBuilder();
         for (OrderGoods g:lsGoods
                 ) {
@@ -887,20 +888,35 @@ public class OrdersManager {
 
                 sb.append(g.getName()).append("、");
             }
+            else if(g.getStatus()>0 && g.getStatus()<4)
+            {
+                //退款处理中，订单暂时不完成。交易完成时间往后延
+                refunding = true;
+            }
         }
-        if(saleAmount.doubleValue() >0 ) {
+
+        if(refunding){
+            //交易完成时间往后延7天。
+            orders.setFinishTime(DateUtils.addDay(orders.getFinishTime(),7));
+        }
+        else if(saleAmount.doubleValue() >0 ) {
             //进入结算
             if(orders.getShopId()>0) {
-                SettleRecord settle = new SettleRecord();
-                settle.setShopId(orders.getShopId());
-                //settle.setMemberId(orders.get);
-                settle.setCellPhone("");
-                settle.setCommission(commission);
-                settle.setSaleAmount(saleAmount);
-                settle.setTradeId(orders.getOrderId());
-                settle.setTradeType("buy");
-                settle.setRemark("销售" + sb.toString() + "进行返佣结算");
-                financeService.createSettleRecord(settle);
+                MemberStore store = memberService.getMemberStore(orders.getShopId());
+                if(store != null) {
+                    SettleRecord settle = new SettleRecord();
+                    settle.setShopId(orders.getShopId());
+                    settle.setMemberId(store.getMemberId());
+                    settle.setCellPhone(store.getCellPhone());
+                    settle.setInviterId(store.getInviterMemberId());
+                    settle.setInviterCellPhone(store.getInviterCellPhone());
+                    settle.setCommission(commission);
+                    settle.setSaleAmount(saleAmount);
+                    settle.setTradeId(orders.getOrderId());
+                    settle.setTradeType("buy");
+                    settle.setRemark("销售【" + sb.toString() + "】进行返佣结算");
+                    financeService.createSettleRecord(settle);
+                }
             }
 
             Integer points = saleAmount.intValue();

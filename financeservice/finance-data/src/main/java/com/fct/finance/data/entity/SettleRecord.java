@@ -65,7 +65,7 @@ public class SettleRecord implements Serializable {
     /// <summary>
     /// 邀请者会员Id
     /// </summary>
-    private Integer inviterCellPhone;
+    private String inviterCellPhone;
 
     /// <summary>
     /// 邀请者获得佣金

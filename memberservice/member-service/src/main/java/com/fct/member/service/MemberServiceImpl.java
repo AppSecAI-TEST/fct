@@ -434,6 +434,18 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
+    public  MemberStore getMemberStore(Integer storeId)
+    {
+        try {
+            return memberStoreManager.findById(storeId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public void updateStoreStatus(Integer id)
     {
         try {

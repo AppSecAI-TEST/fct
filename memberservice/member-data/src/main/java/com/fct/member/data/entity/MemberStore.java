@@ -3,10 +3,7 @@ package com.fct.member.data.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -32,5 +29,9 @@ public class MemberStore implements Serializable {
     private Integer status;
 
     private Date createTime;
+
+    private Integer inviterMemberId;
+
+    private String inviterCellPhone;
 
 }

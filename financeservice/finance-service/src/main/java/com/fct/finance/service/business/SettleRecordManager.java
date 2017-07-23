@@ -158,6 +158,8 @@ public class SettleRecordManager {
         history.setBalancePoints(account.getPoints());
         history.setRemark("佣金结算");
         history.setBehaviorType(1); //收入
+        history.setRechargeAmount(new BigDecimal(0));
+        history.setWithdrawAmount(commission);
         memberAccountHistoryManager.Create(history);
 
     }

@@ -117,6 +117,8 @@ public class MemberAccountManager {
         history.setBalancePoints(account.getPoints());
         history.setRemark("用户消费使用现金赠送同比积分");
         history.setBehaviorType(1); //收入
+        history.setWithdrawAmount(new BigDecimal(0));
+        history.setRechargeAmount(new BigDecimal(0));
         memberAccountHistoryManager.Create(history);
     }
 

@@ -32,9 +32,15 @@ public class MemberAccountHistory implements Serializable {
     private String cellPhone;
 
     /// <summary>
-    /// 变动金额
+    /// 变动金额 (充值+提现)
     /// </summary>
     private BigDecimal amount;
+
+    //充值金额(只做冗余不做展现)
+    private  BigDecimal rechargeAmount;
+
+    //可申请提现金额(只做冗余不做展现)
+    private  BigDecimal withdrawAmount;
 
     /// <summary>
     /// 余额

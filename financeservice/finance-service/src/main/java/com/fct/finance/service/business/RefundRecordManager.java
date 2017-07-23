@@ -278,7 +278,13 @@ public class RefundRecordManager {
 
                 account.setAvailableAmount(account.getAvailableAmount().add(refund.getAccountAmount()));
 
-                account.setRechargeAmount(account.getRechargeAmount().add(refund.getAccountAmount()));
+                //从账户行为历史里，找出原始交易所产生的金额，
+                //并将对应的可提现金额和充值金额分开还原。
+                MemberAccountHistory accountHistory = memberAccountHistoryManager.findByTrade(refund.getTradeId(),
+                        refund.getTradeType());
+
+                account.setRechargeAmount(account.getRechargeAmount().add(accountHistory.getRechargeAmount()));
+                account.setWithdrawAmount(account.getWithdrawAmount().add(accountHistory.getWithdrawAmount()));
 
                 account.setPoints(account.getPoints()+refund.getPoints());
 
@@ -295,6 +301,8 @@ public class RefundRecordManager {
                 history.setBalancePoints(account.getPoints());
                 history.setRemark(refund.getRemark());
                 history.setBehaviorType(1); //收入
+                history.setRechargeAmount(accountHistory.getRechargeAmount());
+                history.setWithdrawAmount(accountHistory.getWithdrawAmount());
                 memberAccountHistoryManager.Create(history);
 
             }

@@ -777,7 +777,7 @@ public class OrdersManager {
             order.setStatus(Constants.enumOrderStatus.close.getValue());
             order.setUpdateTime(new Date());
             order.setExpiresTime(new Date());
-            ordersRepository.saveAndFlush(order);
+            ordersRepository.save(order);
 
             List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
             for (OrderGoods g: lsOrderGoods
@@ -808,7 +808,7 @@ public class OrdersManager {
             order.setExpiresTime(null);
             order.setStatus(Constants.enumOrderStatus.paySuccess.getValue());
 
-            ordersRepository.saveAndFlush(order);
+            ordersRepository.save(order);
 
             //设置销售量
             List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);

@@ -33,6 +33,11 @@ public class MemberAccountHistoryManager {
         memberAccountHistoryRepository.save(history);
     }
 
+    public MemberAccountHistory findByTrade(String tradeId,String tradeType)
+    {
+        return memberAccountHistoryRepository.findByTradeIdAndTradeType(tradeId,tradeType);
+    }
+
     private String getCondition(Integer memberId, String cellPhone, String tradeId, String tradeType,
                                 String startTime,String endTime,List<Object> param)
     {

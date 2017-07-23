@@ -147,6 +147,8 @@ public class RechargeRecordManager {
         history.setBalanceAmount(account.getAvailableAmount());
         history.setPoints(0);
         history.setBalancePoints(account.getPoints());
+        history.setRechargeAmount(rechargeAmount);
+        history.setWithdrawAmount(new BigDecimal(0));
         history.setRemark("充值");
         history.setBehaviorType(1); //收入
         memberAccountHistoryManager.Create(history);

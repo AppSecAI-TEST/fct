@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -92,6 +93,8 @@ public class WithdrawRecordManager {
         history.setBalancePoints(account.getPoints());
         history.setRemark("提现");
         history.setBehaviorType(0); //支出
+        history.setWithdrawAmount(record.getAmount());
+        history.setRechargeAmount(new BigDecimal(0));
         memberAccountHistoryManager.Create(history);
 
     }
@@ -137,6 +140,8 @@ public class WithdrawRecordManager {
             history.setBalancePoints(account.getPoints());
             history.setRemark("提现失败退回金额");
             history.setBehaviorType(1); //支出
+            history.setWithdrawAmount(record.getAmount());
+            history.setRechargeAmount(new BigDecimal(0));
             memberAccountHistoryManager.Create(history);
         }
     }

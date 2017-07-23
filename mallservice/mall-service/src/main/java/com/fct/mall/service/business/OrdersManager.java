@@ -790,8 +790,13 @@ public class OrdersManager {
                 //减去产品
                 jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
             }
+            Boolean refundToAccount = true;
+            if(payStatus == 1000) {
+                refundToAccount = false;
+            }
             //系统发起退款
-            List<MQPayRefund> lsRefund = orderRefundManager.payException(order.getMemberId(),order,payOrderId,lsOrderGoods);
+            List<MQPayRefund> lsRefund = orderRefundManager.payException(order.getMemberId(),order,payOrderId,
+                    lsOrderGoods,refundToAccount);
 
             sendPayTradeMessage(payOrderId,orderId,1000,lsRefund);
         }

@@ -98,8 +98,11 @@ public class OrderRefundManager {
         messageService.send("mq_payrefund","MQPayRefund","com.fct.mallservice", JsonConverter.toJson(mqRefund),"购买商品申请退款");
     }
 
-    public List<MQPayRefund> payException(Integer memberId, Orders orders, String payOrderId, List<OrderGoods> lsOrderGoods)
+    public List<MQPayRefund> payException(Integer memberId, Orders orders, String payOrderId, List<OrderGoods> lsOrderGoods,
+                                          Boolean refundToAccount)
     {
+        //如果是支付平台返回的异常状态，则表示使用的余额积分不需要进行退款。
+        //因为没扣除
         List<MQPayRefund> lsRefund = new ArrayList<>();
         BigDecimal orderAccountAmount = orders.getAccountAmount();
         BigDecimal orderCashAmount = orders.getCashAmount();
@@ -140,8 +143,11 @@ public class OrderRefundManager {
             else
             {
                 mqCashAmount = totalRefundAmount.divide(orderCashAmount); //累计退款金额-订单现金支付额=可退现金
-                mqPoint = orderPoints;  //退积分
-                mqAccountAmount = orderAccountAmount;   //退余额
+                //如果为支付异常，因为未先扣除余额数据，所以不需要再进行退回处理。
+                if(refundToAccount) {
+                    mqPoint = orderPoints;  //退积分
+                    mqAccountAmount = orderAccountAmount;   //退余额
+                }
             }
 
             MQPayRefund mqRefund = new MQPayRefund();

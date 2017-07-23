@@ -60,7 +60,8 @@
                                 <th>用户手机</th>
                                 <th>交易类型</th>
                                 <th>交易Id</th>
-                                <th>变动金额</th>
+                                <th>变动金额(充值+提现)</th>
+                                <th>金额</th>
                                 <th>变动积分</th>
                                 <th>当前余额</th>
                                 <th>当前积分</th>
@@ -73,7 +74,7 @@
                                 <td th:text="${history.cellPhone}"></td>
                                 <td th:text="${cacheFinance.getTradeTypeName(history.tradeType)}"></td>
                                 <td th:text="${history.tradeId}"></td>
-                                <td th:text="'¥'+${history.amount}"></td>
+                                <td th:text="'¥'+${history.amount}+'（¥'+${history.rechargeAmount}+'¥'+${history.withdrawAmount}+'）'"></td>
                                 <td th:text="${history.points}"></td>
                                 <td th:text="'¥'+${history.balanceAmount}"></td>
                                 <td th:text="${history.balancePoints}"></td>

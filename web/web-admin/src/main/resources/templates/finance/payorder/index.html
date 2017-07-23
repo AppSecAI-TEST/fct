@@ -35,7 +35,7 @@
                             <div class="col-sm-3 form-inline">
                                 <select class="col-sm-4 form-control" name="payplatform">
                                     <option value="">支付平台</option>
-                                    <th:block th:each="pay:${cacheFinance.getPayPlatform()}">
+                                    <th:block th:each="pay:${cacheFinance.findCachePayPlatform()}">
                                         <option th:value="${pay.code}" th:text="${pay.name}" th:selected="${query.payplatform eq pay.code} ? 'selected'"></option>
                                     </th:block>
                                 </select>

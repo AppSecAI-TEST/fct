@@ -28,7 +28,11 @@ public class PayPlatformManager {
     {
         StringBuilder sb = new StringBuilder();
         List<Object> param = new ArrayList<>();
-        sb.append("SELECT * FROM PayPlatform WHERE status="+status);
+        sb.append("SELECT * FROM PayPlatform WHERE 1=1 ");
+        if(status>-1)
+        {
+            sb.append(" and status="+status);
+        }
         if(!StringUtils.isEmpty(type))
         {
             sb.append(" and type=?");

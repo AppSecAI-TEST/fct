@@ -34,13 +34,13 @@ public class BaseController {
 
         //获取cookie
 
-        initUser(request,response);
+        //initUser(request,response);
 
         if(currentUser == null) {
             currentUser = new MemberLogin();
         }
-        //currentUser.setMemberId(5);
-        //currentUser.setCellPhone("18616311580");
+        currentUser.setMemberId(5);
+        currentUser.setCellPhone("18616311580");
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);

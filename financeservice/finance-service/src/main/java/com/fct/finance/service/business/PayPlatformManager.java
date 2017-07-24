@@ -41,10 +41,10 @@ public class PayPlatformManager {
         if(!StringUtils.isEmpty(website))
         {
             sb.append(" and website=?");
-            param.add(type);
+            param.add(website);
         }
 
-        sb.append("order by sortIndex asc");
+        sb.append(" order by sortIndex asc");
 
         return jt.query(sb.toString(), param.toArray(),
                 new BeanPropertyRowMapper<PayPlatform>(PayPlatform.class));

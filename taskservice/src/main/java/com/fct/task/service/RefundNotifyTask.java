@@ -39,23 +39,22 @@ public class RefundNotifyTask {
                 MQPayRefund refund = JsonConverter.toObject(msg.getBody(),MQPayRefund.class);
 
                 PayNotify payNotify = null;
-                Boolean updateRefundStatus = false;
+                Boolean updateRefundStatus = true;
                 try {
                     switch (refund.getPay_platform()) {
                         case "wxpay_fctwap":
                             //String payment,String payOrderId,String refundId,BigDecimal payAmount,BigDecimal refundAmount
                             payNotify = mobilePayService.wxpayWapRefund(refund.getPay_platform(),refund.getPay_orderid(),
                                     refund.getRefund_id().toString(),refund.getPay_amount(),refund.getRefund_amount());
-                            updateRefundStatus = true;
                             break;
                         case "wxpay_fctapp":
                             payNotify = mobilePayService.wxpayAppRefund(refund.getPay_platform(),refund.getPay_orderid(),
                                     refund.getRefund_id().toString(),refund.getPay_amount(),refund.getRefund_amount());
-                            updateRefundStatus = true;
                             break;
                         case "unionpay_fctwap":
                             payNotify = mobilePayService.unionpayWapRefund(refund.getPay_platform(),refund.getPay_orderid(),
                                     refund.getRefund_id().toString(),refund.getPay_amount(),refund.getRefund_amount());
+                            updateRefundStatus = false;
                             break;
                     }
                     if(payNotify !=null && !payNotify.getHasError())

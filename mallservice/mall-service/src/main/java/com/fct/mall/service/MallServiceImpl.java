@@ -394,8 +394,8 @@ public class MallServiceImpl implements MallService {
                                            String endTime, Integer pageIndex, Integer pageSize) {
 
         try {
-            return ordersManager.findAll(memberId, cellPhone, orderId, shopId, goodsName, status, payPlatform, payOrderId,
-                    timeType, beginTime, endTime, pageIndex, pageSize);
+            return ordersManager.findAll(memberId, cellPhone, orderId, shopId, goodsName, status,-1, payPlatform,
+                    payOrderId,timeType, beginTime, endTime, pageIndex, pageSize,false);
         }
         catch (Exception exp)
         {

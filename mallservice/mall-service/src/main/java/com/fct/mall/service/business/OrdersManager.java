@@ -347,6 +347,7 @@ public class OrdersManager {
         order.setSettleId(0);
         order.setCommentStatus(0);
         order.setCreateTime(new Date());
+        order.setIsDel(0);
         ordersRepository.save(order);
 
         OrderReceiver orderReceiver = new OrderReceiver();
@@ -378,7 +379,7 @@ public class OrdersManager {
                                 String endTime,List<Object> param)
     {
         StringBuilder sb = new StringBuilder();
-
+        sb.append(" AND isDel=0 ");
         if (!StringUtils.isEmpty(orderId)) {
             sb.append(" AND orderId=?");
             param.add(orderId);
@@ -440,8 +441,8 @@ public class OrdersManager {
 
     //获取订单列表
     public PageResponse<Orders> findAll(Integer memberId, String cellPhone, String orderId, Integer shopId, String goodsName,
-                                        Integer status, String payPlatform, String payOrderId, Integer timeType, String beginTime,
-                                        String endTime, Integer pageIndex, Integer pageSize)
+                                        Integer status, Integer commentStatus,String payPlatform, String payOrderId, Integer timeType, String beginTime,
+                                        String endTime, Integer pageIndex, Integer pageSize,Boolean api)
     {
         //定义一个Expression
         //Expression<String> exp = root.get("orderId");
@@ -450,7 +451,7 @@ public class OrdersManager {
         String table="Orders";
         String field ="*";
         String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,-1,payPlatform,payOrderId,
+        String condition= getCondition(memberId,cellPhone,orderId,shopId,goodsName,status,commentStatus,payPlatform,payOrderId,
                 timeType,beginTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
@@ -460,6 +461,13 @@ public class OrdersManager {
 
         List<Orders> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Orders>(Orders.class));
 
+        if(api)
+        {
+            for (Orders order:ls
+                    ) {
+                order.setOrderGoods(orderGoodsManager.findByOrderId(order.getOrderId()));
+            }
+        }
         int end = pageIndex+1;
         Boolean hasmore = true;
         if(pageIndex*pageSize >= count)
@@ -480,43 +488,10 @@ public class OrdersManager {
     public PageResponse<Orders> findByApi(Integer memberId,String orderId, Integer shopId, String goodsName,
                                           Integer status,Integer commentStatus,Integer pageIndex, Integer pageSize)
     {
-        //定义一个Expression
-        //Expression<String> exp = root.get("orderId");
-        List<Object> param = new ArrayList<>();
 
-        String table="Orders";
-        String field ="*";
-        String orderBy = "createTime Desc";
-        String condition= getCondition(memberId,"",orderId,shopId,goodsName,status,commentStatus,
-                "","",0,"","",param);
+        return findAll(memberId,"",orderId,shopId,goodsName,status,commentStatus,
+                "","",0,"","",pageIndex,pageSize,true);
 
-        String sql = "SELECT Count(0) FROM Orders WHERE 1=1 "+condition;
-        Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);
-
-        sql = PageUtil.getPageSQL(table,field,condition,orderBy,pageIndex,pageSize);
-
-        List<Orders> ls = jt.query(sql, param.toArray(), new BeanPropertyRowMapper<Orders>(Orders.class));
-
-        int end = pageIndex+1;
-        Boolean hasmore = true;
-        if(pageIndex*pageSize >= count)
-        {
-            end = pageIndex;
-            hasmore = false;
-        }
-
-        for (Orders order:ls
-             ) {
-            order.setOrderGoods(orderGoodsManager.findByOrderId(order.getOrderId()));
-        }
-
-        PageResponse<Orders> pageResponse = new PageResponse<>();
-        pageResponse.setTotalCount(count);
-        pageResponse.setCurrent(end);
-        pageResponse.setElements(ls);
-        pageResponse.setHasMore(hasmore);
-
-        return pageResponse;
     }
 
     //获取订单

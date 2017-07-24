@@ -70,6 +70,11 @@ public class Orders implements Serializable{
     /// </summary>
     private Integer status;
 
+    /**
+     * 是否删除
+     * */
+    private Integer isDel;
+
     /// <summary>
     /// 支付单号
     /// </summary>

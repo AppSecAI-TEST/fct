@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,60 +110,28 @@ public class SettleRecordManager {
         List<SettleRecord> ls = settleRecordRepository.findByStatus(1);
         for (SettleRecord sr:ls
              ) {
-            sr.setStatus(2);    //结算成功
-            sr.setUpdateTime(new Date());
-            settleRecordRepository.save(sr);
-
-            addAccountAmount(sr.getMemberId(),sr.getCellPhone(),sr.getCommission(),sr.getId());
-
-            if(sr.getInviterId()>0 && sr.getInviterCommission().doubleValue()>0)
-            {
-                addAccountAmount(sr.getInviterId(),"",sr.getInviterCommission(),sr.getId());
-            }
-
+            settleAmount(sr);
         }
 
     }
 
-    /// <summary>
-    /// 增加虚拟余额
-    /// </summary>
-    void addAccountAmount(Integer memberId,String cellPhone,BigDecimal commission,Integer settleId)
+    @Transactional
+    private void settleAmount(SettleRecord sr)
     {
-        MemberAccount account = memberAccountManager.findById(memberId);
+        sr.setStatus(2);    //结算成功
+        sr.setUpdateTime(new Date());
+        settleRecordRepository.save(sr);
 
-        if (account == null)
+        memberAccountManager.addAccountAmount(sr.getMemberId(),sr.getCellPhone(),sr.getCommission(),
+                new BigDecimal(0),sr.getCommission(),0,Constants.enumTradeType.settle.toString(),
+                sr.getId().toString(),1,"佣金结算");
+
+        if(sr.getInviterId()>0 && sr.getInviterCommission().doubleValue()>0)
         {
-            account = new MemberAccount();
-            account.setMemberId(memberId);
-            account.setCellPhone(cellPhone);
-            account.setCreateTime(new Date());
-            account.setAccumulatePoints(0);
-            account.setFrozenAmount(new BigDecimal(0));
-            account.setPoints(0);
-            account.setWithdrawAmount(new BigDecimal(0));
+            memberAccountManager.addAccountAmount(sr.getInviterId(),sr.getInviterCellPhone(),sr.getInviterCommission(),
+                    new BigDecimal(0),sr.getInviterCommission(),0,Constants.enumTradeType.reward.toString(),
+                    sr.getId().toString(),1,"奖励佣金");
         }
-        account.setAvailableAmount(account.getAvailableAmount().add(commission));
-        account.setAccumulateIncome(account.getAccumulateIncome().add(commission));
-        account.setWithdrawAmount(account.getWithdrawAmount().add(commission));
-
-        memberAccountManager.save(account);
-
-        MemberAccountHistory history = new MemberAccountHistory();
-        history.setTradeId(settleId.toString());
-        history.setTradeType(Constants.enumTradeType.settle.toString());
-        history.setMemberId(memberId);
-        history.setCellPhone(cellPhone);
-        history.setAmount(commission);
-        history.setBalanceAmount(account.getAvailableAmount());
-        history.setPoints(0);
-        history.setBalancePoints(account.getPoints());
-        history.setRemark("佣金结算");
-        history.setBehaviorType(1); //收入
-        history.setRechargeAmount(new BigDecimal(0));
-        history.setWithdrawAmount(commission);
-        memberAccountHistoryManager.Create(history);
-
     }
 
     public SettleRecord findById(Integer id) {

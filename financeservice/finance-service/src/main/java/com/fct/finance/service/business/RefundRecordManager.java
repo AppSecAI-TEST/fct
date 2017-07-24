@@ -274,46 +274,24 @@ public class RefundRecordManager {
             if (refund.getAccountAmount().doubleValue() > 0 || refund.getPoints()>0)
             {
                 //更新用户虚拟余额。
-                MemberAccount account = memberAccountManager.findById(refund.getMemberId());
-
-                account.setAvailableAmount(account.getAvailableAmount().add(refund.getAccountAmount()));
-
                 //从账户行为历史里，找出原始交易所产生的金额，
                 //并将对应的可提现金额和充值金额分开还原。
                 MemberAccountHistory accountHistory = memberAccountHistoryManager.findByTrade(refund.getTradeId(),
                         refund.getTradeType());
 
-                account.setRechargeAmount(account.getRechargeAmount().add(accountHistory.getRechargeAmount()));
-                account.setWithdrawAmount(account.getWithdrawAmount().add(accountHistory.getWithdrawAmount()));
-
-                account.setPoints(account.getPoints()+refund.getPoints());
-
-                memberAccountManager.save(account);
-
-                MemberAccountHistory history = new MemberAccountHistory();
-                history.setTradeId(refund.getId().toString());
-                history.setTradeType(Constants.enumTradeType.refund.toString());
-                history.setMemberId(refund.getMemberId());
-                history.setCellPhone(refund.getCellPhone());
-                history.setAmount(refund.getAccountAmount());
-                history.setBalanceAmount(account.getAvailableAmount());
-                history.setPoints(refund.getPoints());
-                history.setBalancePoints(account.getPoints());
-                history.setRemark(refund.getRemark());
-                history.setBehaviorType(1); //收入
-                history.setRechargeAmount(accountHistory.getRechargeAmount());
-                history.setWithdrawAmount(accountHistory.getWithdrawAmount());
-                memberAccountHistoryManager.Create(history);
+                memberAccountManager.addAccountAmount(refund.getMemberId(),refund.getCellPhone(),refund.getAccountAmount(),
+                        accountHistory.getRechargeAmount(),accountHistory.getWithdrawAmount(),refund.getPoints(),
+                        Constants.enumTradeType.refund.toString(),refund.getId().toString(),1,refund.getRemark());
 
             }
 
             //如果有退款至现金，表示需要原路返回至支付平台。
-            if (refund.getCashAmount().doubleValue() > 0 && refund.getPayPlatform() != "offline")
+            if (refund.getCashAmount().doubleValue() > 0 && !refund.getPayPlatform().equals("offline"))
             {
                 //如果原路返回支付平台，则更新退款状态为部份退款成功(余额退款成功)。
                 refund.setStatus(Constants.enumRefundStatus.confirmed.getValue());
                 //写入原路返回消息体，支付服务进行处理。
-                //sendMessageQ(refund);
+                sendMessageQ(refund);
             }
 
             refundRecordRepository.save(refund);
@@ -346,7 +324,7 @@ public class RefundRecordManager {
         MQPayRefund message = new MQPayRefund();
 
         //如果为银联支付则支付单号必须是银联提供的orgId
-        message.setPay_orderid(refund.getPayPlatform().toLowerCase() == "unionpay_fcth5" ? refund.getPayPlatformOrderId() : refund.getPayOrderId());
+        message.setPay_orderid(refund.getPayPlatform().toLowerCase().contains("unionpay") ? refund.getPayPlatformOrderId() : refund.getPayOrderId());
         message.setPay_platform(refund.getPayPlatform());
         message.setRefund_id(refund.getId());
         message.setPay_amount(refund.getPayAmount());

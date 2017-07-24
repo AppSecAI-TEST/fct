@@ -11,8 +11,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,28 +100,64 @@ public class MemberAccountManager {
         return pageResponse;
     }
 
+    @Transactional
     public void giftPoints(String tradeId,String tradeType,Integer memberId,Integer points)
     {
+        //判断是否重复执行;
+        if(memberAccountHistoryManager.getCountByTrade(tradeId,tradeType)>0)
+        {
+            return;
+        }
+
         MemberAccount account = findById(memberId);
         account.setPoints(account.getPoints()+points);
         account.setAccumulatePoints(account.getAccumulatePoints()+points);
 
         memberAccountRepository.save(account);
 
-        MemberAccountHistory history = new MemberAccountHistory();
-        history.setTradeId(tradeId);
-        history.setTradeType(tradeType);
-        history.setMemberId(memberId);
-        history.setCellPhone(account.getCellPhone());
-        history.setAmount(new BigDecimal(0));
-        history.setBalanceAmount(account.getAvailableAmount());
-        history.setPoints(points);
-        history.setBalancePoints(account.getPoints());
-        history.setRemark("用户消费使用现金赠送同比积分");
-        history.setBehaviorType(1); //收入
-        history.setWithdrawAmount(new BigDecimal(0));
-        history.setRechargeAmount(new BigDecimal(0));
-        memberAccountHistoryManager.Create(history);
+        memberAccountHistoryManager.add(account,new BigDecimal(0),new BigDecimal(0),new BigDecimal(0),
+                points,tradeType,tradeId,1,"用户消费使用现金赠送同比积分");
+
+    }
+
+
+    public void addAccountAmount(Integer memberId, String cellPhone, BigDecimal amount,BigDecimal rechargeAmount,
+                                 BigDecimal withdrawAmount, Integer points,String tradeType,String tradeId,
+                                 Integer behaviorType,String remark)
+    {
+        //判断是否重复执行;
+        if(memberAccountHistoryManager.getCountByTrade(tradeId,tradeType)>0)
+        {
+            return;
+        }
+
+        MemberAccount account = findById(memberId);
+
+        if (account == null)
+        {
+            account = new MemberAccount();
+            account.setMemberId(memberId);
+            account.setCellPhone(cellPhone);
+            account.setCreateTime(new Date());
+            account.setAccumulateIncome(new BigDecimal(0));
+            account.setAccumulatePoints(0);
+            account.setAvailableAmount(new BigDecimal(0));
+            account.setFrozenAmount(new BigDecimal(0));
+            account.setPoints(0);
+            account.setRechargeAmount(new BigDecimal(0));
+            account.setWithdrawAmount(new BigDecimal(0));
+        }
+        account.setAvailableAmount(account.getAvailableAmount().add(amount));
+        account.setRechargeAmount(account.getRechargeAmount().add(rechargeAmount));
+        account.setWithdrawAmount(account.getWithdrawAmount().add(withdrawAmount));
+        account.setPoints(account.getPoints()+points);
+
+        memberAccountRepository.save(account);
+
+        memberAccountHistoryManager.add(account,amount,rechargeAmount,withdrawAmount,
+                points,tradeType,tradeId,behaviorType,remark);
+
+
     }
 
 }

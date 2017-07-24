@@ -107,52 +107,16 @@ public class RechargeRecordManager {
         record.setPayTime(DateUtils.parseString(payTime));
         if(payStatus == 200) {
             record.setStatus(1);    //充值成功
-            addAccountAmount(record.getMemberId(),record.getCellPhone(),record.getAmount(),
-                    record.getId());
+
+            memberAccountManager.addAccountAmount(record.getMemberId(),record.getCellPhone(),record.getAmount(),
+                    record.getAmount(),new BigDecimal(0),0,Constants.enumTradeType.recharge.toString(),
+                    record.getId().toString(),1,"充值");
         }
         else
         {
             record.setStatus(2);    //充值失败
         }
         rechargeRecordRepository.save(record);
-    }
-
-    private void addAccountAmount(Integer memberId, String cellPhone, BigDecimal rechargeAmount, Integer rechargeId)
-    {
-        MemberAccount account = memberAccountManager.findById(memberId);
-
-        if (account == null)
-        {
-            account = new MemberAccount();
-            account.setMemberId(memberId);
-            account.setCellPhone(cellPhone);
-            account.setCreateTime(new Date());
-            account.setAccumulateIncome(new BigDecimal(0));
-            account.setAccumulatePoints(0);
-            account.setAvailableAmount(new BigDecimal(0));
-            account.setFrozenAmount(new BigDecimal(0));
-            account.setPoints(0);
-        }
-        account.setAvailableAmount(account.getAvailableAmount().add(rechargeAmount));
-        account.setRechargeAmount(account.getRechargeAmount().add(rechargeAmount));
-
-        memberAccountManager.save(account);
-
-        MemberAccountHistory history = new MemberAccountHistory();
-        history.setTradeId(rechargeId.toString());
-        history.setTradeType(Constants.enumTradeType.recharge.toString());
-        history.setMemberId(memberId);
-        history.setCellPhone(cellPhone);
-        history.setAmount(rechargeAmount);
-        history.setBalanceAmount(account.getAvailableAmount());
-        history.setPoints(0);
-        history.setBalancePoints(account.getPoints());
-        history.setRechargeAmount(rechargeAmount);
-        history.setWithdrawAmount(new BigDecimal(0));
-        history.setRemark("充值");
-        history.setBehaviorType(1); //收入
-        memberAccountHistoryManager.Create(history);
-
     }
 
     private String getCondition(Integer memberId, String cellPhone, String payPlayform,String payOrderId,

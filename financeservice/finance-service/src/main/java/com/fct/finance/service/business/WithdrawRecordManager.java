@@ -72,34 +72,22 @@ public class WithdrawRecordManager {
             throw  new IllegalArgumentException("非法操作。");
         }
 
-        account.setAvailableAmount(account.getAvailableAmount().subtract(record.getAmount()));
-        account.setWithdrawAmount(account.getWithdrawAmount().subtract(record.getAmount()));
-
-        memberAccountManager.save(account);    //
-
         record.setStatus(0);
         record.setCreateTime(new Date());
         record.setUpdateTime(record.getCreateTime());
         withdrawRecordRepository.save(record);
 
-        MemberAccountHistory history = new MemberAccountHistory();
-        history.setTradeId(record.getId().toString());
-        history.setTradeType(Constants.enumTradeType.withdraw.toString());
-        history.setMemberId(record.getMemberId());
-        history.setCellPhone(record.getCellPhone());
-        history.setAmount(record.getAmount());
-        history.setBalanceAmount(account.getAvailableAmount());
-        history.setPoints(0);
-        history.setBalancePoints(account.getPoints());
-        history.setRemark("提现");
-        history.setBehaviorType(0); //支出
-        history.setWithdrawAmount(record.getAmount());
-        history.setRechargeAmount(new BigDecimal(0));
-        memberAccountHistoryManager.Create(history);
+        account.setAvailableAmount(account.getAvailableAmount().subtract(record.getAmount()));
+        account.setWithdrawAmount(account.getWithdrawAmount().subtract(record.getAmount()));
+
+        memberAccountManager.save(account);    //
+
+        memberAccountHistoryManager.add(account,record.getAmount(),new BigDecimal(0),record.getAmount(),0,
+                Constants.enumTradeType.withdraw.toString(),record.getId().toString(),0,"提现");
 
     }
 
-
+    @Transactional
     public void updateStatus(Integer omsOperaterId,Integer id, Integer status,String desc)
     {
         if(id<=0)
@@ -121,28 +109,9 @@ public class WithdrawRecordManager {
         //如果为拒绝退款，提现金额则返回
         if(status ==2)
         {
-            MemberAccount account = memberAccountManager.findById(record.getMemberId());
-
-
-            account.setAvailableAmount(account.getAvailableAmount().add(record.getAmount()));
-            account.setWithdrawAmount(account.getWithdrawAmount().add(record.getAmount()));
-
-            memberAccountManager.save(account);    //恢复退回提现金额
-
-            MemberAccountHistory history = new MemberAccountHistory();
-            history.setTradeId(record.getId().toString());
-            history.setTradeType(Constants.enumTradeType.withdraw_refund.toString());
-            history.setMemberId(record.getMemberId());
-            history.setCellPhone(record.getCellPhone());
-            history.setAmount(record.getAmount());
-            history.setBalanceAmount(account.getAvailableAmount());
-            history.setPoints(0);
-            history.setBalancePoints(account.getPoints());
-            history.setRemark("提现失败退回金额");
-            history.setBehaviorType(1); //支出
-            history.setWithdrawAmount(record.getAmount());
-            history.setRechargeAmount(new BigDecimal(0));
-            memberAccountHistoryManager.Create(history);
+            memberAccountManager.addAccountAmount(record.getMemberId(),"",record.getAmount(),
+                    new BigDecimal(0),record.getAmount(),0,Constants.enumTradeType.withdraw_refund.toString(),
+                    record.getId().toString(),1,"提现失败退回金额");
         }
     }
 

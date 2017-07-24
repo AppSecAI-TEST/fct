@@ -105,30 +105,21 @@ public class PayOrderManager  {
             pay.setStatus(Constants.enumPayStatus.success.getValue());
             payOrderRepository.save(pay);
 
-
-            MemberAccountHistory history = new MemberAccountHistory();
+            BigDecimal useRechargeAmount = new BigDecimal(0);
+            BigDecimal useWithdrawAmount = new BigDecimal(0);
 
             //可用余额减少
-            calculateAmount(account,pay.getAccountAmount(),history);
+            calculateAmount(account,pay.getAccountAmount(),useRechargeAmount,useWithdrawAmount);
 
             //减去充值金额或可申请提现金额
             account.setPoints(account.getPoints()-pay.getPoints());
+            //实时更新虚拟账户手机号码
+            account.setCellPhone(pay.getCellPhone());
 
             memberAccountManager.save(account);
 
-            history.setTradeType(pay.getTradeType());
-            history.setCellPhone(pay.getCellPhone());
-            history.setTradeId(pay.getTradeId());
-            history.setMemberId(account.getMemberId());
-            history.setAmount(pay.getAccountAmount());
-            history.setBalanceAmount(account.getAvailableAmount());
-            history.setPoints(pay.getPoints());
-            history.setBalancePoints(account.getPoints());
-            history.setRemark(pay.getDescription());
-            history.setCreateTime(new Date());
-            history.setBehaviorType(0); //支出
-
-            memberAccountHistoryManager.Create(history);
+            memberAccountHistoryManager.add(account,pay.getAccountAmount(),useRechargeAmount,useWithdrawAmount,pay.getPoints(),
+                    pay.getTradeType(),pay.getTradeId(),0,pay.getDescription());
 
             //写入消息
             SendMessageQ(pay, Constants.enumPayStatus.success);
@@ -157,7 +148,8 @@ public class PayOrderManager  {
         return pay;
     }
 
-    private void calculateAmount(MemberAccount account, BigDecimal payAccountAmount,MemberAccountHistory history)
+    private void calculateAmount(MemberAccount account, BigDecimal payAccountAmount,BigDecimal useRechargeAmount,
+                                 BigDecimal useWithdrawAmount)
     {
         //可用余额减少
         account.setAvailableAmount(account.getAvailableAmount().subtract(payAccountAmount));
@@ -167,15 +159,14 @@ public class PayOrderManager  {
         {
             account.setRechargeAmount(rechargeAmount);
 
-            history.setRechargeAmount(rechargeAmount);
-            history.setWithdrawAmount(new BigDecimal(0));
+            useRechargeAmount = rechargeAmount;
         }
         else
         {
             //充值余额不可扣，使用账户余额-当前剩余充值余额
             rechargeAmount = payAccountAmount.subtract(account.getRechargeAmount());
 
-            history.setRechargeAmount(rechargeAmount);
+            useRechargeAmount = rechargeAmount;
 
             account.setRechargeAmount(new BigDecimal(0)); //充值金额为0
 
@@ -188,7 +179,7 @@ public class PayOrderManager  {
             }
             account.setWithdrawAmount(rechargeAmount);
 
-            history.setWithdrawAmount(rechargeAmount);
+            useWithdrawAmount = rechargeAmount;
         }
     }
 
@@ -316,28 +307,18 @@ public class PayOrderManager  {
             // 使用虚拟余额或积分支付
             if (pay.getAccountAmount().doubleValue() > 0 || pay.getPoints().doubleValue() > 0)
             {
-                MemberAccountHistory history = new MemberAccountHistory();
+                BigDecimal useRechargeAmount = new BigDecimal(0);
+                BigDecimal useWithdrawAmount = new BigDecimal(0);
 
                 //可用余额减少
-                calculateAmount(account,pay.getAccountAmount(),history);
+                calculateAmount(account,pay.getAccountAmount(),useRechargeAmount,useRechargeAmount);
 
                 account.setPoints(account.getPoints()-pay.getPoints());
                 memberAccountManager.save(account);
 
-                //消耗账户
-                history.setTradeType(pay.getTradeType());
-                history.setTradeId(pay.getTradeId());
-                history.setMemberId(account.getMemberId());
-                history.setCellPhone(account.getCellPhone());
-                history.setAmount(pay.getAccountAmount());
-                history.setBalanceAmount(account.getAvailableAmount());
-                history.setPoints(pay.getPoints());
-                history.setBalancePoints(account.getPoints());
-                history.setRemark(pay.getDescription());
-                history.setCreateTime(new Date());
-                history.setBehaviorType(0); //支出
+                memberAccountHistoryManager.add(account,pay.getAccountAmount(),useRechargeAmount,useWithdrawAmount,
+                        pay.getPoints(),pay.getTradeType(),pay.getTradeId(),0,pay.getDescription());
 
-                memberAccountHistoryManager.Create(history);
             }
 
             Constants.logger.info(logContent + "支付成功。");

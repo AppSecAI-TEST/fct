@@ -1,6 +1,7 @@
 package com.fct.finance.service.business;
 
 import com.fct.core.utils.PageUtil;
+import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.data.entity.MemberAccountHistory;
 import com.fct.finance.data.repository.MemberAccountHistoryRepository;
 import com.fct.finance.interfaces.PageResponse;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +38,33 @@ public class MemberAccountHistoryManager {
     public MemberAccountHistory findByTrade(String tradeId,String tradeType)
     {
         return memberAccountHistoryRepository.findByTradeIdAndTradeType(tradeId,tradeType);
+    }
+
+    public void add(MemberAccount account,BigDecimal amount,BigDecimal rechargeAmount, BigDecimal withdrawAmount,
+                    Integer points,String trdeType,String trdeId,Integer behaviorType,String remark)
+    {
+        MemberAccountHistory history = new MemberAccountHistory();
+        history.setTradeId(trdeId);
+        history.setTradeType(trdeType);
+        history.setMemberId(account.getMemberId());
+        history.setCellPhone(account.getCellPhone());
+        history.setAmount(amount);
+        history.setBalanceAmount(account.getAvailableAmount());
+        history.setPoints(points);
+        history.setBalancePoints(account.getPoints());
+        history.setRemark(remark);
+        history.setBehaviorType(behaviorType); //支出
+        history.setWithdrawAmount(withdrawAmount);
+        history.setRechargeAmount(rechargeAmount);
+
+        history.setCreateTime(new Date());
+
+        memberAccountHistoryRepository.save(history);
+    }
+
+    public int getCountByTrade(String tradeId,String tradeType)
+    {
+        return memberAccountHistoryRepository.countByTradeIdAndTradeType(tradeId,tradeType);
     }
 
     private String getCondition(Integer memberId, String cellPhone, String tradeId, String tradeType,

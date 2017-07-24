@@ -135,35 +135,27 @@ public class OrdersManager {
 
     @Transactional
     public String create(Integer memberId, String cellPhone, Integer shopId, Integer points, BigDecimal accountAmount,
-                         List<OrderGoodsDTO> lsOrderGoods, String couponCode, String remark, Integer receiverId)
-    {
-        if (memberId < 1)
-        {
+                         List<OrderGoodsDTO> lsOrderGoods, String couponCode, String remark, Integer receiverId) {
+        if (memberId < 1) {
             throw new IllegalArgumentException("用户不存在");
         }
-        if (StringUtils.isEmpty(cellPhone))
-        {
+        if (StringUtils.isEmpty(cellPhone)) {
             throw new IllegalArgumentException("手机不存在");
         }
-        if (shopId < 0)
-        {
+        if (shopId < 0) {
             throw new IllegalArgumentException("店铺不存在");
         }
 
-        if (lsOrderGoods == null || lsOrderGoods.size() <= 0)
-        {
+        if (lsOrderGoods == null || lsOrderGoods.size() <= 0) {
             throw new IllegalArgumentException("没有订单商品");
         }
-        if(points<0)
-        {
+        if (points < 0) {
             throw new IllegalArgumentException("积分不正确。");
         }
-        if(accountAmount.doubleValue()<0)
-        {
+        if (accountAmount.doubleValue() < 0) {
             throw new IllegalArgumentException("账户余额为空。");
         }
-        if(receiverId<=0)
-        {
+        if (receiverId <= 0) {
             throw new IllegalArgumentException("收货地址为空");
         }
 
@@ -176,57 +168,53 @@ public class OrdersManager {
         List<OrderProductDTO> lsOrderProduct = new ArrayList<>();
 
         //处理生成促销商品对像数组
-        handleOrderProduct(lsOrderGoods,lsOrderProduct);
+        handleOrderProduct(lsOrderGoods, lsOrderProduct);
 
         //查询用户是否折扣信息
         couponCode = couponCode.trim();
-        DiscountCouponDTO dc = promotionService.getPromotion(memberId,lsOrderProduct,couponCode);
+        DiscountCouponDTO dc = promotionService.getPromotion(memberId, lsOrderProduct, couponCode);
         //当前购买商品中可参与享受优惠的总单价
         BigDecimal couponTotalPrice = new BigDecimal(0);
         CouponCodeDTO cc = null;
-        if(dc!=null)
-        {
+        if (dc != null) {
             lsOrderProduct = dc.getDiscount();//宝贝促销信息重新赋值 。
             cc = dc.getCoupon();
         }
 
-        if(cc != null) {
+        if (cc != null) {
             String[] arrCPId = cc.getProductIds().split(",");
-            for (String pid:arrCPId
+            for (String pid : arrCPId
                     ) {
-                OrderProductDTO p = getSingleProduct(lsOrderProduct,Integer.getInteger(pid));
+                OrderProductDTO p = getSingleProduct(lsOrderProduct, Integer.getInteger(pid));
 
                 if (p != null) {
                     couponTotalPrice = couponTotalPrice.add(p.getDiscountPrice().multiply(new BigDecimal(p.getCount())));//p.RealPrice
                 }
             }
         }
-        String orderId =  StringHelper.generateOrderId();
+        String orderId = StringHelper.generateOrderId();
         BigDecimal orderCashAmount = new BigDecimal(0); //订单应付
         BigDecimal orderTotalAmount = new BigDecimal(0); //订单总价
 
         String goodsIds = "";
         String goodsSpecIds = "";
 
-        for (OrderGoodsDTO goodsDTO:lsOrderGoods
-             ) {
-            OrderProductDTO p = getSingleProduct(lsOrderProduct,goodsDTO.getGoodsId());
-            Goods g  = goodsManager.findById(goodsDTO.getGoodsId());
+        for (OrderGoodsDTO goodsDTO : lsOrderGoods
+                ) {
+            OrderProductDTO p = getSingleProduct(lsOrderProduct, goodsDTO.getGoodsId());
+            Goods g = goodsManager.findById(goodsDTO.getGoodsId());
             OrderGoods orderGoods = new OrderGoods();
 
             orderGoods.setName(g.getName());
 
-            if(goodsDTO.getSpecId()>0)
-            {
+            if (goodsDTO.getSpecId() > 0) {
                 GoodsSpecification spec = goodsSpecificationManager.findById(goodsDTO.getSpecId());
                 orderGoods.setSpecName(spec.getName());
                 orderGoods.setPrice(spec.getSalePrice());
                 orderGoods.setGoodsSpecId(spec.getId());
                 orderGoods.setCommission(spec.getCommission());
                 orderGoods.setGoodsSpecId(spec.getId());
-            }
-            else
-            {
+            } else {
                 orderGoods.setPrice(g.getSalePrice());
                 orderGoods.setCommission(g.getCommission());
                 orderGoods.setGoodsSpecId(0);
@@ -241,11 +229,10 @@ public class OrdersManager {
             orderGoods.setCouponAmount(new BigDecimal(0));
 
             //商品使用优惠券面额
-            if (cc != null && couponTotalPrice.doubleValue() > cc.getFullAmount().doubleValue())
-            {
+            if (cc != null && couponTotalPrice.doubleValue() > cc.getFullAmount().doubleValue()) {
                 //  购买价/ couponTotalPrice
                 String[] arrProductId = cc.getProductIds().split(",");
-                for (String pid:arrProductId
+                for (String pid : arrProductId
                         ) {
                     if (ConvertUtils.toInteger(pid) == orderGoods.getGoodsId()) {
                         BigDecimal amount = orderGoods.getPromotionPrice().multiply(new BigDecimal(orderGoods.getBuyCount()));
@@ -272,17 +259,16 @@ public class OrdersManager {
 
             //减去规格库存
             String sql = "";
-            if (orderGoods.getGoodsSpecId() > 0)
-            {
+            if (orderGoods.getGoodsSpecId() > 0) {
                 sql = String.format("UPDATE GoodsSpecification SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d ",
-                        orderGoods.getBuyCount(), orderGoods.getGoodsSpecId(),orderGoods.getBuyCount());
+                        orderGoods.getBuyCount(), orderGoods.getGoodsSpecId(), orderGoods.getBuyCount());
 
                 jt.update(sql);
 
             }
             //减去产品库存
             sql = String.format("UPDATE Goods SET StockCount=StockCount-%d WHERE Id=%d AND StockCount>=%d ",
-                    orderGoods.getBuyCount(), orderGoods.getGoodsId(),orderGoods.getBuyCount());
+                    orderGoods.getBuyCount(), orderGoods.getGoodsId(), orderGoods.getBuyCount());
 
             jt.update(sql);
 
@@ -291,21 +277,15 @@ public class OrdersManager {
                     g.getBuyCount(), g.getGoodsId());*/
 
             //从购物车中删除,拼接ID
-            if (StringUtils.isEmpty(goodsIds))
-            {
+            if (StringUtils.isEmpty(goodsIds)) {
                 goodsIds = "" + orderGoods.getGoodsId();
-            }
-            else
-            {
+            } else {
                 goodsIds += "," + orderGoods.getGoodsId();
             }
 
-            if (StringUtils.isEmpty(goodsSpecIds))
-            {
+            if (StringUtils.isEmpty(goodsSpecIds)) {
                 goodsSpecIds = "" + orderGoods.getGoodsSpecId();
-            }
-            else
-            {
+            } else {
                 goodsSpecIds += "," + orderGoods.getGoodsSpecId();
             }
 
@@ -315,24 +295,20 @@ public class OrdersManager {
         Orders order = new Orders();
         order.setOrderId(orderId);
 
-        Integer closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(),order.getMemberId(),
-                0,lsOrderProduct,couponCode);
+        Integer closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(), order.getMemberId(),
+                0, lsOrderProduct, couponCode);
 
         //关闭时间
-        if (closeTime > 0)
-        {
-            order.setExpiresTime(DateUtils.addMinute(new Date(),closeTime));
-        }
-        else
-        {
-            order.setExpiresTime(DateUtils.addDay(new Date(),1));
+        if (closeTime > 0) {
+            order.setExpiresTime(DateUtils.addMinute(new Date(), closeTime));
+        } else {
+            order.setExpiresTime(DateUtils.addDay(new Date(), 1));
         }
 
         //验证
         MemberAccount memberAccount = financeService.getMemberAccount(memberId);
         BigDecimal autoPay = new BigDecimal(0);
-        if (memberAccount != null)
-        {
+        if (memberAccount != null) {
             if (memberAccount.getAvailableAmount().doubleValue() < accountAmount.doubleValue()) {
                 throw new IllegalArgumentException("使用余额不能大于自己拥有的余额");
             }
@@ -345,9 +321,14 @@ public class OrdersManager {
                 throw new IllegalArgumentException("余额与积分不能大于应付");
             }
         }
+        //校验shopid是否存在
+        MemberStore store = memberService.getMemberStore(order.getShopId());
+        if (store != null && store.getStatus() == 1)
+        {
+            order.setShopId(shopId);
+        }
         order.setMemberId(memberId);
         order.setCellPhone(cellPhone);
-        order.setShopId(shopId);
         order.setPoints(points);
         order.setAccountAmount(accountAmount);
         order.setCashAmount(orderCashAmount.subtract(autoPay)); //实际现金支付

@@ -75,7 +75,12 @@ public class Constants {
         refund,
 
         //提现退款
-        withdraw_refund
+        withdraw_refund,
+
+        /**
+         * 奖励
+         * */
+        reward
     }
 
     /// <summary>

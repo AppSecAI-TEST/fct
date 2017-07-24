@@ -12,4 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberAccountHistoryRepository extends JpaRepository<MemberAccountHistory, Long> {
 
     MemberAccountHistory findByTradeIdAndTradeType(String tradeId,String tradeType);
+
+    int countByTradeIdAndTradeType(String tradeId,String tradeType);
 }

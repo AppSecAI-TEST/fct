@@ -22,6 +22,7 @@ import com.fct.pay.service.wxpay.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.plugin.javascript.JSContext;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -250,9 +251,7 @@ public class WxpayManager {
 
             Map<String, Object> map = XMLParser.getMapFromXML(xmlContent);
 
-            //String payment = getNotifyPayment(map);
-            
-            String payment="wxpay_fctwap";
+            String payment = getNotifyPayment(map);
 
             initSDKConfiguration(payment,"");
 
@@ -318,7 +317,11 @@ public class WxpayManager {
         try {
             String reqdata = new ScanPayQueryService().request(scanPayQueryReqData);
 
+            Constants.logger.error("查询订单参数:"+reqdata);
+
             Map<String, Object> map = XMLParser.getMapFromXML(reqdata);
+
+            Constants.logger.error("查询订单结果:"+JsonConverter.toJson(map));
 
             if (map.get("return_code").toString() == "SUCCESS" &&
                     map.get("result_code").toString() == "SUCCESS") {

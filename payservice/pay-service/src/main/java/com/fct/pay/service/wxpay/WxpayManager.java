@@ -252,6 +252,8 @@ public class WxpayManager {
 
             String payment = getNotifyPayment(map);
 
+            Constants.logger.error("payment:"+payment);
+
             initSDKConfiguration(payment,"");
 
             if (!Signature.checkIsSignValidFromResponseMap(map)) {

@@ -99,9 +99,9 @@ public class XMLParser {
             if(StringUtils.isEmpty(value))
             {
                 Constants.logger.warn("WxPayData内部含有值为null的字段!");
-                throw new IllegalArgumentException("WxPayData内部含有值为null的字段!");
+            }else {
+                param.put(key, value);
             }
-            param.put(key,value);
 
         }
         return param;

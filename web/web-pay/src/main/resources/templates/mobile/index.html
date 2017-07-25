@@ -24,7 +24,7 @@
                         <label th:attr="for=${platform.code}" th:with="pcode = ${#strings.arraySplit(platform.code,'_')}">
                             <img th:src="${pub.staticPath('/static/img/pay/'+pcode[0]+'.png')}"><span class="line" th:style="${platformStat.index+1 eq length} ? 'border-bottom:0px;'">
                                 <span class="txt" th:text="${platform.showName}"></span>
-                                <input type="radio" class="" name="platform" th:value="${platform.code}" th:id="${platform.code}">
+                                <input type="radio" class="" name="platform" th:value="${platform.code}" th:id="${platform.code}" th:checked="${platformStat.index eq 0}?'checked'">
                             </span>
                         </label>
                     </li>

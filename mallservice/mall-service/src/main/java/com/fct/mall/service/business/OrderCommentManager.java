@@ -37,9 +37,13 @@ public class OrderCommentManager {
     private JdbcTemplate jt;
 
     @Transactional
-    public void createMutil(String orderId,Integer anonymous, Integer logisticsScore,
+    public void createMutil(Integer memberId,String orderId,Integer anonymous, Integer logisticsScore,
                             Integer saleScore,List<OrderComment> commentList)
     {
+        if(memberId<=0)
+        {
+            throw new IllegalArgumentException("会员id为空");
+        }
         if(commentList ==null || commentList.size()<=0)
         {
             throw  new IllegalArgumentException("评论为空");
@@ -58,6 +62,10 @@ public class OrderCommentManager {
         if(orders.getCommentStatus() ==1)
         {
             throw  new IllegalArgumentException("已评论过。");
+        }
+        if(orders.getMemberId() != memberId)
+        {
+            throw new IllegalArgumentException("非法操作");
         }
         orders.setUpdateTime(new Date());
         orders.setCommentStatus(1);

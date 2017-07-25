@@ -744,11 +744,11 @@ public class MallServiceImpl implements MallService {
         }
     }
 
-    public void createOrderCommment(String orderId,Integer anonymous, Integer logisticsScore,
+    public void createOrderCommment(Integer memberId,String orderId,Integer anonymous, Integer logisticsScore,
                                     Integer saleScore,List<OrderComment> commentList) {
 
         try {
-            orderCommentManager.createMutil(orderId,anonymous,logisticsScore,saleScore,commentList);
+            orderCommentManager.createMutil(memberId,orderId,anonymous,logisticsScore,saleScore,commentList);
         }
         catch (IllegalArgumentException exp)
         {

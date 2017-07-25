@@ -119,7 +119,7 @@ public interface MallService {
 
     void refundSuccess (Integer refundId, String description);
 
-    void createOrderCommment(String orderId,Integer anonymous, Integer logisticsScore,
+    void createOrderCommment(Integer memberId,String orderId,Integer anonymous, Integer logisticsScore,
                              Integer saleScore,List<OrderComment> commentList);
 
     void replyOrderComment(Integer id,String replyContent);

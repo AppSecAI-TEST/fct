@@ -6,11 +6,11 @@ server:
 
 pay:
   wxpay_fctwap:
-    key:  40030613ae6f219923c3634e047abe4e
-    mchid:  1405964802
+    key:  bcff23bd479040839af1be788b3cf86b
+    mchid:  1484919332
     notifyurl:  http://test.pay.fangcuntang.com/mobile/wxpay/notify
-    cert_path:  /usr/local/cert/wxpay/fctwap/1405964802_cert.p12
-    cert_password:  1405964802
+    cert_path:  /usr/local/cert/wxpay/fctwap/apiclient_cert.p12
+    cert_password:  1484919332
     appid:  wx39f1f76373754d3c
     appsecret:  5acae7250a2c8ba316aa4fb16b1d0146
 
@@ -18,7 +18,7 @@ pay:
     key:  40030613ae6f219923c3634e047abe4e
     mchid:  1442883002
     notifyurl:  http://teste.pay.fangcuntang.com/mobile/wxpay/appnotify
-    cert_path:  /usr/local/cert/wxpay/fctapp/1442883002_cert.p12
+    cert_path:  /usr/local/cert/wxpay/fctapp/apiclient_cert.p12
     cert_password:  1442883002
     appid:  wx7c866f046dab34b8
     appsecret:  7b6d038c11400a323bbd7f7849021159

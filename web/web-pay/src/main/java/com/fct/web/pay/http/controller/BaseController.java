@@ -1,7 +1,6 @@
 package com.fct.web.pay.http.controller;
 
 import com.fct.core.utils.CookieUtil;
-import com.fct.core.utils.StringHelper;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.web.pay.config.FctConfig;
 import com.fct.web.pay.http.cache.CacheManager;
@@ -41,6 +40,7 @@ public class BaseController {
         }
         currentUser.setMemberId(5);
         currentUser.setCellPhone("18616311580");
+        currentUser.setOpenId("oDYYI1WACqCEH5qB_DCxsPqOBbBs");
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);

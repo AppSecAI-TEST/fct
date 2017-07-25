@@ -13,16 +13,31 @@
     <![endif]-->
     <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
 </head>
-<body class="gray-bg">
-<div class="middle-box text-center loginscreen  animated fadeInDown">
+<body>
+<div class="ibox-content" style="border-style:none;">
+    <form class="form-horizontal m-t" id="submitForm">
+        <div class="form-group col-sm-12">
+            <div class="input-group">
+                <span class="input-group-addon">长(CM)</span>
+                <input name="salePrice" type="text" class="form-control" />
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">宽(CM)</span>
+                <input name="salePrice" type="text" class="form-control" />
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">总平方</span>
+                <input name="salePrice" type="text" class="form-control" />
+            </div>
+        </div>
 
+    </form>
 </div>
 <script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
 <script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
 <script src="//static/js/fct.js" th:src="${pub.staticPath('/static/js/fct.js')}"></script>
 <script src="//static/js/plugins/layer/layer.min.js" th:src="${pub.staticPath('/static/js/plugins/layer/layer.min.js')}"></script>
 <script>
-
 
 </script>
 </body>

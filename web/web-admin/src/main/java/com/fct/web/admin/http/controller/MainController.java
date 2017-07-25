@@ -75,6 +75,13 @@ public class MainController {
         return "/main/error";
     }
 
+    @RequestMapping(value = "/hm", method = RequestMethod.GET)
+    public String hm(Model model) {
+
+        model.addAttribute("pub",fctConfig);
+        return "/main/hm";
+    }
+
     @RequestMapping(value = "/main/sendcode", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
     public String sendCode(HttpServletRequest request, HttpServletResponse response,String cellphone) {

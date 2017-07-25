@@ -1,5 +1,6 @@
 package com.fct.pay.service.wxpay;
 
+import com.alibaba.dubbo.common.json.JSONConverter;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.DateUtils;
 import com.fct.pay.interfaces.PayNotify;
@@ -71,7 +72,7 @@ public class WxpayManager {
         Configure.setAppID(config.get("appid"));
         Configure.setMchID(config.get("mchid"));
         Configure.setSubMchID("");
-        Configure.setCertLocalPath(Constants.getProjectPath() + config.get("cert_path")); //"cert\\wxpayapp\\1442883002_cert.p12";
+        Configure.setCertLocalPath(config.get("cert_path")); //"cert\\wxpayapp\\1442883002_cert.p12";
         Configure.setCertPassword(config.get("cert_password"));
         Configure.setNotifyUrl(config.get("notifyurl"));
         Configure.setIp(userip);
@@ -140,7 +141,7 @@ public class WxpayManager {
 
         if (map == null || !map.containsKey("appid") || !map.containsKey("prepay_id") || map.get("prepay_id").toString() == "")
         {
-            Constants.logger.info("wxpay:UnifiedOrder response error!");
+            Constants.logger.info("wxpay:UnifiedOrder response error!" + JsonConverter.toJson(map));
             throw new IllegalArgumentException("请求微信支付过程中出错，请稍候再试。");
         }
 

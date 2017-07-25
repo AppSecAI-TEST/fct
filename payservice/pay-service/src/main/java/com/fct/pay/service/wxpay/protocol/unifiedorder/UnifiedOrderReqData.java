@@ -3,6 +3,7 @@ package com.fct.pay.service.wxpay.protocol.unifiedorder;
 import com.fct.pay.service.wxpay.common.Configure;
 import com.fct.pay.service.wxpay.common.RandomStringGenerator;
 import com.fct.pay.service.wxpay.common.Signature;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -81,6 +82,12 @@ public class UnifiedOrderReqData {
         //setGoods_tag(goodsTag);
 
         setTrade_type(tradeType);
+
+        setNotify_url(notify_url);
+
+        if(!StringUtils.isEmpty(openId)) {
+            setOpenid(openId);
+        }
 
         //随机字符串，不长于32 位
         setNonce_str(RandomStringGenerator.getRandomStringByLength(32));

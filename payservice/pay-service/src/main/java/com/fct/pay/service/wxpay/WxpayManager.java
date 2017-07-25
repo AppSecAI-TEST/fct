@@ -250,9 +250,9 @@ public class WxpayManager {
 
             Map<String, Object> map = XMLParser.getMapFromXML(xmlContent);
 
-            String payment = getNotifyPayment(map);
-
-            Constants.logger.error("payment:"+payment);
+            //String payment = getNotifyPayment(map);
+            
+            String payment="wxpay_fctwap";
 
             initSDKConfiguration(payment,"");
 

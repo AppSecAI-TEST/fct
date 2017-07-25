@@ -31,6 +31,9 @@ public class MemberInfoManager {
     @Autowired
     private MemberStoreManager memberStoreManager;
 
+    @Autowired
+    private MemberLoginManager memberLoginManager;
+
     public void save(MemberInfo info)
     {
         if(info.getMemberId()<=0)
@@ -44,7 +47,8 @@ public class MemberInfoManager {
         memberInfoRepository.save(info);
     }
 
-    public void updateInfo(Integer memberId,String headPortrait,String userName,Integer sex,String birthday,String weixin)
+    @Transactional
+    public void updateInfo(String token,Integer memberId,String headPortrait,String userName,Integer sex,String birthday,String weixin)
     {
         if(memberId<=0)
         {
@@ -77,6 +81,8 @@ public class MemberInfoManager {
         }
         info.setWeixin(weixin);
         memberInfoRepository.save(info);
+
+        memberLoginManager.updateLogin(token,member,info);
 
     }
 

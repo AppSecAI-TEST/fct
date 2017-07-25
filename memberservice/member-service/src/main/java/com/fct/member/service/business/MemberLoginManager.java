@@ -128,4 +128,17 @@ public class MemberLoginManager {
         }
         return login;
     }
+
+    public void updateLogin(String token,Member member,MemberInfo info)
+    {
+        MemberLogin  login = findByToken(token);
+        if(login.getMemberId() != member.getId())
+        {
+            throw new IllegalArgumentException("非法操作。");
+        }
+        login.setHeadPortrait(info.getHeadPortrait());
+        login.setUserName(member.getUserName());
+
+        memberLoginRepository.save(login);
+    }
 }

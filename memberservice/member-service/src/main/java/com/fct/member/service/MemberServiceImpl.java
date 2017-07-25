@@ -196,10 +196,10 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
-    public void updateMemberInfo(Integer memberId,String headPortrait,String username,Integer sex,String birthday,String weixin)
+    public void updateMemberInfo(String token,Integer memberId,String headPortrait,String username,Integer sex,String birthday,String weixin)
     {
         try {
-            memberInfoManager.updateInfo(memberId,headPortrait,username,sex,birthday,weixin);
+            memberInfoManager.updateInfo(token,memberId,headPortrait,username,sex,birthday,weixin);
         }
         catch (IllegalArgumentException exp)
         {

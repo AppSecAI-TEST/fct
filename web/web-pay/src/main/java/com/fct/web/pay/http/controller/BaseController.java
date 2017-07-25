@@ -33,14 +33,14 @@ public class BaseController {
 
         //获取cookie
 
-        //initUser(request,response);
+        initUser(request,response);
 
         if(currentUser == null) {
             currentUser = new MemberLogin();
         }
-        currentUser.setMemberId(5);
+        /*currentUser.setMemberId(5);
         currentUser.setCellPhone("18616311580");
-        currentUser.setOpenId("oDYYI1WACqCEH5qB_DCxsPqOBbBs");
+        currentUser.setOpenId("oDYYI1WACqCEH5qB_DCxsPqOBbBs");*/
 
         model.addAttribute("pub",fctConfig);
         model.addAttribute("currentUser",currentUser);

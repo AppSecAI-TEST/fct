@@ -1,6 +1,5 @@
 package com.fct.pay.service.wxpay;
 
-import com.alibaba.dubbo.common.json.JSONConverter;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.DateUtils;
 import com.fct.pay.interfaces.PayNotify;
@@ -22,7 +21,6 @@ import com.fct.pay.service.wxpay.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.plugin.javascript.JSContext;
 
 import java.math.BigDecimal;
 import java.util.Date;

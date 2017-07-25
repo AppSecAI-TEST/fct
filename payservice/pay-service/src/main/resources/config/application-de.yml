@@ -44,7 +44,7 @@ pay:
     refund_backUrl: http://test.pay.fangcuntang.com/mobile/unionpay/refundnotify
 
   platform_ids:
-    wxpay_appids: wxpay_fctwap#wx5b63ee784fa7fc96|wxpay_fctapp#wx7c866f046dab34b8
+    wxpay_appids: wxpay_fctwap#wx39f1f76373754d3c|wxpay_fctapp#wx7c866f046dab34b8
     alipay_appids:  alipay_fct#2017072007823643
     unionpay_merids: unionpay_fctwap#777290058148557
 

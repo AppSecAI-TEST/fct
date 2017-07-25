@@ -325,6 +325,7 @@ public class MobileController extends BaseController{
             Constants.logger.error(exp.toString());
         }
         model.addAttribute("payurl", payurl);
+        model.addAttribute("wxbackurl",fctConfig.getPayUrl() +"/mobile/wxpay/callback?orderid="+orderid);
         model.addAttribute("platform",platform);
 
         return "/mobile/pay";

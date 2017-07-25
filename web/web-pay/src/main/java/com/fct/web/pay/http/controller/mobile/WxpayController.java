@@ -43,13 +43,21 @@ public class WxpayController {
 
             if (request.getInputStream() != null)
             {
-                BufferedReader br=new BufferedReader(new InputStreamReader(request.getInputStream(),"utf-8"));
+                /*BufferedReader br=new BufferedReader(new InputStreamReader(request.getInputStream(),"utf-8"));
 
-                String requestXml = br.readLine();
+                String requestXml = br.readLine();*/
 
-                Constants.logger.info("wxpayMobileNotifyXML:" + requestXml);
+                InputStreamReader isr = new InputStreamReader(request.getInputStream(),"utf-8");
 
-                PayNotify payNotify = mobilePayService.wxpayNotify(dicParam,requestXml);
+                String results = "";
+                int tmp;
+                while((tmp = isr.read()) != -1){
+                    results += (char)tmp;
+                }
+
+                Constants.logger.info("wxpayMobileNotifyXML:" + results);
+
+                PayNotify payNotify = mobilePayService.wxpayNotify(dicParam,results);
 
                 responData = payNotify.getErrorMessage();
 
@@ -89,6 +97,8 @@ public class WxpayController {
                 successUrl = payOrder.getCallbackUrl();
 
                 Constants.logger.info("生成SuccessUrl:"+ successUrl);
+
+                Thread.sleep(60*3);
             }
 
         }

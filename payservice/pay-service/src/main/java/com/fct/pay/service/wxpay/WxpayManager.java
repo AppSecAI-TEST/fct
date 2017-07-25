@@ -286,12 +286,12 @@ public class WxpayManager {
 
                 notify.setPayOrderNo(map.get("out_trade_no").toString());
                 notify.setHasError(false);
-                //notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
+                notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
                 notify.setPayPlatform(payment);
 
                 map = new HashMap<>();
                 map.put("return_code", "SUCCESS");
-                map.put("return_msg", "订单查询失败");
+                map.put("return_msg", "订单支付成功");
 
                 notify.setErrorMessage(XMLParser.getXmltoMap(map));
 

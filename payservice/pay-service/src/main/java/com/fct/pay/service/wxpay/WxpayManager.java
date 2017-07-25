@@ -289,6 +289,8 @@ public class WxpayManager {
                 notify.setExtandProperties(XMLParser.getMapConvertToMap(map));
                 notify.setPayPlatform(payment);
 
+                Constants.logger.error("notify:"+JsonConverter.toJson(notify));
+                
                 map = new HashMap<>();
                 map.put("return_code", "SUCCESS");
                 map.put("return_msg", "订单支付成功");

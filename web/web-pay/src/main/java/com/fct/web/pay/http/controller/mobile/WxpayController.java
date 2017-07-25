@@ -43,10 +43,6 @@ public class WxpayController {
 
             if (request.getInputStream() != null)
             {
-                /*BufferedReader br=new BufferedReader(new InputStreamReader(request.getInputStream(),"utf-8"));
-
-                String requestXml = br.readLine();*/
-
                 InputStreamReader isr = new InputStreamReader(request.getInputStream(),"utf-8");
 
                 String results = "";
@@ -64,7 +60,7 @@ public class WxpayController {
                 if (payNotify != null && !payNotify.getHasError())
                 {
                     financeService.paySuccess(payNotify.getPayOrderNo(),
-                            payNotify.getPayPlatform(),payNotify.getErrorMessage());
+                            payNotify.getPayPlatform(),JsonConverter.toJson(payNotify.getExtandProperties()));
                 }
                 else
                 {

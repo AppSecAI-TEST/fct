@@ -86,6 +86,11 @@ public class MemberManager {
         return member;
     }
 
+    public int countByUserName(String userName)
+    {
+        return memberRepository.countByUserName(userName);
+    }
+
     public Member findById(Integer id)
     {
         if(id<=0)

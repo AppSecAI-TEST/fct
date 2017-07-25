@@ -94,7 +94,7 @@ public class WxpayController {
 
                 Constants.logger.info("生成SuccessUrl:"+ successUrl);
 
-                Thread.sleep(60*3);
+                Thread.sleep(1000*3);
             }
 
         }

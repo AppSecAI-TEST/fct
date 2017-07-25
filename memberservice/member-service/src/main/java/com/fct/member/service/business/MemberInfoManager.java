@@ -46,13 +46,27 @@ public class MemberInfoManager {
 
     public void updateInfo(Integer memberId,String headPortrait,String userName,Integer sex,String birthday,String weixin)
     {
-        Member member = memberManager.findById(memberId);
-        if(member.getUserName().equals(member.getCellPhone()))
+        if(memberId<=0)
         {
-            member.setUserName(userName);
+            throw new IllegalArgumentException("会员id为空");
+        }
 
+        Member member = memberManager.findById(memberId);
+
+        if(member == null)
+        {
+            throw new IllegalArgumentException("会员不存在");
+        }
+
+        if(!StringUtils.isEmpty(userName) && !member.getUserName().equals(userName))
+        {
+            if(memberManager.countByUserName(userName)>0) {
+                throw new IllegalArgumentException("用户昵称已存在");
+            }
+            member.setUserName(userName);
             memberManager.save(member);
         }
+
         MemberInfo info = memberInfoRepository.findOne(memberId);
         if(!StringUtils.isEmpty(headPortrait)) {
             info.setHeadPortrait(headPortrait);

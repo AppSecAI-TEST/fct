@@ -315,14 +315,10 @@ public class WxpayManager {
         try {
             String reqdata = new ScanPayQueryService().request(scanPayQueryReqData);
 
-            Constants.logger.error("查询订单参数:"+reqdata);
-
             Map<String, Object> map = XMLParser.getMapFromXML(reqdata);
 
-            Constants.logger.error("查询订单结果:"+JsonConverter.toJson(map));
-
-            if (map.get("return_code").toString() == "SUCCESS" &&
-                    map.get("result_code").toString() == "SUCCESS") {
+            if (map.get("return_code").toString().equals("SUCCESS") &&
+                    map.get("result_code").toString().equals("SUCCESS")) {
                 return true;
             }
         }

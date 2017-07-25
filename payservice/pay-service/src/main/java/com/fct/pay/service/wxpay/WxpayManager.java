@@ -151,7 +151,7 @@ public class WxpayManager {
         jsAPI.put("timeStamp", RandomStringGenerator.getGenerateTimeStamp());
         jsAPI.put("nonceStr", RandomStringGenerator.getRandomStringByLength(12));
         jsAPI.put("package","prepay_id=" + map.get("prepay_id"));
-        jsAPI.put("signType",map.get("MD5"));
+        jsAPI.put("signType","MD5");
         jsAPI.put("paySign", Signature.getSign(jsAPI));
 
         String jsonParam = JsonConverter.toJson(jsAPI);

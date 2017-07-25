@@ -6,26 +6,36 @@
 </head>
 <body>
 
-<script type="text/javascript" th:if="${#strings.contains(platform,'wxpay')}">
-    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
-        WeixinJSBridge.invoke('getBrandWCPayRequest',[[${payurl}]],function (res) {
-            // 返回 res.err_msg,取值
-            // get_brand_wcpay_request:cancel  用户取消
-            // get_brand_wcpay_request:fail 发送失败
-            // get_brand_wcpay_request:ok 发送成功
-            if(res.err_msg == 'get_brand_wcpay_request:ok') {
-                window.location.href = "http://pay.fangcuntang.com/mobile/wxpay/callback?orderid=[[${orderid}]]";
-            } else if(res.err_msg == 'get_brand_wcpay_request:fail'){
-                alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
-            }else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-                alert("用户取消支付!");
-                history.go(-1);
-            }else{
-                history.go(-1);
-            }
-        });
-    }, false);
-</script>
+<th:block th:if="${#strings.contains(platform,'wxpay')}">
+    <div th:utext="${payurl}" id="wxpay-param" style="display:none"></div>
+    <script type="text/javascript">
+        var param = document.getElementById("wxpay-param").innerHTML;
+
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            WeixinJSBridge.invoke('getBrandWCPayRequest',eval("("+param+")"),function (res) {
+                // 返回 res.err_msg,取值
+                // get_brand_wcpay_request:cancel  用户取消
+                // get_brand_wcpay_request:fail 发送失败
+                // get_brand_wcpay_request:ok 发送成功
+                if(res.err_msg == 'get_brand_wcpay_request:ok') {
+                    window.location.href = "http://pay.fangcuntang.com/mobile/wxpay/callback?orderid=[[${orderid}]]";
+                } else if(res.err_msg == 'get_brand_wcpay_request:fail'){
+                    alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
+                }else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                    alert("用户取消支付!");
+                    history.go(-1);
+                }else{
+                    history.go(-1);
+                }
+            });
+        }, false);
+
+        function html2Escape(sHtml) {
+            return sHtml.replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});
+        }
+
+    </script>
+</th:block>
 
 <th:block th:if="${#strings.contains(platform,'unionpay')}">
     <form id="pay_form" th:action="${payurl}" method="post">

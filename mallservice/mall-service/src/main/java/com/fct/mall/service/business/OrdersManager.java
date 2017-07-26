@@ -841,7 +841,7 @@ public class OrdersManager {
         StringBuilder sb = new StringBuilder();
         for (OrderGoods g:lsGoods
                 ) {
-            if(g.getStatus() <1 && g.getStatus() >4)
+            if(g.getStatus() <0 && g.getStatus() >4)
             {
                 //未处理退款、未有退款申请、拒绝退款、关闭退款。均可进行结算。
                 commission = commission.add(g.getCommission());
@@ -849,7 +849,7 @@ public class OrdersManager {
 
                 sb.append(g.getName()).append("、");
             }
-            else if(g.getStatus()>0 && g.getStatus()<4)
+            else if(g.getStatus()>=0 && g.getStatus()<4)
             {
                 //退款处理中，订单暂时不完成。交易完成时间往后延
                 refunding = true;

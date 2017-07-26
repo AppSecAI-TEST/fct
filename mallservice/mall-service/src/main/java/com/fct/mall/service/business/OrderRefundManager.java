@@ -445,7 +445,7 @@ public class OrderRefundManager {
         List<Object> param = new ArrayList<>();
 
         String table="OrderRefund as r INNER JOIN OrderGoods as g on r.orderGoodsId=g.id";
-        String field ="r.*,g.name,g.goodsId,g.goodsSpecId,g.specName,g.img,g.payAmount";
+        String field ="r.*,g.name,g.goodsId,g.goodsSpecId,g.specName,g.img,g.payAmount,g.promotionPrice,g.buyCount";
         String orderBy = "r.Id Desc";
         String condition= getContion(orderId,goodsName,orderGoodsId,memberId,status,beginTime,endTime,param);
 

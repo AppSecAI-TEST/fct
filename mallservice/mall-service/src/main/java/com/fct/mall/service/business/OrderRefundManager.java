@@ -301,6 +301,10 @@ public class OrderRefundManager {
         if (refund == null) {
             throw new IllegalArgumentException ("非法操作");
         }
+        if(refund.getStatus() == Constants.enumRefundStatus.agree.getValue())
+        {
+            throw new IllegalArgumentException ("同意退款的订单不可再进行关闭操作");
+        }
 
         this.save(refund, Constants.enumRefundStatus.close.getValue(), 0, description, images);
     }
@@ -445,7 +449,7 @@ public class OrderRefundManager {
         List<Object> param = new ArrayList<>();
 
         String table="OrderRefund as r INNER JOIN OrderGoods as g on r.orderGoodsId=g.id";
-        String field ="r.*,g.name,g.goodsId,g.goodsSpecId,g.specName,g.img,g.payAmount,g.promotionPrice,g.buyCount";
+        String field ="r.*,g.name,g.goodsId,g.goodsSpecId,g.specName,g.img,g.payAmount,g.buyCount";
         String orderBy = "r.Id Desc";
         String condition= getContion(orderId,goodsName,orderGoodsId,memberId,status,beginTime,endTime,param);
 

@@ -41,11 +41,6 @@ public class OrderRefundDTO extends OrderRefund implements Serializable{
     private BigDecimal payAmount;
 
     /**
-     * 销售价
-     * */
-    private BigDecimal promotionPrice;
-
-    /**
      * 购买数量
      * */
     private Integer buyCount;

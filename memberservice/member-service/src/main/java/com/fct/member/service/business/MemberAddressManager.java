@@ -4,7 +4,9 @@ import com.fct.member.data.entity.MemberAddress;
 import com.fct.member.data.repository.MemberAddressRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +20,10 @@ public class MemberAddressManager {
     @Autowired
     private MemberAddressRepository memberAddressRepository;
 
+    @Autowired
+    private JdbcTemplate jt;
+
+    @Transactional
     public void save(MemberAddress address)
     {
         if(address.getMemberId() <=0)
@@ -50,6 +56,16 @@ public class MemberAddressManager {
         }
         if(address.getId() == null || address.getId()<=0) {
             address.setCreateTime(new Date());
+
+            if(memberAddressRepository.countByMemberId(address.getMemberId())>=10)
+            {
+                throw new IllegalArgumentException("您的收货地址太多啦..");
+            }
+        }
+        if(address.getIsDefault() ==1)
+        {
+            String sql = String.format("UPDATE MemberAddress set isDefault=0 WHERE MemberId=%d",address.getMemberId());
+            jt.update(sql);
         }
         memberAddressRepository.save(address);
     }
@@ -77,13 +93,19 @@ public class MemberAddressManager {
         return memberAddressRepository.findDefault(memberId);
     }
 
-    public void setDefault(Integer id,Integer meberId)
+    @Transactional
+    public void setDefault(Integer id,Integer memberId)
     {
-        if(meberId<=0 || id<=0)
+        if(memberId<=0 || id<=0)
         {
             throw new IllegalArgumentException("id 为空");
         }
-        memberAddressRepository.setDefault(id,meberId);
+        //将用户原来的地址默认先取消
+        String sql = String.format("UPDATE MemberAddress set isDefault=0 WHERE MemberId=%d",memberId);
+        jt.update(sql);
+
+        sql = String.format("UPDATE MemberAddress set isDefault=1 WHERE id=%d AND MemberId=%d",id,memberId);
+        jt.update(sql);
     }
 
     public void delete(Integer id,Integer memberId)

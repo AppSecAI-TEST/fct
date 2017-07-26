@@ -27,4 +27,6 @@ public interface MemberAddressRepository extends JpaRepository<MemberAddress, In
     @Transactional
     @Query(nativeQuery = true, value = "DELETE MemberAddress WHERE id=? and MemberId=?2")
     void delete(Integer id,Integer memberId);
+
+    int countByMemberId(Integer memberId);
 }

@@ -60,7 +60,9 @@ public interface MemberService {
 
     MemberBankInfo getMemberBankInfo(Integer id);
 
-    PageResponse<MemberBankInfo> findMemberBankInfo(String cellPhone,String bankName,Integer status,Integer pageIndex,Integer pageSize);
+    MemberBankInfo getMemberBankInfoByMember(Integer memberId);
+
+    PageResponse<MemberBankInfo> findMemberBankInfo(Integer memberId,String cellPhone,String bankName,Integer status,Integer pageIndex,Integer pageSize);
 
     void createInviteCode(Integer memberId);
 

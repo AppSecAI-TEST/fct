@@ -362,11 +362,23 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         return null;
     }
 
-    public PageResponse<MemberBankInfo> findMemberBankInfo(String cellPhone,String bankName,Integer status,Integer pageIndex,
+    public MemberBankInfo getMemberBankInfoByMember(Integer memberId)
+    {
+        try {
+            return memberBankInfoManager.findOne(memberId);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
+    public PageResponse<MemberBankInfo> findMemberBankInfo(Integer memberId,String cellPhone,String bankName,Integer status,Integer pageIndex,
                                                    Integer pageSize)
     {
         try {
-            return memberBankInfoManager.findAll(cellPhone,bankName,status,pageIndex,pageSize);
+            return memberBankInfoManager.findAll(memberId,cellPhone,bankName,status,pageIndex,pageSize);
         }
         catch (Exception exp)
         {

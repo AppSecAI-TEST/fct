@@ -238,7 +238,7 @@ public class MobileController extends BaseController{
                     {
                         return AjaxUtil.alert("支付业务订单状态异常。");
                     }
-                    if(record.getMemberId() != currentUser.getMemberId()) {
+                    if(!record.getMemberId().equals(currentUser.getMemberId())) {
                         return AjaxUtil.alert("非法用户操作。");
                     }
                     if(DateUtils.compareDate(record.getExpiredTime(),new Date())<=0)
@@ -250,6 +250,7 @@ public class MobileController extends BaseController{
                     financeService.updateRechargePayPlatform(record.getId(),platform);
 
                     payAmount = record.getPayAmount();
+                    totalAmount = payAmount;
                     desc="在线充值";
                     showUrl = fctConfig.getUrl()+"/recharge";
                     expiredTime = record.getExpiredTime();

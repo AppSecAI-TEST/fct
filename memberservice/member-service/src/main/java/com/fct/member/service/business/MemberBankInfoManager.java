@@ -74,7 +74,7 @@ public class MemberBankInfoManager {
         return memberBankInfoRepository.findOne(memberId);
     }
 
-    public String getCondition(String cellPhone,String bankName,Integer status,List<Object> param)
+    public String getCondition(Integer memberId,String cellPhone,String bankName,Integer status,List<Object> param)
     {
         StringBuilder sb = new StringBuilder();
         if(!StringUtils.isEmpty(cellPhone))
@@ -91,10 +91,14 @@ public class MemberBankInfoManager {
         {
             sb.append("  AND status="+status);
         }
+        if(memberId>0)
+        {
+            sb.append("  AND memberId="+memberId);
+        }
         return sb.toString();
     }
 
-    public PageResponse<MemberBankInfo> findAll(String cellPhone,String bankName,Integer status,Integer pageIndex,
+    public PageResponse<MemberBankInfo> findAll(Integer memberId,String cellPhone,String bankName,Integer status,Integer pageIndex,
                                         Integer pageSize)
     {
         List<Object> param = new ArrayList<>();
@@ -102,7 +106,7 @@ public class MemberBankInfoManager {
         String table="MemberBankInfo";
         String field ="*";
         String orderBy = "Id asc";
-        String condition= getCondition(cellPhone,bankName,status,param);
+        String condition= getCondition(memberId,cellPhone,bankName,status,param);
 
         String sql = "SELECT Count(0) FROM MemberBankInfo WHERE 1=1 "+condition;
         Integer count =  jt.queryForObject(sql,param.toArray(),Integer.class);

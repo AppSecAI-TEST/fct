@@ -72,6 +72,9 @@ public class WithdrawRecordManager {
             throw  new IllegalArgumentException("非法操作。");
         }
 
+        if(StringUtils.isEmpty(record.getCellPhone())) {
+            record.setCellPhone(account.getCellPhone());
+        }
         record.setStatus(0);
         record.setCreateTime(new Date());
         record.setUpdateTime(record.getCreateTime());
@@ -126,7 +129,6 @@ public class WithdrawRecordManager {
         if(memberId>0)
         {
             sb.append(" AND memberId="+memberId);
-            param.add(memberId);
         }
         if(status>-1)
         {

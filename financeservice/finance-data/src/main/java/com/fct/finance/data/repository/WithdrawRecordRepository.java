@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public interface WithdrawRecordRepository extends JpaRepository<WithdrawRecord, Integer> {
 
-    @Query(nativeQuery = true, value = "select * from WithdrawRecord where memberid=?1 and status=?2")
+    @Query(nativeQuery = true, value = "select count(0) from WithdrawRecord where memberid=?1 and status=?2")
     int countByMemberIdAndStatus(Integer memberId, Integer status);
 
 }

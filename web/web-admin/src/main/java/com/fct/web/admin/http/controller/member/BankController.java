@@ -55,7 +55,7 @@ public class BankController extends BaseController {
 
         try {
 
-            pageResponse = memberService.findMemberBankInfo(cellphone,bankname,status,page,pageSize);
+            pageResponse = memberService.findMemberBankInfo(0,cellphone,bankname,status,page,pageSize);
         }
         catch (Exception exp)
         {

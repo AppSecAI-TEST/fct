@@ -71,7 +71,7 @@ public class MemberBankInfoManager {
         {
             throw new IllegalArgumentException("会员为空。");
         }
-        return memberBankInfoRepository.findOne(memberId);
+        return memberBankInfoRepository.findOneByMemberId(memberId);
     }
 
     public String getCondition(Integer memberId,String cellPhone,String bankName,Integer status,List<Object> param)

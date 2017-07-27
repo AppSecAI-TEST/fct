@@ -1,9 +1,14 @@
 package com.fct.common.service.business;
 
+import com.fct.common.service.QCloudConfig;
+import com.fct.common.service.qcloud.*;
+
 import com.fct.common.data.entity.VideoSource;
 import com.fct.common.data.repository.VideoSourceRepository;
 import com.fct.common.interfaces.PageResponse;
+import com.fct.common.service.qcloud.Utilities.Json.JSONObject;
 import com.fct.core.utils.PageUtil;
+import com.fct.core.utils.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +29,9 @@ public class VideoSourceManager {
     @Autowired
     private JdbcTemplate jt;
 
+    @Autowired
+    private QCloudConfig qCloudConfig;
+
     public Integer countByCategoryId(Integer cateId)
     {
         return videoSourceRepository.countByCategoryId(cateId);
@@ -32,6 +41,30 @@ public class VideoSourceManager {
     {
         videoSource.setGuid(UUID.randomUUID().toString());
         return videoSourceRepository.save(videoSource);
+    }
+
+    public String upload(VideoSource videoSource,byte[] fileByte)
+    {
+        String[] videoNameSplit = videoSource.getOriginalName().split("\\.");
+        String fileType = videoNameSplit[videoNameSplit.length - 1];
+        videoSource.setFileType(fileType);
+        // 仅上传视频
+        //VodApi.upload(secretId, secretKey, videoPath);
+        // 同时上传视频和封面
+        if(fileByte != null) {
+            JSONObject result = VodApi.upload(qCloudConfig.getSecretId(), qCloudConfig.getSecretKey(), fileByte, fileType);
+
+            videoSource.setUrl(result.getJSONObject("video").getString("storagePath"));
+            if (StringUtils.isEmpty(videoSource.getImg())) {
+                videoSource.setImg(result.getJSONObject("cover").getString("storagePath"));
+            }
+        }
+        videoSource.setCreateTime(new Date());
+        videoSource.setStatus(0);
+        videoSource.setGuid(UUIDUtil.generateUUID());
+        videoSourceRepository.save(videoSource);
+
+        return videoSource.getGuid();
     }
 
     public VideoSource findById(String guid)

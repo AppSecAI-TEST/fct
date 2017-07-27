@@ -32,3 +32,8 @@ oauth:
   wechat:
     appId: wx39f1f76373754d3c
     appSecret: 5acae7250a2c8ba316aa4fb16b1d0146
+
+qcloud:
+  vod:
+    secretId: AKID62kESR7jzzjDRQPcpmTu4yeJm01m3ZbO
+    secretKey: h9ML4YnoZ4JuGMDpLdgT2MQFqBF2ZppY

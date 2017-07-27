@@ -28,6 +28,9 @@ public class CommonServiceImpl implements CommonService {
     private VideoCategoryManager videoCategoryManager;
 
     @Autowired
+    private VideoSourceManager videoSourceManager;
+
+    @Autowired
     private WeChat weChat;
 
     public PageResponse<Article> findArticle(String title, String categoryCode, Integer status, String startTime,
@@ -286,27 +289,86 @@ public class CommonServiceImpl implements CommonService {
         }
     }
 
-    public PageResponse<VideoSource> findVideoSource(String name, Integer categoryId, Integer status, Integer fileType,
+    public String uploadVideo(VideoSource videoSource,byte[] fileByte)
+    {
+        try {
+            return videoSourceManager.upload(videoSource,fileByte);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return "";
+    }
+
+    public PageResponse<VideoSource> findVideoSource(String name, Integer categoryId, Integer status, String fileType,
                                               String startTime, String endTime, Integer pageIndex, Integer pageSize)
     {
+        try {
+            return videoSourceManager.findAll(name,categoryId,status,fileType,startTime,endTime,pageIndex,pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return null;
     }
     public VideoSource getVideoSource(String id)
     {
+        try {
+            videoSourceManager.findById(id);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return null;
     }
 
     public void saveVideoSource(VideoSource videoSource)
-    {}
+    {
+        try {
+            videoSourceManager.save(videoSource);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
 
     public List<VideoSource> findVideoSourceByGuid(String ids)
     {
+        try {
+            videoSourceManager.findByGuid(ids);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
         return null;
     }
 
     public void updateVideoSourceStatus(String id)
     {
-
+        try {
+            videoSourceManager.updateStatus(id);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
     }
 
     public List<VideoCategory> findVideoCategory()

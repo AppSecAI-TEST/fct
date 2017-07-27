@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,12 @@ public class CouponPolicyManager {
             policy.setLastUpdateUserId(policy.getCreateUserId());
             policy.setGenerateStatus(0);
         }
+
+        if(policy.getUsingType()==0)
+        {
+            policy.setFullAmount(new BigDecimal(0));
+        }
+
         couponPolicyRepository.save(policy);
         return policy;
     }
@@ -80,7 +87,12 @@ public class CouponPolicyManager {
             policy.setTypeId(oldPolicy.getTypeId());
             policy.setAmount(oldPolicy.getAmount());
             policy.setUsingType(oldPolicy.getUsingType());
-            policy.setFullAmount(oldPolicy.getFullAmount());
+            if(policy.getUsingType()==0)
+            {
+                policy.setFullAmount(new BigDecimal(0));
+            }else {
+                policy.setFullAmount(oldPolicy.getFullAmount());
+            }
             policy.setAuditStatus(oldPolicy.getAuditStatus());
             policy.setFetchType(oldPolicy.getFetchType());
             policy.setReceivedCount(oldPolicy.getReceivedCount());

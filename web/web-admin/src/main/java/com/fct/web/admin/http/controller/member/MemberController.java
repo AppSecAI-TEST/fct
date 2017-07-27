@@ -138,7 +138,7 @@ public class MemberController extends BaseController {
             if (id > 0) {
                 member = memberService.getMember(id);
                 info = memberService.getMemberInfo(id);
-                bank = memberService.getMemberBankInfo(id);
+                bank = memberService.getMemberBankInfoByMember(id);
             }
         }
         catch (Exception exp)

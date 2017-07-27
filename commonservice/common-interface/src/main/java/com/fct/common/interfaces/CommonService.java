@@ -43,9 +43,11 @@ public interface CommonService {
 
     void deleteImageCategory(Integer id);
 
-    PageResponse<VideoSource> findVideoSource(String name, Integer categoryId, Integer status, Integer fileType,
+    PageResponse<VideoSource> findVideoSource(String name, Integer categoryId, Integer status, String fileType,
                                               String startTime, String endTime, Integer pageIndex, Integer pageSize);
     VideoSource getVideoSource(String id);
+
+    String uploadVideo(VideoSource videoSource,byte[] fileByte);
 
     void saveVideoSource(VideoSource videoSource);
 

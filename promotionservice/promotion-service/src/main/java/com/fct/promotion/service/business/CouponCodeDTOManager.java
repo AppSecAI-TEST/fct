@@ -34,7 +34,7 @@ public class CouponCodeDTOManager {
         String condition = getCondition(policyId,memberId,code,status,isValid,param);
 
         String orderby = " c.Id desc";
-        String fields = " c.*,p.Name as CouponName,p.StartTime,p.EndTime,p.Amount as Amount,p.FullAmount as FullAmount,p.ProductIds as ProductIds";
+        String fields = " c.*,p.Name as CouponName,p.StartTime,p.EndTime,p.Amount as Amount,p.FullAmount as FullAmount,p.ProductIds as ProductIds,p.typeId as typeId";
         String tables = " CouponPolicy p inner join CouponCode c on p.Id = c.policyId ";
 
         String sql = PageUtil.getPageSQL(tables,fields,condition,orderby,pageIndex,pageSize);

@@ -78,6 +78,7 @@
                                 <td th:text="${cache.getVideoCategoryName(video.categoryId)}"></td>
                                 <td>
                                     <span th:text="${#strings.substring(video.url,0,50)}+'...'"></span>
+                                    <div class="hide" th:text="${video.url}"></div>
                                 </td>
                                 <td th:text="${video.fileSize}"></td>
                                 <td th:text="${#dates.format(video.createTime, 'yyyy-MM-dd HH:mm')}"></td>

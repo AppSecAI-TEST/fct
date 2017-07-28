@@ -26,4 +26,6 @@ public class CouponCodeDTO extends CouponCode implements Serializable {
     private BigDecimal amount;
 
     private String productIds;
+
+    private Integer typeId;
 }

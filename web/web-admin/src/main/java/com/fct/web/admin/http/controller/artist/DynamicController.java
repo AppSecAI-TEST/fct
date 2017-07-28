@@ -115,7 +115,7 @@ public class DynamicController extends BaseController{
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(Integer id,Integer artistid,String content,String images,String videoid,
+    public String save(Integer id,Integer artistid,String content,String images,String videourl,String videoid,
                        String videoimg, Integer status)
     {
         id = ConvertUtils.toInteger(id);
@@ -123,6 +123,7 @@ public class DynamicController extends BaseController{
         artistid = ConvertUtils.toInteger(artistid);
         content =ConvertUtils.toString(content);
         images = ConvertUtils.toString(images);
+        videourl = ConvertUtils.toString(videourl);
         videoid = ConvertUtils.toString(videoid);
         videoimg = ConvertUtils.toString(videoimg);
 
@@ -139,6 +140,7 @@ public class DynamicController extends BaseController{
         dynamic.setContent(content);
         dynamic.setImages(images);
         dynamic.setVideoId(videoid);
+        dynamic.setVideoUrl(videourl);
         dynamic.setVideoImg(videoimg);
         dynamic.setStatus(status);
 

@@ -163,9 +163,10 @@ public class GoodsController extends BaseController {
     public String save(HttpServletRequest request,String artistId,String materialId, @RequestParam(required = false) String ext_id,
                        @RequestParam(required = false) String ext_name,@RequestParam(required = false) String ext_code,@RequestParam(required = false) String ext_marketPrice,
                        @RequestParam(required = false) String ext_salePrice,@RequestParam(required = false) String ext_commission,
-                       @RequestParam(required = false) String ext_stockCount,String videoId)
+                       @RequestParam(required = false) String ext_stockCount,String videourl)
     {
-        videoId = ConvertUtils.toString(videoId);
+        videourl = ConvertUtils.toString(videourl);
+        String videoId = ConvertUtils.toString(request.getParameter("videoid"));
         String categorycode = ConvertUtils.toString(request.getParameter("categorycode"));
         String content = ConvertUtils.toString(request.getParameter("content"));
         String name = ConvertUtils.toString(request.getParameter("name"));
@@ -243,6 +244,7 @@ public class GoodsController extends BaseController {
         goods.setDefaultImage(arrImg[0]); //取第一张为默认
         goods.setMultiImages(defaultImage);
         goods.setVideoId(videoId);
+        goods.setVideoUrl(videourl);
         goods.setVideoImg(videoImg);
         goods.setCode(code);
         goods.setMarketPrice(marketPrice);

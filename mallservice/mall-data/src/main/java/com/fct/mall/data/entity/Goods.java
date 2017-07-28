@@ -50,6 +50,11 @@ public class Goods implements Serializable {
     //视频Id
     private String videoId;
 
+    /**
+     * 视频url
+     * */
+    private String videoUrl;
+
     //视频图片
     private String videoImg;
 

@@ -35,9 +35,14 @@ public class ArtistDynamic implements Serializable {
     private String images;
 
     /**
-     * 视频地址
+     * 视频id
      * */
     private String videoId;
+
+    /**
+     * 视频地址
+     * */
+    private String videoUrl;
 
     /**
      * 视频图片

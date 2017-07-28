@@ -1,8 +1,12 @@
 package com.fct.api.web.http.controller.mall;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fct.api.web.http.cache.OrderCache;
+import com.fct.api.web.http.cache.PaymentCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.OrderGoods;
 import com.fct.mall.data.entity.Orders;
@@ -18,10 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by z on 17-6-29.
@@ -32,6 +33,12 @@ public class OrderController extends BaseController {
 
     @Autowired
     private MallService mallService;
+
+    @Autowired
+    private PaymentCache paymentCache;
+
+    @Autowired
+    private OrderCache orderCache;
 
     /**
      * 获取订单列表
@@ -59,52 +66,8 @@ public class OrderController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
-        PageResponse<Orders> pageResponse = mallService.findOrdersByAPI(member.getMemberId(), order_id,
-                0, goodsName, status, comment_status, page_index, page_size);
-
-        PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
-        if (pageResponse != null) {
-
-            if (pageResponse.getTotalCount() > 0) {
-
-                List<Map<String, Object>> lsMaps = new ArrayList<>();
-                Map<String, Object> map = null;
-
-                List<Map<String, Object>> lsProductMaps = null;
-                Map<String, Object> productMap = null;
-
-                for (Orders order: pageResponse.getElements()) {
-
-                    map = new HashMap<>();
-                    map.put("orderId", order.getOrderId());
-                    map.put("payAmount", order.getPayAmount());
-                    map.put("status", order.getStatus());
-                    map.put("statusName", this.getStatusName(order.getStatus()));
-                    map.put("buyTotalCount", order.getOrderGoods().size());
-
-                    lsProductMaps = new ArrayList<>();
-                    for (OrderGoods product: order.getOrderGoods()) {
-
-                        productMap = new HashMap<>();
-                        productMap.put("name", product.getName());
-                        productMap.put("specName", product.getSpecName());
-                        productMap.put("img", fctResourceUrl.getImageUrl(product.getImg()));
-                        productMap.put("buyCount", product.getBuyCount());
-                        productMap.put("price", product.getPrice());
-                        lsProductMaps.add(productMap);
-                    }
-                    map.put("orderGoods", lsProductMaps);
-
-                    lsMaps.add(map);
-                }
-
-                pageMaps.setElements(lsMaps);
-                pageMaps.setCurrent(pageResponse.getCurrent());
-                pageMaps.setTotalCount(pageResponse.getTotalCount());
-                pageMaps.setHasMore(pageResponse.isHasMore());
-            }
-        }
-
+        PageResponse<Map<String, Object>> pageMaps = orderCache.findPageOrder(member.getMemberId(), order_id,
+                goodsName, status, comment_status, page_index, page_size);
 
         ReturnValue<PageResponse<Map<String, Object>>> response = new ReturnValue<>();
         response.setData(pageMaps);
@@ -119,20 +82,73 @@ public class OrderController extends BaseController {
      * @return
      */
     @RequestMapping(value = "{order_id}", method = RequestMethod.GET)
-    public ReturnValue<Orders> getOrder(@PathVariable("order_id") String order_id) {
+    public ReturnValue<Map<String, Object>> getOrder(@PathVariable("order_id") String order_id) {
 
         order_id = ConvertUtils.toString(order_id);
         if (StringUtils.isEmpty(order_id)) {
 
             return new ReturnValue<>(404, "订单不存在");
         }
-
         this.memberAuth();
 
-        Orders orders = mallService.getOrders(order_id);
+        Map<String, Object> map = new HashMap<>();
 
-        ReturnValue<Orders> response = new ReturnValue<>();
-        response.setData(orders);
+        Orders orders = orderCache.getOrder(order_id);
+        if (orders == null) {
+            return new ReturnValue<>(404, "订单不存在");
+        }
+
+        map.put("orderId", orders.getOrderId());
+        map.put("payAmount", orders.getPayAmount());
+        map.put("status", orders.getStatus());
+        map.put("statusName", orderCache.getStatusName(orders.getStatus()));
+        map.put("buyTotalCount", orders.getOrderGoods().size());
+        map.put("payOrderId", orders.getPayOrderId());
+        map.put("payPlatform", orders.getPayPlatform());
+        map.put("payName", paymentCache.getNameByCode(orders.getPayPlatform()));
+        map.put("payTime", this.getFormatDate(orders.getPayTime(), "yyyy-MM-dd HH:mm:ss"));
+        map.put("createTime", this.getFormatDate(orders.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+        map.put("expiresTime", this.getFormatDate(orders.getExpiresTime(), "yyyy-MM-dd HH:mm:ss"));
+        map.put("finishTime", this.getFormatDate(orders.getFinishTime(), "yyyy-MM-dd HH:mm:ss"));
+
+        Map<String, Object> receiverMap = new HashMap<>();
+        if (orders.getOrderReceiver() != null) {
+            receiverMap.put("name", orders.getOrderReceiver().getName());
+            receiverMap.put("phone", orders.getOrderReceiver().getPhone());
+            receiverMap.put("province", orders.getOrderReceiver().getProvince());
+            receiverMap.put("city", orders.getOrderReceiver().getCity());
+            receiverMap.put("region", orders.getOrderReceiver().getRegion());
+            receiverMap.put("address", orders.getOrderReceiver().getAddress());
+            receiverMap.put("expressPlatform", orders.getOrderReceiver().getExpressPlatform());
+            receiverMap.put("expressNO", orders.getOrderReceiver().getExpressNO());
+            receiverMap.put("deliveryTime", this.getFormatDate(orders.getOrderReceiver().getDeliveryTime(), "yyyy-MM-dd HH:mm:ss"));
+        }
+        map.put("orderReceiver", receiverMap);
+
+        List<Map<String, Object>> lsGoodsMaps = new ArrayList<>();
+        if (orders.getOrderGoods() != null) {
+            for (OrderGoods goods: orders.getOrderGoods()) {
+
+                Map<String, Object> goodsMaps = new HashMap<>();
+                goodsMaps.put("id", goods.getId());
+                goodsMaps.put("goodsId", goods.getGoodsId());
+                goodsMaps.put("goodsSpecId", goods.getGoodsSpecId());
+                goodsMaps.put("name", goods.getName());
+                goodsMaps.put("specName", goods.getSpecName());
+                goodsMaps.put("img", fctResourceUrl.getImageUrl(goods.getImg()));
+                goodsMaps.put("buyCount", goods.getBuyCount());
+                goodsMaps.put("status", goods.getStatus());
+                goodsMaps.put("statusName", goods.getStatusName());
+                goodsMaps.put("price", goods.getSpecName());
+
+                lsGoodsMaps.add(goodsMaps);
+            }
+        }
+
+        map.put("orderGoods", lsGoodsMaps);
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
 
         return response;
     }
@@ -160,34 +176,20 @@ public class OrderController extends BaseController {
         addressId = ConvertUtils.toInteger(addressId);
 
         //orderGoodsInfo传json列表，如[{goodsId:1,SpecId:1,buyCount:2}...]
-        List<Map<String, Object>> lsMap = JsonConverter.toObject(orderGoodsInfo, List.class);
-        List<OrderGoodsDTO> orderProductIds = new ArrayList<>();
-        Integer goodsId = 0;
-        Integer specId = 0;
-        Integer buyCount = 0;
-        for (Map<String, Object> map : lsMap) {
-
-            goodsId = ConvertUtils.toInteger(map.get("goodsId"), 0);
-            specId = ConvertUtils.toInteger(map.get("specId"), 0);
-            buyCount = ConvertUtils.toInteger(map.get("buyCount"), 0);
-            if (goodsId < 1) {
+        List<OrderGoodsDTO> orderProductIds = JsonConverter.toObject(orderGoodsInfo,
+                new TypeReference<List<OrderGoodsDTO>>(){});
+        for (OrderGoodsDTO product : orderProductIds) {
+            if (product.getGoodsId() < 1) {
                 return new ReturnValue<>(404, "订单有产品已下架");
             }
 
-            if (buyCount < 1) {
+            if (product.getBuyCount() < 1) {
                 return new ReturnValue<>(404, "购买数量不能小于1");
             }
-
-            OrderGoodsDTO orderGoodsDTO = new OrderGoodsDTO();
-            orderGoodsDTO.setGoodsId(goodsId);
-            orderGoodsDTO.setSpecId(specId);
-            orderGoodsDTO.setBuyCount(buyCount);
-
-            orderProductIds.add(orderGoodsDTO);
         }
 
         MemberLogin member = this.memberAuth();
-        String orderId = mallService.createOrder(member.getMemberId(), member.getUserName(),
+        String orderId = mallService.createOrder(member.getMemberId(), member.getCellPhone(),
                 0, points, accountAmount, orderProductIds, couponCode,
                 remark, addressId);
 
@@ -218,23 +220,5 @@ public class OrderController extends BaseController {
         mallService.cancelOrders(order_id, member.getMemberId(), 0);
 
         return new ReturnValue(200, "订单取消成功");
-    }
-
-    private String getStatusName(Integer status) {
-
-        switch (status) {
-            case 0:
-                return "待付款";
-            case 1:
-                return "待发货";
-            case 2:
-                return "待收货";
-            case 3:
-                return "交易完成";
-            case 4:
-                return "关闭";
-        }
-
-        return "";
     }
 }

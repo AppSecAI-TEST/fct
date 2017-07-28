@@ -1,14 +1,18 @@
 package com.fct.api.web.http.controller.member;
 
+import com.fct.api.web.http.cache.FavoriteCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberFavourite;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.member.interfaces.PageResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * Created by z on 17-7-5.
@@ -17,22 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/member/favorites")
 public class FavoriteController extends BaseController {
 
+    @Autowired
+    private FavoriteCache favoriteCache;
+
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<MemberFavourite>> findFovorite(Integer from_type,
+    public ReturnValue<PageResponse<Map<String, Object>>> findFovorite(Integer from_type,
                                                                    Integer page_index, Integer page_size) {
 
         from_type = ConvertUtils.toInteger(from_type);
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
-        if (from_type < 1)
+        if (from_type != 0 && from_type != 1)
             return new ReturnValue<>(404, "请带入收藏类型");
 
         MemberLogin member = this.memberAuth();
 
-        PageResponse<MemberFavourite> lsFavorite = memberService.findFavourite(member.getMemberId(), from_type, page_index, page_size);
+        PageResponse<Map<String, Object>> pageMaps = favoriteCache.findPageFavorite(member.getMemberId(), from_type,
+                page_index, page_size);
 
-        ReturnValue<PageResponse<MemberFavourite>> response = new ReturnValue<>();
-        response.setData(lsFavorite);
+        ReturnValue<PageResponse<Map<String, Object>>> response = new ReturnValue<>();
+        response.setData(pageMaps);
 
         return response;
     }

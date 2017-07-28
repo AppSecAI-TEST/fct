@@ -1,9 +1,11 @@
 package com.fct.api.web.http.controller.finance;
 
+import com.fct.api.web.http.cache.PaymentCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.finance.data.entity.RechargeRecord;
+import com.fct.finance.data.entity.WithdrawRecord;
 import com.fct.finance.interfaces.FinanceService;
 import com.fct.finance.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
@@ -29,6 +31,9 @@ public class RechargeController extends BaseController {
     @Autowired
     private FinanceService financeService;
 
+    @Autowired
+    private PaymentCache paymentCache;
+
     /**获取用户充值列表
      *
      * @param page_index
@@ -36,7 +41,7 @@ public class RechargeController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<RechargeRecord>> findRecharge(Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<Map<String, Object>>> findRecharge(Integer page_index, Integer page_size) {
 
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
@@ -46,8 +51,34 @@ public class RechargeController extends BaseController {
         PageResponse<RechargeRecord> lsRecharge = financeService.findRechargeRecord(member.getMemberId(), "",
                 "", "", -1, 0, "", "", page_index, page_size);
 
-        ReturnValue<PageResponse<RechargeRecord>> response = new ReturnValue<>();
-        response.setData(lsRecharge);
+        PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
+        if (lsRecharge != null && lsRecharge.getTotalCount() > 0) {
+
+            List<Map<String, Object>> lsMaps = new ArrayList<>();
+            Map<String, Object> map = null;
+            for (RechargeRecord recharge: lsRecharge.getElements()) {
+
+                map = new HashMap<>();
+                map.put("id", recharge.getId());
+                map.put("payAmount", recharge.getPayAmount());
+                map.put("giftAmount", recharge.getGiftAmount());
+                map.put("amount", recharge.getAmount());
+                map.put("payOrderId", recharge.getPayOrderId());
+                map.put("status", recharge.getStatus());
+                map.put("payName", paymentCache.getNameByCode(recharge.getPayPlatform()));
+                map.put("createTime", this.getFormatDate(recharge.getCreateTime()));
+                map.put("payTime", this.getFormatDate(recharge.getPayTime()));
+                lsMaps.add(map);
+            }
+
+            pageMaps.setElements(lsMaps);
+            pageMaps.setCurrent(lsRecharge.getCurrent());
+            pageMaps.setTotalCount(lsRecharge.getTotalCount());
+            pageMaps.setHasMore(lsRecharge.isHasMore());
+        }
+
+        ReturnValue<PageResponse<Map<String, Object>>> response = new ReturnValue<>();
+        response.setData(pageMaps);
 
         return response;
     }
@@ -83,17 +114,15 @@ public class RechargeController extends BaseController {
     /**保存用户充值申请
      *
      * @param pay_amount
-     * @param gift_amount
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ReturnValue saveRecharge(BigDecimal pay_amount, BigDecimal gift_amount) {
+    public ReturnValue<Integer> saveRecharge(BigDecimal pay_amount) {
 
         pay_amount = ConvertUtils.toBigDeciaml(pay_amount);
-        gift_amount = ConvertUtils.toBigDeciaml(gift_amount);
-        if (pay_amount.doubleValue() < 1) {
+        if (pay_amount.doubleValue() < 100) {
 
-            return new ReturnValue(404, "充值金额不能小于1000元");
+            return new ReturnValue(404, "充值金额不能小于100元");
         }
 
 
@@ -103,11 +132,13 @@ public class RechargeController extends BaseController {
         recharge.setMemberId(member.getMemberId());
         recharge.setCellPhone(member.getCellPhone());
         recharge.setPayAmount(pay_amount);
-        recharge.setGiftAmount(gift_amount);
+        recharge.setGiftAmount(this.getGiftAmount(pay_amount));
 
-        financeService.createRechargeRecord(recharge);
+        Integer id = financeService.createRechargeRecord(recharge);
+        ReturnValue<Integer> response = new ReturnValue<>();
+        response.setData(id);
 
-        return new ReturnValue(200, "充值成功");
+        return response;
     }
 
     /**充值申请数据
@@ -115,24 +146,46 @@ public class RechargeController extends BaseController {
      * @return
      */
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public ReturnValue<Map<Integer, String>> createRecharge()
+    public ReturnValue<Map<String, Object>> createRecharge()
     {
         MemberLogin member = this.memberAuth();
 
-        Map<Integer, String> map = new HashMap<>();
-        map.put(500, "送500,可得1000元。");
-        map.put(1000, "送1000,可得2000元。");
-        map.put(2000, "送2000,可得4000元。");
-        map.put(3000, "送3000,可得6000元。");
-        map.put(5000, "送5000,可得10000元。");
-        map.put(6000, "送6000,可得12000元。");
-        map.put(8000, "送8000,可得16000元。");
-        map.put(10000, "送10000,可得20000元。");
-
         //充值数据
-        ReturnValue<Map<Integer, String>> response = new ReturnValue<>();
-        response.setData(map);
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(this.getRechargeRules());
 
         return response;
+    }
+
+    private BigDecimal getGiftAmount(BigDecimal amount) {
+
+        Map<String, Object> map = this.getRechargeRules();
+        Map<Integer, Double> rules = (Map<Integer, Double>) map.get("rules");
+        if (rules.containsKey(amount)) {
+
+            return amount.multiply(ConvertUtils.toBigDeciaml(rules.get(amount)));
+        }
+
+        return amount.multiply(ConvertUtils.toBigDeciaml(map.get("defaultGift")));
+    }
+
+    private Map<String, Object> getRechargeRules() {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("min", 100);
+        map.put("max", 10000000);
+        map.put("defaultGift", 0.2);
+
+        Map<Integer, Double> ruleMap = new HashMap<>();
+        ruleMap.put(500, 0.2);
+        ruleMap.put(1000, 0.3);
+        ruleMap.put(3000, 0.4);
+        ruleMap.put(5000, 0.5);
+        ruleMap.put(10000, 0.6);
+        ruleMap.put(50000, 0.7);
+
+        map.put("rules", ruleMap);
+
+        return map;
     }
 }

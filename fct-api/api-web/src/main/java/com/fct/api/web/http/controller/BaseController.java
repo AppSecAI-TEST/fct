@@ -1,6 +1,7 @@
 package com.fct.api.web.http.controller;
 
 import com.fct.api.web.utils.FctResourceUrl;
+import com.fct.core.utils.DateUtils;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.member.interfaces.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +33,7 @@ public class BaseController {
         authToken = request.getHeader("auth-token");
     }
 
-    public MemberLogin memberAuth()
+    protected MemberLogin memberAuth()
     {
         if (StringUtils.isEmpty(this.authToken))
         {
@@ -47,7 +49,7 @@ public class BaseController {
         return member;
     }
 
-    public MemberLogin memberAuth(Boolean hasException)
+    protected MemberLogin memberAuth(Boolean hasException)
     {
         if (StringUtils.isEmpty(this.authToken))
         {
@@ -59,6 +61,22 @@ public class BaseController {
         }
 
         return memberService.getMemberLogin(this.authToken);
+    }
+
+    protected String getFormatDate(Date time) {
+
+        if (time == null)
+            return  "";
+
+        return DateUtils.formatDate(time, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    protected String getFormatDate(Date time, String format) {
+
+        if (time == null)
+            return  "";
+
+        return DateUtils.formatDate(time, format);
     }
 
     protected String getImgUrl(String url)

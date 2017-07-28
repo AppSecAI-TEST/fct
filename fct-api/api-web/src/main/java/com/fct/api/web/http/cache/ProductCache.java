@@ -206,4 +206,9 @@ public class ProductCache {
 
         return lsMap;
     }
+
+    public List<Goods> findProductByIds(String productIds) {
+
+        return mallService.findGoodsByIds(productIds);
+    }
 }

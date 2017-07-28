@@ -42,7 +42,7 @@ public class ArtistDynamicCache {
                 map.put("content", dynamic.getContent());
                 map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages()));
                 map.put("videoImage", fctResourceUrl.getImageUrl(dynamic.getVideoImg()));
-                map.put("videoId", dynamic.getVideoId());
+                map.put("videoUrl", dynamic.getVideoUrl());
 
                 lsMaps.add(map);
             }

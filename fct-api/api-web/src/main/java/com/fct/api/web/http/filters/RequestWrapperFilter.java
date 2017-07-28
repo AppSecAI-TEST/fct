@@ -1,12 +1,10 @@
 package com.fct.api.web.http.filters;
 
 
-
-
 import com.fct.api.web.utils.servlet.MultiReadHttpServletRequest;
 
-import java.io.IOException;
 import javax.servlet.*;
+import java.io.IOException;
 
 /**
  * @author ningyang

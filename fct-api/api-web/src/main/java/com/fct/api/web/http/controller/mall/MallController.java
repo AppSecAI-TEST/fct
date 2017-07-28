@@ -5,9 +5,6 @@ import com.fct.api.web.http.cache.ProductCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.artist.data.entity.Artist;
 import com.fct.artist.interfaces.ArtistService;
-import com.fct.common.data.entity.Article;
-import com.fct.common.data.entity.ArticleCategory;
-import com.fct.common.interfaces.CommonService;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.Goods;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

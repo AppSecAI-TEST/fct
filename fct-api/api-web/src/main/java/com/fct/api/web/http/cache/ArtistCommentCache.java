@@ -4,7 +4,6 @@ import com.fct.api.web.utils.FctResourceUrl;
 import com.fct.artist.data.entity.ArtistComment;
 import com.fct.artist.interfaces.ArtistService;
 import com.fct.artist.interfaces.PageResponse;
-import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.DateUtils;
 import com.fct.member.interfaces.MemberDTO;
 import org.springframework.beans.factory.annotation.Autowired;

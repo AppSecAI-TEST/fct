@@ -133,7 +133,7 @@ public class ProductController extends BaseController {
         product.put("content", goods.getContent());
 
         Map<String, Object> video = new HashMap<>();
-        video.put("url", goods.getVideoId());
+        video.put("url", goods.getVideoUrl());
         video.put("poster", getImgUrl(goods.getVideoImg()));
         product.put("video", video);
 

@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller.member;
 
+import com.fct.api.web.http.cache.DataCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.DateUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +26,8 @@ import java.util.Map;
 @RequestMapping(value = "/member")
 public class MemberController extends BaseController {
 
+    @Autowired
+    private DataCache dataCache;
 
     @Autowired
     private MessageService messageService;
@@ -91,7 +95,7 @@ public class MemberController extends BaseController {
         weixin = ConvertUtils.toString(weixin);
 
         MemberLogin member = this.memberAuth();
-        memberService.updateMemberInfo(member.getMemberId(), avatar, username, gender, birthday, weixin);
+        memberService.updateMemberInfo(member.getToken(), member.getMemberId(), avatar, username, gender, birthday, weixin);
 
         return new ReturnValue<>(200, "修改成功");
     }
@@ -170,12 +174,27 @@ public class MemberController extends BaseController {
         if (info != null) {
 
             map.put("sex", info.getSex());
-            map.put("birthday", info.getBirthday());
+            map.put("birthday", info.getBirthday() != null
+                    ? DateUtils.formatDate(info.getBirthday(), "yyyy-MM-dd") : "");
             map.put("weixin", info.getWeixin());
         }
 
         ReturnValue<Map<String, Object>> response = new ReturnValue<>();
         response.setData(map);
+
+        return response;
+    }
+
+    /**获取银行列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "get-banks", method = RequestMethod.GET)
+    public ReturnValue<List> getBanks() {
+
+        List banks = dataCache.getBanks();
+        ReturnValue<List> response = new ReturnValue<>();
+        response.setData(banks);
 
         return response;
     }

@@ -1,8 +1,8 @@
 package com.fct.api.web.http.controller.mall;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.json.JsonConverter;
-import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.finance.data.entity.MemberAccount;
 import com.fct.finance.interfaces.FinanceService;
@@ -46,29 +46,14 @@ public class OrderProductController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
-        List<Map<String, Object>> lsMap = JsonConverter.toObject(orderProductInfo, List.class);
-        List<OrderGoodsDTO> orderProductIds = new ArrayList<>();
-        Integer goodsId = 0;
-        Integer specId = 0;
-        Integer buyCount = 0;
-        for (Map<String, Object> map:lsMap) {
+        List<OrderGoodsDTO> orderProductIds = JsonConverter.toObject(orderProductInfo,
+                new TypeReference<List<OrderGoodsDTO>>(){});
 
-            goodsId = ConvertUtils.toInteger(map.get("goodsId"), 0);
-            specId = ConvertUtils.toInteger(map.get("specId"), 0);
-            buyCount = ConvertUtils.toInteger(map.get("buyCount"), 0);
-
-            if (goodsId < 1)
+        for (OrderGoodsDTO product : orderProductIds) {
+            if (product.getGoodsId() < 1)
                 return new ReturnValue<>(404, "订单有产品已下架");
-            if (buyCount < 1)
+            if (product.getBuyCount() < 1)
                 return new ReturnValue<>(404, "购买数量不能小于1");
-
-
-            OrderGoodsDTO orderGoodsDTO = new OrderGoodsDTO();
-            orderGoodsDTO.setGoodsId(goodsId);
-            orderGoodsDTO.setSpecId(specId);
-            orderGoodsDTO.setBuyCount(buyCount);
-
-            orderProductIds.add(orderGoodsDTO);
         }
 
         OrderGoodsResponse lsOrderGoods = mallService.getSubmitOrderGoods(member.getMemberId(), orderProductIds);
@@ -140,19 +125,37 @@ public class OrderProductController extends BaseController {
         return  response;
     }
 
-
     /**根据订单产品自增ID获取订单产品
      *
      * @param id
      * @return
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ReturnValue<OrderGoods> getProduct(@PathVariable("id") Integer id) {
+    public ReturnValue<Map<String, Object>> getProduct(@PathVariable("id") Integer id) {
 
         OrderGoods product = mallService.getOrderGoods(id);
+        Map<String, Object> map = new HashMap<>();
+        if (product != null) {
 
-        ReturnValue<OrderGoods> response = new ReturnValue<>();
-        response.setData(product);
+            map.put("id", product.getId());
+            map.put("orderId", product.getOrderId());
+            map.put("goodsId", product.getGoodsId());
+            map.put("goodsSpecId", product.getGoodsSpecId());
+            map.put("name", product.getName());
+            map.put("specName", product.getSpecName());
+            map.put("img", fctResourceUrl.getImageUrl(product.getImg()));
+            map.put("price", product.getPrice());
+            map.put("buyCount", product.getBuyCount());
+            map.put("payAmount", product.getPayAmount());
+
+            List<String> lsReason = new ArrayList<>();
+            lsReason.add("做工问题");
+            lsReason.add("其他原因");
+            map.put("reasons", lsReason);
+        }
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
 
         return response;
     }

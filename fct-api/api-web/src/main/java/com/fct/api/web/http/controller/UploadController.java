@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by nick on 2017/6/5.
@@ -89,12 +88,6 @@ public class UploadController extends BaseController {
 
             if(responseList != null) {
                 ImageResponse response =responseList.get(0);
-                //非编辑器模式，上传的图片
-                if(!StringUtils.isEmpty(action))
-                {
-                    response.setUrl(fctConfig.thumbnail(response.getUrl(),200));
-                }
-
                 responseEntity.setData(response);
             }
 

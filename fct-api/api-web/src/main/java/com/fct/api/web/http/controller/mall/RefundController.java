@@ -8,12 +8,18 @@ import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.OrderRefundDTO;
 import com.fct.mall.interfaces.PageResponse;
 import com.fct.member.data.entity.MemberLogin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by z on 17-7-13.
@@ -35,7 +41,7 @@ public class RefundController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<PageResponse<OrderRefundDTO>> findRefund(String keyword, Integer page_index, Integer page_size) {
+    public ReturnValue<PageResponse<Map<String, Object>>> findRefund(String keyword, Integer page_index, Integer page_size) {
 
         MemberLogin member = this.memberAuth();
 
@@ -50,11 +56,37 @@ public class RefundController extends BaseController {
         page_index = ConvertUtils.toPageIndex(page_index);
         page_size = ConvertUtils.toInteger(page_size);
 
-        PageResponse<OrderRefundDTO> pageResponse = mallService.findOrderRefund(orderId, goodsName, 0,
+        PageResponse<OrderRefundDTO> pageRefund = mallService.findOrderRefund(orderId, goodsName, 0,
                 member.getMemberId(), -1, "", "", page_index, page_size);
+        PageResponse<Map<String, Object>> pageMaps = new PageResponse<>();
+        if (pageRefund != null && pageRefund.getTotalCount() > 0) {
+            List<Map<String, Object>> lsMaps = new ArrayList<>();
+            Map<String, Object> map = null;
 
-        ReturnValue<PageResponse<OrderRefundDTO>> response = new ReturnValue<>();
-        response.setData(pageResponse);
+            for (OrderRefundDTO refund: pageRefund.getElements()) {
+
+                map = new HashMap<>();
+                map.put("id", refund.getId());
+                map.put("statusName", this.getStatusName(refund.getStatus()));
+                map.put("name", refund.getName());
+                map.put("specName", refund.getSpecName());
+                map.put("price", refund.getPayAmount().divide(new BigDecimal(refund.getBuyCount())));
+                map.put("buyCount", refund.getBuyCount());
+                map.put("payAmount", refund.getPayAmount());
+                map.put("img", fctResourceUrl.getImageUrl(refund.getImg()));
+                lsMaps.add(map);
+            }
+
+            pageMaps.setElements(lsMaps);
+            pageMaps.setCurrent(pageRefund.getCurrent());
+            pageMaps.setTotalCount(pageRefund.getTotalCount());
+            pageMaps.setHasMore(pageRefund.isHasMore());
+        }
+
+
+
+        ReturnValue<PageResponse<Map<String, Object>>> response = new ReturnValue<>();
+        response.setData(pageMaps);
 
         return response;
     }
@@ -145,5 +177,27 @@ public class RefundController extends BaseController {
                 1, "", "", 0);
 
         return new ReturnValue(200, "退换货关闭成功");
+    }
+
+    private String getStatusName(Integer status) {
+
+        switch (status) {
+            case 0:
+                return "等待处理";
+            case 1:
+                return "同意退货退款";
+            case 2:
+                return "退回产品中";
+            case 3:
+                return "同意退款";
+            case 4:
+                return "退款成功";
+            case 5:
+                return "拒绝处理";
+            case 6:
+                return "关闭申请";
+            default:
+                return "异常";
+        }
     }
 }

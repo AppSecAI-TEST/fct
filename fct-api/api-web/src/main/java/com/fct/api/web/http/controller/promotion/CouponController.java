@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller.promotion;
 
+import com.fct.api.web.http.cache.CouponCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by z on 17-6-30.
@@ -25,19 +28,22 @@ public class CouponController extends BaseController {
     @Autowired
     private PromotionService promotionService;
 
+    @Autowired
+    private CouponCache couponCache;
+
     /**产品可用优惠券列表
      *
      * @param product_id
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ReturnValue<List<CouponPolicy>> findCoupons(Integer product_id) {
+    public ReturnValue<List<Map<String, Object>>> findCoupons(Integer product_id) {
 
         product_id = ConvertUtils.toInteger(product_id);
-        List<CouponPolicy> lsCoupon = promotionService.findCanReceiveCouponPolicy(product_id);
+        List<Map<String, Object>> lsMaps = couponCache.findCacheCanReceive(product_id);
 
-        ReturnValue<List<CouponPolicy>> response = new ReturnValue<>();
-        response.setData(lsCoupon);
+        ReturnValue<List<Map<String, Object>>> response = new ReturnValue<>();
+        response.setData(lsMaps);
 
         return  response;
     }
@@ -56,6 +62,7 @@ public class CouponController extends BaseController {
 
         String code = promotionService.receiveCouponCode(member.getMemberId(), coupon_id);
         if (StringUtils.isEmpty(code)) {
+
             return new ReturnValue(404, "领取失败");
         }
 
@@ -68,16 +75,21 @@ public class CouponController extends BaseController {
      * @return
      */
     @RequestMapping(value = "by-member", method = RequestMethod.GET)
-    public ReturnValue<List<CouponCodeDTO>> findMemberCoupons(Integer status) {
+    public ReturnValue<Map<String, Object>> findMemberCoupons(Integer status) {
 
         status = ConvertUtils.toInteger(status,-1);
 
         MemberLogin member = this.memberAuth();
-        List<CouponCodeDTO> lsCoupon = promotionService.findMemberCouponCode(0, member.getMemberId(),
-                "", status, false, 1, 20);
 
-        ReturnValue<List<CouponCodeDTO>> response = new ReturnValue<>();
-        response.setData(lsCoupon);
+        List<Map<String, Object>> lsMaps = couponCache.findMemberReceive(member.getMemberId(), status);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("couponList", lsMaps);
+        if (status == 0)
+            map.put("canReceiveCount", couponCache.findCacheCanReceive(0).size());
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
 
         return  response;
     }

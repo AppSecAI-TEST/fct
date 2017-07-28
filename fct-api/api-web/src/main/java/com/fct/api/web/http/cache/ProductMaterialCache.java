@@ -1,7 +1,6 @@
 package com.fct.api.web.http.cache;
 
 import com.fct.api.web.utils.Constants;
-import com.fct.mall.data.entity.GoodsCategory;
 import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.PageResponse;

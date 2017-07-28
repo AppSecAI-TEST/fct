@@ -16,12 +16,13 @@ public class VodApi {
             return upload(appId,secretId, secretKey,vidoeFile,fileType, null);
         }
 
-        public static JSONObject upload(long appId,String secretId, String secretKey,byte[] videoFile, String fileType, String coverPath) {
+        public static JSONObject upload(long appId,String secretId, String secretKey,byte[] videoFile, String fileType,
+                                        String coverPath) {
                 TreeMap<String, Object> config = new TreeMap<String, Object>();
                 config.put("SecretId", secretId);
                 config.put("SecretKey", secretKey);
                 /* 区域参数，可选: gz:广州; sh:上海; hk:香港; ca:北美;等。 */
-                config.put("DefaultRegion", "ap-shanghai");
+                config.put("DefaultRegion", "sh");
                 config.put("RequestMethod", "GET");
                 QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Vod(),config);
 
@@ -52,10 +53,11 @@ public class VodApi {
                 }
 
                 // 第二步，上传文件到COS
+                long myappId = 10022853;
                 ClientConfig clientConfig = new ClientConfig();
                 clientConfig.setRegion(region);
                 clientConfig.setSignExpired(24 * 3600);
-                Credentials cred = new Credentials(appId, secretId, secretKey);
+                Credentials cred = new Credentials(myappId, secretId, secretKey);
                 COSClient cosClient = new COSClient(clientConfig, cred);
 
         	    UploadFileRequest uploadFileRequest = new UploadFileRequest(bucket, videoDst, videoFile);

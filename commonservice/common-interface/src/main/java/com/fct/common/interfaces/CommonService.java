@@ -47,7 +47,7 @@ public interface CommonService {
                                               String startTime, String endTime, Integer pageIndex, Integer pageSize);
     VideoSource getVideoSource(String id);
 
-    String uploadVideo(VideoSource videoSource,byte[] fileByte);
+    VideoResponse uploadVideo(byte[] fileByte,String originalName,Float fileSize);
 
     void saveVideoSource(VideoSource videoSource);
 

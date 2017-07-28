@@ -52,11 +52,6 @@ public class VideoSource implements Serializable {
     private Float fileSize;
 
     /**
-     * 视频时长
-     * */
-    private Integer timing;
-
-    /**
      *
      * 视频简介
      * */
@@ -78,7 +73,7 @@ public class VideoSource implements Serializable {
     private Integer status;
 
     /**
-     * 上传成功后冗余结果
+     * 视频id
      * */
-    private String resultData;
+    private String fileId;
 }

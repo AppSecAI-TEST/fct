@@ -20,8 +20,8 @@ redis:
 spring:
   http:
     multipart:
-      max-file-size: 3MB
-      max-request-size: 3MB
+      max-file-size: 20MB
+      max-request-size: 20MB
     encoding:
       charset: utf-8
       enabled: true

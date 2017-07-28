@@ -1,5 +1,6 @@
 package com.fct.common.service.business;
 
+import com.fct.common.interfaces.VideoResponse;
 import com.fct.common.service.QCloudConfig;
 import com.fct.common.service.qcloud.*;
 
@@ -37,34 +38,67 @@ public class VideoSourceManager {
         return videoSourceRepository.countByCategoryId(cateId);
     }
 
-    public VideoSource save(VideoSource videoSource)
+    public String save(VideoSource video)
     {
-        videoSource.setGuid(UUID.randomUUID().toString());
-        return videoSourceRepository.save(videoSource);
+        if(StringUtils.isEmpty(video.getName()))
+        {
+            throw new IllegalArgumentException("名称为空");
+        }
+        if(StringUtils.isEmpty(video.getFileId()))
+        {
+            throw new IllegalArgumentException("视频Id为空");
+        }
+        if(StringUtils.isEmpty(video.getFileType()))
+        {
+            throw new IllegalArgumentException("文件类型为空");
+        }
+        if(StringUtils.isEmpty(video.getImg()))
+        {
+            throw new IllegalArgumentException("图片为空");
+        }
+        if(StringUtils.isEmpty(video.getOriginalName()))
+        {
+            throw new IllegalArgumentException("原始名称为空");
+        }
+        if(StringUtils.isEmpty(video.getUrl()))
+        {
+            throw new IllegalArgumentException("地址为空");
+        }
+        if(video.getFileSize() <=0)
+        {
+            throw new IllegalArgumentException("大小不对");
+        }
+        if(StringUtils.isEmpty(video.getIntro()))
+        {
+            throw new IllegalArgumentException("介绍为空");
+        }
+        if(StringUtils.isEmpty(video.getGuid())) {
+            video.setCreateTime(new Date());
+            video.setStatus(0);
+            video.setGuid(UUIDUtil.generateUUID());
+        }
+        videoSourceRepository.save(video);
+
+        return video.getGuid();
     }
 
-    public String upload(VideoSource videoSource,byte[] fileByte)
+    public VideoResponse upload(byte[] fileByte,String originalName,Float fileSize)
     {
-        String[] videoNameSplit = videoSource.getOriginalName().split("\\.");
-        String fileType = videoNameSplit[videoNameSplit.length - 1];
-        videoSource.setFileType(fileType);
-        // 仅上传视频
-        //VodApi.upload(secretId, secretKey, videoPath);
-        // 同时上传视频和封面
-        if(fileByte != null) {
-            JSONObject result = VodApi.upload(qCloudConfig.getAppId(),qCloudConfig.getSecretId(), qCloudConfig.getSecretKey(), fileByte, fileType);
-
-            videoSource.setUrl(result.getJSONObject("video").getString("storagePath"));
-            if (StringUtils.isEmpty(videoSource.getImg())) {
-                videoSource.setImg(result.getJSONObject("cover").getString("storagePath"));
-            }
+        if(fileByte == null)
+        {
+            throw new IllegalArgumentException("文件不存在");
         }
-        videoSource.setCreateTime(new Date());
-        videoSource.setStatus(0);
-        videoSource.setGuid(UUIDUtil.generateUUID());
-        videoSourceRepository.save(videoSource);
+        String[] videoNameSplit = originalName.split("\\.");
+        String fileType = videoNameSplit[videoNameSplit.length - 1];
+        JSONObject result = VodApi.upload(qCloudConfig.getAppId(),qCloudConfig.getSecretId(), qCloudConfig.getSecretKey(), fileByte, fileType);
 
-        return videoSource.getGuid();
+        VideoResponse response = new VideoResponse();
+        response.setFileId(result.getString("fileId"));
+        response.setUrl(result.getJSONObject("video").getString("url"));
+        response.setFileType(fileType);
+        response.setFileSize(fileSize);
+
+        return response;
     }
 
     public VideoSource findById(String guid)

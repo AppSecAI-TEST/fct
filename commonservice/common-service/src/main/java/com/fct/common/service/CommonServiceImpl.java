@@ -289,10 +289,10 @@ public class CommonServiceImpl implements CommonService {
         }
     }
 
-    public String uploadVideo(VideoSource videoSource,byte[] fileByte)
+    public VideoResponse uploadVideo(byte[] fileByte,String originalName,Float fileSize)
     {
         try {
-            return videoSourceManager.upload(videoSource,fileByte);
+            return videoSourceManager.upload(fileByte,originalName,fileSize);
         }
         catch (IllegalArgumentException exp)
         {
@@ -302,7 +302,7 @@ public class CommonServiceImpl implements CommonService {
         {
             Constants.logger.error(exp.toString());
         }
-        return "";
+        return null;
     }
 
     public PageResponse<VideoSource> findVideoSource(String name, Integer categoryId, Integer status, String fileType,

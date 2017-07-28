@@ -5,6 +5,7 @@ import com.fct.common.data.entity.VideoSource;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
+import com.fct.common.interfaces.VideoResponse;
 import com.fct.core.utils.ReturnValue;
 import com.fct.web.admin.config.FctConfig;
 import com.fct.web.admin.utils.Constants;
@@ -100,7 +101,7 @@ public class UploadController {
     }
 
     @RequestMapping(value = "/video", method = RequestMethod.POST)
-    public ReturnValue<String> uploadVideo(HttpServletRequest request){
+    public ReturnValue<VideoResponse> uploadVideo(HttpServletRequest request){
 
         MultipartFile multipartFile = ((MultipartHttpServletRequest) request)
                 .getFile("file");
@@ -111,20 +112,10 @@ public class UploadController {
 
             Float length = new Float(multipartFile.getSize() / 1024.0); // 源图大小
 
-            VideoSource videoSource =  new VideoSource();
-            videoSource.setName("hello");
-            videoSource.setSortIndex(1);
-            videoSource.setImg("");
-            videoSource.setCategoryId(1);
-            videoSource.setIntro("test");
+            VideoResponse response = commonService.uploadVideo(bytes,originalName,length);
 
-            videoSource.setFileSize(length);
-            videoSource.setOriginalName(originalName);
-
-            String guid = commonService.uploadVideo(videoSource,bytes);
-
-            ReturnValue<String> returnValue = new ReturnValue<>();
-            returnValue.setData(guid);
+            ReturnValue<VideoResponse> returnValue = new ReturnValue<>();
+            returnValue.setData(response);
             return  returnValue;
 
         }catch (IOException e){

@@ -5,7 +5,9 @@ import com.fct.common.data.entity.VideoCategory;
 import com.fct.common.data.entity.VideoSource;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.PageResponse;
+import com.fct.common.interfaces.VideoResponse;
 import com.fct.core.exceptions.Exceptions;
+import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.PageUtil;
@@ -20,10 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,9 +102,19 @@ public class VideoController extends BaseController {
     public String create(@RequestParam(required = false) String id, Model model) {
         id = ConvertUtils.toString(id);
         VideoSource videoSource =null;
+        String response = "";
         try {
             if (!StringUtils.isEmpty(id)) {
                 videoSource = commonService.getVideoSource(id);
+
+                VideoResponse videoResponse = new VideoResponse();
+                videoResponse.setFileSize(videoSource.getFileSize());
+                videoResponse.setFileId(videoSource.getFileId());
+                videoResponse.setFileType(videoSource.getFileType());
+                videoResponse.setUrl(videoResponse.getUrl());
+                videoResponse.setOriginalName(videoResponse.getOriginalName());
+
+                response = JsonConverter.toJson(videoResponse);
             }
         }
         catch (Exception exp)
@@ -117,22 +125,23 @@ public class VideoController extends BaseController {
             videoSource = new VideoSource();
         }
         model.addAttribute("video", videoSource);
+        model.addAttribute("videoResponse", response);
         model.addAttribute("cache", cacheCommonManager);
         return "source/video/create";
     }
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(HttpServletRequest request, String url, String id, String name, String img, Integer categoryid,
+    public String save(String videoresponse,String id, String name, String img, Integer categoryid,
                        String intro, Integer sortindex)
     {
         id = ConvertUtils.toString(id);
         name = ConvertUtils.toString(name);
         sortindex =ConvertUtils.toInteger(sortindex);
         img = ConvertUtils.toString(img);
-        url = ConvertUtils.toString(url);
         categoryid = ConvertUtils.toInteger(categoryid);
         intro = ConvertUtils.toString(intro);
+        videoresponse = ConvertUtils.toString(videoresponse);
 
         VideoSource videoSource =  null;
         if(!StringUtils.isEmpty(id)) {
@@ -141,29 +150,23 @@ public class VideoController extends BaseController {
         if (videoSource == null) {
             videoSource = new VideoSource();
         }
-        videoSource.setName(name);
-        videoSource.setSortIndex(sortindex);
-        videoSource.setImg(img);
-        videoSource.setCategoryId(categoryid);
-        videoSource.setIntro(intro);
 
         try {
 
-            byte[] bytes = null;
-            if(!url.equals(videoSource.getUrl()))
-            {
-                /*MultipartFile file = ((MultipartHttpServletRequest) request)
-                        .getFile("file");
-                bytes = file.getBytes();
-                String originalName = file.getOriginalFilename();
+            VideoResponse response = JsonConverter.toObject(videoresponse,VideoResponse.class);
+            videoSource.setFileType(response.getFileType());
+            videoSource.setFileId(response.getFileId());
+            videoSource.setUrl(response.getUrl());
+            videoSource.setFileSize(response.getFileSize());
+            videoSource.setOriginalName(response.getOriginalName());
 
-                Float length = new Float(file.getSize() / 1024.0); // 源图大小
+            videoSource.setName(name);
+            videoSource.setSortIndex(sortindex);
+            videoSource.setImg(img);
+            videoSource.setCategoryId(categoryid);
+            videoSource.setIntro(intro);
 
-                videoSource.setFileSize(length);
-                videoSource.setOriginalName(originalName);*/
-            }
-
-            commonService.uploadVideo(videoSource,bytes);
+            commonService.saveVideoSource(videoSource);
         }
         catch (IllegalArgumentException exp)
         {

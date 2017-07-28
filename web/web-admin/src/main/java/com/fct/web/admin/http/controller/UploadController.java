@@ -1,14 +1,13 @@
 package com.fct.web.admin.http.controller;
 
 import com.fct.common.data.entity.ImageSource;
-import com.fct.common.data.entity.VideoSource;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
 import com.fct.common.interfaces.VideoResponse;
+import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ReturnValue;
 import com.fct.web.admin.config.FctConfig;
-import com.fct.web.admin.utils.Constants;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +100,7 @@ public class UploadController {
     }
 
     @RequestMapping(value = "/video", method = RequestMethod.POST)
-    public ReturnValue<VideoResponse> uploadVideo(HttpServletRequest request){
+    public ReturnValue<String> uploadVideo(HttpServletRequest request){
 
         MultipartFile multipartFile = ((MultipartHttpServletRequest) request)
                 .getFile("file");
@@ -114,8 +113,8 @@ public class UploadController {
 
             VideoResponse response = commonService.uploadVideo(bytes,originalName,length);
 
-            ReturnValue<VideoResponse> returnValue = new ReturnValue<>();
-            returnValue.setData(response);
+            ReturnValue<String> returnValue = new ReturnValue<>();
+            returnValue.setData(JsonConverter.toJson(response));
             return  returnValue;
 
         }catch (IOException e){

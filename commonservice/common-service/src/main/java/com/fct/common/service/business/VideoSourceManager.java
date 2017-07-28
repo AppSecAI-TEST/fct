@@ -97,6 +97,7 @@ public class VideoSourceManager {
         response.setUrl(result.getJSONObject("video").getString("url"));
         response.setFileType(fileType);
         response.setFileSize(fileSize);
+        response.setOriginalName(originalName);
 
         return response;
     }

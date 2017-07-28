@@ -320,7 +320,7 @@ public class CommonServiceImpl implements CommonService {
     public VideoSource getVideoSource(String id)
     {
         try {
-            videoSourceManager.findById(id);
+            return videoSourceManager.findById(id);
         }
         catch (Exception exp)
         {
@@ -347,7 +347,7 @@ public class CommonServiceImpl implements CommonService {
     public List<VideoSource> findVideoSourceByGuid(String ids)
     {
         try {
-            videoSourceManager.findByGuid(ids);
+            return videoSourceManager.findByGuid(ids);
         }
         catch (Exception exp)
         {

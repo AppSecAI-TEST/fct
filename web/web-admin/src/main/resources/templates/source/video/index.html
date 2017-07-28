@@ -63,28 +63,30 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Id</th>
                                 <th>名称</th>
                                 <th>分类</th>
-                                <th>类型</th>
                                 <th>地址</th>
                                 <th>大小</th>
                                 <th>上传时间</th>
                                 <th>状态</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="video : ${lsVideo}">
-                                <td th:text="${video.guid}"></td>
-                                <td th:text="${video.originalName}"></td>
+                                <td th:text="${video.name}"></td>
                                 <td th:text="${cache.getVideoCategoryName(video.categoryId)}"></td>
-                                <td th:text="${video.fileType}"></td>
-                                <td th:text="${video.url}"></td>
+                                <td>
+                                    <span th:text="${#strings.substring(video.url,0,50)}+'...'"></span>
+                                </td>
                                 <td th:text="${video.fileSize}"></td>
                                 <td th:text="${#dates.format(video.createTime, 'yyyy-MM-dd HH:mm')}"></td>
                                 <td>
                                     <a href="javascript:;" th:if="${video.status eq 0}" th:attr="data-id=${video.guid}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> </a>
                                     <a href="javascript:;" th:if="${video.status eq 1}" th:attr="data-id=${video.guid}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                                <td>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default update" th:attr="data-id=${video.guid}" >修改查看</a>
                                 </td>
                             </tr>
                             </tbody>

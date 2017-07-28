@@ -111,8 +111,8 @@ public class VideoController extends BaseController {
                 videoResponse.setFileSize(videoSource.getFileSize());
                 videoResponse.setFileId(videoSource.getFileId());
                 videoResponse.setFileType(videoSource.getFileType());
-                videoResponse.setUrl(videoResponse.getUrl());
-                videoResponse.setOriginalName(videoResponse.getOriginalName());
+                videoResponse.setUrl(videoSource.getUrl());
+                videoResponse.setOriginalName(videoSource.getOriginalName());
 
                 response = JsonConverter.toJson(videoResponse);
             }

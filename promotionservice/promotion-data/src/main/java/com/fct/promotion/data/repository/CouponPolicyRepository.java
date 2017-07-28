@@ -16,7 +16,7 @@ import java.util.List;
 public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Integer> {
 
     @Modifying
-    @Query(nativeQuery = true, value = "update CouponPolicy set ReceivedCount+=1 where Id=?1")
+    @Query(nativeQuery = true, value = "update CouponPolicy set ReceivedCount=ReceivedCount+1 where Id=?1")
     void addReceiveCount(Integer policyId);
 
     @Modifying

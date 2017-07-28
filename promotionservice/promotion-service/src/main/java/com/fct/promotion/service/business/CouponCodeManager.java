@@ -79,7 +79,7 @@ public class CouponCodeManager {
         return code;
     }
 
-    void setCodeUsing(String code) {
+    public void setCodeUsing(String code) {
         String sql = "update CouponCode set Status =1,UseTime=?,LastUpdateTime=? where code=? and Status=0";
         List<Object> param = new ArrayList<>();
         param.add(DateUtils.format(new Date()));
@@ -236,8 +236,8 @@ public class CouponCodeManager {
     }
 
 
-    Integer getSendCount(Integer policyId, Integer memberId) {
-        String sql = "select count(1) from CouponCode where policyId=" + policyId;
+    public Integer getSendCount(Integer policyId, Integer memberId) {
+        String sql = "select count(0) from CouponCode where policyId=" + policyId;
         if (memberId > 0) {
             sql += " and MemberId=" + memberId;
         }

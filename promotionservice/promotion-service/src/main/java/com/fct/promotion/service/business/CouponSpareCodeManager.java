@@ -40,7 +40,7 @@ public class CouponSpareCodeManager {
 
         obj.setStatus(2);
         obj.setLastUpdateTime(new Date());
-        couponSpareCodeRepository.saveAndFlush(obj);
+        couponSpareCodeRepository.save(obj);
     }
 
     void addCode(String code)

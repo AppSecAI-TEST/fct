@@ -29,11 +29,13 @@ public class BaseController {
     public void init(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
         //获取cookie
-        initUser(request,response);
+        //initUser(request,response);
 
         if(currentUser == null)
         {
             currentUser = new SysUserLogin();
+            currentUser.setUserId(1);
+            currentUser.setUserName("fct");
         }
 
         model.addAttribute("pub",config);

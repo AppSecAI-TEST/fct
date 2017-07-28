@@ -35,5 +35,6 @@ oauth:
 
 qcloud:
   vod:
+    appId: 1253930304
     secretId: AKID62kESR7jzzjDRQPcpmTu4yeJm01m3ZbO
     secretKey: h9ML4YnoZ4JuGMDpLdgT2MQFqBF2ZppY

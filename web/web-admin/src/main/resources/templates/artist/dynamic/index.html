@@ -138,7 +138,7 @@
         });
 
         $(".update").click(function () {
-            var id = $(this).attr("data-id");
+            var id = $(this).attr("data-id") || 0;
             JQbox.open({
                 title:"艺人动态添加/修改",
                 width: 800,

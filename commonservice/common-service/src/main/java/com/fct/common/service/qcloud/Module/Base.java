@@ -9,7 +9,7 @@ public abstract class Base {
 	protected String serverUri = "/v2/index.php";
 	protected String secretId = "";
 	protected String secretKey = "";
-	protected String defaultRegion = "";
+	protected String defaultRegion = "sh";
 	protected String requestMethod = "GET";
 
 	public void setConfig(TreeMap<String, Object> config) {

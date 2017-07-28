@@ -16,4 +16,7 @@ public class QCloudConfig {
 
     @Value("${qcloud.vod.secretKey}")
     private String secretKey;
+
+    @Value("${qcloud.vod.appId}")
+    private long appId;
 }

@@ -1,10 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-视频管理</title>
+    <link />
 </head>
-<body>
 
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'source_video',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" method="get">
+                        <div class="row col-sm-5 form-inline">
+                            <div class="form-group">
+                                <div class="col-sm-7">
+                                    <label>有效时间：</label>
+                                    <input type="text" class="laydate-icon form-control layer-date" placeholder="开始时间" id="starttime" name="starttime" th:value="${query.starttime}" >
+                                </div>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control laydate-icon layer-date" placeholder="结束时间" id="endtime" name="endtime" th:value="${query.endtime}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class=" col-sm-5 form-inline">
+                            <select class="form-control" name="categoryid">
+                                <option value="">分类</option>
+                                <th:block th:each="cate : ${query.lsCategory}">
+                                    <option th:text="${cate.name}" th:value="${cate.id}" th:selected="${cate.id eq query.categoryid} ? 'selected'"></option>
+                                </th:block>
+                            </select>
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">待审核</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">已审核</option>
+                            </select>
+                            <div class="input-group"> <input type="text" placeholder="请输入名称" th:value="${query.name}" class="input-sm form-control" name="title">
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="pull-right" style="padding-right:20px;">
+                            <a class="btn btn-default btn-outline btn-sm update" href="javascript:;">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;<span class="bold">创建视频</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>名称</th>
+                                <th>分类</th>
+                                <th>类型</th>
+                                <th>地址</th>
+                                <th>大小</th>
+                                <th>上传时间</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="video : ${lsVideo}">
+                                <td th:text="${video.guid}"></td>
+                                <td th:text="${video.originalName}"></td>
+                                <td th:text="${cache.getVideoCategoryName(video.categoryId)}"></td>
+                                <td th:text="${video.fileType}"></td>
+                                <td th:text="${video.url}"></td>
+                                <td th:text="${video.fileSize}"></td>
+                                <td th:text="${#dates.format(video.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <a href="javascript:;" th:if="${video.status eq 0}" th:attr="data-id=${video.guid}" th:class="statusClick" title="待审核"><i class="fa fa-close"></i> </a>
+                                    <a href="javascript:;" th:if="${video.status eq 1}" th:attr="data-id=${video.guid}" th:class="statusClick" title="已审核"><i class="fa fa-check text-navy"></i> </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" th:src="${pub.staticPath('/static/js/plugins/laydate/laydate.js')}" class="script"></script>
+<script type="application/javascript" class="script">
+
+    $(function () {
+        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
+
+        $(".statusClick").click(function () {
+            var id = $(this).attr("data-id");
+            JQAjax.post(this, {
+                form:"",
+                url: "/source/video/upstatus?action=audi&id="+ id,
+                wait:true
+            });
+        });
+
+        $(".update").click(function () {
+            var id = $(this).attr("data-id") || "";
+            JQbox.open({
+                title:"视频添加/修改",
+                width: 600,
+                url: '/source/video/create?id='+id
+            })
+        });
+    })
+</script>
 </body>
 </html>

@@ -12,15 +12,17 @@ import com.qcloud.cos.sign.Credentials;
 
 public class VodApi {
 
-        public static JSONObject upload(String secretId, String secretKey, byte[] vidoeFile, String fileType) {
-            return upload(secretId, secretKey,vidoeFile,fileType, null);
+        public static JSONObject upload(long appId,String secretId, String secretKey, byte[] vidoeFile, String fileType) {
+            return upload(appId,secretId, secretKey,vidoeFile,fileType, null);
         }
 
-        public static JSONObject upload(String secretId, String secretKey,byte[] videoFile, String fileType, String coverPath) {
+        public static JSONObject upload(long appId,String secretId, String secretKey,byte[] videoFile, String fileType, String coverPath) {
                 TreeMap<String, Object> config = new TreeMap<String, Object>();
                 config.put("SecretId", secretId);
                 config.put("SecretKey", secretKey);
-                config.put("RequestMethod", "POST");
+                /* 区域参数，可选: gz:广州; sh:上海; hk:香港; ca:北美;等。 */
+                config.put("DefaultRegion", "ap-shanghai");
+                config.put("RequestMethod", "GET");
                 QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Vod(),config);
 
                 // 第一步，发起上传
@@ -50,7 +52,6 @@ public class VodApi {
                 }
 
                 // 第二步，上传文件到COS
-                long appId = 10022853;
                 ClientConfig clientConfig = new ClientConfig();
                 clientConfig.setRegion(region);
                 clientConfig.setSignExpired(24 * 3600);

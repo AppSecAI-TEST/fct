@@ -57,6 +57,12 @@ public class VideoSource implements Serializable {
     private Integer timing;
 
     /**
+     *
+     * 视频简介
+     * */
+    private String intro;
+
+    /**
      * 生成时间
      * */
     private Date createTime;

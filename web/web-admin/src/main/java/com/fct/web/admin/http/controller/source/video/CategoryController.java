@@ -27,7 +27,7 @@ public class CategoryController extends BaseController{
     private CommonService commonService;
 
     /**
-     * 获取图片分类
+     * 获取视频分类
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)

@@ -1,6 +1,7 @@
 package com.fct.web.admin.http.controller;
 
 import com.fct.common.data.entity.ImageSource;
+import com.fct.common.data.entity.VideoSource;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
@@ -96,5 +97,40 @@ public class UploadController {
         }
 
         return responseEntity;
+    }
+
+    @RequestMapping(value = "/video", method = RequestMethod.POST)
+    public ReturnValue<String> uploadVideo(HttpServletRequest request){
+
+        MultipartFile multipartFile = ((MultipartHttpServletRequest) request)
+                .getFile("file");
+
+        try{
+            byte[] bytes = multipartFile.getBytes();
+            String originalName = multipartFile.getOriginalFilename();
+
+            Float length = new Float(multipartFile.getSize() / 1024.0); // 源图大小
+
+            VideoSource videoSource =  new VideoSource();
+            videoSource.setName("hello");
+            videoSource.setSortIndex(1);
+            videoSource.setImg("");
+            videoSource.setCategoryId(1);
+            videoSource.setIntro("test");
+
+            videoSource.setFileSize(length);
+            videoSource.setOriginalName(originalName);
+
+            String guid = commonService.uploadVideo(videoSource,bytes);
+
+            ReturnValue<String> returnValue = new ReturnValue<>();
+            returnValue.setData(guid);
+            return  returnValue;
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return new ReturnValue<>(404,"error");
     }
 }

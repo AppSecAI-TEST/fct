@@ -52,7 +52,7 @@ public class VideoSourceManager {
         //VodApi.upload(secretId, secretKey, videoPath);
         // 同时上传视频和封面
         if(fileByte != null) {
-            JSONObject result = VodApi.upload(qCloudConfig.getSecretId(), qCloudConfig.getSecretKey(), fileByte, fileType);
+            JSONObject result = VodApi.upload(qCloudConfig.getAppId(),qCloudConfig.getSecretId(), qCloudConfig.getSecretKey(), fileByte, fileType);
 
             videoSource.setUrl(result.getJSONObject("video").getString("storagePath"));
             if (StringUtils.isEmpty(videoSource.getImg())) {

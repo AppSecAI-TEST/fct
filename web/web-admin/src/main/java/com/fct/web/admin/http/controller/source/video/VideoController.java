@@ -1,12 +1,15 @@
 package com.fct.web.admin.http.controller.source.video;
 
-import com.fct.common.data.entity.ImageSource;
+import com.alibaba.dubbo.common.URL;
 import com.fct.common.data.entity.VideoCategory;
 import com.fct.common.data.entity.VideoSource;
 import com.fct.common.interfaces.CommonService;
+import com.fct.common.interfaces.PageResponse;
 import com.fct.core.exceptions.Exceptions;
 import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.PageUtil;
+import com.fct.web.admin.http.cache.CacheCommonManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller("video")
 @RequestMapping(value = "/source/video")
@@ -30,36 +35,104 @@ public class VideoController extends BaseController {
     @Autowired
     private CommonService commonService;
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(@RequestParam(required = false) Integer id, Model model) {
-        id = ConvertUtils.toInteger(id);
-        VideoCategory category =null;
+    @Autowired
+    private CacheCommonManager cacheCommonManager;
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String index(String name,Integer categoryid,Integer status,String starttime,String endtime,
+                        Integer page, Model model) {
+
+        name = ConvertUtils.toString(name);
+        status =ConvertUtils.toInteger(status,-1);
+        categoryid = ConvertUtils.toInteger(categoryid);
+        page =ConvertUtils.toPageIndex(page);
+        starttime = ConvertUtils.toString(starttime);
+        endtime = ConvertUtils.toString(endtime);
+
+        List<VideoCategory> lsCategory = cacheCommonManager.findCacheVideoCategory();//这样引用出错
+
+        Integer pageSize = 30;
+        StringBuilder sb = new StringBuilder();
+        sb.append("?page=%d");
+        if(!StringUtils.isEmpty(name))
+        {
+            sb.append("&q="+ URL.encode(name));
+        }
+        if(categoryid>0)
+        {
+            sb.append("&categoryid="+categoryid);
+        }
+        if(!StringUtils.isEmpty(starttime))
+        {
+            sb.append("&starttime="+ starttime);
+        }
+        if(!StringUtils.isEmpty(endtime))
+        {
+            sb.append("&endtime="+ endtime);
+        }
+        PageResponse<VideoSource> pageResponse = null;
+
         try {
-            if (id > 0) {
-                category = commonService.getVideoCategory(id);
+
+            pageResponse = commonService.findVideoSource(name,categoryid,status,"",starttime,endtime,
+                    page, pageSize);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+            pageResponse = new PageResponse<VideoSource>();
+        }
+
+        Map<String,Object> query = new HashMap<>();
+        query.put("name", name);
+        query.put("status", status);
+        query.put("starttime", starttime);
+        query.put("endtime", endtime);
+        query.put("lsCategory", lsCategory);
+        query.put("categoryid",categoryid);
+
+        model.addAttribute("query", query);
+        model.addAttribute("lsVideo", pageResponse.getElements());
+        model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
+                pageSize,sb.toString()));
+        model.addAttribute("cache", cacheCommonManager);
+
+        return "source/video/index";
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String create(@RequestParam(required = false) String id, Model model) {
+        id = ConvertUtils.toString(id);
+        VideoSource videoSource =null;
+        try {
+            if (!StringUtils.isEmpty(id)) {
+                videoSource = commonService.getVideoSource(id);
             }
         }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
         }
-        if (category == null) {
-            category = new VideoCategory();
-            category.setId(0);
+        if (videoSource == null) {
+            videoSource = new VideoSource();
         }
-        model.addAttribute("category", category);
-        return "source/video/category/create";
+        model.addAttribute("video", videoSource);
+        model.addAttribute("cache", cacheCommonManager);
+        return "source/video/create";
     }
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(MultipartFile file,String url,String id, String name, String img, Integer categoryid, Integer sortindex)
+    public String save(HttpServletRequest request, String url, String id, String name, String img, Integer categoryid,
+                       String intro, Integer sortindex)
     {
         id = ConvertUtils.toString(id);
         name = ConvertUtils.toString(name);
         sortindex =ConvertUtils.toInteger(sortindex);
         img = ConvertUtils.toString(img);
         url = ConvertUtils.toString(url);
+        categoryid = ConvertUtils.toInteger(categoryid);
+        intro = ConvertUtils.toString(intro);
 
         VideoSource videoSource =  null;
         if(!StringUtils.isEmpty(id)) {
@@ -71,19 +144,23 @@ public class VideoController extends BaseController {
         videoSource.setName(name);
         videoSource.setSortIndex(sortindex);
         videoSource.setImg(img);
+        videoSource.setCategoryId(categoryid);
+        videoSource.setIntro(intro);
 
         try {
 
             byte[] bytes = null;
             if(!url.equals(videoSource.getUrl()))
             {
+                /*MultipartFile file = ((MultipartHttpServletRequest) request)
+                        .getFile("file");
                 bytes = file.getBytes();
                 String originalName = file.getOriginalFilename();
-
 
                 Float length = new Float(file.getSize() / 1024.0); // 源图大小
 
                 videoSource.setFileSize(length);
+                videoSource.setOriginalName(originalName);*/
             }
 
             commonService.uploadVideo(videoSource,bytes);
@@ -99,6 +176,36 @@ public class VideoController extends BaseController {
             return AjaxUtil.remind("系统或网络错误，请稍候再试。");
         }
 
-        return AjaxUtil.reload("保存视频分类成功");
+        return AjaxUtil.reload("保存视频成功");
+    }
+
+    @RequestMapping(value = "/upstatus", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String upStatus(String id,String action)
+    {
+        id = ConvertUtils.toString(id);
+        action = ConvertUtils.toString(action);
+
+        try {
+
+            switch (action)
+            {
+                case "audi":
+                    commonService.updateVideoSourceStatus(id);
+                    break;
+            }
+        }
+        catch (IllegalArgumentException exp)
+        {
+            return AjaxUtil.alert(exp.getMessage());
+        }
+        catch (Exception exp)
+        {
+            //这里没有写进文件
+            Constants.logger.error(Exceptions.getStackTraceAsString(exp));
+            return AjaxUtil.alert("系统或网络错误，请稍候再试。");
+        }
+
+        return AjaxUtil.reload("处理成功。");
     }
 }

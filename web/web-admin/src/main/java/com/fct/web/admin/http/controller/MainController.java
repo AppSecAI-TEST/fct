@@ -150,13 +150,13 @@ public class MainController {
 
         try {
 
-            String sessionId = CookieUtil.getCookieByName(request,"sessionId");
+            /*String sessionId = CookieUtil.getCookieByName(request,"sessionId");
 
             //String sessionId,String cellPhone,String code
             if(messageService.checkVerifyCode(sessionId,cellphone,code) == 0)
             {
                 return AjaxUtil.alert("验证码不正确");
-            }
+            }*/
 
             SysUserLogin user = memberService.loginSystemUser(cellphone,password, HttpUtils.getIp(request),
                     12);

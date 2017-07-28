@@ -18,6 +18,8 @@ public interface ArtistService {
 
     Artist getArtist(Integer id);
 
+    List<Artist> findArtistByIds(String ids);
+
     void updateArtistStatus(Integer id);
 
     void addArtistFollowCount(Integer id,Integer count);

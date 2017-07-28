@@ -82,6 +82,19 @@ public class ArtistManager {
         return artist;
     }
 
+    public List<Artist> findByIds(String ids)
+    {
+        if(StringUtils.isEmpty(ids))
+        {
+            throw new IllegalArgumentException("id为空");
+        }
+
+        String sql = "select * Artist WHERE status=1 and artistId in ("+ ids +")";
+
+        return jt.query(sql,new Object[]{}, new BeanPropertyRowMapper<>(Artist.class));
+
+    }
+
     public void updateStatus(Integer id)
     {
         if(id==null || id<=0)

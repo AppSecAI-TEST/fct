@@ -56,6 +56,18 @@ public class ArtistServiceImpl implements ArtistService {
         return null;
     }
 
+    public  List<Artist> findArtistByIds(String ids)
+    {
+        try {
+            return artistManager.findByIds(ids);
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+        return null;
+    }
+
     public void saveArtist(Artist artist)
     {
         try {

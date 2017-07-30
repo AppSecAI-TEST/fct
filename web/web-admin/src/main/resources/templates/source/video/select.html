@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="minimalize-styl-2">
+    <div class="row input-group col-sm-6 pull-left">
+        <input type="text" placeholder="请输入视频名称" value="" class="input-sm form-control" name="q" id="input_name">
+        <span class="input-group-btn">
+                <button type="bottom" class="btn btn-sm btn-warning" id="searchClick" data-load="loadVideo"> 搜索</button>
+            </span>
+    </div>
+</div>
+
+<div class="ibox-content">
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="loadVideo">
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2" class="footable-visible">
+                    <div class="page">
+                        <button type="bottom" class="btn btn-sm btn-primary" id="okClick"> 确定</button>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<script type="application/javascript" class="script">
+
+    $(function () {
+
+        var loadData = function (parentEl) {
+            var name = $("#input_name").val();
+            var url = "/source/video/ajaxload?id=[[${id}]]&q="+name;
+            JQAjax.load(parentEl, url);
+        }
+
+        $("#searchClick").click(function () {
+            loadData($(this));
+        });
+
+        loadData($("#searchClick"));
+
+        var videoData = {};
+
+        $(document).on('change','.checkVideo',function () {
+            var id = $(this).val();
+            var data = $(this).attr("data-json");
+            if ($(this).is(':checked')) {
+                videoData = data;
+            }
+        });
+
+        $("#okClick").click(function () {
+            selectVideo(videoData);
+        });
+
+    })
+</script>
+</body>
+</html>

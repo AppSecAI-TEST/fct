@@ -111,6 +111,14 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("商品图片为空");
         }
+        if (StringUtils.isEmpty(goods.getVideoImg()))
+        {
+            throw new IllegalArgumentException("视频图片为空");
+        }
+        if (StringUtils.isEmpty(goods.getVideoUrl()))
+        {
+            throw new IllegalArgumentException("视频地址为空");
+        }
         if (goods.getCommission().doubleValue() < 0 ||
                 goods.getCommission().doubleValue() > goods.getSalePrice().doubleValue())
         {
@@ -264,7 +272,7 @@ public class GoodsManager {
                 orderBy = "commission Desc";   //佣金由高到低
                 break;
             default:
-                orderBy = "id asc";  //综合
+                orderBy = "id desc";  //综合
                 break;
         }
         String condition= getContion(name,categoryCode,gradeId,materialId,artistId,minVolume,maxVolume,status,param);

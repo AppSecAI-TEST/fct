@@ -160,32 +160,35 @@ public class GoodsController extends BaseController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(HttpServletRequest request,String artistId,String materialId, @RequestParam(required = false) String ext_id,
-                       @RequestParam(required = false) String ext_name,@RequestParam(required = false) String ext_code,@RequestParam(required = false) String ext_marketPrice,
-                       @RequestParam(required = false) String ext_salePrice,@RequestParam(required = false) String ext_commission,
-                       @RequestParam(required = false) String ext_stockCount,String videourl)
+    public String save(HttpServletRequest request,Integer id, String ext_id,
+                       String ext_name,String ext_code,String ext_marketPrice,
+                       String ext_salePrice, String ext_commission,
+                       String ext_stockCount,String videoUrl,String artistId,String materialId,String videoId,
+                       String categoryCode,String content,String name,String subTitle,String defaultImage,String videoImg,String code,
+                       BigDecimal marketPrice,BigDecimal salePrice,BigDecimal commission,Integer stockCount,Integer advanceSaleDays,
+                       Integer sortIndex,Integer gradeId,Integer status,Integer minVolume,Integer maxVolume,String intro)
     {
-        videourl = ConvertUtils.toString(videourl);
-        String videoId = ConvertUtils.toString(request.getParameter("videoid"));
-        String categorycode = ConvertUtils.toString(request.getParameter("categorycode"));
-        String content = ConvertUtils.toString(request.getParameter("content"));
-        String name = ConvertUtils.toString(request.getParameter("name"));
-        String subTitle = ConvertUtils.toString(request.getParameter("subTitle"));
-        String defaultImage = ConvertUtils.toString(request.getParameter("defaultImage"));
-        String videoImg = ConvertUtils.toString(request.getParameter("videoImg"));
-        String code = ConvertUtils.toString(request.getParameter("code"));
-        BigDecimal marketPrice = ConvertUtils.toBigDeciaml(request.getParameter("marketPrice"));
-        BigDecimal salePrice = ConvertUtils.toBigDeciaml(request.getParameter("salePrice"));
-        BigDecimal commission = ConvertUtils.toBigDeciaml(request.getParameter("commission"));
-        Integer stockCount = ConvertUtils.toInteger(request.getParameter("stockCount"));
-        Integer advanceSaleDays = ConvertUtils.toInteger(request.getParameter("advanceSaleDays"));
-        Integer sortIndex = ConvertUtils.toInteger(request.getParameter("sortIndex"));
-        Integer id = ConvertUtils.toInteger(request.getParameter("id"));
-        Integer gradeId = ConvertUtils.toInteger(request.getParameter("gradeId"));
-        Integer status = ConvertUtils.toInteger(request.getParameter("status"));
-        Integer minVolume = ConvertUtils.toInteger(request.getParameter("minVolume"));
-        Integer maxVolume = ConvertUtils.toInteger(request.getParameter("maxVolume"));
-        String intro = ConvertUtils.toString(request.getParameter("intro"));
+        id = ConvertUtils.toInteger(id);
+        categoryCode = ConvertUtils.toString(categoryCode);
+        content = ConvertUtils.toString(content);
+        name = ConvertUtils.toString(name);
+        subTitle = ConvertUtils.toString(subTitle);
+        defaultImage = ConvertUtils.toString(defaultImage);
+        code = ConvertUtils.toString(code);
+        videoUrl = ConvertUtils.toString(videoUrl);
+        videoId = ConvertUtils.toString(videoId);
+        videoImg = ConvertUtils.toString(videoImg);
+        marketPrice = ConvertUtils.toBigDeciaml(marketPrice);
+        salePrice=ConvertUtils.toBigDeciaml(salePrice);
+        commission = ConvertUtils.toBigDeciaml(commission);
+        stockCount =ConvertUtils.toInteger(stockCount);
+        advanceSaleDays = ConvertUtils.toInteger(advanceSaleDays);
+        sortIndex = ConvertUtils.toInteger(sortIndex);
+        gradeId = ConvertUtils.toInteger(gradeId);
+        status = ConvertUtils.toInteger(status);
+        minVolume = ConvertUtils.toInteger(minVolume);
+        maxVolume = ConvertUtils.toInteger(maxVolume);
+        intro = ConvertUtils.toString(intro);
 
         artistId = ConvertUtils.toString(artistId);
         materialId = ConvertUtils.toString(materialId);
@@ -233,18 +236,17 @@ public class GoodsController extends BaseController {
         else
         {
             goods = new Goods();
-            goods.setId(0);
         }
         String[] arrImg = defaultImage.split(",");
         goods.setSpecification(lsSpec);
         goods.setName(name);
         goods.setSubTitle(subTitle);
-        goods.setCategoryCode(categorycode);
+        goods.setCategoryCode(categoryCode);
         goods.setContent(content);
         goods.setDefaultImage(arrImg[0]); //取第一张为默认
         goods.setMultiImages(defaultImage);
         goods.setVideoId(videoId);
-        goods.setVideoUrl(videourl);
+        goods.setVideoUrl(videoUrl);
         goods.setVideoImg(videoImg);
         goods.setCode(code);
         goods.setMarketPrice(marketPrice);

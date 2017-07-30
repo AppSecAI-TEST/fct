@@ -22,7 +22,7 @@
                         </div>
                         <div class="ibox-content">
                             <form class="form-horizontal m-t" id="submitForm">
-                                <input type="hidden" name="categorycode" id="categoryCode" th:value="${goods.categoryCode}" />
+                                <input type="hidden" name="categoryCode" id="categoryCode" th:value="${goods.categoryCode}" />
                                 <input type="hidden" name="content" id="editDesc"/>
                                 <input type="hidden" name="id" th:value="${goods.id}"/>
                                 <div class="form-group">
@@ -97,14 +97,19 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">视频Id：</label>
                                     <div class="col-sm-5 m-b">
-                                        <input name="videoId" th:value="${goods.videoId}" type="text" class="form-control" />
+                                        <div class="input-group">
+                                            <input name="videoId" th:value="${goods.videoId}" type="text" readonly="readonly" id="videoId" class="form-control" />
+                                            <span class="input-group-btn">
+                                                <a href="javascript:;" class="btn btn-warning" id="selVideo">选择</a>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">视频Url：</label>
                                     <div class="col-sm-7 m-b">
-                                        <input name="videourl" th:value="${goods.videoUrl}" type="text" class="form-control" />
+                                        <input name="videoUrl" th:value="${goods.videoUrl}" type="text" id="videoUrl" class="form-control" />
                                     </div>
                                 </div>
 
@@ -373,6 +378,14 @@
                     });
                 });
 
+                $("#selVideo").click(function () {
+                    JQbox.open({
+                        title:"选择视频",
+                        width: 500,
+                        url: "/source/video/select?id="+$("#videoId").val()
+                    });
+                });
+
             });
             webUploads($('#dropDefaultImage'), {
                 url: "/upload/image",
@@ -397,6 +410,37 @@
             $('.is-remove').on('click', function () {
                 $(this).parent().parent().remove();
             });
+
+            var selectVideo = function (data) {
+                var json = eval('(' + data + ')');
+
+                $("#videoId").val(json.id);
+                $("#videoUrl").val(json.url);
+                $("#videoImg").val(json.img);
+
+                var imgUrl = fct_imageUrl+ json.img+"!120";
+                var imgHtml = '<div class="dz-preview sortable_img dz-processing dz-image-preview dz-default">'
+                    +'<div class="preview-img">'
+                    +'<img data-dz-thumbnail="" alt="" src="'+ imgUrl +'">'
+                    +'<div data-dz-name=""></div>'
+                    +'</div>'
+                    +'<a name="" class="fork-remove" data-dz-remove="" data-url="'+ imgUrl +'"><div class="dz-success-mark"><span>✔</span></div>'
+                    +'<div class="dz-error-mark"><span>✘</span></div>'
+                    +'<div class="dz-error-message"><span data-dz-errormessage=""></span></div>'
+                    +'</a></div>';
+
+                $("#dropVideoImg .dz-complete").remove();
+
+                $("#dropVideoImg .dropzone-previews").append(imgHtml);
+
+                layer.closeAll();
+
+                $(".dz-default").click(function () {
+                    $(".dz-default").remove();
+                    $("#videoImg").val('');
+                });
+            };
+
         </script>
 </body>
 </html>

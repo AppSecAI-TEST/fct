@@ -157,7 +157,7 @@ public class VideoSourceManager {
 
         String table="VideoSource";
         String field ="*";
-        String orderBy = "sortIndex asc";
+        String orderBy = "sortIndex asc,createTime desc";
         String condition= getCondition(name,categoryId,status,fileType,startTime,endTime,param);
 
         String sql = "SELECT Count(0) FROM VideoSource WHERE 1=1 "+condition;

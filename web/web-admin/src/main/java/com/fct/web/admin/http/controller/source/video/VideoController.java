@@ -11,6 +11,7 @@ import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.AjaxUtil;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.PageUtil;
+import com.fct.mall.data.entity.GoodsMaterial;
 import com.fct.web.admin.http.cache.CacheCommonManager;
 import com.fct.web.admin.http.controller.BaseController;
 import com.fct.web.admin.utils.Constants;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,5 +213,44 @@ public class VideoController extends BaseController {
         }
 
         return AjaxUtil.reload("处理成功。");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/ajaxload", method = RequestMethod.GET,produces="text/html;charset=UTF-8")
+    public String ajaxLoad(String q,String id)
+    {
+        q = ConvertUtils.toString(q);
+        id = ConvertUtils.toString(id);
+
+        PageResponse<VideoSource> pageResponse = commonService.findVideoSource(q,0,1,"","","",
+                1, 15);
+
+        StringBuilder sb = new StringBuilder();
+
+        for (VideoSource video:pageResponse.getElements()
+                ) {
+            String checked = "";
+            if(id.equals(video.getGuid()))
+            {
+                checked = " checked=\"checked\"";
+            }
+            String json = "{id:'"+ video.getGuid()+"',url:'"+ video.getUrl() +"',img:'"+ video.getImg() +"'}";
+
+            sb.append("<tr>");
+            sb.append("<td>"+ video.getName() +"</td>");
+            sb.append("<td>");
+            sb.append("<input type=\"radio\" class=\"checkVideo\" value=\""+ video.getGuid() +"\" data-json=\""+ json +"\" name=\"chk_videoId\" "+checked+"/>");
+            sb.append("</td>");
+            sb.append("</tr>");
+        }
+        return sb.toString();
+    }
+
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
+    public String select(String id,Model model) {
+
+        id = ConvertUtils.toString(id);
+        model.addAttribute("id", id);
+        return "source/video/select";
     }
 }

@@ -4,6 +4,7 @@ import com.fct.common.data.entity.*;
 import com.fct.common.interfaces.*;
 import com.fct.common.service.business.*;
 import com.fct.common.service.oauth.WeChat;
+import com.fct.common.service.oauth.WeChatShare;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,9 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private WeChat weChat;
+
+    @Autowired
+    private WeChatShare weChatShare;
 
     public PageResponse<Article> findArticle(String title, String categoryCode, Integer status, String startTime,
                                       String endTime, Integer pageIndex, Integer pageSize)
@@ -444,6 +448,6 @@ public class CommonServiceImpl implements CommonService {
 
     public WeChatShareResponse jsShare(String url) {
 
-        return weChat.jsShare(url);
+        return weChatShare.jsShare(url);
     }
 }

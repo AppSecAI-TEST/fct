@@ -33,47 +33,38 @@ public class WeChat {
     private JedisPool jedisPool;
 
 
-    private final String CONNECT_URL = "https://open.weixin.qq.com/connect/oauth2";
+    private final String AUTHORIZE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize";
+    private final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
+    private final String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
+    private final String USERINFO_URL = "https://api.weixin.qq.com/sns/oauth2/userinfo";
 
     private final String SNS_URL = "https://api.weixin.qq.com/sns";
-
-    private final String JS_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
-
-
 
     public String oAuthURL(String redirectURI, String scope) {
 
         return String.format(
-                "%s/authorize?appid=%s&response_type=code&scope=%s&state=fangcun&redirect_uri=%s#wechat_redirect",
-                CONNECT_URL, oAuthCofnig.getAppId(), scope, redirectURI);
+                "%s?appid=%s&response_type=code&scope=%s&state=fangcun&redirect_uri=%s#wechat_redirect",
+                AUTHORIZE_URL, oAuthCofnig.getAppId(), scope, redirectURI);
     }
 
     public WeChatResponse callback(String code) {
 
         String url = String.format(
-                "%s/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
-                SNS_URL, oAuthCofnig.getAppId(), oAuthCofnig.getAppSecret(), code);
-
-        String resultString = this.get(url);
-
-        if (StringUtils.isEmpty(resultString)) return null;
-
-        Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-        //请求出错，记录错误信息
-        if (result.containsKey("errcode"))
-            Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
-
-        String openid = ConvertUtils.toString(result.get("openid"));
-        String accessToken = ConvertUtils.toString(result.get("access_token"));
-        String refreshToken = ConvertUtils.toString(result.get("refresh_token"));
-        Integer expireIn = ConvertUtils.toInteger(result.get("expires_in"));
+                "%s?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
+                ACCESS_TOKEN_URL, oAuthCofnig.getAppId(), oAuthCofnig.getAppSecret(), code);
+        Map<String, Object> result = this.get(url);
 
         WeChatResponse response = new WeChatResponse();
-        response.setOpenid(openid);
-        response.setAccessToken(accessToken);
+        if (result != null) {
+            String openid = ConvertUtils.toString(result.get("openid"));
+            String accessToken = ConvertUtils.toString(result.get("access_token"));
+            String refreshToken = ConvertUtils.toString(result.get("refresh_token"));
+            Integer expireIn = ConvertUtils.toInteger(result.get("expires_in"));
 
-        this.setAccessToken(accessToken, refreshToken, expireIn);
-
+            response.setOpenid(openid);
+            response.setAccessToken(accessToken);
+            this.setAccessToken(accessToken, refreshToken, expireIn);
+        }
         return response;
     }
 
@@ -84,18 +75,17 @@ public class WeChat {
      */
     public WeChatUserResponse getUserInfo(String openId) {
 
+        if (this.getAccessToken() == null)
+            return  null;
+
         String url = String.format(
-                "%s/userinfo?access_token=%s&openid=%s&lang=zh_CN",
-                SNS_URL, this.getAccessToken(), openId);
+                "%s?access_token=%s&openid=%s&lang=zh_CN",
+                USERINFO_URL, this.getAccessToken(), openId);
+        Map<String, Object> result = this.get(url);
 
-        String resultString = this.get(url);
-        if (resultString != null) {
-            Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-            if (result == null) {
-                return  null;
-            }
+        WeChatUserResponse weChatResponse = new WeChatUserResponse();
+        if (result != null) {
 
-            WeChatUserResponse weChatResponse = new WeChatUserResponse();
             weChatResponse.setOpenid(openId);
             weChatResponse.setNickname(ConvertUtils.toString(result.get("nickname")));
             weChatResponse.setSex(ConvertUtils.toInteger(result.get("sex")) == 2 ? 0 : 1);
@@ -104,97 +94,10 @@ public class WeChat {
             weChatResponse.setContry(ConvertUtils.toString(result.get("contry")));
             weChatResponse.setProvince(ConvertUtils.toString(result.get("province")));
             weChatResponse.setCity(ConvertUtils.toString(result.get("city")));
-
-            return weChatResponse;
         }
 
-        return null;
+        return weChatResponse;
     }
-
-    public WeChatShareResponse jsShare(String url) {
-
-        Date date = new Date();
-        String noncestr = StringHelper.getRandomString(16);
-        Integer timestamp = ConvertUtils.toInteger(date.getTime() / 1000);
-        String ticket = this.getJsTicket();
-        if (ticket == null) {
-
-            return null;
-        }
-
-        WeChatShareResponse response = new WeChatShareResponse();
-        response.setDebug(false);
-        response.setAppId(oAuthCofnig.getAppId());
-        response.setTimestamp(timestamp);
-        response.setNonceStr(noncestr);
-        response.setSignature(this.signature(ticket, noncestr, timestamp, url));
-
-        return response;
-    }
-
-    private String signature(String ticket, String noncestr, Integer timestamp, String url) {
-
-        String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s?params=value",
-                ticket, noncestr, timestamp, url).toLowerCase();
-
-        return DigestUtils.sha1Hex(str);
-    }
-
-
-    private String getJsTicket() {
-
-
-        String key = "wechat_js_ticket";
-        Jedis jedis = null;
-        try
-        {
-            jedis = jedisPool.getResource();
-            byte[] object = jedis.get((key).getBytes());
-            //对象不存在或不是刷新请求
-            if(object != null)
-            {
-                return (String) SerializationUtils.deserialize(object);
-            }
-            else
-            {
-                String accessToken = this.getAccessToken();
-
-                if (StringUtils.isEmpty(accessToken)) return  null;
-
-                String url = String.format("%s?access_token=%s&type=jsapi", JS_TICKET, accessToken);
-
-                String resultString = this.get(url);
-                if (StringUtils.isEmpty(resultString))  return  null;
-
-                Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-                if (result.containsKey("errcode")) {
-
-                    Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
-                    return null;
-                }
-
-                if (result != null) {
-
-                    String ticket = ConvertUtils.toString(result.get("ticket"));
-
-                    jedis.set(key.getBytes(), SerializationUtils.serialize(ticket));
-                    jedis.expire(key, ConvertUtils.toInteger(result.get("expires_in")) - 5); //缓存7200秒，提前一天失效
-                    return ticket;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Constants.logger.error(e.toString());
-        }
-        finally {
-
-            if (jedis != null) jedis.close();
-        }
-
-        return null;
-    }
-
 
     /**获取accessToken
      *
@@ -202,7 +105,7 @@ public class WeChat {
      */
     private String getAccessToken() {
 
-        String key = "wechat_access_token";
+        String key = "oauth2_access_token";
         Jedis jedis = null;
         try
         {
@@ -214,31 +117,26 @@ public class WeChat {
             {
                 weChatSource = (WeChatSource) SerializationUtils.deserialize(object);
                 Date date = new Date();
+                //已过去时间
                 Integer cacheTime = ConvertUtils.toInteger(date.getTime() - weChatSource.getRefreshTime() / 1000);
                 if (cacheTime >= weChatSource.getExpireIn()) {
 
                     String url = String.format(
-                            "%s/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s",
-                            SNS_URL, oAuthCofnig.getAppId(), weChatSource.getRefreshToken());
+                            "%s?appid=%s&grant_type=refresh_token&refresh_token=%s",
+                            REFRESH_TOKEN_URL, oAuthCofnig.getAppId(), weChatSource.getRefreshToken());
 
-                    String resultString = this.get(url);
+                    Map<String, Object> result = this.get(url);
+                    if (result != null) {
+                        weChatSource.setAccessToken(ConvertUtils.toString(result.get("access_token")));
+                        //过期时间，通常为7200
+                        weChatSource.setExpireIn(7000);
+                        //刷新的token，有效期为30天
+                        weChatSource.setRefreshToken(ConvertUtils.toString(result.get("refresh_token")));
+                        //刷新时间
+                        weChatSource.setRefreshTime(date.getTime());
 
-                    if (StringUtils.isEmpty(resultString)) return null;
-
-                    Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-                    //请求出错，记录错误信息
-                    if (result.containsKey("errcode"))  Constants.logger.error(
-                            "code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
-
-                    weChatSource.setAccessToken(ConvertUtils.toString(result.get("access_token")));
-                    //过期时间，通常为7200
-                    weChatSource.setExpireIn(ConvertUtils.toInteger(result.get("expire_in")));
-                    //刷新的token，有效期为30天
-                    weChatSource.setRefreshToken(ConvertUtils.toString(result.get("refresh_token")));
-                    //刷新时间
-                    weChatSource.setRefreshTime(date.getTime());
-
-                    jedis.set(key.getBytes(), SerializationUtils.serialize(weChatSource));
+                        jedis.set(key.getBytes(), SerializationUtils.serialize(weChatSource));
+                    }
                 }
 
                 return weChatSource.getAccessToken();
@@ -264,7 +162,7 @@ public class WeChat {
      */
     private void setAccessToken(String accessToken, String refreshToken, Integer expireIn) {
 
-        String key = "wechat_access_token";
+        String key = "oauth2_access_token";
         Jedis jedis = null;
         try
         {
@@ -293,7 +191,7 @@ public class WeChat {
         }
     }
 
-    private String get(String url) {
+    private Map<String, Object> get(String url) {
 
         if (StringUtils.isEmpty(url)) return null;
 
@@ -303,8 +201,12 @@ public class WeChat {
             if (200 == status) {
                 String resultString = hc.getResult();
                 if (!StringUtils.isEmpty(resultString)) {
+                    Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
+                    //请求出错，记录错误信息
+                    if (result.containsKey("errcode"))
+                        Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
 
-                    return resultString;
+                    return result;
                 }
             }else{
 

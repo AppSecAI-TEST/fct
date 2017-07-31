@@ -881,7 +881,7 @@ public class OrdersManager {
                     settle.setTradeType("buy");
                     settle.setRemark("销售【" + sb.toString() + "】进行返佣结算");
                     Integer settleId =  financeService.createSettleRecord(settle);
-
+                    //冗余结算id
                     orders.setSettleId(settleId);
                 }
             }

@@ -141,4 +141,11 @@ public class MemberLoginManager {
 
         memberLoginRepository.save(login);
     }
+
+    public void updateAudiStatus(Integer memberId,Integer audiStatus)
+    {
+        String sql = String.format("update MemberLogin set authStatus=%d where memberId=%d and expireTime>'%s'",
+                audiStatus,memberId,DateUtils.format(new Date()));
+        jt.update(sql);
+    }
 }

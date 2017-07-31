@@ -175,7 +175,7 @@
                                         <td rowspan="0">
                                             <a th:href="@{/order/detail(orderid=${order.orderId})}" class="btn btn-xs btn-outline btn-default" >查看</a>
                                             <th:block th:if="${order.status eq 0}">
-                                                <a href="javascript:;" class="btn btn-xs btn-outline btn-default delaytime" th:attr="data-id=${order.orderId}">延长关闭时间</a>
+                                                <!---<a href="javascript:;" class="btn btn-xs btn-outline btn-default delaytime" th:attr="data-id=${order.orderId}">延长关闭时间</a>-->
                                                 <a href="javascript:;" class="btn btn-xs btn-outline btn-default orderStatus" th:attr="data-id=${order.orderId},data-memberid=${order.memberId}" data-action="pay">确认付款</a>
                                                 <a href="javascript:;" class="btn btn-xs btn-outline btn-danger orderStatus" th:attr="data-id=${order.orderId},data-memberid=${order.memberId}"  data-action="close">关闭</a>
                                             </th:block>

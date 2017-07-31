@@ -63,7 +63,7 @@
                                 <th>艺人</th>
                                 <th>内容</th>
                                 <th>图片</th>
-                                <th>视频Id/图片</th>
+                                <th>视频地址</th>
                                 <th>更新时间</th>
                                 <th>状态</th>
                                 <th>操作</th>
@@ -79,12 +79,9 @@
                                         <img th:src="${pub.thumbnail(img)}" class="loadimg" width="80" />
                                     </th:block>
                                 </td>
-                                <td class="text-center">
-                                    <th:block th:if="${!#strings.isEmpty(dyn.videoId)}">
-                                        <img th:src="${pub.thumbnail(dyn.videoImg)}" class="loadimg" width="80" />
-                                        <br>
-                                        <span th:text="${dyn.videoId}"></span>
-                                    </th:block>
+                                <td>
+                                    <span th:text="${#strings.substring(dyn.videoUrl,0,50)}+'...'"></span>
+                                    <div class="hide" th:text="${dyn.videoUrl}"></div>
                                 </td>
                                 <td th:text="${#dates.format(dyn.updateTime, 'yyyy-MM-dd HH:mm')}">
                                 <td>
@@ -93,7 +90,7 @@
                                 </td>
                                 <td>
                                     <a href="javascript:;" th:attr="data-id=${dyn.id}" class="btn btn-xs btn-outline btn-default statusClick" data-action="top"><th:block th:text="${dyn.isTop eq 0} ? '设为置顶':'取消置顶'"></th:block></a>
-                                    <a href="javascript:;" th:attr="data-id=${dyn.id}" class="btn btn-xs btn-outline btn-default" >查看修改</a>
+                                    <a href="javascript:;" th:attr="data-id=${dyn.id}" class="btn btn-xs btn-outline btn-default update" >查看修改</a>
                                 </td>
                             </tr>
                             </tbody>

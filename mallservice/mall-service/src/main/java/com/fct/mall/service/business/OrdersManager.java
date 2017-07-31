@@ -327,6 +327,10 @@ public class OrdersManager {
         {
             order.setShopId(shopId);
         }
+        else
+        {
+            order.setShopId(0);
+        }
         order.setMemberId(memberId);
         order.setCellPhone(cellPhone);
         order.setPoints(points);
@@ -876,7 +880,9 @@ public class OrdersManager {
                     settle.setTradeId(orders.getOrderId());
                     settle.setTradeType("buy");
                     settle.setRemark("销售【" + sb.toString() + "】进行返佣结算");
-                    financeService.createSettleRecord(settle);
+                    Integer settleId =  financeService.createSettleRecord(settle);
+
+                    orders.setSettleId(settleId);
                 }
             }
 

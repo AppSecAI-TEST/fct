@@ -94,7 +94,7 @@ public class CacheCommonManager {
 
         for (ArticleCategory cate:findCacheArticleCategory()
                 ) {
-            if(cate.getParentId() == parentId)
+            if(cate.getParentId().equals(parentId))
                 lsCate.add(cate);
         }
         return lsCate;

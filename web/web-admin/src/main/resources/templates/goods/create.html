@@ -411,35 +411,19 @@
                 $(this).parent().parent().remove();
             });
 
-            var selectVideo = function (data) {
+            var searchVideo = function (data) {
                 var json = eval('(' + data + ')');
+                selectVideo({
+                    id:"videoId",
+                    img:"videoImg",
+                    url:"videoUrl",
+                    dropid:"dropVideoImg",
+                    data:json
 
-                $("#videoId").val(json.id);
-                $("#videoUrl").val(json.url);
-                $("#videoImg").val(json.img);
-
-                var imgUrl = fct_imageUrl+ json.img+"!120";
-                var imgHtml = '<div class="dz-preview sortable_img dz-processing dz-image-preview dz-default">'
-                    +'<div class="preview-img">'
-                    +'<img data-dz-thumbnail="" alt="" src="'+ imgUrl +'">'
-                    +'<div data-dz-name=""></div>'
-                    +'</div>'
-                    +'<a name="" class="fork-remove" data-dz-remove="" data-url="'+ imgUrl +'"><div class="dz-success-mark"><span>✔</span></div>'
-                    +'<div class="dz-error-mark"><span>✘</span></div>'
-                    +'<div class="dz-error-message"><span data-dz-errormessage=""></span></div>'
-                    +'</a></div>';
-
-                $("#dropVideoImg .dz-complete").remove();
-
-                $("#dropVideoImg .dropzone-previews").append(imgHtml);
-
-                layer.closeAll();
-
-                $(".dz-default").click(function () {
-                    $(".dz-default").remove();
-                    $("#videoImg").val('');
                 });
+                layer.closeAll();
             };
+
 
         </script>
 </body>

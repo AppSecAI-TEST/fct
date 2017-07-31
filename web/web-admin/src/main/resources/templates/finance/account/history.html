@@ -60,11 +60,11 @@
                                 <th>用户手机</th>
                                 <th>交易类型</th>
                                 <th>交易Id</th>
+                                <th>变动积分</th>
+                                <th>当前积分</th>
                                 <th>充值+提现</th>
                                 <th>变动金额</th>
                                 <th>当前余额</th>
-                                <th>变动积分</th>
-                                <th>当前积分</th>
                                 <th>行为</th>
                                 <th>更新时间</th>
                             </tr>
@@ -74,13 +74,13 @@
                                 <td th:text="${history.cellPhone}"></td>
                                 <td th:text="${cacheFinance.getTradeTypeName(history.tradeType)}"></td>
                                 <td th:text="${history.tradeId}"></td>
+                                <td><span th:text="${history.points}" class="text-danger"></span></td>
+                                <td th:text="${history.balancePoints}"></td>
                                 <td th:text="'¥'+${history.rechargeAmount}+' + ¥'+${history.withdrawAmount}"></td>
                                 <td>
                                    <span th:text="'¥'+${history.amount}" class="text-danger"></span>
                                 </td>
                                 <td th:text="'¥'+${history.balanceAmount}"></td>
-                                <td><span th:text="${history.points}" class="text-danger"></span></td>
-                                <td th:text="${history.balancePoints}"></td>
                                 <td th:text="${history.behaviorType eq 0}?'支出':'收入'"></td>
                                 <td th:text="${#dates.format(history.createTime, 'yyyy-MM-dd HH:mm')}"></td>
                             </tr>

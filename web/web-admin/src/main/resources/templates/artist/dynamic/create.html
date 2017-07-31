@@ -21,21 +21,26 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">视频Id：</label>
                 <div class="col-sm-7">
-                    <input name="videoid" th:value="${dynamic.videoId}" type="text" class="form-control" />
+                    <div class="input-group">
+                        <input name="videoid" th:value="${dynamic.videoId}" type="text" id="videoId" class="form-control" placeholder="输入视频id" />
+                        <span class="input-group-btn">
+                            <a href="javascript:;" class="btn btn-warning" id="selVideo">获取</a>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">视频地址：</label>
-                <div class="col-sm-7">
-                    <input name="videourl" th:value="${dynamic.videoUrl}" type="text" class="form-control" />
+                <div class="col-sm-9">
+                    <input name="videourl" th:value="${dynamic.videoUrl}" id="videoUrl" type="text" class="form-control" />
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">图片：</label>
                 <div class="col-sm-9">
-                    <input name="images" th:value="${dynamic.images}" type="hidden" id="dynImages" class="form-control" />
+                    <input name="images" th:value="${dynamic.images}" type="hidden" id="videoImg" class="form-control" />
                     <div id="dropImages" class="dropzone">
                         <div class="dropzone-previews"></div>
                     </div>
@@ -76,11 +81,31 @@
         });
     });
 
+    $("#selVideo").click(function () {
+        var id = $("#videoId").val();
+        JQAjax.post(this, {
+            form:"",
+            url: '/source/video/search?id='+id,
+            wait:true
+        });
+    })
+
     webUploads($('#dropImages'), {
         url: '/upload/image',
-        input: 'dynImages',
+        input: 'videoImg',
         max: 9
     });
+
+
+    var searchVideo = function (data) {
+        selectVideo({
+            id:"videoId",
+            url:"videoUrl",
+            img:"videoImg",
+            dropid:"dropImages",
+            data:data
+        });
+    };
 
 </script>
 

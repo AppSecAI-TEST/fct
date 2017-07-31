@@ -64,12 +64,12 @@
                                 <td th:text="${bank.bankAccount}"></td>
                                 <td>
                                     <a href="javascript:;" class="statusClick" th:attr="data-id=${bank.id}">
-                                        <i class="fa fa-check text-navy" th:class="${member.status eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i>
+                                        <i class="fa fa-check text-navy" th:class="${bank.status eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i>
                                     </a>
                                 </td>
-                                <td th:text="${#dates.format(code.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${#dates.format(bank.createTime, 'yyyy-MM-dd HH:mm')}"></td>
                                 <td>
-                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default m_info" th:attr="data-id=${bank.memberId}">查看信息</a>
+                                    <a href="javascript:;" class="btn btn-xs btn-outline btn-default lookClick" th:attr="data-id=${bank.memberId}">查看信息</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -88,24 +88,20 @@
     </div>
 </div>
 
-<script type="application/javascript" th:src="${pub.staticPath('/static/js/plugins/laydate/laydate.js')}" class="script"></script>
 <script type="application/javascript" class="script">
 
     $(function () {
-        laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
-        laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
 
         $(".statusClick").click(function () {
             var id = $(this).attr("data-id");
             JQAjax.post(this, {
                 form:'',
-                url: "/member/update?action=audi&id=" + id,
+                url: "/member/update?action=audi&id=" + id
             });
         });
 
-        $(".m_info").click(function () {
+        $(".lookClick").click(function () {
             var id = $(this).attr("data-id");
-            var auth = $(this).attr("data-auth");
             JQbox.open({
                 title: '身份信息',
                 width: 500,

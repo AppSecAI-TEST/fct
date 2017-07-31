@@ -33,7 +33,7 @@ public class MessageController extends BaseController {
 
         q = ConvertUtils.toString(q);
         typeid = ConvertUtils.toString(typeid);
-        status = ConvertUtils.toInteger(status);
+        status = ConvertUtils.toInteger(status,-2);
         page = ConvertUtils.toPageIndex(page);
 
         Integer pageSize = 30;

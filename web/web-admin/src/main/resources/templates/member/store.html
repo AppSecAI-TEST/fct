@@ -27,8 +27,8 @@
                         <div class="col-sm-2">
                             <select class="form-control inline" name="status">
                                 <option value="">选择状态</option>
-                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">关闭</option>
-                                <option value="2" th:selected="${query.status eq 2} ? 'selected'">正常</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">关闭</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">正常</option>
                             </select>
                         </div>
                         <div class="row col-sm-3">
@@ -58,6 +58,7 @@
                                 <th>店铺编号</th>
                                 <th>名称</th>
                                 <th>店长手机</th>
+                                <th>推荐人</th>
                                 <th>状态</th>
                                 <th>注册时间</th>
                             </tr>
@@ -65,10 +66,13 @@
                             <tbody>
                             <tr th:each="store:${lsStore}">
                                 <td th:text="${store.id}"></td>
-                                <td th:text="${store.cellPhone}"></td>
                                 <td th:text="${store.name}"></td>
+                                <td th:text="${store.cellPhone}"></td>
+                                <td th:text="${store.inviterCellPhone}"></td>
                                 <td>
-                                    <a href="javascript:;" class="audiClick" th:attr="data-id=${member.id}"><i class="fa fa-check text-navy" th:class="${member.authStatus eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i> </a>
+                                    <a href="javascript:;" class="audiClick" th:attr="data-id=${store.id}">
+                                        <i class="fa fa-check text-navy" th:class="${store.status eq 1}?'fa fa-check text-navy' : 'fa fa-close'"></i>
+                                    </a>
                                 </td>
                                 <td th:text="${#dates.format(store.createTime, 'yyyy-MM-dd HH:mm')}"></td>
                             </tr>
@@ -100,7 +104,7 @@
             var id = $(this).attr("data-id");
             JQAjax.post(this, {
                 form:'',
-                url: "/member/store/update?action=audi&id=" + id,
+                url: "/member/store/update?action=audi&id=" + id
             });
         });
     })

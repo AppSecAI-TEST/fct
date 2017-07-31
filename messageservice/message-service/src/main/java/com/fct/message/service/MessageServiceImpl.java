@@ -173,11 +173,11 @@ public class MessageServiceImpl implements MessageService {
         try {
             List<Object> param = new ArrayList<>();
             String condition = "";
-            if (StringUtils.isEmpty(typeId)) {
+            if (!StringUtils.isEmpty(typeId)) {
                 condition += " AND typeId=?";
                 param.add(typeId);
             }
-            if (status > -1) {
+            if (status > -2) {
                 condition += " AND status=" + status;
             }
             if (!StringUtils.isEmpty(body)) {

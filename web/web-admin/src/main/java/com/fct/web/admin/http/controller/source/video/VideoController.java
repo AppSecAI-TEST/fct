@@ -253,4 +253,33 @@ public class VideoController extends BaseController {
         model.addAttribute("id", id);
         return "source/video/select";
     }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public String search(String id) {
+
+        id = ConvertUtils.toString(id);
+        if(StringUtils.isEmpty(id))
+        {
+            return AjaxUtil.alert("id为空.");
+        }
+        String json = "";
+        try
+        {
+            VideoSource video = commonService.getVideoSource(id);
+
+            json = "{id:'"+ video.getGuid()+"',url:'"+ video.getUrl() +"',img:'"+ video.getImg() +"'}";
+        }
+        catch (IllegalArgumentException exp)
+        {
+            return AjaxUtil.alert(exp.getMessage());
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(Exceptions.getStackTraceAsString(exp));
+            return AjaxUtil.alert("系统或网络错误，请稍候再试。");
+        }
+
+        return AjaxUtil.eval("searchVideo("+ json +")");
+    }
 }

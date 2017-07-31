@@ -63,6 +63,7 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>名称</th>
                                 <th>分类</th>
                                 <th>地址</th>
@@ -74,6 +75,7 @@
                             </thead>
                             <tbody>
                             <tr th:each="video : ${lsVideo}">
+                                <td th:text="${video.guid}"></td>
                                 <td th:text="${video.name}"></td>
                                 <td th:text="${cache.getVideoCategoryName(video.categoryId)}"></td>
                                 <td>

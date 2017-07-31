@@ -55,8 +55,19 @@ public class FctResourceUrl {
         return ls;
     }
 
-    private String defaultNullImage()
+    public String defaultNullImage()
     {
-        return String.format("%s%s","","/images/default-null.png");
+        return this.getImageUrl("/images/default-null.png");
+    }
+
+    public String getAvatarUrl(String url) {
+        if (StringUtils.isEmpty(url))
+            return this.getImageUrl("/static/img/head.jpg");
+
+        if (url.indexOf("//") > 0 || url.indexOf("http") > 0) {
+            return url;
+        }
+
+        return this.getImageUrl(url);
     }
 }

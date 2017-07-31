@@ -68,11 +68,9 @@ public class MemberController extends BaseController {
         }
 
         MemberLogin member = memberService.loginMember(cellphone, password, platform, ip, expire_day);
-        if (StringUtils.isEmpty(member.getHeadPortrait())) {
-            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
-        } else {
-            member.setHeadPortrait(fctResourceUrl.getImageUrl(member.getHeadPortrait()));
-        }
+        if (member != null)
+            member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
+
         response.setData(member);
 
         return  response;
@@ -161,13 +159,11 @@ public class MemberController extends BaseController {
     public ReturnValue<Map<String, Object>> getMemberInfo() {
 
         MemberLogin member = this.memberAuth();
-
         Map<String, Object> map = new HashMap<>();
         map.put("memberId", member.getMemberId());
         map.put("cellPhone", member.getCellPhone());
         map.put("userName", member.getUserName());
-        map.put("headPortrait", StringUtils.isEmpty(member.getHeadPortrait())
-                ? "" : fctResourceUrl.getImageUrl(member.getHeadPortrait()));
+        map.put("headPortrait", fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
 
         MemberInfo info = memberService.getMemberInfo(member.getMemberId());
@@ -201,9 +197,13 @@ public class MemberController extends BaseController {
 
     @RequestMapping(value = "get-by-token", method = RequestMethod.GET)
     public ReturnValue<MemberLogin> getByToken() {
+        
         MemberLogin member = this.memberAuth();
+        if (member != null)
+            member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();
+
         response.setData(member);
 
         return response;

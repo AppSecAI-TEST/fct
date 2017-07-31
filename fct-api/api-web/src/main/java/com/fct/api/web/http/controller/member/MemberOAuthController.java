@@ -74,9 +74,7 @@ public class MemberOAuthController extends BaseController {
         member = memberService.saveMemberAuth(memberId, weChat.getOpenid(),
                 platform, nickname, headimgurl, unionid, sex, ip, expire_day);
 
-        if(StringUtils.isEmpty(member.getHeadPortrait())) {
-            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
-        }
+        member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();
         response.setData(member);
@@ -113,10 +111,7 @@ public class MemberOAuthController extends BaseController {
          MemberLogin member = memberService.bindMemberAuth(cellphone, platform, openid, user.getNickname(),
                  user.getHeadimgurl(), user.getUnionid(), user.getSex(), ip, expire_day);
 
-        if(StringUtils.isEmpty(member.getHeadPortrait())) {
-
-            member.setHeadPortrait(fctResourceUrl.getImageUrl("/static/img/head.jpg"));
-        }
+        member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
         response.setData(member);
         return response;

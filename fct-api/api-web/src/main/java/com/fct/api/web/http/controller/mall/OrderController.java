@@ -186,6 +186,8 @@ public class OrderController extends BaseController {
             if (product.getBuyCount() < 1) {
                 return new ReturnValue<>(404, "购买数量不能小于1");
             }
+            if (product.getSpecId() == null)
+                product.setSpecId(0);
         }
 
         MemberLogin member = this.memberAuth();

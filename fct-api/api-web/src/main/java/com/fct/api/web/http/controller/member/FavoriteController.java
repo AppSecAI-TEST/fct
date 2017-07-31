@@ -50,8 +50,13 @@ public class FavoriteController extends BaseController {
 
         from_id = ConvertUtils.toInteger(from_id);
         from_type = ConvertUtils.toInteger(from_type);
+
         if (from_id < 1)
             return new ReturnValue<>(404, "收藏的产品或艺术家不存在");
+
+        if (!favoriteCache.validRelatedId(from_id, from_type))
+            return new ReturnValue<>(404, "收藏的产品或艺术家不存在");
+
 
         MemberLogin member = this.memberAuth();
 

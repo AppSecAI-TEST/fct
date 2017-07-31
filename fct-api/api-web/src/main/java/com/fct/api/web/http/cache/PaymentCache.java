@@ -52,7 +52,7 @@ public class PaymentCache {
                 if (lsPlatform != null) {
                     for (PayPlatform platform: lsPlatform) {
 
-                        map.put(platform.getCode(), platform.getName());
+                        map.put(platform.getCode(), platform.getShowName());
                     }
                 }
                 if (map != null && map.size() > 0) {

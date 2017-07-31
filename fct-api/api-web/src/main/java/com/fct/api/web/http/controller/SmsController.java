@@ -36,7 +36,7 @@ public class SmsController {
         switch (action) {
             case "login":
                 return "{code}为您的登录验证码，5分钟内有效！";
-            case "forget_password":
+            case "forget":
                 return "{code}为您的找回密码验证码，5分钟内有效！";
             default:
                 return null;

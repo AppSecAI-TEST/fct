@@ -3,6 +3,7 @@ package com.fct.api.web.http.cache;
 import com.fct.api.web.utils.FctResourceUrl;
 import com.fct.artist.data.entity.Artist;
 import com.fct.artist.interfaces.ArtistService;
+import com.fct.core.utils.ConvertUtils;
 import com.fct.mall.data.entity.Goods;
 import com.fct.member.data.entity.MemberFavourite;
 import com.fct.member.interfaces.MemberService;
@@ -55,11 +56,13 @@ public class FavoriteCache {
             Map<String, Object> subMap = null;
             for (MemberFavourite favourite: lsFavorite.getElements()) {
 
-                subMap = (Map<String, Object>) map.get(favourite.getRelatedId());
-                subMap.put("favoriteId", favourite.getId());
-                subMap.put("favType", favourite.getFavType());
+                if (map.containsKey(favourite.getRelatedId())) {
+                    subMap = (Map<String, Object>) map.get(favourite.getRelatedId());
+                    subMap.put("favoriteId", favourite.getId());
+                    subMap.put("favType", favourite.getFavType());
 
-                lsMaps.add(subMap);
+                    lsMaps.add(subMap);
+                }
             }
 
             pageMaps.setElements(lsMaps);
@@ -69,6 +72,18 @@ public class FavoriteCache {
         }
 
         return pageMaps;
+    }
+
+    public Boolean validRelatedId(Integer relatedId, Integer favType) {
+
+        if (favType == 0)
+            return productCache.findProductByIds(ConvertUtils.toString(relatedId)).size() > 0
+                    ? true : false;
+        else if (favType == 1)
+            return artistService.findArtistByIds(ConvertUtils.toString(relatedId)).size() > 0
+                    ? true : false;
+
+        return false;
     }
 
     public Map<Integer, Object> findProducts(String productIds) {

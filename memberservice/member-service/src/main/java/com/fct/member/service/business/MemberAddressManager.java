@@ -113,6 +113,13 @@ public class MemberAddressManager {
         MemberAddress address = memberAddressRepository.findOne(id);
         if(address != null && address.getMemberId() == memberId)
         {
+            if(address.getIsDefault() ==1)
+            {
+                List<MemberAddress> lsAddress = findAll(memberId);
+                if(lsAddress.size()>1) {
+                    throw new IllegalArgumentException("删除前请先设置默认地址");
+                }
+            }
             memberAddressRepository.delete(id);
         }
 

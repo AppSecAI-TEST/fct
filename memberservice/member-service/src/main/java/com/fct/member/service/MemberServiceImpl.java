@@ -320,10 +320,10 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         }
     }
 
-    public void verifyAuthentication(Integer memberId)
+    public void verifyAuthentication(Integer memberId,Integer authStatus)
     {
         try {
-            memberManager.verifyAuthStatus(memberId);
+            memberManager.verifyAuthStatus(memberId,authStatus);
         }
         catch (IllegalArgumentException exp)
         {

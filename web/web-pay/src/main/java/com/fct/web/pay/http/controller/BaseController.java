@@ -66,7 +66,7 @@ public class BaseController {
     protected String errorPage(String msg)
     {
         try {
-            return "redirect:" + fctConfig.getUrl() + "/error?msg=" + URLEncoder.encode(msg, "utf-8");
+            return "redirect:" + fctConfig.getUrl() + "/error?message=" + URLEncoder.encode(msg, "utf-8");
         }
         catch (Exception exp)
         {

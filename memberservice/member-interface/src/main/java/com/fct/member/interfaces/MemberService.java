@@ -54,7 +54,7 @@ public interface MemberService {
     void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
                               String bankName,String bankAccount);
 
-    void verifyAuthentication(Integer memberId);
+    void verifyAuthentication(Integer memberId,Integer authStatus);
 
     void saveMemberBankInfo(MemberBankInfo bankInfo);
 

@@ -198,7 +198,7 @@ public class MemberManager {
     }
 
     @Transactional
-    public void verifyAuthStatus(Integer memberId)
+    public void verifyAuthStatus(Integer memberId,Integer authStatus)
     {
         if(memberId<=0)
         {
@@ -211,7 +211,13 @@ public class MemberManager {
         bank.setStatus(1 - bank.getStatus());  //审核通过
         memberBankInfoManager.save(bank);
 
-        memberRepository.verifyAuthStatus(memberId);
+        Member member = memberRepository.findOne(memberId);
+        if(member.getAuthStatus() ==0 && authStatus==2)
+        {
+            throw new IllegalArgumentException("非法操作");
+        }
+        member.setAuthStatus(authStatus);
+        memberRepository.save(member);
 
     }
 

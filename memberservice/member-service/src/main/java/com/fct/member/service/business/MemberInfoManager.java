@@ -126,11 +126,10 @@ public class MemberInfoManager {
 
         Member member = memberManager.findById(memberId);
 
-        if(member.getAuthStatus() ==1)
+        if(member.getAuthStatus() !=0)
         {
-            throw new BaseException("已认证");
+            throw new BaseException("已认证或审核中");
         }
-
         member.setAuthStatus(1);//待审核认证
         memberManager.save(member);
 

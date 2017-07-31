@@ -165,10 +165,11 @@ public class OrderController extends BaseController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ReturnValue<String> saveOrder(Integer points, BigDecimal accountAmount,
+    public ReturnValue<String> saveOrder(Integer shopId, Integer points, BigDecimal accountAmount,
                                          String orderGoodsInfo, String couponCode,
                                          String remark, Integer addressId) {
 
+        shopId = ConvertUtils.toInteger(shopId, 0);
         points = ConvertUtils.toInteger(points);
         accountAmount = ConvertUtils.toBigDeciaml(accountAmount);
         couponCode = ConvertUtils.toString(couponCode);
@@ -192,7 +193,7 @@ public class OrderController extends BaseController {
 
         MemberLogin member = this.memberAuth();
         String orderId = mallService.createOrder(member.getMemberId(), member.getCellPhone(),
-                0, points, accountAmount, orderProductIds, couponCode,
+                shopId, points, accountAmount, orderProductIds, couponCode,
                 remark, addressId);
 
         if (StringUtils.isEmpty(orderId)) {

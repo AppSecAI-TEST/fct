@@ -197,7 +197,7 @@ public class MemberController extends BaseController {
 
     @RequestMapping(value = "get-by-token", method = RequestMethod.GET)
     public ReturnValue<MemberLogin> getByToken() {
-        
+
         MemberLogin member = this.memberAuth();
         if (member != null)
             member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));

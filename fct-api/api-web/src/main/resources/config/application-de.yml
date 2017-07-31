@@ -25,11 +25,11 @@ mongo:
 
 fct:
   domain:
-    url: http://www.fangcun.com
-    payurl: http://pay.fangcun.com
-    staticurl: http://static.fangcun.com
-    imageurl: http://fct-nick.img-cn-shanghai.aliyuncs.com
-    videourl: http://vod.fangcun.com
+    url: http://test.fangcuntang.com 
+    imageurl: http://cdn.fangcun.com 
+    videourl: http://video.fangcun.com 
+    staticurl: http://cdn.fangcun.com
+
 
 
 

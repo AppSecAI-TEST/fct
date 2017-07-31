@@ -33,6 +33,9 @@ public class MemberManager {
     private MemberBankInfoManager memberBankInfoManager;
 
     @Autowired
+    private MemberLoginManager memberLoginManager;
+
+    @Autowired
     private JdbcTemplate jt;
 
     @Transactional
@@ -219,6 +222,8 @@ public class MemberManager {
         member.setAuthStatus(authStatus);
         memberRepository.save(member);
 
+        //更新memberlogin
+        memberLoginManager.updateAudiStatus(memberId,member.getAuthStatus());
     }
 
     private String getCondition(String cellPhone, Integer authStatus,String beginTime,String endTime,List<Object> param)

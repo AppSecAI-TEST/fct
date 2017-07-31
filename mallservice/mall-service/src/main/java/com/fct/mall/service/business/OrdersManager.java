@@ -322,7 +322,7 @@ public class OrdersManager {
             }
         }
         //校验shopid是否存在
-        MemberStore store = memberService.getMemberStore(order.getShopId());
+        MemberStore store = memberService.getMemberStore(shopId);
         if (store != null && store.getStatus() == 1)
         {
             order.setShopId(shopId);

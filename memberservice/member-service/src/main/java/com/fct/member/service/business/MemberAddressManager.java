@@ -110,6 +110,11 @@ public class MemberAddressManager {
 
     public void delete(Integer id,Integer memberId)
     {
-        memberAddressRepository.delete(id,memberId);
+        MemberAddress address = memberAddressRepository.findOne(id);
+        if(address != null && address.getMemberId() == memberId)
+        {
+            memberAddressRepository.delete(id);
+        }
+
     }
 }

@@ -106,7 +106,7 @@ public class MemberController extends BaseController {
                     memberService.lockMember(id);
                     break;
                 case "auth":
-                    memberService.verifyAuthentication(id);
+                    memberService.verifyAuthentication(id,Integer.valueOf(value));
                     break;
                 case "password":
                     memberService.updateMemberPassword(id,"sysupdate",value,value);

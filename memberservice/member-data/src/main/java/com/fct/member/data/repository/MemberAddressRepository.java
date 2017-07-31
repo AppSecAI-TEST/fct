@@ -23,10 +23,6 @@ public interface MemberAddressRepository extends JpaRepository<MemberAddress, In
     @Query(nativeQuery = true, value = "UPDATE MemberAddress set isDefault=1 WHERE id=? and MemberId=?2")
     void setDefault(Integer id,Integer memberId);
 
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true, value = "DELETE MemberAddress WHERE id=?1 and MemberId=?2")
-    void delete(Integer id,Integer memberId);
 
     int countByMemberId(Integer memberId);
 }

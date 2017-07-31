@@ -55,10 +55,10 @@
                     <span th:text="${bank.bankAccount}" class="form-control"></span>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" th:if="${member.authStatus gt 0}">
                 <div class="col-sm-4 col-sm-offset-3">
-                    <button class="btn btn-default passClick" type="button" th:if="${member.authStatus eq 1}">取消认证</button>
-                    <button class="btn btn-primary passClick" type="button" th:if="${member.authStatus eq 0}">认证通过</button>
+                    <button class="btn btn-default passClick" th:attr="data-status=0" type="button" th:if="${member.authStatus eq 2}">取消认证</button>
+                    <button class="btn btn-primary passClick" th:attr="data-status=2" type="button" th:if="${member.authStatus eq 1}">认证通过</button>
                 </div>
             </div>
         </form>
@@ -67,9 +67,10 @@
 
 <script type="text/javascript">
     $(".passClick").click(function () {
+        var status = $(this).attr("data-status");
         JQAjax.post(this, {
             form: "authForm",
-            url: '/member/update?action=auth',
+            url: '/member/update?action=auth&value='+status,
             wait: true
         });
     });

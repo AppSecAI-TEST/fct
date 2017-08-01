@@ -31,11 +31,12 @@ public class WeChatShare {
     private JedisPool jedisPool;
 
 
-    public WeChatShareResponse jsShare(String url) {
+    public WeChatShareResponse jsShare(String url, Boolean debug) {
 
         Date date = new Date();
         String noncestr = StringHelper.getRandomString(16);
         Integer timestamp = ConvertUtils.toInteger(date.getTime() / 1000);
+        debug = ConvertUtils.toBoolean(debug);
         String ticket = this.getJsTicket();
         if (ticket == null) {
 
@@ -43,12 +44,12 @@ public class WeChatShare {
         }
 
         WeChatShareResponse response = new WeChatShareResponse();
-        response.setDebug(false);
+        response.setDebug(debug);
         response.setAppId(oAuthCofnig.getAppId());
         response.setTimestamp(timestamp);
         response.setNonceStr(noncestr);
         response.setSignature(this.signature(ticket, noncestr, timestamp, url));
-
+Constants.logger.error(JsonConverter.toJson(response));
         return response;
     }
 

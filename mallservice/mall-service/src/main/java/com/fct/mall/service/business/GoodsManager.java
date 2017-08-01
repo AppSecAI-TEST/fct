@@ -242,7 +242,7 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("分类id为空");
         }
-        String sql = "update goods set categoryCode=? where categoryCode like ?";
+        String sql = "update Goods set categoryCode=? where categoryCode like ?";
         List<Object> param = new ArrayList<>();
         param.add(newCode);
         param.add(","+ cagetoryId +",%");

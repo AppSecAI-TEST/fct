@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface MemberAuthRepository extends JpaRepository<MemberAuth, Integer> {
 
+    @Query(nativeQuery = true, value = "SELECT * FROM MemberAuth WHERE memberId=?1 and platform=?2 limit 1")
     MemberAuth findByMemberIdAndPlatform(Integer memberId,String platform);
 
     @Query(nativeQuery = true, value = "SELECT * FROM MemberAuth WHERE openId=?1 and platform=?2 limit 1")

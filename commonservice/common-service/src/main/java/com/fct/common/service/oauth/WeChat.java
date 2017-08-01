@@ -74,7 +74,7 @@ public class WeChat {
     public WeChatUserResponse getUserInfo(String openId) {
 
         String accessToken = this.getAccessToken();
-
+Constants.logger.error("accessToken:" + accessToken +", " + openId);
         if (accessToken == null)
             return  null;
 
@@ -82,7 +82,7 @@ public class WeChat {
                 "%s?access_token=%s&openid=%s&lang=zh_CN",
                 USERINFO_URL, accessToken, openId);
         Map<String, Object> result = this.get(url);
-
+Constants.logger.error("result:" + JsonConverter.toJson(result));
         WeChatUserResponse weChatResponse = new WeChatUserResponse();
         if (result != null) {
 

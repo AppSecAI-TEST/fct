@@ -86,7 +86,8 @@ public class UploadController {
                 //非编辑器模式，上传的图片
                 if(!StringUtils.isEmpty(action))
                 {
-                    response.setUrl(response.getFullUrl());
+                    //response.setUrl(response.getFullUrl());
+                    response.setUrl(fctConfig.getImageUrl()+response.getUrl());
                 }
 
                 responseEntity.setData(response);

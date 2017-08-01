@@ -116,8 +116,8 @@
                                 <td th:text="${cacheArtist.getArtistName(goods.artistIds)}"></td>
                                 <td th:text="${cache.getGoodsCateName(goods.categoryCode)}"></td>
                                 <td th:text="${cache.getGoodsGradeName(goods.gradeId)}"></td>
-                                <td th:text="${goods.salePrice}"></td>
-                                <td th:text="${goods.commission}"></td>
+                                <td th:text="'¥'+${goods.salePrice}"></td>
+                                <td th:text="'¥'+${goods.commission}"></td>
                                 <td th:text="${goods.stockCount}"></td>
                                 <td>
                                     <span th:text="'销售数：' + ${goods.sellCount}"></span><br />

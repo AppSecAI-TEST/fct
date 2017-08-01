@@ -78,7 +78,7 @@
                                     <img th:src="${pub.thumbnail(goods.img)}" width="80" height="80">
                                 </td>
                                 <td th:text="${goods.name}"></td>
-                                <td th:text="${goods.buyCount}"></td>
+                                <td th:text="'×'+${goods.buyCount}"></td>
                                 <td th:text="'¥'+${goods.commission}"></td>
                                 <td th:text="'¥'+${goods.price}"></td>
                                 <td th:text="'¥'+${goods.promotionPrice}"></td>
@@ -112,9 +112,9 @@
                     </table>
                     <div class="text-right m-t">
                         <th:block th:if="${orders.status eq 0}">
-                            <button class="btn btn-primary orderStatus" type="button" data-action="pay">确认付款</button>
-                            <button class="btn btn-primary delaytime" type="button">延长关闭时间</button>
-                            <button class="btn btn-danger orderStatus" type="button" data-action="close">关闭订单</button>
+                            <button class="btn btn-sm btn-primary orderStatus" type="button" data-action="pay">确认付款</button>
+                            <button class="btn btn-sm btn-primary delaytime" type="button">延长关闭时间</button>
+                            <button class="btn btn-sm btn-danger orderStatus" type="button" data-action="close">关闭订单</button>
                         </th:block>
                         <button class="btn btn-primary" th:if="${orders.status eq 1}" id="deliveryClick">发货</button>
                     </div>

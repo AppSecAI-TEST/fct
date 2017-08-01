@@ -38,8 +38,8 @@ public class MainController {
 
         //String cellPhone,String platform,String openId, String nickName,String headImgUrl,
         //String unionId,Integer sex,String ip,Integer expireDay
-        /*memberService.bindMemberAuth("13816619868","wxwap","sfdsfsdf","jon","","",0,"127.0.0.1",
-                7);*/
+        memberService.bindMemberAuth("13816619868","weixin_web","oDYYI1WACqCEH5qB_DCxsPqOBbBs=","江水滔滔","","",0,"127.0.0.1",
+                7);
 
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);

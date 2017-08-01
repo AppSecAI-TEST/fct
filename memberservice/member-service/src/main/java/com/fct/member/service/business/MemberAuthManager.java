@@ -53,9 +53,9 @@ public class MemberAuthManager {
     public MemberLogin bind(String cellPhone,String platform,String openId, String nickName,String headImgUrl,
                             String unionId,Integer sex,String ip,Integer expireDay)
     {
-        Constants.logger.info(String.format("cellphone:%s==platform:%s==openid:%s===nickName:%s,sex:%d,ip:%s,expireDay:%d",
-                cellPhone,platform,openId,nickName,sex,ip,expireDay));
-        
+        Constants.logger.info(String.format("cellphone:%s==platform:%s==openid:%s===nickName:%s,sex:%d,ip:%s,expireDay:%d==unionId:%s",
+                cellPhone,platform,openId,nickName,sex,ip,expireDay,unionId));
+
         if(StringUtils.isEmpty(cellPhone))
         {
             throw new IllegalArgumentException("手机号码为空");

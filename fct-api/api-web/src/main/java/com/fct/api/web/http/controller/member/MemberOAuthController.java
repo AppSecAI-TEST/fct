@@ -74,8 +74,13 @@ public class MemberOAuthController extends BaseController {
         member = memberService.saveMemberAuth(memberId, weChat.getOpenid(),
                 platform, nickname, headimgurl, unionid, sex, ip, expire_day);
 
-        if (member != null)
-            member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
+        //不存在取默认值
+        if (member == null) {
+            member = new MemberLogin();
+            member.setMemberId(0);
+            member.setOpenId(weChat.getOpenid());
+        }
+        member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();
         response.setData(member);

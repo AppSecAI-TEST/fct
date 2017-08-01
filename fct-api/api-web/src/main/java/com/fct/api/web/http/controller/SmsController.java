@@ -38,6 +38,8 @@ public class SmsController {
                 return "{code}为您的登录验证码，5分钟内有效！";
             case "forget":
                 return "{code}为您的找回密码验证码，5分钟内有效！";
+            case "bind":
+                return "{code}为您的微信绑定验证码，5分钟内有效！";
             default:
                 return null;
 

@@ -1,6 +1,7 @@
 package com.fct.api.web.http.controller.member;
 
 import com.fct.api.web.http.controller.BaseController;
+import com.fct.api.web.utils.Constants;
 import com.fct.common.interfaces.CommonService;
 import com.fct.common.interfaces.WeChatResponse;
 import com.fct.common.interfaces.WeChatUserResponse;
@@ -54,6 +55,7 @@ public class MemberOAuthController extends BaseController {
         }
 
         MemberLogin member = this.memberAuth(false);
+        Constants.logger.error("login");
 
         Integer memberId = 0;
         String nickname = "";
@@ -70,11 +72,12 @@ public class MemberOAuthController extends BaseController {
             sex = user.getSex();
             unionid = user.getUnionid();
         }
-
+        Constants.logger.error("getUserInfo");
         member = memberService.saveMemberAuth(memberId, weChat.getOpenid(),
                 platform, nickname, headimgurl, unionid, sex, ip, expire_day);
-
-        member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
+        Constants.logger.error("saveAuth");
+        if (member != null)
+            member.setHeadPortrait(fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
 
         ReturnValue<MemberLogin> response = new ReturnValue<>();
         response.setData(member);

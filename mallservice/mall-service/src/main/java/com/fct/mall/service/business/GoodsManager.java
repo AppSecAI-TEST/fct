@@ -450,4 +450,16 @@ public class GoodsManager {
         sb.append(" order by sellCount desc limit "+top);
         return jt.query(sb.toString(), param.toArray(), new BeanPropertyRowMapper<Goods>(Goods.class));
     }
+
+    public void addViewCount(Integer id,Integer count)
+    {
+        if (id < 1)
+        {
+            throw new IllegalArgumentException("商品不存在");
+        }
+        Goods goods = goodsRepository.findOne(id);
+        goods.setViewCount(goods.getViewCount()+count);
+        goods.setUpdateTime(new Date());
+        goodsRepository.save(goods);
+    }
 }

@@ -73,6 +73,21 @@ public class MallServiceImpl implements MallService {
         return null;
     }
 
+    public void addGoodsViewCount(Integer id, Integer count)
+    {
+        try {
+            goodsManager.addViewCount(id,count);
+        }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
+        catch (Exception exp)
+        {
+            Constants.logger.error(exp.toString());
+        }
+    }
+
     public Goods getGoods(Integer id) {
         try {
             return goodsManager.findById(id);

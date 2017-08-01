@@ -2,6 +2,7 @@ package com.fct.mall.interfaces;
 
 import com.fct.mall.data.entity.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public interface MallService {
     void setGoodsStatus(Integer id, Integer status);
 
     void deleteGoods(Integer id);
+
+    void addGoodsViewCount(Integer id, Integer count);
 
     List<Goods> findGoodsByGuess(String goodsId,String categoryCode, Integer gradeId, Integer materialId,
                                  Integer artistId,int top);

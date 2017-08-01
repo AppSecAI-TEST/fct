@@ -57,8 +57,6 @@ public class MemberAuthManager {
     public MemberLogin bind(String cellPhone,String platform,String openId, String nickName,String headImgUrl,
                             String unionId,Integer sex,String ip,Integer expireDay)
     {
-        Constants.logger.info(String.format("cellphone:%s==platform:%s==openid:%s===nickName:%s,sex:%d,ip:%s,expireDay:%d==unionId:%s",
-                cellPhone,platform,openId,nickName,sex,ip,expireDay,unionId));
 
         if(StringUtils.isEmpty(cellPhone))
         {
@@ -115,8 +113,7 @@ public class MemberAuthManager {
 
         if(auth ==null)
         {
-            Constants.logger.info("five...");
-            auth = getByOpenId(openId,platform);
+            auth = memberAuthRepository.findOneByOpenId(openId,platform);
             if(auth == null) {
                 Constants.logger.info("six...");
                 auth = new MemberAuth();
@@ -161,7 +158,7 @@ public class MemberAuthManager {
         if(!StringUtils.isEmpty(openId))
         {
             //去取memberid
-            auth = getByOpenId(openId,platform);
+            auth = memberAuthRepository.findOneByOpenId(openId,platform);
             memberId = auth.getMemberId();
         }
         if(memberId>0)

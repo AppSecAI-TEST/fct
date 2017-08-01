@@ -34,7 +34,7 @@ public class WeChat {
     private final String AUTHORIZE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize";
     private final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
     private final String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
-    private final String USERINFO_URL = "https://api.weixin.qq.com/sns/oauth2/userinfo";
+    private final String USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo";
 
     private final String SNS_URL = "https://api.weixin.qq.com/sns";
 

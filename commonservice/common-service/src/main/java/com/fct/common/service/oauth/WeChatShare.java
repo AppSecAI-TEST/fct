@@ -39,6 +39,7 @@ public class WeChatShare {
         debug = ConvertUtils.toBoolean(debug);
 
         String ticket = this.getJsTicket();
+        Constants.logger.error("ticket:" + ticket);
         if (ticket == null) {
             return null;
         }
@@ -49,7 +50,7 @@ public class WeChatShare {
         response.setTimestamp(timestamp);
         response.setNonceStr(noncestr);
         response.setSignature(this.signature(ticket, noncestr, timestamp, url));
-
+        Constants.logger.error("response:" + JsonConverter.toJson(response));
         return response;
     }
 

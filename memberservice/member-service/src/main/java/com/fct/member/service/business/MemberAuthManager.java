@@ -80,11 +80,13 @@ public class MemberAuthManager {
             expireDay = 7;//默认7天
         }
 
+        Constants.logger.info("one...");
         Member member = memberManager.findByCellPhone(cellPhone);
         MemberAuth  auth = null;
 
         if(member !=null)
         {
+            Constants.logger.info("two...");
             auth = memberAuthRepository.findByMemberIdAndPlatform(member.getId(), platform);
             //
             if(StringUtils.isEmpty(member.getUserName()) || member.getUserName().equals(member.getCellPhone()))
@@ -101,6 +103,7 @@ public class MemberAuthManager {
             memberInfo.setSex(sex <=0 ?0 :1);
 
             memberInfoManager.save(memberInfo);
+            Constants.logger.info("three...");
         }
         else
         {
@@ -108,12 +111,15 @@ public class MemberAuthManager {
             member = memberManager.register(cellPhone,nickName,cellPhone.substring(5),headImgUrl,sex);
             //发送条短信。告诉默认密码
 
+            Constants.logger.info("four...");
         }
 
         if(auth ==null)
         {
+            Constants.logger.info("five...");
             auth = memberAuthRepository.findOneByOpenId(openId,platform);
             if(auth == null) {
+                Constants.logger.info("six...");
                 auth = new MemberAuth();
                 auth.setMemberId(member.getId());
                 auth.setCreateTime(new Date());
@@ -125,6 +131,8 @@ public class MemberAuthManager {
         auth.setUnionId(unionId);
 
         memberAuthRepository.save(auth);
+
+        Constants.logger.info("seven...");
 
         return loginManager.login(member,platform,openId,ip,expireDay);
     }

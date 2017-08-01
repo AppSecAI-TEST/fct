@@ -1,5 +1,6 @@
 package com.fct.member.service.business;
 
+import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.UUIDUtil;
 import com.fct.member.data.entity.*;
@@ -72,6 +73,8 @@ public class MemberLoginManager {
         member.setLoginTime(new Date());
         memberManager.save(member);
 
+        Constants.logger.info("login。。。");
+
         MemberLogin login = new MemberLogin();
         login.setCellPhone(member.getCellPhone());
         login.setMemberId(member.getId());
@@ -89,7 +92,11 @@ public class MemberLoginManager {
         login.setOpenId(openId);
         login.setLoginCount(member.getLoginCount());
 
+        Constants.logger.info("loginData:"+ JsonConverter.toJson(login));
+
         memberLoginRepository.save(login);
+
+        Constants.logger.info("login yeah。。。");
 
         return login;
     }

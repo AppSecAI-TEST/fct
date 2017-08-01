@@ -76,14 +76,17 @@ public class WeChat {
      */
     public WeChatUserResponse getUserInfo(String openId) {
 
-        if (this.getAccessToken() == null)
+        String accessToken = this.getAccessToken();
+
+        if (accessToken == null)
             return  null;
 
         String url = String.format(
                 "%s?access_token=%s&openid=%s&lang=zh_CN",
-                USERINFO_URL, this.getAccessToken(), openId);
+                USERINFO_URL, accessToken, openId);
         Map<String, Object> result = this.get(url);
 
+        Constants.logger.error("result:" + JsonConverter.toJson(result));
         WeChatUserResponse weChatResponse = new WeChatUserResponse();
         if (result != null) {
 
@@ -117,6 +120,7 @@ public class WeChat {
             if(object != null)
             {
                 weChatSource = (WeChatSource) SerializationUtils.deserialize(object);
+                Constants.logger.error("weChatSource:" + JsonConverter.toJson(weChatSource));
                 Date date = new Date();
                 //已过去时间
                 Integer cacheTime = ConvertUtils.toInteger(date.getTime() - weChatSource.getRefreshTime() / 1000);
@@ -169,7 +173,6 @@ public class WeChat {
         {
             jedis = jedisPool.getResource();
 
-            Constants.logger.error("fields:" + accessToken + ", " + refreshToken + ", " + expireIn);
             Date date = new Date();
             WeChatSource weChatSource = new WeChatSource();
             weChatSource.setAccessToken(accessToken);
@@ -180,9 +183,7 @@ public class WeChat {
             //刷新时间
             weChatSource.setRefreshTime(date.getTime());
 
-            Constants.logger.error("wechatSource begin:" + JsonConverter.toJson(weChatSource));
             jedis.set(key.getBytes(), SerializationUtils.serialize(weChatSource));
-            Constants.logger.error("wechatSource end:" + JsonConverter.toJson(weChatSource));
             jedis.expire(key, 2505600); //缓存29天，提前一天失效
         }
         catch (Exception e)

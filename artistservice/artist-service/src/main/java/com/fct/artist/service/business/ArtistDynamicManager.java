@@ -38,7 +38,7 @@ public class ArtistDynamicManager {
         {
             artistDynamic.setCreateTime(new Date());
         }
-        if(!StringUtils.isEmpty(artistDynamic.getVideoId()))
+        if(!StringUtils.isEmpty(artistDynamic.getVideoUrl()))
         {
             artistDynamic.setVideoImg(artistDynamic.getImages());
         }

@@ -72,15 +72,15 @@
                             <tbody>
                             <tr th:each="dyn : ${lsDynamic}">
                                 <td th:text="${dyn.id}"></td>
-                                <td th:text="${dyn.artistId}"></td>
-                                <td th:text="${dyn.content}"></td>
+                                <td th:text="${cache.getArtistName(dyn.artistId)}"></td>
+                                <td th:text="${dyn.content}" width="20%"></td>
                                 <td>
-                                    <th:block th:each="img:${#strings.listSplit(dyn.images,',')}">
-                                        <img th:src="${pub.thumbnail(img)}" class="loadimg" width="80" />
+                                    <th:block th:each="img,imgStat:${#strings.listSplit(dyn.images,',')}">
+                                        <img th:if="${imgStat.index eq 0}" th:src="${pub.thumbnail(img)}" class="loadimg" width="60"/>
                                     </th:block>
                                 </td>
-                                <td>
-                                    <span th:text="${#strings.substring(dyn.videoUrl,0,50)}+'...'"></span>
+                                <td width="16%">
+                                    <span th:if="${#strings.length(dyn.videoUrl) gt 50}" th:text="${#strings.substring(dyn.videoUrl,0,50)}+'...'"></span>
                                     <div class="hide" th:text="${dyn.videoUrl}"></div>
                                 </td>
                                 <td th:text="${#dates.format(dyn.updateTime, 'yyyy-MM-dd HH:mm')}">

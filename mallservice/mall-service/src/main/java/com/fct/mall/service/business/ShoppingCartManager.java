@@ -139,7 +139,7 @@ public class ShoppingCartManager {
             throw new IllegalArgumentException("无此用户");
         }
 
-        String sql = "select count(0) from shoppingCart c inner join goods g ";
+        String sql = "select count(0) from ShoppingCart c inner join Goods g ";
         sql += " on c.goodsId = g.Id";
         sql += String.format(" where c.memberId=%d and g.status=1",memberId);
 

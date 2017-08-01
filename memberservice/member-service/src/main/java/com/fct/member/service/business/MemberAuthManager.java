@@ -65,7 +65,7 @@ public class MemberAuthManager {
 
         if(StringUtils.isEmpty(openId))
         {
-            throw new IllegalArgumentException("open为空");
+            throw new IllegalArgumentException("openid为空");
         }
 
         if(StringUtils.isEmpty(ip))
@@ -79,9 +79,10 @@ public class MemberAuthManager {
 
         Member member = memberManager.findByCellPhone(cellPhone);
         MemberAuth  auth = null;
+
         if(member !=null)
         {
-            auth = memberAuthRepository.findByMemberIdAndPlatform(member.getId(),platform);
+            auth = memberAuthRepository.findByMemberIdAndPlatform(member.getId(), platform);
             //
             if(StringUtils.isEmpty(member.getUserName()) || member.getUserName().equals(member.getCellPhone()))
             {
@@ -108,9 +109,12 @@ public class MemberAuthManager {
 
         if(auth ==null)
         {
-            auth = new MemberAuth();
-            auth.setMemberId(member.getId());
-            auth.setCreateTime(new Date());
+            auth = memberAuthRepository.findOneByOpenId(openId,platform);
+            if(auth == null) {
+                auth = new MemberAuth();
+                auth.setMemberId(member.getId());
+                auth.setCreateTime(new Date());
+            }
         }
         auth.setOpenId(openId);
         auth.setPlatform(platform);
@@ -144,8 +148,17 @@ public class MemberAuthManager {
 
         MemberAuth auth = null;
         MemberLogin login = null;
+        if(!StringUtils.isEmpty(openId))
+        {
+            //去取memberid
+            auth = memberAuthRepository.findOneByOpenId(openId,platform);
+            memberId = auth.getMemberId();
+        }
         if(memberId>0)
         {
+            if(auth != null) {
+                auth = memberAuthRepository.findByMemberIdAndPlatform(memberId, platform);
+            }
             //如果用户存在，则更新相关信息（为空的情况下）
             Member member = memberManager.findById(memberId);
             if(member == null)
@@ -166,8 +179,6 @@ public class MemberAuthManager {
             memberInfo.setSex(sex <=0 ?0 :1);
 
             memberInfoManager.save(memberInfo);
-
-            auth = memberAuthRepository.findByMemberIdAndPlatform(memberId,platform);
 
             login = loginManager.login(member,platform,openId,ip,expireDay);
         }

@@ -87,6 +87,7 @@ public class DynamicController extends BaseController{
         query.put("q", q);
 
         model.addAttribute("query", query);
+        model.addAttribute("cache", cacheArtistManager);
         model.addAttribute("lsDynamic", pageResponse.getElements());
         model.addAttribute("pageHtml", PageUtil.getPager(pageResponse.getTotalCount(),page,
                 pageSize,sb.toString()));
@@ -139,6 +140,7 @@ public class DynamicController extends BaseController{
         dynamic.setArtistId(artistid);
         dynamic.setContent(content);
         dynamic.setImages(images);
+        dynamic.setIsTop(0);
         dynamic.setVideoId(videoid);
         dynamic.setVideoUrl(videourl);
         dynamic.setVideoImg(videoimg);

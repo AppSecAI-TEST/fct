@@ -1,16 +1,17 @@
 package com.fct.member.service.business;
 
-import com.fct.member.data.entity.Member;
-import com.fct.member.data.entity.MemberAuth;
-import com.fct.member.data.entity.MemberInfo;
-import com.fct.member.data.entity.MemberLogin;
+import com.fct.member.data.entity.*;
 import com.fct.member.data.repository.MemberAuthRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jon on 2017/5/8.
@@ -29,6 +30,9 @@ public class MemberAuthManager {
 
     @Autowired
     private MemberLoginManager loginManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     public MemberAuth save(MemberAuth auth)
     {
@@ -80,13 +84,11 @@ public class MemberAuthManager {
             expireDay = 7;//默认7天
         }
 
-        Constants.logger.info("one...");
         Member member = memberManager.findByCellPhone(cellPhone);
         MemberAuth  auth = null;
 
         if(member !=null)
         {
-            Constants.logger.info("two...");
             auth = memberAuthRepository.findByMemberIdAndPlatform(member.getId(), platform);
             //
             if(StringUtils.isEmpty(member.getUserName()) || member.getUserName().equals(member.getCellPhone()))
@@ -103,21 +105,18 @@ public class MemberAuthManager {
             memberInfo.setSex(sex <=0 ?0 :1);
 
             memberInfoManager.save(memberInfo);
-            Constants.logger.info("three...");
         }
         else
         {
             //新用户注册
             member = memberManager.register(cellPhone,nickName,cellPhone.substring(5),headImgUrl,sex);
             //发送条短信。告诉默认密码
-
-            Constants.logger.info("four...");
         }
 
         if(auth ==null)
         {
             Constants.logger.info("five...");
-            auth = memberAuthRepository.findOneByOpenId(openId,platform);
+            auth = getByOpenId(openId,platform);
             if(auth == null) {
                 Constants.logger.info("six...");
                 auth = new MemberAuth();
@@ -162,7 +161,7 @@ public class MemberAuthManager {
         if(!StringUtils.isEmpty(openId))
         {
             //去取memberid
-            auth = memberAuthRepository.findOneByOpenId(openId,platform);
+            auth = getByOpenId(openId,platform);
             memberId = auth.getMemberId();
         }
         if(memberId>0)
@@ -207,5 +206,20 @@ public class MemberAuthManager {
 
         return login;
 
+    }
+
+    private MemberAuth getByOpenId(String openId,String platform)
+    {
+        try {
+            String sql = "SELECT * FROM MemberAuth WHERE openId=? and platform=? limit 1";
+            List<Object> param = new ArrayList<>();
+            param.add(openId);
+            param.add(platform);
+
+            return jt.queryForObject(sql, new BeanPropertyRowMapper<MemberAuth>(MemberAuth.class), param.toArray());
+        }
+        catch (Exception exp)
+        {}
+        return null;
     }
 }

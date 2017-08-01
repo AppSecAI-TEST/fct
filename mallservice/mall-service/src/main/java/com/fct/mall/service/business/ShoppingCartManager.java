@@ -140,7 +140,7 @@ public class ShoppingCartManager {
         }
 
         String sql = "select count(0) from shoppingCart c inner join goods g ";
-        sql += " on c.goodsId on g.Id";
+        sql += " on c.goodsId = g.Id";
         sql += String.format(" where c.memberId=%d and g.status=1",memberId);
 
         return jt.queryForObject(sql,Integer.class);

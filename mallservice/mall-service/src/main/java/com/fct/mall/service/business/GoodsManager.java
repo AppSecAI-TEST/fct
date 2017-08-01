@@ -133,7 +133,7 @@ public class GoodsManager {
         {
             throw new IllegalArgumentException("合作艺人为空");
         }
-        if(StringUtils.isEmpty(goods.getMaterialId()))
+        if(StringUtils.isEmpty(goods.getMaterialIds()))
         {
             throw new IllegalArgumentException("材质为空");
         }
@@ -331,8 +331,9 @@ public class GoodsManager {
             sb.append("  AND gradeId="+gradeId);
         }
         if (materialId>0) {
-            sb.append("  AND materialId like ?");
-            param.add(","+ materialId +",");
+            //sb.append("  AND materialId like ?");
+            //param.add(","+ materialId +",");
+            sb.append(" AND find_in_set(" + materialId + ",materialIds)");
         }
         if (minVolume>0) {
             sb.append("  AND minVolume="+minVolume);
@@ -341,8 +342,9 @@ public class GoodsManager {
             sb.append("  AND maxVolume="+maxVolume);
         }
         if (artistId>0) {
-            sb.append("  AND artistIds like ?");
-            param.add(","+artistId +",");
+            //sb.append("  AND artistIds like ?");
+            //param.add(","+artistId +",");
+            sb.append(" AND find_in_set(" + artistId + ",artistIds)");
         }
         return sb.toString();
     }

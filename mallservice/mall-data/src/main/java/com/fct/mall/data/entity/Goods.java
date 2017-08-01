@@ -104,7 +104,7 @@ public class Goods implements Serializable {
     private String content;
 
     //材质--泥料介绍 多个,1,12,
-    private String materialId;
+    private String materialIds;
 
     //最小容量便于显示与搜索
     private Integer minVolume;

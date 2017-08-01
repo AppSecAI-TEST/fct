@@ -261,7 +261,7 @@
                                     <label class="col-sm-2 control-label">材质：</label>
                                     <div class="col-sm-3 m-b">
                                         <div class="input-group">
-                                            <input name="materialId" th:value="${goods.materialId}" type="hidden" id="input_materialId" />
+                                            <input name="materialId" th:value="${goods.materialIds}" type="hidden" id="input_materialId" />
                                             <input name="materialName" th:value="${materialName}" type="text" readonly="readonly" id="input_materialName" class="form-control" placeholder="选择材质" />
                                             <span class="input-group-btn">
                                                 <a href="javascript:;" class="btn btn-warning" id="selMaterial">选择</a>
@@ -371,10 +371,12 @@
                     });
                 });
                 $("#selMaterial").click(function () {
+                    var ids = $("#input_materialId").val();
+                    var names = $("#input_materialName").val();
                     JQbox.open({
                         title:"选择材质",
                         width: 500,
-                        url: "/goods/material/select?ids="+$("#input_materialId").val()
+                        url: "/goods/material/select?ids="+ids+"&names="+encodeURI(encodeURI(names))
                     });
                 });
 

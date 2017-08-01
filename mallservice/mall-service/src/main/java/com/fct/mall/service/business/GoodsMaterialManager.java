@@ -109,7 +109,7 @@ public class GoodsMaterialManager {
         }
         if(goodsId>0)
         {
-            sb.append(" AND id in(select materialid from goods where id="+ goodsId +")");
+            sb.append(" AND id in(select materialids from goods where id="+ goodsId +")");
         }
         if(status>-1)
         {
@@ -162,7 +162,7 @@ public class GoodsMaterialManager {
         {
             throw new IllegalArgumentException("材质id为空。");
         }
-        materialIds = materialIds.substring(1,materialIds.length()-1);
+        //materialIds = materialIds.substring(1,materialIds.length()-1);
 
         String sql = "SELECT * FROM GoodsMaterial WHERE id in("+ materialIds +")";
 

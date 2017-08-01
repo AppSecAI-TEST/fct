@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,10 +61,21 @@ public class MaterialController extends BaseController {
     }
 
     @RequestMapping(value = "/select", method = RequestMethod.GET)
-    public String select(String ids,Model model) {
+    public String select(String ids,String names,Model model) {
 
         ids = ConvertUtils.toString(ids);
-        model.addAttribute("materialIds", ids);
+        names = ConvertUtils.toString(names);
+        try
+        {
+            names = URLDecoder.decode(names, "UTF-8");
+        }
+        catch (Exception exp)
+        {
+
+        }
+        model.addAttribute("ids", ids);
+        model.addAttribute("names", names);
+
         return "goods/material/select";
     }
     @ResponseBody

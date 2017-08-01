@@ -131,11 +131,8 @@ public class GoodsController extends BaseController {
         Goods goods =null;
         if(id>0) {
             goods = mallService.getGoods(id);
-            if(!StringUtils.isEmpty(goods.getMaterialId())) {
-                String materialid = goods.getMaterialId();
-                materialName = cacheGoodsManager.getMaterialName(goods.getMaterialId());
-                materialid = materialid.substring(1, materialid.length() - 1);
-                goods.setMaterialId(materialid); //为了去掉前后各一个, 避免添加的时候重复。
+            if(!StringUtils.isEmpty(goods.getMaterialIds())) {
+                materialName = cacheGoodsManager.getMaterialName(goods.getMaterialIds());
             }
 
         }
@@ -144,7 +141,7 @@ public class GoodsController extends BaseController {
             goods.setId(0);
             goods.setArtistIds("");
             goods.setCategoryCode("");
-            goods.setMaterialId("");
+            goods.setMaterialIds("");
         }
         List<GoodsCategory> categoryList = cacheGoodsManager.findGoodsCategoryByParent();
         List<GoodsGrade> gradeList = cacheGoodsManager.findCacheGoodsGrade();
@@ -160,7 +157,7 @@ public class GoodsController extends BaseController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(HttpServletRequest request,Integer id, String ext_id,
+    public String save(Integer id, String ext_id,
                        String ext_name,String ext_code,String ext_marketPrice,
                        String ext_salePrice, String ext_commission,
                        String ext_stockCount,String videoUrl,String artistId,String materialId,String videoId,
@@ -253,7 +250,7 @@ public class GoodsController extends BaseController {
         goods.setSalePrice(salePrice);
         goods.setCommission(commission);
         goods.setStockCount(stockCount);
-        goods.setMaterialId(","+materialId+",");
+        goods.setMaterialIds(materialId);
         goods.setMinVolume(minVolume);
         goods.setMaxVolume(maxVolume);
         goods.setAdvanceSaleDays(advanceSaleDays);
@@ -262,7 +259,7 @@ public class GoodsController extends BaseController {
         goods.setGradeId(gradeId);
         goods.setStatus(status);
 
-        goods.setArtistIds(","+artistId+",");
+        goods.setArtistIds(artistId);
 
         try
         {

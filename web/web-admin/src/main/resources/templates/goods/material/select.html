@@ -41,7 +41,7 @@
 
         var loadData = function (parentEl) {
             var name = $("#input_name").val();
-            var url = "/goods/material/ajaxload?ids=[[${materialIds}]]&q="+name;
+            var url = "/goods/material/ajaxload?ids=[[${ids}]]&q="+name;
             JQAjax.load(parentEl, url);
         }
 
@@ -52,6 +52,21 @@
         loadData($("#searchClick"));
 
         var arrData=[];
+
+        //当checkbox为可以取消模式的时候，则初始化绑定数据。
+        var loadGoodsData = function () {
+            var ids = "[[${ids}]]";
+            if(ids !="") {
+                var arrId = ids.split(',');
+                var arrName = "[[${names}]]".split('、');
+                for (var i = 0; i < arrId.length; i++) {
+                    var json = "{id:" + arrId[i] + ",name:'" + arrName[i] + "'}";
+                    arrData.push(json);
+                }
+            }
+        };
+
+        loadGoodsData();
 
         $(document).on('change','.checkMaterial',function () {
             var id = $(this).val();
@@ -72,15 +87,18 @@
 
         $("#okClick").click(function () {
             var arrId =[];
-            var arrName=[];
+            var arrName="";
             for(var key in arrData) {
                 var json = eval('(' + arrData[key] + ')');
                 arrId.push(json.id);
-                arrName.push(json.name);
+                if(arrName != ""){
+                    arrName += "、";
+                }
+                arrName += json.name;
 
             }
             $("#input_materialId").val(arrId.join());
-            $("#input_materialName").val(arrName.join());
+            $("#input_materialName").val(arrName);
             layer.closeAll();
         });
 

@@ -25,7 +25,7 @@ public class ShareContrller extends BaseController {
         if (StringUtils.isEmpty(share_url))
             return new ReturnValue<>(404, "分享url不存在");
 
-        WeChatShareResponse share = commonService.jsShare(share_url);
+        WeChatShareResponse share = commonService.jsShare(share_url, true);
 
         ReturnValue<WeChatShareResponse> response = new ReturnValue<>();
         response.setData(share);

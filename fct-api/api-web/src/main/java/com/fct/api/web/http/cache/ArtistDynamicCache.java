@@ -6,6 +6,7 @@ import com.fct.artist.interfaces.ArtistService;
 import com.fct.artist.interfaces.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,11 @@ public class ArtistDynamicCache {
                 map.put("id", dynamic.getId());
                 map.put("isTop", dynamic.getIsTop());
                 map.put("content", dynamic.getContent());
-                map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages()));
+                if (!StringUtils.isEmpty(dynamic.getVideoUrl())) {
+                    map.put("images", new ArrayList<>());
+                } else {
+                    map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages()));
+                }
                 map.put("videoImage", fctResourceUrl.getImageUrl(dynamic.getVideoImg()));
                 map.put("videoUrl", dynamic.getVideoUrl());
 

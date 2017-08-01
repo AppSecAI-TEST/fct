@@ -7,7 +7,9 @@ import com.fct.mall.data.entity.ShoppingCart;
 import com.fct.mall.data.repository.ShoppingCartRepository;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.DiscountProductDTO;
+import com.sun.javafx.binding.StringFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,6 +38,9 @@ public class ShoppingCartManager {
 
     @Autowired
     private OrderGoodsManager orderGoodsManager;
+
+    @Autowired
+    private JdbcTemplate jt;
 
     //添加或追加到购物车
     public void add(Integer memberId, Integer shopId, Integer goodsId, Integer goodsSpecId, Integer buyCount)
@@ -133,7 +138,12 @@ public class ShoppingCartManager {
         {
             throw new IllegalArgumentException("无此用户");
         }
-        return shoppingCartRepository.countByMemberId(memberId);
+
+        String sql = "select count(0) from shoppingCart c inner join goods g ";
+        sql += " on c.goodsId on g.Id";
+        sql += String.format(" where c.memberId=%d and g.status=1",memberId);
+
+        return jt.queryForObject(sql,Integer.class);
     }
 
     public List<ShoppingCart> find(Integer memberId, Integer shopId)

@@ -36,6 +36,10 @@ public class MainController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request,String returnurl,Model model) {
 
+        //String cellPhone,String platform,String openId, String nickName,String headImgUrl,
+        //String unionId,Integer sex,String ip,Integer expireDay
+        /*memberService.bindMemberAuth("13816619868","wxwap","sfdsfsdf","jon","","",0,"127.0.0.1",
+                7);*/
 
         model.addAttribute("returnurl",returnurl);
         model.addAttribute("pub",fctConfig);

@@ -74,7 +74,7 @@ public class WeChat {
     public WeChatUserResponse getUserInfo(String openId) {
 
         String accessToken = this.getAccessToken();
-Constants.logger.error("accessToken:" + accessToken +", " + openId);
+
         if (accessToken == null)
             return  null;
 
@@ -82,7 +82,7 @@ Constants.logger.error("accessToken:" + accessToken +", " + openId);
                 "%s?access_token=%s&openid=%s&lang=zh_CN",
                 USERINFO_URL, accessToken, openId);
         Map<String, Object> result = this.get(url);
-Constants.logger.error("result:" + JsonConverter.toJson(result));
+
         WeChatUserResponse weChatResponse = new WeChatUserResponse();
         if (result != null) {
 
@@ -111,17 +111,15 @@ Constants.logger.error("result:" + JsonConverter.toJson(result));
         {
             jedis = jedisPool.getResource();
             byte[] object = jedis.get((key).getBytes());
-            Constants.logger.error("object:" + object.toString());
             WeChatSource weChatSource = null;
             //对象不存在或不是刷新请求
             if(object != null)
             {
                 weChatSource = (WeChatSource) SerializationUtils.deserialize(object);
-Constants.logger.error("weChatSource:" + JsonConverter.toJson(weChatSource));
+
                 Date date = new Date();
                 //已过去时间
-                Integer cacheTime = ConvertUtils.toInteger(date.getTime() - weChatSource.getRefreshTime() / 1000);
-                Constants.logger.error("cacheTime:" + cacheTime);
+                Integer cacheTime = ConvertUtils.toInteger((date.getTime() - weChatSource.getRefreshTime()) / 1000);
                 if (cacheTime >= weChatSource.getExpireIn()) {
 
                     String url = String.format(
@@ -129,7 +127,6 @@ Constants.logger.error("weChatSource:" + JsonConverter.toJson(weChatSource));
                             REFRESH_TOKEN_URL, oAuthCofnig.getAppId(), weChatSource.getRefreshToken());
 
                     Map<String, Object> result = this.get(url);
-                    Constants.logger.error("result2:" + JsonConverter.toJson(result));
                     if (result != null) {
                         weChatSource.setAccessToken(ConvertUtils.toString(result.get("access_token")));
                         //过期时间，通常为7200

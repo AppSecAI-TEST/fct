@@ -169,6 +169,7 @@ public class WeChat {
         {
             jedis = jedisPool.getResource();
 
+            Constants.logger.error("fields:" + accessToken + ", " + refreshToken + ", " + expireIn);
             Date date = new Date();
             WeChatSource weChatSource = new WeChatSource();
             weChatSource.setAccessToken(accessToken);
@@ -179,7 +180,9 @@ public class WeChat {
             //刷新时间
             weChatSource.setRefreshTime(date.getTime());
 
+            Constants.logger.error("wechatSource begin:" + JsonConverter.toJson(weChatSource));
             jedis.set(key.getBytes(), SerializationUtils.serialize(weChatSource));
+            Constants.logger.error("wechatSource end:" + JsonConverter.toJson(weChatSource));
             jedis.expire(key, 2505600); //缓存29天，提前一天失效
         }
         catch (Exception e)

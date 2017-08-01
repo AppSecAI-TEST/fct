@@ -37,13 +37,13 @@ public class BaseController {
     {
         if (StringUtils.isEmpty(this.authToken))
         {
-            throw new IllegalArgumentException("登录授权已过期，请重新登录");
+            throw new IllegalArgumentException("loginExpire");
         }
 
         MemberLogin member = memberService.getMemberLogin(this.authToken);
         if (member == null)
         {
-            throw new IllegalArgumentException("登录授权已过期，请重新登录");
+            throw new IllegalArgumentException("loginExpire");
         }
 
         return member;

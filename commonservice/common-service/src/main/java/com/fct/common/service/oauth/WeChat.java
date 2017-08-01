@@ -43,7 +43,7 @@ public class WeChat {
     public String oAuthURL(String redirectURI, String scope) {
 
         return String.format(
-                "%s?appid=%s&redirect_uri=%sresponse_type=code&scope=%s&state=fangcun&#wechat_redirect",
+                "%s?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=fangcun&#wechat_redirect",
                 AUTHORIZE_URL, oAuthCofnig.getAppId(), redirectURI, scope);
     }
 

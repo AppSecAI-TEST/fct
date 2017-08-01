@@ -122,7 +122,7 @@ public class WithdrawController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
-        if (member.getAuthStatus() != 1) {
+        if (member.getAuthStatus() != 2) {
 
             return new ReturnValue(404, "还未进行实名认证");
         }

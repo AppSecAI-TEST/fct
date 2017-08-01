@@ -1,14 +1,11 @@
 package com.fct.common.service.oauth;
 
 import com.fct.common.interfaces.WeChatResponse;
-import com.fct.common.interfaces.WeChatShareResponse;
 import com.fct.common.interfaces.WeChatUserResponse;
 import com.fct.common.service.Constants;
 import com.fct.common.service.OAuthCofnig;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ConvertUtils;
-import com.fct.core.utils.StringHelper;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
@@ -86,7 +83,6 @@ public class WeChat {
                 USERINFO_URL, accessToken, openId);
         Map<String, Object> result = this.get(url);
 
-        Constants.logger.error("result:" + JsonConverter.toJson(result));
         WeChatUserResponse weChatResponse = new WeChatUserResponse();
         if (result != null) {
 
@@ -120,7 +116,7 @@ public class WeChat {
             if(object != null)
             {
                 weChatSource = (WeChatSource) SerializationUtils.deserialize(object);
-                Constants.logger.error("weChatSource:" + JsonConverter.toJson(weChatSource));
+
                 Date date = new Date();
                 //已过去时间
                 Integer cacheTime = ConvertUtils.toInteger(date.getTime() - weChatSource.getRefreshTime() / 1000);

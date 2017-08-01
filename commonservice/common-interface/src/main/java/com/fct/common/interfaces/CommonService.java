@@ -69,6 +69,6 @@ public interface CommonService {
 
     WeChatUserResponse getUserInfo(String openid);
 
-    WeChatShareResponse jsShare(String url);
+    WeChatShareResponse jsShare(String url, Boolean debug);
 
 }

@@ -446,8 +446,8 @@ public class CommonServiceImpl implements CommonService {
         return weChat.getUserInfo(openid);
     }
 
-    public WeChatShareResponse jsShare(String url) {
+    public WeChatShareResponse jsShare(String url, Boolean debug) {
 
-        return weChatShare.jsShare(url);
+        return weChatShare.jsShare(url, debug);
     }
 }

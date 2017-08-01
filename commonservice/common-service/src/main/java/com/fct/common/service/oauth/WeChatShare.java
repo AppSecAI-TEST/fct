@@ -37,9 +37,9 @@ public class WeChatShare {
         String noncestr = StringHelper.getRandomString(16);
         Integer timestamp = ConvertUtils.toInteger(date.getTime() / 1000);
         debug = ConvertUtils.toBoolean(debug);
+
         String ticket = this.getJsTicket();
         if (ticket == null) {
-
             return null;
         }
 
@@ -49,7 +49,7 @@ public class WeChatShare {
         response.setTimestamp(timestamp);
         response.setNonceStr(noncestr);
         response.setSignature(this.signature(ticket, noncestr, timestamp, url));
-Constants.logger.error(JsonConverter.toJson(response));
+
         return response;
     }
 
@@ -154,7 +154,7 @@ Constants.logger.error(JsonConverter.toJson(response));
                 if (!StringUtils.isEmpty(resultString)) {
 
                     Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-                    if (result.containsKey("errcode")) {
+                    if (result.containsKey("errcode") && ConvertUtils.toInteger(result.get("errcode"), 1) != 0) {
 
                         Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
                         return null;

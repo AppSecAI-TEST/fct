@@ -72,12 +72,12 @@ public class CategoryController extends BaseController {
 
     @RequestMapping(value="/save", method=RequestMethod.POST,produces="application/json;charset=UTF-8")
     @ResponseBody
-    public String save(Integer id,String name,Integer sortindex,Integer parentId,String img,String description)
+    public String save(Integer id,String name,Integer sortindex,Integer parentid,String img,String description)
     {
         id = ConvertUtils.toInteger(id);
         name =ConvertUtils.toString(name);
         sortindex = ConvertUtils.toInteger(sortindex);
-        parentId = ConvertUtils.toInteger(parentId);
+        parentid = ConvertUtils.toInteger(parentid);
         img = ConvertUtils.toString(img);
         description = ConvertUtils.toString(description);
 
@@ -90,7 +90,7 @@ public class CategoryController extends BaseController {
         }
         category.setImg(img);
         category.setName(name);
-        category.setParentId(parentId);
+        category.setParentId(parentid);
         category.setSortIndex(sortindex);
         category.setDescription(description);
 

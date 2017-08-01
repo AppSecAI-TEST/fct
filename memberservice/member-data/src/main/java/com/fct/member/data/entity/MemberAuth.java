@@ -18,7 +18,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class MemberAuth implements Serializable {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer Id;
 

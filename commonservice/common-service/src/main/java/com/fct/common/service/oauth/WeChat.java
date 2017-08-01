@@ -17,6 +17,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -201,10 +202,12 @@ public class WeChat {
             if (200 == status) {
                 String resultString = hc.getResult();
                 if (!StringUtils.isEmpty(resultString)) {
-                    Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
+                    Map<String, Object> result = JsonConverter.toObject(resultString, HashMap.class);
                     //请求出错，记录错误信息
-                    if (result.containsKey("errcode"))
+                    if (result.containsKey("errcode")) {
                         Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
+                        return null;
+                    }
 
                     return result;
                 }

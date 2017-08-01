@@ -76,16 +76,14 @@ public class ProductController extends BaseController {
             cartProductCount = mallService.getShoopingCartCount(member.getMemberId());
         }
         goods = mallService.getGoods(id);
-        if(goods !=null)
-        {
-            discountProductDTO = promotionService.getDiscountByProduct(id);
-        }
-
         if(goods == null)
         {
             return new ReturnValue<Map<String, Object>>(404, "产品不存在");
         }
 
+        mallService.addGoodsViewCount(goods.getId(), goods.getViewCount());
+
+        discountProductDTO = promotionService.getDiscountByProduct(id);
         Map<String, Object> discount = new HashMap<>();
         if (discountProductDTO != null) {
             Long endTime = DateUtils.compareDate(discountProductDTO.getDiscount().getStartTime(), new Date()) / 1000;

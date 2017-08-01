@@ -113,7 +113,8 @@ public class MemberOAuthController extends BaseController {
         }
 
         WeChatUserResponse user = commonService.getUserInfo(openid);
-        if (user == null) return new ReturnValue(404, "授权已失效，请重新授权");
+        if (user == null)
+            return new ReturnValue(404, "授权已失效，请重新授权");
          MemberLogin member = memberService.bindMemberAuth(cellphone, platform, openid, user.getNickname(),
                  user.getHeadimgurl(), user.getUnionid(), user.getSex(), ip, expire_day);
 

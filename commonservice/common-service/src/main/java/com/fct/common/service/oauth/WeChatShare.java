@@ -56,7 +56,7 @@ public class WeChatShare {
 
         String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s",
                 ticket, noncestr, timestamp, url);
-
+        Constants.logger.error("SignString:" + str);
         return DigestUtils.sha1Hex(str);
     }
 

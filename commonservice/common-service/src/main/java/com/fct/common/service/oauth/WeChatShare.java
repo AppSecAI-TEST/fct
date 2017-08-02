@@ -54,10 +54,10 @@ public class WeChatShare {
 
     private String signature(String ticket, String noncestr, Integer timestamp, String url) {
 
-        String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s",
-                ticket, noncestr, timestamp, url);
+        String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s",
+                ticket, noncestr, timestamp.toString(), url);
         Constants.logger.error("SignString:" + str);
-        return DigestUtils.sha1Hex(str);
+        return DigestUtils.sha1(str).toString();
     }
 
     public String getAccessToken() {

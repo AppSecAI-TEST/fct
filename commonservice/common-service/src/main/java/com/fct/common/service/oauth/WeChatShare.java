@@ -147,7 +147,7 @@ public class WeChatShare {
 
                 ShareResultResponse response = JsonConverter.toObject(resultString, ShareResultResponse.class);
 
-                if (response.getErrcode() == 0) {
+                if (response.getErrcode() == null || response.getErrcode() == 0) {
 
                     return response;
                 }

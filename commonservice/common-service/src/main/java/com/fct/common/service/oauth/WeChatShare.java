@@ -57,7 +57,7 @@ public class WeChatShare {
         String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s",
                 ticket, noncestr, timestamp.toString(), url);
         Constants.logger.error("SignString:" + str);
-        return DigestUtils.sha1(str).toString();
+        return DigestUtils.sha1Hex(str);
     }
 
     public String getAccessToken() {
@@ -144,10 +144,7 @@ public class WeChatShare {
             String resultString = hc.getResult();
             Constants.logger.info("wecharShare--request-result:"+resultString);
             if (!StringUtils.isEmpty(resultString)) {
-
                 ShareResultResponse response = JsonConverter.toObject(resultString, ShareResultResponse.class);
-                Constants.logger.error("response:" + JsonConverter.toJson(response));
-
                 if (response.getErrcode() == null || response.getErrcode() == 0) {
 
                     return response;

@@ -58,7 +58,7 @@ public class ProductMaterialController extends BaseController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", material.getId());
                 map.put("name", material.getName());
-                map.put("image", getImgUrl(material.getImages()));
+                map.put("image", fctResourceUrl.thumbSmall(material.getImages()));
                 map.put("description", material.getDescription());
                 //获取泥料指定个数产品
                 map.put("products", productCache.guessProducts(product_id, material.getId(), 0, 3));

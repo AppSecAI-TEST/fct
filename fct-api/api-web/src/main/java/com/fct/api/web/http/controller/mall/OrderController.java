@@ -135,7 +135,7 @@ public class OrderController extends BaseController {
                 goodsMaps.put("goodsSpecId", goods.getGoodsSpecId());
                 goodsMaps.put("name", goods.getName());
                 goodsMaps.put("specName", goods.getSpecName());
-                goodsMaps.put("img", fctResourceUrl.getImageUrl(goods.getImg()));
+                goodsMaps.put("img", fctResourceUrl.thumbSmall(goods.getImg()));
                 goodsMaps.put("buyCount", goods.getBuyCount());
                 goodsMaps.put("status", goods.getStatus());
                 goodsMaps.put("statusName", goods.getStatusName());

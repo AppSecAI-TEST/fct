@@ -71,7 +71,7 @@ public class ArtistCommentCache {
             MemberDTO member = memberCache.getMember(comment.getMemberId());
             map.put("id", comment.getId());
             map.put("userName", member.getUserName());
-            map.put("headPortrait", fctResourceUrl.getImageUrl(member.getHeadPortrait()));
+            map.put("headPortrait", fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
             map.put("content", comment.getContent());
             map.put("replyContent", getFormatCommetns(comment.getReplyComment()));
             map.put("createTime", DateUtils.formatDate(comment.getCreateTime(),"yyyy-MM-dd"));

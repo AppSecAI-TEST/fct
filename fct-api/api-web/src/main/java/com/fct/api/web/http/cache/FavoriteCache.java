@@ -99,7 +99,7 @@ public class FavoriteCache {
                 productMap.put("id", goods.getId());
                 productMap.put("name", goods.getName());
                 productMap.put("title", "");
-                productMap.put("image", fctResourceUrl.getImageUrl(goods.getVideoImg()));
+                productMap.put("image", fctResourceUrl.thumbLarge(goods.getVideoImg()));
                 map.put(goods.getId(), productMap);
             }
         }
@@ -121,7 +121,7 @@ public class FavoriteCache {
                 artistMap.put("id", artist.getId());
                 artistMap.put("name", artist.getName());
                 artistMap.put("title", artist.getTitle());
-                artistMap.put("image", fctResourceUrl.getImageUrl(artist.getBanner()));
+                artistMap.put("image", fctResourceUrl.thumbLarge(artist.getBanner()));
                 map.put(artist.getId(), artistMap);
             }
         }

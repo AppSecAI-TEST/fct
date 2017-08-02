@@ -78,14 +78,4 @@ public class BaseController {
 
         return DateUtils.formatDate(time, format);
     }
-
-    protected String getImgUrl(String url)
-    {
-        return fctResourceUrl.getImageUrl(url);
-    }
-
-    protected List<String> getMutilImgUrl(String url)
-    {
-        return fctResourceUrl.getMutilImageUrl(url);
-    }
 }

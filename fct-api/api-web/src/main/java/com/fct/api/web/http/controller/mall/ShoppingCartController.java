@@ -54,7 +54,7 @@ public class ShoppingCartController extends BaseController {
                 map.put("id", cart.getId());
                 map.put("goodsId", cart.getGoodsId());
                 map.put("name", cart.getGoods().getName());
-                map.put("img", getImgUrl(cart.getGoods().getImg()));
+                map.put("img", fctResourceUrl.thumbSmall(cart.getGoods().getImg()));
                 map.put("promotionPrice", cart.getGoods().getPromotionPrice());
                 map.put("price", cart.getGoods().getPrice());
                 map.put("specId", cart.getGoodsSpecId());

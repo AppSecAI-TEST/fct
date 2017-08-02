@@ -67,7 +67,7 @@ public class OrderProductController extends BaseController {
             for (OrderGoods orderGoods:lsOrderGoods.getItems()) {
 
                 //设置图片
-                orderGoods.setImg(this.getImgUrl(orderGoods.getImg()));
+                orderGoods.setImg(fctResourceUrl.thumbSmall(orderGoods.getImg()));
 
                 OrderProductDTO productDTO = new OrderProductDTO();
                 productDTO.setProductId(orderGoods.getGoodsId());
@@ -143,7 +143,7 @@ public class OrderProductController extends BaseController {
             map.put("goodsSpecId", product.getGoodsSpecId());
             map.put("name", product.getName());
             map.put("specName", product.getSpecName());
-            map.put("img", fctResourceUrl.getImageUrl(product.getImg()));
+            map.put("img", fctResourceUrl.thumbSmall(product.getImg()));
             map.put("price", product.getPrice());
             map.put("buyCount", product.getBuyCount());
             map.put("payAmount", product.getPayAmount());

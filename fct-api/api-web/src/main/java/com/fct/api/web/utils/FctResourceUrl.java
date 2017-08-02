@@ -18,7 +18,7 @@ public class FctResourceUrl {
     @Autowired
     private FctConfig fctConfig;
 
-    public String getImageUrl(String url)
+    private String getImageUrl(String url)
     {
         if (StringUtils.isEmpty(url))
             return this.defaultNullImage();
@@ -32,10 +32,30 @@ public class FctResourceUrl {
         {
             url = "";
         }
-        return String.format("%s!%d", getImageUrl(url), size);
+        return String.format("%s!%d", this.getImageUrl(url), size);
     }
 
-    public List<String> getMutilImageUrl(String url)
+    /**最小尺寸
+     *
+     * @param url
+     * @return
+     */
+    public String thumbSmall(String url) {
+
+        return this.thumbnail(url, 120);
+    }
+
+    public String thumbMedium(String url) {
+
+        return this.thumbnail(url, 300);
+    }
+
+    public String thumbLarge(String url) {
+
+        return this.thumbnail(url, 750);
+    }
+
+    public List<String> getMutilImageUrl(String url, String size)
     {
         if(StringUtils.isEmpty(url))
         {
@@ -44,12 +64,17 @@ public class FctResourceUrl {
         String[] arrUrl = url.split(",");
         List<String> ls = new ArrayList<>();
         for (String img:arrUrl) {
-
-            if (StringUtils.isEmpty(url))
-                ls.add(this.defaultNullImage());
-
-            else
-                ls.add(String.format("%s%s", fctConfig.getImageUrl(), img));
+            switch (size) {
+                case "small":
+                    ls.add(this.thumbSmall(img));
+                    break;
+                case "medium":
+                    ls.add(this.thumbSmall(img));
+                    break;
+                case "large":
+                    ls.add(this.thumbSmall(img));
+                    break;
+            }
         }
 
         return ls;
@@ -68,6 +93,6 @@ public class FctResourceUrl {
             return url;
         }
 
-        return this.getImageUrl(url);
+        return this.thumbSmall(url);
     }
 }

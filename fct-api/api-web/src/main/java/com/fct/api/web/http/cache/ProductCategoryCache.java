@@ -94,7 +94,7 @@ public class ProductCategoryCache {
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", cate.getId());
                     map.put("name", cate.getName());
-                    map.put("image", fctResourceUrl.getImageUrl(cate.getImg()));
+                    map.put("image", fctResourceUrl.thumbSmall(cate.getImg()));
 
                     lsMaps.add(map);
                 }

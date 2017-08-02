@@ -64,7 +64,7 @@ public class MallController extends BaseController{
             Map<String,Object> map = new HashMap<>();
             map.put("id", grade.getId());
             map.put("name", grade.getName());
-            map.put("img", getImgUrl(grade.getImg()));
+            map.put("img", fctResourceUrl.thumbSmall(grade.getImg()));
             lsGrade.add(map);
         }
 
@@ -82,8 +82,8 @@ public class MallController extends BaseController{
                 map.put("name", goods.getName());
                 map.put("subTitle", goods.getSubTitle());
                 map.put("intro", goods.getIntro());
-                map.put("videoImg", getImgUrl(goods.getVideoImg()));
-                map.put("multiImages", getMutilImgUrl(goods.getMultiImages()));
+                map.put("videoImg", fctResourceUrl.thumbLarge(goods.getVideoImg()));
+                map.put("multiImages", fctResourceUrl.getMutilImageUrl(goods.getMultiImages(), "small"));
                 map.put("viewCount", goods.getViewCount());
                 map.put("commentCount", goods.getCommentCount());
 
@@ -139,7 +139,7 @@ public class MallController extends BaseController{
                 Map<String, Object> mapArtist = new HashMap<>();
                 mapArtist.put("id", artist.getId());
                 mapArtist.put("name", artist.getName());
-                mapArtist.put("headPortrait", fctResourceUrl.thumbnail(artist.getHeadPortrait(), 100));
+                mapArtist.put("headPortrait", fctResourceUrl.getAvatarUrl(artist.getHeadPortrait()));
                 mapArtist.put("intro", artist.getIntro());
 
                 lsArtist.add(mapArtist);

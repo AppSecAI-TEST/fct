@@ -46,12 +46,12 @@ public class ProductCommentCache {
 
                 map.put("id", comment.getIsAnonymous() != 1 ? 0 : comment.getId());
                 map.put("userName", comment.getIsAnonymous() != 1 ? "匿名" : member.getUserName());
-                map.put("headPortrait", fctResourceUrl.getImageUrl(member.getHeadPortrait()));
+                map.put("headPortrait", fctResourceUrl.getAvatarUrl(member.getHeadPortrait()));
                 map.put("descScore", comment.getDescScore());
                 map.put("content", comment.getContent());
                 map.put("replyContent", comment.getReplyContent());
                 map.put("createTime", DateUtils.formatDate(comment.getCreateTime(),"yyyy-MM-dd"));
-                map.put("pictures", fctResourceUrl.getMutilImageUrl(comment.getPicture()));
+                map.put("pictures", fctResourceUrl.getMutilImageUrl(comment.getPicture(), "small"));
 
                 lsMaps.add(map);
             }

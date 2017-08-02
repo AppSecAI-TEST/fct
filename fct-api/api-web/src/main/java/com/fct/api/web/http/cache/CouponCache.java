@@ -188,7 +188,7 @@ public class CouponCache {
                 productMap = new HashMap<>();
                 productMap.put("id", goods.getId());
                 productMap.put("name", goods.getName());
-                productMap.put("defaultImage", fctResourceUrl.getImageUrl(goods.getDefaultImage()));
+                productMap.put("defaultImage", fctResourceUrl.thumbSmall(goods.getDefaultImage()));
                 map.put(goods.getId(), productMap);
             }
         }

@@ -44,9 +44,9 @@ public class ArtistDynamicCache {
                 if (!StringUtils.isEmpty(dynamic.getVideoUrl())) {
                     map.put("images", new ArrayList<>());
                 } else {
-                    map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages()));
+                    map.put("images", fctResourceUrl.getMutilImageUrl(dynamic.getImages(), "small"));
                 }
-                map.put("videoImage", fctResourceUrl.getImageUrl(dynamic.getVideoImg()));
+                map.put("videoImage", fctResourceUrl.thumbLarge(dynamic.getVideoImg()));
                 map.put("videoUrl", dynamic.getVideoUrl());
 
                 lsMaps.add(map);

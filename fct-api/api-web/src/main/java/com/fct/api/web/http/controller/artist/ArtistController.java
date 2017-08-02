@@ -62,7 +62,7 @@ public class ArtistController extends BaseController {
                 map.put("intro", artist.getIntro());
                 map.put("followCount", artist.getFollowCount());
                 map.put("goodsCount", artist.getGoodsCount());
-                map.put("image", getImgUrl(artist.getMainImg()));
+                map.put("image", fctResourceUrl.thumbLarge(artist.getMainImg()));
 
                 lsMaps.add(map);
             }
@@ -105,7 +105,7 @@ public class ArtistController extends BaseController {
             map.put("name", artist.getName());
             //因为网站现在人气不高，占时用浏览数代替关注数
             map.put("followCount", artist.getViewCount());
-            map.put("banner", getImgUrl(artist.getBanner()));
+            map.put("banner", fctResourceUrl.thumbLarge(artist.getBanner()));
             //动态
             map.put("dynamicList", artistDynamicCache.findPageArtistDynamic(id, page_index, page_size));
         }
@@ -143,7 +143,7 @@ public class ArtistController extends BaseController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", artist.getId());
                 map.put("name", artist.getName());
-                map.put("headPortrait", getImgUrl(artist.getHeadPortrait()));
+                map.put("headPortrait", fctResourceUrl.getAvatarUrl(artist.getHeadPortrait()));
                 map.put("description", artist.getDescription());
 
                 //获取艺术家指定个数产品

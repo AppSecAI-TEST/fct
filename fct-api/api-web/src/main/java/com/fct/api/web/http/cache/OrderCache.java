@@ -62,7 +62,7 @@ public class OrderCache {
                         productMap = new HashMap<>();
                         productMap.put("name", product.getName());
                         productMap.put("specName", product.getSpecName());
-                        productMap.put("img", fctResourceUrl.getImageUrl(product.getImg()));
+                        productMap.put("img", fctResourceUrl.thumbSmall(product.getImg()));
                         productMap.put("buyCount", product.getBuyCount());
                         productMap.put("price", product.getPrice());
                         lsProductMaps.add(productMap);

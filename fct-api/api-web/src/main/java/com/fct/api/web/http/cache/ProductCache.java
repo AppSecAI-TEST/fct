@@ -40,7 +40,7 @@ public class ProductCache {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", goods.getId());
                 map.put("name", goods.getName());
-                map.put("defaultImage", fctResourceUrl.getImageUrl(goods.getDefaultImage()));
+                map.put("defaultImage", fctResourceUrl.thumbSmall(goods.getDefaultImage()));
                 if (goods.getSpecification() == null || goods.getSpecification().size() < 1) {
                     map.put("price", goods.getSalePrice());
                     map.put("commission", goods.getCommission());
@@ -191,7 +191,7 @@ public class ProductCache {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", goods.getId());
                 map.put("name", goods.getName());
-                map.put("defaultImage", fctResourceUrl.getImageUrl(goods.getDefaultImage()));
+                map.put("defaultImage", fctResourceUrl.thumbMedium(goods.getDefaultImage()));
 
                 if (hasPrice)
                     map.put("price", goods.getSalePrice());

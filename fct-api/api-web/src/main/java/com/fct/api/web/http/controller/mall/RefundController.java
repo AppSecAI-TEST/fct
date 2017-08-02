@@ -76,7 +76,7 @@ public class RefundController extends BaseController {
                 map.put("price", refund.getPayAmount().divide(new BigDecimal(refund.getBuyCount())));
                 map.put("buyCount", refund.getBuyCount());
                 map.put("payAmount", refund.getPayAmount());
-                map.put("img", fctResourceUrl.getImageUrl(refund.getImg()));
+                map.put("img", fctResourceUrl.thumbSmall(refund.getImg()));
                 lsMaps.add(map);
             }
 
@@ -117,7 +117,7 @@ public class RefundController extends BaseController {
             Map<String, Object> productMap = new HashMap<>();
             productMap.put("name", refund.getOrderGoods().getName());
             productMap.put("specName", refund.getOrderGoods().getSpecName());
-            productMap.put("img", fctResourceUrl.getImageUrl(refund.getOrderGoods().getImg()));
+            productMap.put("img", fctResourceUrl.thumbSmall(refund.getOrderGoods().getImg()));
             productMap.put("buyCount", refund.getOrderGoods().getBuyCount());
             productMap.put("price", refund.getOrderGoods().getPrice());
             productMap.put("payAmount", refund.getOrderGoods().getPayAmount());
@@ -130,7 +130,7 @@ public class RefundController extends BaseController {
 
                     messageMap = new HashMap<>();
                     messageMap.put("description", message.getDescription());
-                    messageMap.put("images", fctResourceUrl.getMutilImageUrl(message.getImages()));
+                    messageMap.put("images", fctResourceUrl.getMutilImageUrl(message.getImages(), "small"));
                     messageMap.put("createTime", DateUtils.formatDate(message.getCreateTime(), "yyyy-MM-dd"));
 
                     lsMessageMaps.add(messageMap);

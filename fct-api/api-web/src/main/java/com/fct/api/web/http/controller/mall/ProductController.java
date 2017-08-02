@@ -132,7 +132,7 @@ public class ProductController extends BaseController {
 
         Map<String, Object> video = new HashMap<>();
         video.put("url", goods.getVideoUrl());
-        video.put("poster", getImgUrl(goods.getVideoImg()));
+        video.put("poster", fctResourceUrl.thumbLarge(goods.getVideoImg()));
         product.put("video", video);
 
         List<Map<String, Object>> lsSpec = new ArrayList<>();

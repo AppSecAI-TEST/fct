@@ -142,6 +142,7 @@ public class WeChatShare {
 
         if (200 == status) {
             String resultString = hc.getResult();
+            Constants.logger.info("wecharShare--request-result:"+resultString);
             if (!StringUtils.isEmpty(resultString)) {
 
                 ShareResultResponse response = JsonConverter.toObject(resultString, ShareResultResponse.class);

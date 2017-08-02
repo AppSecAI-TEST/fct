@@ -67,7 +67,7 @@ public class WikiController extends BaseController {
             }
         } else if (type.equals("material")) {
 
-            map = productCategoryCache.getWiki(type_id);
+            map = productMaterialCache.getWiki(type_id);
             if (map != null)
 
                 map.put("productList", productCache.guessProducts(0, type_id, 0, 3));

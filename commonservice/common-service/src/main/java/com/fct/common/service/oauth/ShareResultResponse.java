@@ -17,4 +17,6 @@ public class ShareResultResponse implements Serializable {
     private String ticket;
 
     private String access_token;
+
+    private String expires_in;
 }

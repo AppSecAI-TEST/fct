@@ -2,8 +2,10 @@ package com.fct.api.web.http.controller.mall;
 
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
+import com.fct.core.utils.DateUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.mall.data.entity.OrderRefund;
+import com.fct.mall.data.entity.OrderRefundMessage;
 import com.fct.mall.interfaces.MallService;
 import com.fct.mall.interfaces.OrderRefundDTO;
 import com.fct.mall.interfaces.PageResponse;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,16 +100,48 @@ public class RefundController extends BaseController {
      * @return
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ReturnValue<OrderRefund> getRefund(@PathVariable("id") Integer id) {
+    public ReturnValue<Map<String, Object>> getRefund(@PathVariable("id") Integer id) {
 
         if (id < 1) {
             return new ReturnValue<>(404, "退换货记录不存在");
         }
 
         OrderRefund refund = mallService.getOrderRefund(id);
+        Map<String, Object> map = new HashMap<>();
+        if (refund != null) {
+            map.put("id", refund.getId());
+            map.put("serviceType", refund.getServiceType() == 0 ? "仅退款" : "退货退款");
+            map.put("refundReason", refund.getRefundReason());
+            map.put("statusName", refund.getStatusName());
 
-        ReturnValue<OrderRefund> response = new ReturnValue<>();
-        response.setData(refund);
+            Map<String, Object> productMap = new HashMap<>();
+            productMap.put("name", refund.getOrderGoods().getName());
+            productMap.put("specName", refund.getOrderGoods().getSpecName());
+            productMap.put("img", fctResourceUrl.getImageUrl(refund.getOrderGoods().getImg()));
+            productMap.put("buyCount", refund.getOrderGoods().getBuyCount());
+            productMap.put("price", refund.getOrderGoods().getPrice());
+            productMap.put("payAmount", refund.getOrderGoods().getPayAmount());
+            map.put("orderGoods", productMap);
+
+            List<Map<String, Object>> lsMessageMaps = new ArrayList<>();
+            if (refund.getRefundMessage() != null && refund.getRefundMessage().size() > 0) {
+                Map<String, Object> messageMap = null;
+                for (OrderRefundMessage message: refund.getRefundMessage()) {
+
+                    messageMap = new HashMap<>();
+                    messageMap.put("description", message.getDescription());
+                    messageMap.put("images", fctResourceUrl.getMutilImageUrl(message.getImages()));
+                    messageMap.put("createTime", DateUtils.formatDate(message.getCreateTime(), "yyyy-MM-dd"));
+
+                    lsMessageMaps.add(messageMap);
+                }
+            }
+
+            map.put("orderRefundMessage", lsMessageMaps);
+        }
+
+        ReturnValue<Map<String, Object>> response = new ReturnValue<>();
+        response.setData(map);
 
         return response;
     }

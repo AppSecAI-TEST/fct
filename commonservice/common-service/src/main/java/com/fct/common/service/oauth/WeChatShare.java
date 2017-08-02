@@ -30,16 +30,14 @@ public class WeChatShare {
     @Autowired
     private JedisPool jedisPool;
 
-
     public WeChatShareResponse jsShare(String url, Boolean debug) {
 
-        Date date = new Date();
+        //Date date = new Date();
         String noncestr = StringHelper.getRandomString(16);
-        Integer timestamp = ConvertUtils.toInteger(date.getTime() / 1000);
+        Integer timestamp = ConvertUtils.toInteger(System.currentTimeMillis() / 1000);
         debug = ConvertUtils.toBoolean(debug);
 
-        String ticket = this.getJsTicket();
-        Constants.logger.error("ticket:" + ticket);
+        String ticket = getJsTicket();
         if (ticket == null) {
             return null;
         }
@@ -49,8 +47,8 @@ public class WeChatShare {
         response.setAppId(oAuthCofnig.getAppId());
         response.setTimestamp(timestamp);
         response.setNonceStr(noncestr);
-        response.setSignature(this.signature(ticket, noncestr, timestamp, url));
-        Constants.logger.error("response:" + JsonConverter.toJson(response));
+        response.setSignature(signature(ticket, noncestr, timestamp, url));
+        Constants.logger.info("response:" + JsonConverter.toJson(response));
         return response;
     }
 
@@ -76,16 +74,11 @@ public class WeChatShare {
 
                 String url = String.format("%s?grant_type=client_credential&appid=%s&secret=%s",
                         this.ACCESS_TOKEN_URL, oAuthCofnig.getAppId(), oAuthCofnig.getAppSecret());
-                Map<String, Object> result = this.get(url);
-                if (result != null) {
-
-                    String accessToken = ConvertUtils.toString(result.get("access_token"));
-                    if (StringUtils.isEmpty(accessToken)) {
-                        return null;
-                    }
-                    jedis.set(key.getBytes(), SerializationUtils.serialize(accessToken));
+                ShareResultResponse response = getRequestData(url);
+                if (response != null && !StringUtils.isEmpty(response.getAccess_token())) {
+                    jedis.set(key.getBytes(), SerializationUtils.serialize(response.getAccess_token()));
                     jedis.expire(key, 7000); //缓存7200秒，提前一天失效
-                    return accessToken;
+                    return response.getAccess_token();
                 }
             }
         } catch (Exception e) {
@@ -109,6 +102,7 @@ public class WeChatShare {
             //对象不存在或不是刷新请求
             if(object != null)
             {
+                Constants.logger.info("redis-data:");
                 return (String) SerializationUtils.deserialize(object);
             }
             else
@@ -118,16 +112,11 @@ public class WeChatShare {
                     return  null;
 
                 String url = String.format("%s?type=jsapi&access_token=%s", TICKET_URL, accessToken);
-                Map<String, Object> result = this.get(url);
-                if (result != null) {
-
-                    String ticket = ConvertUtils.toString(result.get("ticket"));
-                    if (StringUtils.isEmpty(ticket))
-                        return null;
-
-                    jedis.set(key.getBytes(), SerializationUtils.serialize(ticket));
+                ShareResultResponse response = getRequestData(url);
+                if (response != null && !StringUtils.isEmpty(response.getTicket())) {
+                    jedis.set(key.getBytes(), SerializationUtils.serialize(response.getTicket()));
                     jedis.expire(key, 7000); //缓存7200秒，提前一天失效
-                    return ticket;
+                    return response.getTicket();
                 }
             }
         }
@@ -143,35 +132,31 @@ public class WeChatShare {
         return null;
     }
 
-    private Map<String, Object> get(String url) {
+    private ShareResultResponse getRequestData(String url) throws Exception {
 
         if (StringUtils.isEmpty(url)) return null;
 
         HttpClient hc = new HttpClient(url,10000,30000);
-        try {
-            int status = hc.sendGet("UTF-8");
-            if (200 == status) {
-                String resultString = hc.getResult();
-                if (!StringUtils.isEmpty(resultString)) {
 
-                    Map<String, Object> result = JsonConverter.toObject(resultString, Map.class);
-                    if (result.containsKey("errcode") && ConvertUtils.toInteger(result.get("errcode"), 1) != 0) {
+        int status = hc.sendGet("UTF-8");
 
-                        Constants.logger.error("code:" + result.get("errcode") + ", message:" + result.get("errmsg"));
-                        return null;
-                    }
+        if (200 == status) {
+            String resultString = hc.getResult();
+            Constants.logger.info("wecharShare--request-result:"+resultString);
+            if (!StringUtils.isEmpty(resultString)) {
 
-                    return result;
+                ShareResultResponse response = JsonConverter.toObject(resultString, ShareResultResponse.class);
+
+                if (response.getErrcode() == 0) {
+
+                    return response;
                 }
-            }else{
 
-                Constants.logger.error("返回http状态码["+status+"]，请检查请求报文或者请求地址是否正确");
             }
-        } catch (Exception e) {
+        }else{
 
-            Constants.logger.error(e.getMessage(), e);
+            Constants.logger.error("返回http状态码["+status+"]，请检查请求报文或者请求地址是否正确");
         }
-
         return null;
     }
 

@@ -83,7 +83,7 @@ public class MobileController extends BaseController{
                             desc += "等多件";
                         }
 
-                        String showUrl = fctConfig.getUrl()+"/my/orders/detail/"+orders.getOrderId();
+                        String showUrl = fctConfig.getUrl()+"/my/orders/"+orders.getOrderId();
 
                         payOrder = createPay(tradeid,tradetype,orders.getAccountAmount(),payAmount,orders.getTotalAmount(),
                                 new BigDecimal(0),orders.getPoints(),
@@ -228,7 +228,7 @@ public class MobileController extends BaseController{
                     {
                         desc += "等多件";
                     }
-                    showUrl = fctConfig.getUrl()+"/my/orders/detail/"+orders.getOrderId();
+                    showUrl = fctConfig.getUrl()+"/my/orders/"+orders.getOrderId();
                     //为业务特殊需求（延期过期时间）特将支付系统的过期时间再追加1天
                     expiredTime = DateUtils.addDay(orders.getExpiresTime(),1);
                     break;
@@ -365,7 +365,7 @@ public class MobileController extends BaseController{
                         remark += "等多件";
                     }
                     remark = "您购买的”"+remark +"”正在处理中，请耐心等待并关注订单状态。";
-                    gourl = fctConfig.getUrl() +"/my/orders/detail/"+payOrder.getOrderId();
+                    gourl = fctConfig.getUrl() +"/my/orders/"+payOrder.getOrderId();
                     break;
                 case "recharge":
                     RechargeRecord rechargeRecord = cacheManager.getCacheRechargeRecord(Integer.valueOf(payOrder.getTradeId()));

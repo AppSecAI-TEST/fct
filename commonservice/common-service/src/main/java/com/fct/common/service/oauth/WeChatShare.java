@@ -54,8 +54,8 @@ public class WeChatShare {
 
     private String signature(String ticket, String noncestr, Integer timestamp, String url) {
 
-        String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s?params=value",
-                ticket, noncestr, timestamp, url).toLowerCase();
+        String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s",
+                ticket, noncestr, timestamp, url);
 
         return DigestUtils.sha1Hex(str);
     }

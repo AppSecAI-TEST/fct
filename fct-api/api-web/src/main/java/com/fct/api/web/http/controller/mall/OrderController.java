@@ -139,7 +139,7 @@ public class OrderController extends BaseController {
                 goodsMaps.put("buyCount", goods.getBuyCount());
                 goodsMaps.put("status", goods.getStatus());
                 goodsMaps.put("statusName", goods.getStatusName());
-                goodsMaps.put("price", goods.getSpecName());
+                goodsMaps.put("price", goods.getPrice());
 
                 lsGoodsMaps.add(goodsMaps);
             }

@@ -47,7 +47,7 @@ public class FctResourceUrl {
 
     public String thumbMedium(String url) {
 
-        return this.thumbnail(url, 300);
+        return this.thumbnail(url, 350);
     }
 
     public String thumbLarge(String url) {

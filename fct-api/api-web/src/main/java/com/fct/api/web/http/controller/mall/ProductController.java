@@ -127,7 +127,7 @@ public class ProductController extends BaseController {
         product.put("hasCoupon", hasCoupon);
         product.put("hasDiscount", discountProductDTO != null);
         product.put("discount", discount);
-        product.put("materialId", goods.getMaterialId());
+        product.put("materialId", goods.getMaterialIds());
         product.put("content", goods.getContent());
 
         Map<String, Object> video = new HashMap<>();

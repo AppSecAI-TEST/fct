@@ -103,13 +103,24 @@ public class CouponCodeDTOManager {
             throw new IllegalArgumentException("产品列表不能为空");
         }
 
+        String queryCode = "";
+        Integer queryMemberId = 0;
+        if (!StringUtils.isEmpty(couponCode))
+        {
+            queryCode = couponCode;
+        }
+        else
+        {
+            queryMemberId = memberId;
+        }
+
         CouponCodeDTO obj = null;
-        List<CouponCodeDTO> result = findMemberCouponCode(0,memberId,couponCode,0,
+        List<CouponCodeDTO> result = findMemberCouponCode(0,queryMemberId,queryCode,0,
                 true,1,50);
 
         if (!StringUtils.isEmpty(couponCode))
         {
-            if (result == null || result == null || result.size() < 1)
+            if (result == null || result.size() < 1)
             {
                 throw new IllegalArgumentException("该优惠券不存在或已过期");
             }

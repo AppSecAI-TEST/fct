@@ -1,19 +1,23 @@
 package com.fct.api.web.http.controller.promotion;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fct.api.web.http.cache.CouponCache;
 import com.fct.api.web.http.controller.BaseController;
+import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ConvertUtils;
 import com.fct.core.utils.ReturnValue;
 import com.fct.member.data.entity.MemberLogin;
 import com.fct.promotion.data.entity.CouponPolicy;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
+import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +71,25 @@ public class CouponController extends BaseController {
         }
 
         return new ReturnValue(200, "领取成功");
+    }
+
+    @RequestMapping(value = "use", method = RequestMethod.POST)
+    public ReturnValue<BigDecimal> useCoupon(String code, String product_info) {
+
+        MemberLogin member = this.memberAuth();
+
+        code = ConvertUtils.toString(code);
+        List<OrderProductDTO> productList = JsonConverter.toObject(product_info,
+                new TypeReference<List<OrderProductDTO>>() {});
+
+        CouponCodeDTO couponCode = promotionService.validCouponCode(member.getMemberId(), productList, code);
+        if (couponCode == null)
+            return new ReturnValue(404, "无效优惠券");
+
+        ReturnValue<BigDecimal> response = new ReturnValue<>();
+        response.setData(couponCode.getAmount());
+
+        return response;
     }
 
     /**用户的优惠券

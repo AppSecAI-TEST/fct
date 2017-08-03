@@ -49,7 +49,7 @@ public class CouponCodeDTOManager {
         List<Object> param = new ArrayList<>();
         String condition = getCondition(policyId,memberId,code,status,isValid,param);
 
-        String sql = "Select Count(0) from CouponPolicy as p inner join CouponCode as c on p.Id = c.policyId  where "+condition;
+        String sql = "Select Count(0) from CouponPolicy as p inner join CouponCode as c on p.Id = c.policyId  where 1=1 "+condition;
         return jt.queryForObject(sql,Integer.class,param.toArray());
     }
 

@@ -103,7 +103,8 @@
                                     <a href="javascript:;" th:if="${coupon.auditStatus eq 0}" th:attr="data-id=${coupon.id}" class="statusClick" data-actio="refuse"><i class="fa fa-close text-navy"></i> 拒绝</a>
                                 </td>
                                 <td>
-                                    <a th:href="@{/promotion/coupon/create(id=${coupon.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
+                                    <a th:href="@{/promotion/coupon/create(id=${coupon.id})}" class="btn btn-xs btn-outline btn-default">修改</a>
+                                    <a th:href="@{/promotion/coupon/code(policyid=${coupon.id})}" class="btn btn-xs btn-outline btn-default">查看</a>
                                 </td>
                             </tr>
                             </tbody>

@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/layout :: header(~{this :: title},~{::link})">
+    <title>方寸堂-优惠券管理</title>
+    <link />
+</head>
+
+<body th:replace="fragment/layout::body(~{ :: .bodyContent},'promotion_coupon',~{::.script})">
+
+<div class="row border-bottom bodyContent">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="top_search">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" class="form-horizontal" method="get">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <select class="col-sm-4 form-control" name="selkey">
+                                        <option value="code" th:selected="${query.selkey eq 'code'} ? 'selected'">券码</option>
+                                        <option value="member" th:selected="${query.selkey eq 'member'} ? 'selected'">会员Id</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input name="selvalue" th:value="${query.selvalue}" type="text" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-sm-2">
+                            <select class="form-control" name="status">
+                                <option value="">选择状态</option>
+                                <option value="0" th:selected="${query.status eq 0} ? 'selected'">未使用</option>
+                                <option value="1" th:selected="${query.status eq 1} ? 'selected'">使用中</option>
+                                <option value="2" th:selected="${query.status eq 2} ? 'selected'">已使用</option>
+                                <option value="3" th:selected="${query.status eq 3} ? 'selected'">已过期</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-sm btn-primary"> 搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight bodyContent">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>券码</th>
+                                <th>名称</th>
+                                <th>面额</th>
+                                <th>会员Id</th>
+                                <th>领取时间</th>
+                                <th>使用时间</th>
+                                <th>状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="coupon : ${lsCoupon}">
+                                <td th:text="${coupon.code}"></td>
+                                <td th:text="${coupon.couponName}"></td>
+                                <td th:text="'¥'+${coupon.amount}"></td>
+                                <td th:text="${coupon.memberId}"></td>
+                                <td th:text="${#dates.format(coupon.lastUpdateTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${#dates.format(coupon.useTime, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td>
+                                    <th:block th:if="${coupon.status eq 0}">未使用</th:block>
+                                    <th:block th:if="${coupon.status eq 1}">使用中</th:block>
+                                    <th:block th:if="${coupon.status eq 2}">已使用</th:block>
+                                    <th:block th:if="${coupon.status eq 3}">已过期</th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="13" class="footable-visible">
+                                    <div class="pager pull-right" th:utext="${pageHtml}"></div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" class="script">
+
+
+</script>
+</body>
+</html>

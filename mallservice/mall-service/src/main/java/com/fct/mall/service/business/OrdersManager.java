@@ -185,7 +185,7 @@ public class OrdersManager {
             String[] arrCPId = cc.getProductIds().split(",");
             for (String pid : arrCPId
                     ) {
-                OrderProductDTO p = getSingleProduct(lsOrderProduct, Integer.getInteger(pid));
+                OrderProductDTO p = getSingleProduct(lsOrderProduct, Integer.valueOf(pid));
 
                 if (p != null) {
                     couponTotalPrice = couponTotalPrice.add(p.getDiscountPrice().multiply(new BigDecimal(p.getCount())));//p.RealPrice

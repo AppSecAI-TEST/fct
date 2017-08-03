@@ -294,6 +294,7 @@ public class OrdersManager {
         //生成订单号
         Orders order = new Orders();
         order.setOrderId(orderId);
+        order.setMemberId(memberId);
 
         Integer closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(), order.getMemberId(),
                 0, lsOrderProduct, couponCode);

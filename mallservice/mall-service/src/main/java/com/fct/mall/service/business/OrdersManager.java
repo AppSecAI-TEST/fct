@@ -555,6 +555,10 @@ public class OrdersManager {
             jt.update(String.format("UPDATE Goods SET PayCount=PayCount+%d,SellCount=SellCount+%d WHERE Id=%d",
                     g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
         }
+
+        if(!StringUtils.isEmpty(order.getCouponCode())) {
+            promotionService.useCouponCode(order.getCouponCode());
+        }
     }
 
     public void updatePayPlatform(String orderId,String platform) {

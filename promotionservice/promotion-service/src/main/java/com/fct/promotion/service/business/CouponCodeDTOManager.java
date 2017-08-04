@@ -134,8 +134,6 @@ public class CouponCodeDTOManager {
             }
         }
 
-
-
         if (result == null || result == null)
         {
             return obj;

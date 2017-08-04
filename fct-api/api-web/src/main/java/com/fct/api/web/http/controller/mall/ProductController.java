@@ -81,7 +81,7 @@ public class ProductController extends BaseController {
             return new ReturnValue<Map<String, Object>>(404, "产品不存在");
         }
 
-        mallService.addGoodsViewCount(goods.getId(), goods.getViewCount());
+        mallService.addGoodsViewCount(goods.getId(), 1);
 
         discountProductDTO = promotionService.getDiscountByProduct(id);
         Map<String, Object> discount = new HashMap<>();

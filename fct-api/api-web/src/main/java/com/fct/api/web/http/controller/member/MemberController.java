@@ -149,7 +149,7 @@ public class MemberController extends BaseController {
                                 String bank_name, String bank_account) {
 
         MemberLogin member = this.memberAuth();
-        memberService.authenticationMember(member.getMemberId(), name,
+        memberService.authenticationMember(member.getToken(), member.getMemberId(), name,
                 idcard_no,idcard_image_url, bank_name, bank_account);
 
         return new ReturnValue();

@@ -82,7 +82,9 @@ public class MemberInfoManager {
         info.setWeixin(weixin);
         memberInfoRepository.save(info);
 
-        memberLoginManager.updateLogin(token,member,info);
+        if(!StringUtils.isEmpty(token)) {
+            memberLoginManager.updateLogin(token, member, info);
+        }
 
     }
 
@@ -153,7 +155,7 @@ public class MemberInfoManager {
         bank.setBankAccount(bankAccount);
         memberBankInfoManager.save(bank);
 
-        if(StringUtils.isEmpty(token)) {
+        if(!StringUtils.isEmpty(token)) {
             memberLoginManager.updateLogin(token, member, info);
         }
 

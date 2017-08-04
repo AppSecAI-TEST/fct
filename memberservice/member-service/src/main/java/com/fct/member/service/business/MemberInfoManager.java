@@ -96,7 +96,7 @@ public class MemberInfoManager {
     }
 
     @Transactional
-    public void authentication(Integer memberId,String name,String identityCardNo,String identityCardImg,
+    public void authentication(String token,Integer memberId,String name,String identityCardNo,String identityCardImg,
                                      String bankName,String bankAccount)
     {
         if(memberId<=0)
@@ -152,6 +152,10 @@ public class MemberInfoManager {
         bank.setBankName(bankName);
         bank.setBankAccount(bankAccount);
         memberBankInfoManager.save(bank);
+
+        if(StringUtils.isEmpty(token)) {
+            memberLoginManager.updateLogin(token, member, info);
+        }
 
     }
 

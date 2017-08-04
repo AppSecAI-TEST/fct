@@ -51,7 +51,7 @@ public interface MemberService {
 
     void setDefaultAddress(Integer id,Integer memberId);
 
-    void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
+    void authenticationMember(String token,Integer memberId,String name,String identityCardNo,String identityCardImg,
                               String bankName,String bankAccount);
 
     void verifyAuthentication(Integer memberId,Integer authStatus);

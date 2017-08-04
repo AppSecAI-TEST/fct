@@ -304,11 +304,11 @@ public class MemberServiceImpl implements com.fct.member.interfaces.MemberServic
         }
     }
 
-    public void authenticationMember(Integer memberId,String name,String identityCardNo,String identityCardImg,
+    public void authenticationMember(String token,Integer memberId,String name,String identityCardNo,String identityCardImg,
                          String bankName,String bankAccount)
     {
         try {
-            memberInfoManager.authentication(memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
+            memberInfoManager.authentication(token,memberId,name,identityCardNo,identityCardImg,bankName,bankAccount);
         }
         catch (IllegalArgumentException exp)
         {

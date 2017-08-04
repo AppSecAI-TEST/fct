@@ -81,8 +81,8 @@ public class CouponCodeManager {
 
     public void setCodeUsing(Integer policyId,String code) {
 
-        String sql = String.format("update CouponCode set Status =1,UseTime='%s',LastUpdateTime='%s' where policyId=%d and code='%s' and Status=0",
-                policyId,DateUtils.format(new Date()),DateUtils.format(new Date()),code);
+        String sql = String.format("update CouponCode set Status=1,UseTime='%s',LastUpdateTime='%s' where policyId=%d and code='%s' and Status=0",
+                DateUtils.format(new Date()),DateUtils.format(new Date()),policyId,code);
         int count = jt.update(sql);
         if (count < 1) {
             throw new IllegalArgumentException("优惠券使用出错");
@@ -156,7 +156,6 @@ public class CouponCodeManager {
         //更新数量
         coupon.setStatus(0);
         coupon.setMemberId(memberId);
-        this.save(coupon);
         couponPolicyManager.addReceiveCount(policy.getId());
     }
 
@@ -201,7 +200,7 @@ public class CouponCodeManager {
         return code;
     }
 
-    private CouponCode save(CouponCode obj) {
+    public CouponCode save(CouponCode obj) {
         obj.setLastUpdateTime(new Date());
         if (obj.getId() == null || obj.getId() <= 0) {
             obj.setCreateTime(new Date());

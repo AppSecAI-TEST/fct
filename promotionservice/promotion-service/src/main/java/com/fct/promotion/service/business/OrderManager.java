@@ -48,8 +48,12 @@ public class OrderManager {
         //check coupon
         CouponCode coupon = checkAndReceiveCouponCode(memberId, products, couponCode);
 
+        coupon.setUseTime(new Date());
+        coupon.setStatus(1);
+        couponCodeManager.save(coupon);
+
         //use coupon
-        couponCodeManager.setCodeUsing(coupon.getPolicyId(),coupon.getCode());
+        //couponCodeManager.setCodeUsing(coupon.getPolicyId(),coupon.getCode());
 
         //record
         this.addLog(orderId, coupon, products);

@@ -74,7 +74,7 @@ public class CouponPolicy implements Serializable {
     private Integer totalCount;
 
     /// <summary>
-    /// 每人领取的数量
+    /// 每人领取的数量该优惠券不存在或已过期
     /// </summary>
     private Integer singleCount;
 

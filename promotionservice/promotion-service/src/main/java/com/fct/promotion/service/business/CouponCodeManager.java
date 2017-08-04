@@ -79,17 +79,13 @@ public class CouponCodeManager {
         return code;
     }
 
-    public void setCodeUsing(String code) {
-        String sql = "update CouponCode set Status =1,UseTime=?,LastUpdateTime=? where code=? and Status=0";
-        List<Object> param = new ArrayList<>();
-        param.add(DateUtils.format(new Date()));
-        param.add(DateUtils.format(new Date()));
-        param.add(code);
-        synchronized (syncObj) {
-            int count = jt.update(sql,param.toArray());
-            if (count < 1) {
-                throw new IllegalArgumentException("优惠券使用出错");
-            }
+    public void setCodeUsing(Integer policyId,String code) {
+
+        String sql = String.format("update CouponCode set Status =1,UseTime='%s',LastUpdateTime='%s' where policyId=%d and code='%s' and Status=0",
+                policyId,DateUtils.format(new Date()),DateUtils.format(new Date()),code);
+        int count = jt.update(sql);
+        if (count < 1) {
+            throw new IllegalArgumentException("优惠券使用出错");
         }
     }
 
@@ -142,47 +138,26 @@ public class CouponCodeManager {
     }
 
 
-    public void receiveSystemCouponCode(Integer memberId, Integer policyId, String code) {
+    public void receiveSystemCouponCode(Integer memberId, CouponPolicy policy,CouponCode coupon) {
 
         if (memberId <= 0) {
             throw new IllegalArgumentException("会员不存在");
         }
-        if (policyId <= 0) {
-            throw new IllegalArgumentException("优惠券id不存在");
-        }
-        if (StringUtils.isEmpty(code)) {
-            throw new IllegalArgumentException("优惠券码为空");
-        }
-        CouponPolicy policy = couponPolicyManager.findById(policyId);
-        if (policy == null) {
-            throw new IllegalArgumentException("该优惠券活动不存在");
-        }
-        if (DateUtils.compareDate(new Date(), policy.getEndTime()) > 0 || policy.getAuditStatus() != 1) {
-            throw new IllegalArgumentException("优惠券活动已过期");
+
+        int memberSendCount = this.getSendCount(policy.getId(), memberId);
+        if (memberSendCount >= policy.getSingleCount()) {
+            throw new IllegalArgumentException("该优惠活动您已领用过，超过次数限制");
         }
 
-        synchronized (syncObj) {
-            CouponCode coupon = findByCode(code);
-            if (coupon == null) {
-                throw new IllegalArgumentException("该优惠券不存在");
-            }
-
-            int memberSendCount = this.getSendCount(policyId, memberId);
-            if (memberSendCount >= policy.getSingleCount()) {
-                throw new IllegalArgumentException("该优惠活动您已领用过，超过次数限制");
-            }
-
-            if (coupon.getMemberId() > 0) {
-                throw new IllegalArgumentException("优惠券异常，重复领取!!!");
-            }
-
-            coupon.setStatus(0);
-            coupon.setMemberId(memberId);
-            this.save(coupon);
-
-            //更新数量
-            couponPolicyManager.addReceiveCount(policyId);
+        if (coupon.getMemberId() > 0) {
+            throw new IllegalArgumentException("优惠券异常，重复领取!!!");
         }
+
+        //更新数量
+        coupon.setStatus(0);
+        coupon.setMemberId(memberId);
+        this.save(coupon);
+        couponPolicyManager.addReceiveCount(policy.getId());
     }
 
     public CouponCode findByCode(String code) {

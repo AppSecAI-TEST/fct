@@ -23,16 +23,8 @@ public class CouponUseLogManager {
 
     private CouponUseLog save(CouponUseLog obj)
     {
-        if (obj.getId() > 0)
-        {
-            throw new IllegalArgumentException("use log can not update");
-            //entityContext.Update<CouponUseLog>(obj);
-        }
-        else
-        {
-            obj.setCreateTime(new Date());
-            couponUseLogRepository.save(obj);
-        }
+        obj.setCreateTime(new Date());
+        couponUseLogRepository.save(obj);
         return obj;
     }
 }

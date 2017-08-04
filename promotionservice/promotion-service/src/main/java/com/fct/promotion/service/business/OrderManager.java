@@ -7,6 +7,8 @@ import com.fct.promotion.service.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -34,6 +36,7 @@ public class OrderManager {
     @Autowired
     private DiscountManager discountManager;
 
+    @Transactional
     public Integer use(String orderId, Integer memberId, List<OrderProductDTO> products, String couponCode, Integer memberGradeId)
     {
         Integer orderCloseTime = 0;
@@ -46,10 +49,7 @@ public class OrderManager {
         CouponCode coupon = checkAndReceiveCouponCode(memberId, products, couponCode);
 
         //use coupon
-        if (coupon != null)
-        {
-            couponCodeManager.setCodeUsing(coupon.getCode());
-        }
+        couponCodeManager.setCodeUsing(coupon.getPolicyId(),coupon.getCode());
 
         //record
         this.addLog(orderId, coupon, products);
@@ -227,20 +227,6 @@ public class OrderManager {
         {
             throw new IllegalArgumentException("优惠券不存在");
         }
-        if (coupon.getMemberId() == 0 && coupon.getStatus() == 0)
-        {
-            coupon.setMemberId(memberId);
-            couponCodeManager.receiveSystemCouponCode(memberId,coupon.getPolicyId(),couponCode);
-        }
-        if (coupon.getMemberId() != memberId)
-        {
-            throw new IllegalArgumentException("你没有使用该优惠券的权限");
-        }
-        if (coupon.getStatus() != 0)
-        {
-            throw new IllegalArgumentException("优惠券已使用或已失效");
-        }
-
         CouponPolicy policy = couponPolicyManager.findById(coupon.getPolicyId());
         if (policy.getAuditStatus() != 1)
         {
@@ -250,6 +236,18 @@ public class OrderManager {
                 DateUtils.compareDate(policy.getEndTime(),new Date())<0)
         {
             throw new IllegalArgumentException("优惠券已过期");
+        }
+        if (coupon.getMemberId() == 0 && coupon.getStatus() == 0)
+        {
+            couponCodeManager.receiveSystemCouponCode(memberId,policy,coupon);
+        }
+        if (coupon.getMemberId() != memberId)
+        {
+            throw new IllegalArgumentException("你没有使用该优惠券的权限");
+        }
+        if (coupon.getStatus() != 0)
+        {
+            throw new IllegalArgumentException("优惠券已使用或已失效");
         }
 
         BigDecimal orderTotalPrice = new BigDecimal(0);
@@ -261,14 +259,13 @@ public class OrderManager {
         if (!StringUtils.isEmpty(policy.getProductIds())) //只针对某些产品
         {
             BigDecimal price = new BigDecimal(0);
-            String temp = String.format(",s%,", policy.getProductIds());
+            String temp = String.format(",%s,", policy.getProductIds());
             for (OrderProductDTO product:products
                  ) {
-                if (!temp.contains("," + product.getProductId() + ","))
+                if (temp.contains("," + product.getProductId() + ","))
                 {
-                    continue;
+                    price = price.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
                 }
-                price.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
             }
             if (policy.getFullAmount().doubleValue() > 0)
             {
@@ -316,16 +313,17 @@ public class OrderManager {
             List<DiscountUseLog> lst = new ArrayList<>();
             for (OrderProductDTO obj:products
                  ) {
-                if (obj.getDiscountId() < 1)
+                if (obj.getDiscountId() != null && obj.getDiscountId() > 0)
                 {
-                    continue;
+                    DiscountUseLog log = new DiscountUseLog();
+                    log.setOrderId(orderId);
+                    log.setDiscountId(obj.getDiscountId());
+                    log.setProductId(obj.getProductId());
+                    log.setCreateTime(new Date());
+
+                    lst.add(log);
                 }
-                DiscountUseLog log = new DiscountUseLog();
-                log.setOrderId(orderId);
-                log.setDiscountId(obj.getDiscountId());
-                log.setProductId(obj.getProductId());
-                log.setCreateTime(new Date());
-                lst.add(log);
+
             }
             if (lst.size() > 0)
             {

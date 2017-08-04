@@ -18,7 +18,6 @@ public class DiscountUseLogManager {
     @Autowired
     private DiscountUseLogRepository discountUseLogRepository;
 
-    @Transactional
     public void add(List<DiscountUseLog> lst)
     {
         for (DiscountUseLog obj:lst
@@ -29,15 +28,7 @@ public class DiscountUseLogManager {
 
     private void save(DiscountUseLog obj)
     {
-        if (obj.getId() > 0)
-        {
-            throw new IllegalArgumentException("use log can not update");
-            //entityContext.Update<CouponUseLog>(obj);
-        }
-        else
-        {
-            obj.setCreateTime(new Date());
-            discountUseLogRepository.save(obj);
-        }
+        obj.setCreateTime(new Date());
+        discountUseLogRepository.save(obj);
     }
 }

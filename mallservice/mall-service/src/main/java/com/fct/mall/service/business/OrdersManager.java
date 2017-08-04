@@ -578,7 +578,7 @@ public class OrdersManager {
         {
             throw new IllegalArgumentException("订单号不能为空");
         }
-        if(order.getMemberId() != memberId)
+        if(operatorId <=0 && order.getMemberId() != memberId)
         {
             throw new IllegalArgumentException("非法操作");
         }
@@ -606,6 +606,10 @@ public class OrdersManager {
             }
             //减去产品
             jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
+        }
+        if(!StringUtils.isEmpty(order.getCouponCode()))
+        {
+            promotionService.cancelUseCouponCode(order.getCouponCode());
         }
     }
 
@@ -732,7 +736,9 @@ public class OrdersManager {
         if (payStatus == 1000 || order.getStatus() == Constants.enumOrderStatus.close.getValue())
         {
             //如果是支付异常就退优惠券
-            promotionService.cancelUseCouponCode(order.getCouponCode());
+            if(!StringUtils.isEmpty(order.getCouponCode())) {
+                promotionService.cancelUseCouponCode(order.getCouponCode());
+            }
 
             //设置取消时间
             order.setStatus(Constants.enumOrderStatus.close.getValue());
@@ -783,7 +789,9 @@ public class OrdersManager {
                     jt.update(String.format("UPDATE Goods SET payCount=payCount+%d,sellCount=sellCount+%d WHERE Id=%d",
                     g.getBuyCount(),g.getBuyCount(),g.getGoodsId()));
             }
-
+            if(!StringUtils.isEmpty(order.getCouponCode())) {
+                promotionService.useCouponCode(order.getCouponCode());
+            }
             //sendPayTradeMessage(payOrderId,orderId,200,null);
         }
     }

@@ -134,7 +134,7 @@ public class CouponCodeDTOManager {
             }
         }
 
-        if (result == null || result == null)
+        if (result == null || result.size() <1)
         {
             return obj;
         }
@@ -146,7 +146,7 @@ public class CouponCodeDTOManager {
         BigDecimal orderTotalPrice = new BigDecimal(0);
         for (OrderProductDTO product:products
              ) {
-            orderTotalPrice.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
+            orderTotalPrice = orderTotalPrice.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
         }
         for (CouponCodeDTO code:userCouponList
              ) {
@@ -156,23 +156,22 @@ public class CouponCodeDTOManager {
                 String temp = String.format(",%s,", code.getProductIds());
                 for (OrderProductDTO product:products
                         ) {
-                    if (!temp.contains("," + product.getProductId() + ","))
+                    if (temp.contains("," + product.getProductId() + ","))
                     {
-                        continue;
-                    }
-                    price.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
-                    if (code.getFullAmount().doubleValue() > 0)
-                    {
-                        if (price.doubleValue() >= code.getFullAmount().doubleValue()) //大于满额
+                        price = price.add(product.getRealPrice().multiply(new BigDecimal(product.getCount())));
+                        if (code.getFullAmount().doubleValue() > 0)
                         {
-                            return code;
+                            if (price.doubleValue() >= code.getFullAmount().doubleValue()) //大于满额
+                            {
+                                return code;
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (price.doubleValue() >= code.getAmount().doubleValue()) //大于面额
+                        else
                         {
-                            return code;
+                            if (price.doubleValue() >= code.getAmount().doubleValue()) //大于面额
+                            {
+                                return code;
+                            }
                         }
                     }
                 }

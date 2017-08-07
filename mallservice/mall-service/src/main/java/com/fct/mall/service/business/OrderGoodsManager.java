@@ -200,7 +200,7 @@ public class OrderGoodsManager {
 
 
         //暂时隐藏掉自动获取可用优惠券，测试并发有无影响
-        CouponCodeDTO coupon = promotionService.getCouponCodeDTOByOrder(memberId,lsProduct);;
+        CouponCodeDTO coupon = promotionService.getCouponCodeDTOByOrder(memberId,lsProduct);
         if (coupon != null)
         {
             goodsDTO.setCouponAmount(coupon.getAmount());

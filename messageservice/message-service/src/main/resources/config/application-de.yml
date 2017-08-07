@@ -26,5 +26,6 @@ qcloud:
   sms:
     appid: 1400034770
     appkey: b2d927f48ea8b897b373014f30d0f305
+    sign: 方寸堂
 
 

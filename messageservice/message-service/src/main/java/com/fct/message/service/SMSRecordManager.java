@@ -40,6 +40,7 @@ public class SMSRecordManager {
             throw new IllegalArgumentException("短信类型为空。");
         }
 
+        content = String.format("【%s】%s",qCloudSMSConfig.getSign(),content);
         //发送短信
         SMSRecord sr = new SMSRecord();
         sr.setCellPhone(cellPhone);
@@ -81,8 +82,8 @@ public class SMSRecordManager {
         try {
             // 初始化群发
             SmsMultiSender multiSender = new SmsMultiSender(qCloudSMSConfig.getAppId(), qCloudSMSConfig.getAppKey());
-            SmsMultiSenderResult multiSenderResult = multiSender.send(0, "86", phoneNumbers,
-                    content, "", "");
+            SmsMultiSenderResult multiSenderResult = multiSender.send(0, "86",
+                    phoneNumbers,content, "", "");
 
             if(multiSenderResult.result == 0)
             {
@@ -105,8 +106,8 @@ public class SMSRecordManager {
         try {
             //初始化单发
             SmsSingleSender singleSender = new SmsSingleSender(qCloudSMSConfig.getAppId(), qCloudSMSConfig.getAppKey());
-            SmsSingleSenderResult singleSenderResult = singleSender.send(0, "86", cellphone,
-                    content, "", "");
+            SmsSingleSenderResult singleSenderResult = singleSender.send(0, "86",
+                    cellphone,content, "", "");
 
             if(singleSenderResult.result == 0)
             {

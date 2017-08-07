@@ -4,41 +4,209 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>海绵计算器</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--[if lt IE 8]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
     <link rel="shortcut icon" th:href="${pub.staticPath('/static/img/favicon.png')}" type="image/png" />
     <link href="//static/css/bootstrap.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/bootstrap.min.css')}" />
     <link href="//static/css/font-awesome.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/font-awesome.min.css')}" />
     <link href="//static/css/admin.min.css" rel="stylesheet" th:href="${pub.staticPath('/static/css/admin.min.css')}" />
-    <!--[if lt IE 8]>
-    <meta http-equiv="refresh" content="0;ie.html" />
-    <![endif]-->
-    <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
 </head>
 <body>
 <div class="ibox-content" style="border-style:none;">
-    <form class="form-horizontal m-t" id="submitForm">
-        <div class="form-group col-sm-12">
-            <div class="input-group">
-                <span class="input-group-addon">长(CM)</span>
-                <input name="salePrice" type="text" class="form-control" />
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">宽(CM)</span>
-                <input name="salePrice" type="text" class="form-control" />
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon">总平方</span>
-                <input name="salePrice" type="text" class="form-control" />
-            </div>
-        </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="m-t-none m-b text-center">海绵</h3>
+            <form role="form" class="form-horizontal">
+                <div class="form-group">
+                    <div class="form-inline">
+                        <div class="input-group m-b"><span class="input-group-addon">长</span>
+                            <input type="number" class="form-control change" name="hmLong" id="hmLong">
+                            <span class="input-group-addon">CM</span>
+                        </div>
+                        <div class="input-group"><span class="input-group-addon">宽</span>
+                            <input type="number" class="form-control change" name="hmWidth" id="hmWidth">
+                            <span class="input-group-addon">CM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center text-primary" style="margin-bottom:-10px;"><span class="label-warning">=</span></div>
 
-    </form>
+                <div class="form-group has-error">
+                    <div class="input-group"><span class="input-group-addon">总平方</span>
+                        <input type="number" class="form-control change" name="hmSquare" id="hmSquare" readonly="readonly">
+                        <span class="input-group-addon">CM</span>
+                    </div>
+                </div>
+                <div class="text-center text-primary"  style="margin-top:-10px;"><span class="label-warning">×</span></div>
+                <div class="form-group">
+                    <div class="form-inline">
+                        <div class="input-group"><span class="input-group-addon">单价/平方</span>
+                            <select name="hmPrice" id="hmPrice" class="form-control change">
+                                <option value="0">0元/平方</option>
+                                <option value="42">42元/平方</option>
+                                <option value="70">70元/平方</option>
+                                <option value="112">112元/平方</option>
+                                <option value="168">168元/平方</option>
+                                <option value="210">210元/平方</option>
+                                <option value="252">252元/平方</option>
+                            </select>
+                        </div>
+                        <div class="text-center text-primary"><span class="label-warning">+</span></div>
+                        <div class="input-group"><span class="input-group-addon">工费</span>
+                            <select name="hmLabourCost" id="hmLabourCost" class="form-control change">
+                                <option value="0">0元</option>
+                                <option value="10">10元</option>
+                                <option value="20">20元</option>
+                                <option value="30">30元</option>
+                                <option value="40">40元</option>
+                                <option value="50">50元</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center text-primary"  style="margin-top:-10px;"><span class="label-warning">=</span></div>
+                <div class="form-group has-error">
+                    <div class="input-group m-b"><span class="input-group-addon">海绵金额</span>
+                        <input type="number" class="form-control change" name="hmTotalPrice" id="hmTotalPrice" readonly="readonly">
+                        <span class="input-group-addon">元</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12">
+            <h3 class="m-t-none m-b text-center">布套</h3>
+            <form role="form">
+                <div class="form-group">
+                    <div class="form-inline">
+                        <div class="input-group"><span class="input-group-addon">长</span>
+                            <input type="number" class="form-control change" name="blLong" id="blLong">
+                            <span class="input-group-addon">CM</span>
+                        </div>
+                        <div class="text-center"><span class="label-warning">×(</span></div>
+                        <div class="input-group"><span class="input-group-addon">门幅</span>
+                            <select name="blWidth" id="blWidth" class="form-control change">
+                                <option value="0">0门幅</option>
+                                <option value="1">1门幅</option>
+                                <option value="2">2门幅</option>
+                                <option value="3">3门幅</option>
+                                <option value="4">4门幅</option>
+                                <option value="5">5门幅</option>
+                            </select>
+                        </div>
+                        <div class="text-center"><span class="label-warning">+</span></div>
+                        <div class="input-group m-b"><span class="input-group-addon">线缝</span>
+                            <select name="blSeam" id="blSeam" class="form-control change">
+                                <option value="0">0线缝</option>
+                                <option value="0.1">0.1线缝</option>
+                                <option value="0.2">0.2线缝</option>
+                                <option value="0.3">0.3线缝</option>
+                                <option value="0.4">0.4线缝</option>
+                                <option value="0.5">0.5线缝</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">)=</span></div>
+                <div class="form-group has-error">
+                    <div class="input-group"><span class="input-group-addon">总米线</span>
+                        <input type="number" class="form-control change" name="blMetre" id="blMetre" readonly="readonly">
+                        <span class="input-group-addon">米</span>
+                    </div>
+                </div>
+                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">×</span></div>
+                <div class="form-group">
+                    <div class="form-inline">
+                        <div class="input-group"><span class="input-group-addon">单价/米</span>
+                            <select name="blPrice" id="blPrice" class="form-control change">
+                                <option value="0">0元/平方</option>
+                                <option value="42">42元/平方</option>
+                                <option value="70">70元/平方</option>
+                                <option value="112">112元/平方</option>
+                                <option value="168">168元/平方</option>
+                                <option value="210">210元/平方</option>
+                                <option value="252">252元/平方</option>
+                            </select>
+                        </div>
+                        <div class="text-center"><span class="label-warning">+</span></div>
+                        <div class="input-group"><span class="input-group-addon">工费</span>
+                            <select name="blLabourCost" id="blLabourCost" class="form-control change">
+                                <option value="0">0元</option>
+                                <option value="10">10元</option>
+                                <option value="20">20元</option>
+                                <option value="30">30元</option>
+                                <option value="40">40元</option>
+                                <option value="50">50元</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">=</span></div>
+                <div class="form-group has-error">
+                    <div class="input-group m-b"><span class="input-group-addon">布料金额</span>
+                        <input type="number" class="form-control change" hmTotalPrice="blTotalPrice" id="blTotalPrice" readonly="readonly">
+                        <span class="input-group-addon">元</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
 <script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
-<script src="//static/js/fct.js" th:src="${pub.staticPath('/static/js/fct.js')}"></script>
+<script src="//static/js/plugins/icheck.min.js" th:src="${pub.staticPath('/static/js/plugins/icheck.min.js')}"></script>
 <script src="//static/js/plugins/layer/layer.min.js" th:src="${pub.staticPath('/static/js/plugins/layer/layer.min.js')}"></script>
+<script src="//static/js/plugins/jtools.js" th:src="${pub.staticPath('/static/js/plugins/jtools.js')}"></script>
+<script src="//static/js/fct.js" th:src="${pub.staticPath('/static/js/fct.js')}"></script>
 <script>
+    $(function () {
 
+        $(".change").change(function () {
+            calculator();
+        });
+
+        var calculator = function(){
+
+            var hmLong = $("#hmLong").val() || 0;
+            var hmWidth = $("#hmWidth").val() || 0;
+            var hmSquare = parseFloat(hmLong/100 * hmWidth/100).toFixed(2);
+            $("#hmSquare").val(hmSquare);
+
+            var hmPrice=$("#hmPrice").children('option:selected').val() || 0;//这就是selected的值
+
+            var hmLabourCost=$("#hmLabourCost").children('option:selected').val() || 0;
+
+            var hm_sumPrice = (parseFloat(hmSquare * hmPrice)+parseInt(hmLabourCost)).toFixed(2);
+
+            $("#hmTotalPrice").val(hm_sumPrice);
+
+
+            var blLong = $("#blLong").val() || 0;
+
+            var blWidth=$("#blWidth").children('option:selected').val() || 0;
+            var blSeam=$("#blSeam").children('option:selected').val() || 0;
+
+            var blMetre = parseFloat(blLong*(blWidth+blSeam)/100).toFixed(2);
+            $("#blMetre").val(blMetre);
+
+            var blPrice=$("#blPrice").children('option:selected').val() || 0;
+            var blLabourCost=$("#blLabourCost").children('option:selected').val() || 0;
+
+
+            var bl_sumPrice = (parseFloat(blMetre * blPrice)+parseInt(blLabourCost)).toFixed(2);
+
+            $("#blTotalPrice").val(bl_sumPrice);
+
+            //console.log("bl_sumPrice："+bl_sumPrice);
+
+            var sumPrice = parseFloat(hm_sumPrice) + parseFloat(bl_sumPrice);
+
+            document.title = "总金额：" + sumPrice.toFixed(2) +"元";
+        }
+
+    })
 </script>
 </body>
 </html>

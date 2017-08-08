@@ -2,7 +2,6 @@ package com.fct.api.web.http.controller.mall;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fct.api.web.http.controller.BaseController;
-import com.fct.api.web.utils.Constants;
 import com.fct.core.json.JsonConverter;
 import com.fct.core.utils.ReturnValue;
 import com.fct.finance.data.entity.MemberAccount;
@@ -49,6 +48,7 @@ public class OrderProductController extends BaseController {
 
         List<OrderGoodsDTO> orderProductIds = JsonConverter.toObject(orderProductInfo,
                 new TypeReference<List<OrderGoodsDTO>>(){});
+
         for (OrderGoodsDTO product : orderProductIds) {
             if (product.getGoodsId() < 1)
                 return new ReturnValue<>(404, "订单有产品已下架");
@@ -57,28 +57,29 @@ public class OrderProductController extends BaseController {
         }
 
         OrderGoodsResponse lsOrderGoods = mallService.getSubmitOrderGoods(member.getMemberId(), orderProductIds);
-        Constants.logger.info("Json:" + JsonConverter.toJson(lsOrderGoods));
 
         //优惠券使用List<OrderProductDTO
         List<OrderProductDTO> lsOrderProduct = new ArrayList<>();
         if (lsOrderGoods != null
-                && lsOrderGoods.getItems() != null
-                && StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
+                && lsOrderGoods.getItems() != null) {
 
             for (OrderGoods orderGoods:lsOrderGoods.getItems()) {
 
                 //设置图片
                 orderGoods.setImg(fctResourceUrl.thumbSmall(orderGoods.getImg()));
 
-                OrderProductDTO productDTO = new OrderProductDTO();
-                productDTO.setProductId(orderGoods.getGoodsId());
-                productDTO.setSizeId(orderGoods.getGoodsSpecId());
-                productDTO.setCount(orderGoods.getBuyCount());
-                productDTO.setRealPrice(orderGoods.getPrice());
-                productDTO.setDiscountId(0);
-                productDTO.setSingleCount(0);
-                productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
-                lsOrderProduct.add(productDTO);
+                if (StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
+
+                    OrderProductDTO productDTO = new OrderProductDTO();
+                    productDTO.setProductId(orderGoods.getGoodsId());
+                    productDTO.setSizeId(orderGoods.getGoodsSpecId());
+                    productDTO.setCount(orderGoods.getBuyCount());
+                    productDTO.setRealPrice(orderGoods.getPrice());
+                    productDTO.setDiscountId(0);
+                    productDTO.setSingleCount(0);
+                    productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
+                    lsOrderProduct.add(productDTO);
+                }
             }
         }
 

@@ -224,4 +224,24 @@ public class OrderController extends BaseController {
 
         return new ReturnValue(200, "订单取消成功");
     }
+
+    /**确认收货
+     *
+     * @param order_id
+     * @return
+     */
+    @RequestMapping(value = "{order_id}/finish", method = RequestMethod.POST)
+    public ReturnValue finishOrder(@PathVariable("order_id") String order_id) {
+
+        order_id = ConvertUtils.toString(order_id);
+
+        if (StringUtils.isEmpty(order_id))
+            return new ReturnValue(404, "订单不存在");
+
+        MemberLogin member = this.memberAuth();
+
+        mallService.orderFinishByMember(member.getMemberId(), order_id);
+
+        return new ReturnValue(200, "确认收货成功");
+    }
 }

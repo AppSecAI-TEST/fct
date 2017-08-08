@@ -22,28 +22,30 @@
             <form role="form" class="form-horizontal">
                 <div class="form-group">
                     <div class="form-inline">
-                        <div class="input-group m-b"><span class="input-group-addon">长</span>
+                        <div class="input-group" style="float:left;width:45%;"><span class="input-group-addon">长</span>
                             <input type="number" class="form-control change" name="hmLong" id="hmLong">
                             <span class="input-group-addon">CM</span>
                         </div>
-                        <div class="input-group"><span class="input-group-addon">宽</span>
+                        <div class="text-center text-primary" style="width:10%;float:left;padding-top:10px;">
+                            <span class="label-warning">×</span>
+                        </div>
+                        <div class="input-group" style="float:left;width:45%;"><span class="input-group-addon">宽</span>
                             <input type="number" class="form-control change" name="hmWidth" id="hmWidth">
                             <span class="input-group-addon">CM</span>
                         </div>
                     </div>
                 </div>
-                <div class="text-center text-primary" style="margin-bottom:-10px;"><span class="label-warning">=</span></div>
-
+                <div class="text-center text-primary" style="margin-bottom:5px;"><span class="label-warning">=</span></div>
                 <div class="form-group has-error">
                     <div class="input-group"><span class="input-group-addon">总平方</span>
                         <input type="number" class="form-control change" name="hmSquare" id="hmSquare" readonly="readonly">
                         <span class="input-group-addon">CM</span>
                     </div>
                 </div>
-                <div class="text-center text-primary"  style="margin-top:-10px;"><span class="label-warning">×</span></div>
+                <div class="text-center text-primary"  style="margin-bottom:5px;margin-top:-5px;"><span class="label-warning">×</span></div>
                 <div class="form-group">
                     <div class="form-inline">
-                        <div class="input-group"><span class="input-group-addon">单价/平方</span>
+                        <div class="input-group" style="float:left;width:55%;"><span class="input-group-addon">单价/平方</span>
                             <select name="hmPrice" id="hmPrice" class="form-control change">
                                 <option value="0">0元/平方</option>
                                 <option value="42">42元/平方</option>
@@ -54,8 +56,8 @@
                                 <option value="252">252元/平方</option>
                             </select>
                         </div>
-                        <div class="text-center text-primary"><span class="label-warning">+</span></div>
-                        <div class="input-group"><span class="input-group-addon">工费</span>
+                        <div class="text-center text-primary" style="float:left;width:10%;padding-top:10px;"><span class="label-warning">+</span></div>
+                        <div class="input-group" style="float:left;width:35%;"><span class="input-group-addon">工费</span>
                             <select name="hmLabourCost" id="hmLabourCost" class="form-control change">
                                 <option value="0">0元</option>
                                 <option value="10">10元</option>
@@ -67,9 +69,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-center text-primary"  style="margin-top:-10px;"><span class="label-warning">=</span></div>
+                <div class="text-center text-primary"  style="margin-bottom:5px;margin-top:-5px;"><span class="label-warning">=</span></div>
                 <div class="form-group has-error">
-                    <div class="input-group m-b"><span class="input-group-addon">海绵金额</span>
+                    <div class="input-group"><span class="input-group-addon">海绵金额</span>
                         <input type="number" class="form-control change" name="hmTotalPrice" id="hmTotalPrice" readonly="readonly">
                         <span class="input-group-addon">元</span>
                     </div>
@@ -77,61 +79,63 @@
             </form>
         </div>
         <div class="col-sm-12">
-            <h3 class="m-t-none m-b text-center">布套</h3>
-            <form role="form">
+            <h3 class="m-t-none m-b text-center">布料</h3>
+            <form role="form" class="form-horizontal">
                 <div class="form-group">
                     <div class="form-inline">
-                        <div class="input-group"><span class="input-group-addon">长</span>
+                        <div class="input-group"style="float:left;width:45%;padding-top:10px;" ><span class="input-group-addon">长</span>
                             <input type="number" class="form-control change" name="blLong" id="blLong">
                             <span class="input-group-addon">CM</span>
                         </div>
-                        <div class="text-center"><span class="label-warning">×(</span></div>
-                        <div class="input-group"><span class="input-group-addon">门幅</span>
-                            <select name="blWidth" id="blWidth" class="form-control change">
-                                <option value="0">0门幅</option>
-                                <option value="1">1门幅</option>
-                                <option value="2">2门幅</option>
-                                <option value="3">3门幅</option>
-                                <option value="4">4门幅</option>
-                                <option value="5">5门幅</option>
-                            </select>
+                        <div class="text-center" style="float:left;width:10%;padding-top:20px;"><span class="label-warning">×</span></div>
+                        <div style="float:left;width:45%;">
+                            <div class="input-group"><span class="input-group-addon">门幅</span>
+                                <select name="blWidth" id="blWidth" class="form-control change">
+                                    <option value="0">0门幅</option>
+                                    <option value="1">1门幅</option>
+                                    <option value="2">2门幅</option>
+                                    <option value="3">3门幅</option>
+                                    <option value="4">4门幅</option>
+                                    <option value="5">5门幅</option>
+                                </select>
+                            </div>
+                            <div class="text-center"><span class="label-warning">+</span></div>
+                            <div class="input-group"><span class="input-group-addon">线缝</span>
+                                <select name="blSeam" id="blSeam" class="form-control change">
+                                    <option value="0">0线缝</option>
+                                    <option value="0.1">0.1线缝</option>
+                                    <option value="0.2">0.2线缝</option>
+                                    <option value="0.3">0.3线缝</option>
+                                    <option value="0.4">0.4线缝</option>
+                                    <option value="0.5">0.5线缝</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="text-center"><span class="label-warning">+</span></div>
-                        <div class="input-group m-b"><span class="input-group-addon">线缝</span>
-                            <select name="blSeam" id="blSeam" class="form-control change">
-                                <option value="0">0线缝</option>
-                                <option value="0.1">0.1线缝</option>
-                                <option value="0.2">0.2线缝</option>
-                                <option value="0.3">0.3线缝</option>
-                                <option value="0.4">0.4线缝</option>
-                                <option value="0.5">0.5线缝</option>
-                            </select>
-                        </div>
+
                     </div>
                 </div>
-                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">)=</span></div>
+                <div class="text-center" style="margin-bottom: 5px;margin-top:-10px;"><span class="label-warning">=</span></div>
                 <div class="form-group has-error">
                     <div class="input-group"><span class="input-group-addon">总米线</span>
                         <input type="number" class="form-control change" name="blMetre" id="blMetre" readonly="readonly">
                         <span class="input-group-addon">米</span>
                     </div>
                 </div>
-                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">×</span></div>
+                <div class="text-center text-primary" style="margin-bottom:5px;margin-top:-5px;"><span class="label-warning">×</span></div>
                 <div class="form-group">
                     <div class="form-inline">
-                        <div class="input-group"><span class="input-group-addon">单价/米</span>
+                        <div class="input-group" style="float:left;width:55%;"><span class="input-group-addon">单价/米</span>
                             <select name="blPrice" id="blPrice" class="form-control change">
-                                <option value="0">0元/平方</option>
-                                <option value="42">42元/平方</option>
-                                <option value="70">70元/平方</option>
-                                <option value="112">112元/平方</option>
-                                <option value="168">168元/平方</option>
-                                <option value="210">210元/平方</option>
-                                <option value="252">252元/平方</option>
+                                <option value="0">0元/米</option>
+                                <option value="35">35元/米</option>
+                                <option value="45">45元/米</option>
+                                <option value="55">55元/米</option>
+                                <option value="65">65元/米</option>
+                                <option value="75">75元/米</option>
                             </select>
                         </div>
-                        <div class="text-center"><span class="label-warning">+</span></div>
-                        <div class="input-group"><span class="input-group-addon">工费</span>
+                        <div class="text-center" style="float:left;width:10%;padding-top:10px;"><span class="label-warning">+</span></div>
+                        <div class="input-group" style="float:left;width:35%;"><span class="input-group-addon">工费</span>
                             <select name="blLabourCost" id="blLabourCost" class="form-control change">
                                 <option value="0">0元</option>
                                 <option value="10">10元</option>
@@ -143,9 +147,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-center" style="margin-top: -10px;"><span class="label-warning">=</span></div>
+                <div class="text-center" style="margin-bottom:5px;margin-top:-5px;"><span class="label-warning">=</span></div>
                 <div class="form-group has-error">
-                    <div class="input-group m-b"><span class="input-group-addon">布料金额</span>
+                    <div class="input-group"><span class="input-group-addon">布料金额</span>
                         <input type="number" class="form-control change" hmTotalPrice="blTotalPrice" id="blTotalPrice" readonly="readonly">
                         <span class="input-group-addon">元</span>
                     </div>
@@ -156,9 +160,6 @@
 </div>
 <script src="//static/js/jquery.min.js" th:src="${pub.staticPath('/static/js/jquery.min.js')}"></script>
 <script src="//static/js/bootstrap.min.js?v=3.3.5" th:src="${pub.staticPath('/static/js/bootstrap.min.js')}"></script>
-<script src="//static/js/plugins/icheck.min.js" th:src="${pub.staticPath('/static/js/plugins/icheck.min.js')}"></script>
-<script src="//static/js/plugins/layer/layer.min.js" th:src="${pub.staticPath('/static/js/plugins/layer/layer.min.js')}"></script>
-<script src="//static/js/plugins/jtools.js" th:src="${pub.staticPath('/static/js/plugins/jtools.js')}"></script>
 <script src="//static/js/fct.js" th:src="${pub.staticPath('/static/js/fct.js')}"></script>
 <script>
     $(function () {

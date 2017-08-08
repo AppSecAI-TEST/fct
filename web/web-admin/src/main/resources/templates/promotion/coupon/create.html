@@ -98,14 +98,14 @@
                             <label class="col-sm-2 control-label">类型：</label>
                             <div class="col-sm-3 m-b form-inline">
                                 <label class="checkbox-inline i-checks">
-                                <input type="radio" name="typeid" class="form-control" value="0" th:checked="${coupon.typeId eq 0} ?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;全场通用
+                                <input type="radio" name="typeid" class="form-control type-check" value="0" th:checked="${coupon.typeId eq 0} ?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;全场通用
                                 </label>
                                 <label class="checkbox-inline i-checks">
-                                <input type="radio" name="typeid" class="form-control" value="1" th:checked="${coupon.typeId eq 1}?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;部份商品
+                                <input type="radio" name="typeid" class="form-control type-check" value="1" th:checked="${coupon.typeId eq 1}?'checked'" th:disabled="${coupon.id > 0} ? 'disabled'"/>&nbsp;&nbsp;部份商品
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="addProduct">
                             <label class="col-sm-2 control-label">
                                 <a href="javascript:;" class="btn btn-xs btn-outline btn-danger" id="addGoods">添加宝贝</a>
                             </label>
@@ -133,7 +133,7 @@
         laydate({elem:"#starttime",event:"focus",format:"YYYY-MM-DD hh:mm"});
         laydate({elem:"#endtime",event:"focus",format:"YYYY-MM-DD hh:mm"});
 
-        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
+        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green"});
 
         $("#btnClick").click(function () {
             JQAjax.post(this, {
@@ -152,7 +152,23 @@
                 url: "/goods/select?disabled=false&ids="+ids+"&names="+encodeURI(encodeURI(text))
             });
         });
+
+
+        $('.type-check').on('ifChecked', function(event){
+            var type = $(this).val();
+            if ($(this).is(":checked") && type==0) {
+                $("#addGoods").hide();
+            } else {
+                $("#addGoods").show();
+            }
+        });
+
+
+        if([[${coupon.typeId}]] == 0){
+            $("#addGoods").hide();
+        }
     });
+
 
     var insertGoods = function (arrJson) {
 

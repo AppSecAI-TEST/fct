@@ -42,6 +42,7 @@ public class FctResourceUrl {
      */
     public String thumbSmall(String url) {
 
+        Constants.logger.info("image url:" + this.thumbnail(url, 120));
         return this.thumbnail(url, 120);
     }
 

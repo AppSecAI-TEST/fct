@@ -599,7 +599,13 @@ public class OrdersManager {
         ordersRepository.saveAndFlush(order);
 
         //恢复库存
-        List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(orderId);
+        recoverStockAndCoupon(order);
+    }
+
+    private void recoverStockAndCoupon(Orders order)
+    {
+        //恢复库存
+        List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(order.getOrderId());
         for (OrderGoods g: lsOrderGoods
                 ) {
             //减去规格库存
@@ -825,19 +831,7 @@ public class OrdersManager {
             o.setStatus(Constants.enumOrderStatus.close.getValue());
             ordersRepository.save(o);
 
-            //恢复库存
-            List<OrderGoods> lsOrderGoods= orderGoodsManager.findByOrderId(o.getOrderId());
-            for (OrderGoods g: lsOrderGoods
-                    ) {
-                //减去规格库存
-                if (g.getGoodsSpecId() > 0)
-                {
-                    jt.update("UPDATE GoodsSpecification SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsSpecId());
-
-                }
-                //减去产品
-                jt.update("UPDATE Goods SET StockCount=StockCount+" + g.getBuyCount() + " WHERE Id=" + g.getGoodsId());
-            }
+            recoverStockAndCoupon(o);
         }
 
     }
@@ -908,6 +902,7 @@ public class OrdersManager {
         {
             //所有商品都退款，将订单关闭
             orders.setStatus(Constants.enumOrderStatus.close.getValue());
+            recoverStockAndCoupon(orders);
         }
         orders.setUpdateTime(new Date());
         ordersRepository.save(orders);

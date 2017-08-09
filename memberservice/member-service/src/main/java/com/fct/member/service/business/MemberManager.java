@@ -74,6 +74,7 @@ public class MemberManager {
         member.setRegisterTime(new Date());
         member.setAuthStatus(0);
         member.setCanInviteCount(0);
+        member.setInviterMemberId(0);
         member.setFailLoginCount(0);
         member.setGradeId(0);
         member.setLocked(0);

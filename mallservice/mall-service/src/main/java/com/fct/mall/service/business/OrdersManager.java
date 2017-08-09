@@ -239,7 +239,7 @@ public class OrdersManager {
 
                         amount = amount.divide(couponTotalPrice).multiply(cc.getAmount());
 
-                        amount = amount.divide(new BigDecimal(orderGoods.getBuyCount()));
+                        amount = amount.divide(new BigDecimal(orderGoods.getBuyCount()), BigDecimal.ROUND_HALF_UP);
 
                         if(amount.doubleValue()>orderGoods.getPromotionPrice().doubleValue())
                         {

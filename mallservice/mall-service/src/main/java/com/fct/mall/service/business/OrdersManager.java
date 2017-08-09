@@ -22,6 +22,7 @@ import com.fct.message.interfaces.model.MQPayTrade;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DiscountCouponDTO;
+import com.fct.promotion.interfaces.dto.DiscountProductDTO;
 import com.fct.promotion.interfaces.dto.OrderProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -76,6 +77,15 @@ public class OrdersManager {
     public void save(Orders orders)
     {
         ordersRepository.save(orders);
+    }
+
+    public Integer getBuyCount(Integer memberId,Integer goodsId,Date startTime)
+    {
+        String sql = "select count(0) from Orders o inner join OrderGoods g on o.orderId=g.orderId";
+        sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.createTime>'%s'",
+                memberId,goodsId,DateUtils.format(startTime));
+
+        return jt.queryForObject(sql,Integer.class);
     }
 
     private OrderProductDTO getSingleProduct(List<OrderProductDTO> lsProduct, Integer pid)
@@ -172,6 +182,7 @@ public class OrdersManager {
 
         //查询用户是否折扣信息
         couponCode = couponCode.trim();
+
         DiscountCouponDTO dc = promotionService.getPromotion(memberId, lsOrderProduct, couponCode);
         //当前购买商品中可参与享受优惠的总单价
         BigDecimal couponTotalPrice = new BigDecimal(0);
@@ -179,6 +190,24 @@ public class OrdersManager {
         if (dc != null) {
             lsOrderProduct = dc.getDiscount();//宝贝促销信息重新赋值 。
             cc = dc.getCoupon();
+
+            for (OrderProductDTO product:lsOrderProduct
+                 ) {
+                if(product.getDiscountId()>0)
+                {
+                    //判断限购数
+                    if(product.getNotStartCanNotBuy() ==1 && DateUtils.compareDate(product.getStartTime(),new Date())>0)
+                    {
+                        throw new IllegalArgumentException("活动未开始【"+product.getProductId()+"】不可购买");
+                    }
+
+                    Integer buyCount = getBuyCount(memberId,product.getProductId(),product.getStartTime());
+                    if(buyCount>=product.getSingleCount())
+                    {
+                        throw new IllegalArgumentException("限购宝贝超过购买数量");
+                    }
+                }
+            }
         }
 
         if (cc != null) {
@@ -705,7 +734,7 @@ public class OrdersManager {
         //延长订单取消时间
         order.setExpiresTime(DateUtils.addHour(order.getExpiresTime(),hour));
         order.setOperatorId(order.getOperatorId() + "delayOrderCloseTime:"+operatorId+",");
-        ordersRepository.saveAndFlush(order);
+        ordersRepository.save(order);
     }
 
 
@@ -733,7 +762,7 @@ public class OrdersManager {
         //延长订单收货时间
         order.setFinishTime(DateUtils.addDay(order.getFinishTime(),day));
         order.setOperatorId(order.getOperatorId() + "delayFinishTime:"+operatorId+",");
-        ordersRepository.saveAndFlush(order);
+        ordersRepository.save(order);
     }
 
 

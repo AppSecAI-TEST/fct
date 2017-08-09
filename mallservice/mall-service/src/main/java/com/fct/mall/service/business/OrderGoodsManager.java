@@ -1,10 +1,12 @@
 package com.fct.mall.service.business;
 
 import com.fct.core.json.JsonConverter;
+import com.fct.core.utils.DateUtils;
 import com.fct.mall.data.entity.*;
 import com.fct.mall.data.repository.OrderGoodsRepository;
 import com.fct.mall.interfaces.OrderGoodsDTO;
 import com.fct.mall.interfaces.OrderGoodsResponse;
+import com.fct.promotion.data.entity.Discount;
 import com.fct.promotion.interfaces.PromotionService;
 import com.fct.promotion.interfaces.dto.CouponCodeDTO;
 import com.fct.promotion.interfaces.dto.DiscountProductDTO;
@@ -15,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -176,6 +179,19 @@ public class OrderGoodsManager {
             {
                 BigDecimal realPrice =  discount.getDiscountProduct().getDiscountRate().multiply(orderGoods.getPrice());
                 orderGoods.setPromotionPrice(realPrice); //重新计算真实销售价，
+
+                //判断如果为秒杀商品并且，活动时间还未开始，则抛出异常
+                Discount dis = discount.getDiscount();
+                if(dis.getNotStartCanNotBuy() ==1 && DateUtils.compareDate(dis.getStartTime(),new Date())>0)
+                {
+                    throw new IllegalArgumentException("活动尚未开始【"+ discount.getDiscountProduct().getProductName() +"】不可购买。");
+                }
+
+                Integer buyCount = ordersManager.getBuyCount(memberId,discount.getProductId(),dis.getStartTime());
+                if(buyCount>=discount.getDiscountProduct().getSingleCount())
+                {
+                    throw new IllegalArgumentException("限购宝贝超过购买数量");
+                }
             }
 
             orderGoods.setImg(g.getDefaultImage());

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -61,7 +62,6 @@ public class DiscountProductDTOManager {
         for (DiscountProduct p: discountProductList
                 ) {
 
-            discountIds.add(p.getDiscountId());
             DiscountProductDTO dto = new DiscountProductDTO();
             dto.setProductId(p.getProductId());
             dto.setDiscountProduct(p);
@@ -119,26 +119,51 @@ public class DiscountProductDTOManager {
 
         DiscountCouponDTO dc = new DiscountCouponDTO();
         List<DiscountProduct> discountProductList = discountProductManager.findByValid(productIds,1);
-        if (discountProductList !=null)
+        if (discountProductList == null || discountProductList.size() < 1)
         {
-            for (OrderProductDTO p:lsProduct
-                 ) {
-                DiscountProduct dp = single(discountProductList,p.getProductId());
-                if (dp != null)
-                {
-                    p.setDiscountId(dp.getDiscountId());
-                    p.setDiscountPrice(p.getRealPrice().multiply(dp.getDiscountRate()));
-                    p.setSingleCount(dp.getSingleCount());
-                }
-                else
-                {
-                    p.setDiscountPrice(p.getRealPrice());
-                }
+            return null;
+        }
+
+        List<Integer> discountIds = new ArrayList<>();
+        for (DiscountProduct p: discountProductList
+                ) {
+            discountIds.add(p.getDiscountId());
+        }
+        List<Discount> discountList = discountManager.findByDiscountId(discountIds);
+        Map<Integer, Discount> map = new HashMap<>();
+        for (Discount dicount:discountList
+                ) {
+            map.put(dicount.getId(),dicount);
+        }
+
+
+        for (OrderProductDTO p:lsProduct
+                ) {
+
+            DiscountProduct dp = single(discountProductList,p.getProductId());
+
+            Discount discount = map.get(p.getDiscountId());
+            if (dp != null)
+            {
+                p.setDiscountId(dp.getDiscountId());
+                p.setDiscountPrice(p.getRealPrice().multiply(dp.getDiscountRate()));
+                p.setSingleCount(dp.getSingleCount());
+
+                //冗余，为了提交订单判断是否未开始活动和限购数量
+                p.setStartTime(discount.getStartTime());
+                p.setNotStartCanNotBuy(discount.getNotStartCanNotBuy());
+            }
+            else
+            {
+                p.setDiscountPrice(p.getRealPrice());
             }
         }
-        CouponCodeDTO coupon = couponCodeDTOManager.findByMemberId(memberId,lsProduct,couponCode);
+
+        if(!StringUtils.isEmpty(couponCode)) {
+            CouponCodeDTO coupon = couponCodeDTOManager.findByMemberId(memberId, lsProduct, couponCode);
+            dc.setCoupon(coupon);
+        }
         dc.setDiscount(lsProduct);
-        dc.setCoupon(coupon);
         return dc;
     }
 

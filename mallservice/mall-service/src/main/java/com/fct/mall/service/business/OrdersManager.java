@@ -334,11 +334,8 @@ public class OrdersManager {
         order.setOrderId(orderId);
         order.setMemberId(memberId);
 
-        Integer closeTime = 0 ;
-        if(!StringUtils.isEmpty(couponCode)) {
-            closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(), order.getMemberId(),
-                    0, lsOrderProduct, couponCode);
-        }
+        Integer closeTime = promotionService.useCouponCodeDiscount(order.getOrderId(), order.getMemberId(),
+                0, lsOrderProduct, couponCode);
 
         //关闭时间
         if(closeTime == -1)

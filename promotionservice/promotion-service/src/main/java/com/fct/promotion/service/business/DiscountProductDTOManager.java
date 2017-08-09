@@ -135,23 +135,22 @@ public class DiscountProductDTOManager {
                 ) {
             map.put(dicount.getId(),dicount);
         }
-
-
+        
         for (OrderProductDTO p:lsProduct
                 ) {
 
             DiscountProduct dp = single(discountProductList,p.getProductId());
-
-            Discount discount = map.get(p.getDiscountId());
             if (dp != null)
             {
+                Discount dis = map.get(dp.getDiscountId());
+
                 p.setDiscountId(dp.getDiscountId());
                 p.setDiscountPrice(p.getRealPrice().multiply(dp.getDiscountRate()));
                 p.setSingleCount(dp.getSingleCount());
 
                 //冗余，为了提交订单判断是否未开始活动和限购数量
-                p.setStartTime(discount.getStartTime());
-                p.setNotStartCanNotBuy(discount.getNotStartCanNotBuy());
+                p.setStartTime(dis.getStartTime());
+                p.setNotStartCanNotBuy(dis.getNotStartCanNotBuy());
             }
         }
 

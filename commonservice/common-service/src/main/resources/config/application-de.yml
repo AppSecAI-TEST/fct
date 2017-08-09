@@ -27,6 +27,7 @@ aliyun:
     accesskeyId: LTAIhVymglNdvlXM
     accesskeySecret: Ml6DD0eNolZWB45w0OTTCPlprX4uHg
     endpoint: http://oss-cn-shanghai.aliyuncs.com/
+    domain: https://cdn.fangcun.com
 
 oauth:
   wechat:

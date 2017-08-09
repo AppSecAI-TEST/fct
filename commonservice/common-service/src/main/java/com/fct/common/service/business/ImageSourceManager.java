@@ -5,6 +5,7 @@ import com.fct.common.data.repository.ImageSourceRepository;
 import com.fct.common.interfaces.FileRequest;
 import com.fct.common.interfaces.ImageResponse;
 import com.fct.common.interfaces.PageResponse;
+import com.fct.common.service.AliyunOSSConfig;
 import com.fct.common.service.Constants;
 import com.fct.common.service.oss.*;
 import com.fct.core.utils.PageUtil;
@@ -31,6 +32,9 @@ public class ImageSourceManager {
 
     @Autowired
     private FileOperatorHelper fileOperatorHelper;
+
+    @Autowired
+    private AliyunOSSConfig aliyunOSSConfig;
 
     public String save(ImageSource imageSource)
     {
@@ -101,7 +105,8 @@ public class ImageSourceManager {
 
                 ImageResponse imageResponse = new ImageResponse();
                 imageResponse.setUrl(imageSource.getUrl());
-                imageResponse.setFullUrl(response.getUrl());
+                //imageResponse.setFullUrl(response.getUrl());
+                imageResponse.setFullUrl(aliyunOSSConfig.getDomain()+imageSource.getUrl()+"!350");
                 imageResponse.setName(imageSource.getOriginalName());
                 imageResponse.setGuid(imageSource.getGuid());
                 lsResponse.add(imageResponse);

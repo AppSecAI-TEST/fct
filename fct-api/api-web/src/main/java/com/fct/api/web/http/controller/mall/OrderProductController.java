@@ -146,7 +146,7 @@ public class OrderProductController extends BaseController {
             map.put("name", product.getName());
             map.put("specName", product.getSpecName());
             map.put("img", fctResourceUrl.thumbSmall(product.getImg()));
-            map.put("price", product.getPrice());
+            map.put("price", product.getPayAmount().divide(new BigDecimal(product.getBuyCount())));
             map.put("buyCount", product.getBuyCount());
             map.put("payAmount", product.getPayAmount());
 

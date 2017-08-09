@@ -119,7 +119,7 @@ public class RefundController extends BaseController {
             productMap.put("specName", refund.getOrderGoods().getSpecName());
             productMap.put("img", fctResourceUrl.thumbSmall(refund.getOrderGoods().getImg()));
             productMap.put("buyCount", refund.getOrderGoods().getBuyCount());
-            productMap.put("price", refund.getOrderGoods().getPrice());
+            productMap.put("price", refund.getOrderGoods().getPayAmount().divide(new BigDecimal(refund.getOrderGoods().getBuyCount())));
             productMap.put("payAmount", refund.getOrderGoods().getPayAmount());
             map.put("orderGoods", productMap);
 

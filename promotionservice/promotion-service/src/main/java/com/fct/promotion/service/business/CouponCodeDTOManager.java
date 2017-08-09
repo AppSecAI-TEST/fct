@@ -66,8 +66,11 @@ public class CouponCodeDTOManager {
         if (memberId > 0)
         {
             sb.append(" and c.MemberId="+memberId);
-            sb.append(" and p.EndTime>=?");
-            param.add(DateUtils.format(DateUtils.addMonth(new Date(),-6)));
+            if (!isValid)
+            {
+                sb.append(" and p.EndTime>=?");
+                param.add(DateUtils.format(DateUtils.addMonth(new Date(), -6)));
+            }
         }
 
         if (!StringUtils.isEmpty(code))

@@ -14,6 +14,7 @@ import org.springframework.util.SerializationUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class OrderCache {
                         productMap.put("specName", product.getSpecName());
                         productMap.put("img", fctResourceUrl.thumbSmall(product.getImg()));
                         productMap.put("buyCount", product.getBuyCount());
-                        productMap.put("price", product.getPrice());
+                        productMap.put("price", product.getPayAmount().divide(new BigDecimal(product.getBuyCount())));
                         lsProductMaps.add(productMap);
                     }
                     map.put("orderGoods", lsProductMaps);

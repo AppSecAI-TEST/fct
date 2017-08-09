@@ -116,6 +116,7 @@ public class DiscountManager {
             p.setLastUpdateUserId(obj.getCreateUserId());
             p.setLastUpdateTime(new Date());
             p.setCreateTime(new Date());
+            p.setIsValidForSize(false);
             discountProductManager.save(p);
         }
 

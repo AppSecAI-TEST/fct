@@ -79,13 +79,13 @@ public class OrdersManager {
         ordersRepository.save(orders);
     }
 
-    public Integer getBuyCount(Integer memberId,Integer goodsId,Date startTime)
+    public Integer getBuyCount(Integer memberId,Integer goodsId,Date startTime,Integer buyCount)
     {
         String sql = "select count(0) from Orders o inner join OrderGoods g on o.orderId=g.orderId";
-        sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.createTime>='%s'",
+        sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.status!=4 and o.createTime>='%s'",
                 memberId,goodsId,DateUtils.format(startTime));
 
-        return jt.queryForObject(sql,Integer.class);
+        return jt.queryForObject(sql,Integer.class)+buyCount;
     }
 
     private OrderProductDTO getSingleProduct(List<OrderProductDTO> lsProduct, Integer pid)
@@ -202,7 +202,7 @@ public class OrdersManager {
                         throw new IllegalArgumentException("活动未开始【"+product.getProductId()+"】不可购买");
                     }
 
-                    Integer buyCount = getBuyCount(memberId,product.getProductId(),product.getStartTime());
+                    Integer buyCount = getBuyCount(memberId,product.getProductId(),product.getStartTime(),product.getCount());
                     if(product.getCount() > product.getSingleCount() || buyCount>=product.getSingleCount())
                     {
                         throw new IllegalArgumentException("限购宝贝超过购买数量");

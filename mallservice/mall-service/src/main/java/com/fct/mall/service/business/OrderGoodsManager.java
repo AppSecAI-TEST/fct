@@ -187,7 +187,8 @@ public class OrderGoodsManager {
                     throw new IllegalArgumentException("活动尚未开始【"+ discount.getDiscountProduct().getProductName() +"】不可购买。");
                 }
 
-                Integer buyCount = ordersManager.getBuyCount(memberId,discount.getProductId(),dis.getStartTime());
+                Integer buyCount = ordersManager.getBuyCount(memberId,discount.getProductId(),
+                        dis.getStartTime(),cart.getBuyCount());
                 if(cart.getBuyCount() > discount.getDiscountProduct().getSingleCount() ||
                         buyCount>=discount.getDiscountProduct().getSingleCount())
                 {

@@ -46,17 +46,22 @@ public class OrderManager {
         orderCloseTime = this.checkDiscount(products,memberGradeId);
 
         //check coupon
-        CouponCode coupon = checkAndReceiveCouponCode(memberId, products, couponCode);
+        if(!StringUtils.isEmpty(couponCode)) {
+            CouponCode coupon = checkAndReceiveCouponCode(memberId, products, couponCode);
+            if(coupon == null)
+            {
+                throw new IllegalArgumentException("无效优惠券码");
+            }
+            coupon.setUseTime(new Date());
+            coupon.setStatus(1);
+            couponCodeManager.save(coupon);
 
-        coupon.setUseTime(new Date());
-        coupon.setStatus(1);
-        couponCodeManager.save(coupon);
+            //use coupon
+            //couponCodeManager.setCodeUsing(coupon.getPolicyId(),coupon.getCode());
 
-        //use coupon
-        //couponCodeManager.setCodeUsing(coupon.getPolicyId(),coupon.getCode());
-
-        //record
-        this.addLog(orderId, coupon, products);
+            //record
+            this.addLog(orderId, coupon, products);
+        }
 
         return orderCloseTime;
 
@@ -80,22 +85,19 @@ public class OrderManager {
 
     private Integer checkDiscount(List<OrderProductDTO> products, Integer memberGradeId)
     {
-        int orderCloseTime = 0;
+        Integer orderCloseTime = 0;
+
         List<Integer> productIdList = new ArrayList<>();
         List<Integer> discountIdList = new ArrayList<>();
 
-
-        Constants.logger.info("one");
         for (OrderProductDTO obj:products
              ) {
             productIdList.add(obj.getProductId());
-            if (obj.getDiscountId() != null && obj.getDiscountId()>0 &&
-                    !discountIdList.contains(obj.getDiscountId()))
+            if (obj.getDiscountId()>0 && !discountIdList.contains(obj.getDiscountId()))
             {
                 discountIdList.add(obj.getDiscountId());
             }
         }
-        Constants.logger.info("two");
 
         Map<Integer,DiscountProduct> mapDiscountProduct = new HashMap<>();
         Map<Integer,Discount> mapDiscount = new HashMap<>();
@@ -113,8 +115,6 @@ public class OrderManager {
             }
         }
 
-
-        Constants.logger.info("three");
 
         if (discountProductList != null)
         {
@@ -159,9 +159,6 @@ public class OrderManager {
                 dicProductSizeCount.put(obj.getProductId(),mapSize);
             }
         }
-
-
-        Constants.logger.info("four");
 
         for (OrderProductDTO obj:products
              ) {
@@ -229,11 +226,6 @@ public class OrderManager {
                 orderCloseTime = orderCloseTime == 0 ? discount.getOrderCloseTime() : Math.min(orderCloseTime, discount.getOrderCloseTime());
             }
         }
-
-
-        Constants.logger.info("five");
-
-
 
         return orderCloseTime;
     }

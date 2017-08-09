@@ -192,7 +192,7 @@ public class OrderGoodsManager {
                 if(cart.getBuyCount() > discount.getDiscountProduct().getSingleCount() ||
                         buyCount>=discount.getDiscountProduct().getSingleCount())
                 {
-                    throw new IllegalArgumentException("限购宝贝超过购买数量");
+                    throw new IllegalArgumentException("宝贝超过限购数量");
                 }
             }
 

@@ -90,23 +90,19 @@ public class CouponCodeManager {
     }
 
     public void setCodeUsed(String code) {
-        String sql = "update CouponCode set Status =2,LastUpdateTime=? where code=? and Status=1";
-        List<Object> param = new ArrayList<>();
-        param.add(DateUtils.format(new Date()));
-        param.add(code);
+        String sql = String.format("update CouponCode set Status =2,LastUpdateTime='%s' where code='%s' and Status=1",
+                DateUtils.format(new Date()),code);
 
-        int count = jt.update(sql,param.toArray());
+        int count = jt.update(sql);
         if (count < 1) {
             throw new IllegalArgumentException("优惠券使用成功出错");
         }
     }
 
     public void cancelCodeUsed(String code) {
-        String sql = "update CouponCode set Status =0,LastUpdateTime=? where code=? and Status!=0";
-        List<Object> param = new ArrayList<>();
-        param.add(DateUtils.format(new Date()));
-        param.add(code);
-        int count = jt.update(sql,param.toArray());
+        String sql = String.format("update CouponCode set Status =0,LastUpdateTime='%s' where code='%s' and Status!=0",
+                DateUtils.format(new Date()),code);
+        int count = jt.update(sql);
         if (count < 1) {
             throw new IllegalArgumentException("优惠券取消使用成功出错");
         }

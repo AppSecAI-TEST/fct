@@ -84,18 +84,24 @@ public class OrderManager {
         List<Integer> productIdList = new ArrayList<>();
         List<Integer> discountIdList = new ArrayList<>();
 
+
+        Constants.logger.info("one");
         for (OrderProductDTO obj:products
              ) {
             productIdList.add(obj.getProductId());
-            if (obj.getDiscountId()>0 && !discountIdList.contains(obj.getDiscountId()))
+            if (obj.getDiscountId() != null && obj.getDiscountId()>0 &&
+                    !discountIdList.contains(obj.getDiscountId()))
             {
                 discountIdList.add(obj.getDiscountId());
             }
         }
+        Constants.logger.info("two");
+
         Map<Integer,DiscountProduct> mapDiscountProduct = new HashMap<>();
         Map<Integer,Discount> mapDiscount = new HashMap<>();
 
         List<DiscountProduct> discountProductList = discountProductManager.findByValid(productIdList,1);
+
         if(discountIdList.size()>0) {
             List<Discount> discountList = discountManager.findByDiscountId(discountIdList);
             if (discountList != null && discountIdList.size()>0)
@@ -106,6 +112,9 @@ public class OrderManager {
                 }
             }
         }
+
+
+        Constants.logger.info("three");
 
         if (discountProductList != null)
         {
@@ -150,6 +159,9 @@ public class OrderManager {
                 dicProductSizeCount.put(obj.getProductId(),mapSize);
             }
         }
+
+
+        Constants.logger.info("four");
 
         for (OrderProductDTO obj:products
              ) {
@@ -217,6 +229,9 @@ public class OrderManager {
                 orderCloseTime = orderCloseTime == 0 ? discount.getOrderCloseTime() : Math.min(orderCloseTime, discount.getOrderCloseTime());
             }
         }
+
+
+        Constants.logger.info("five");
 
 
 

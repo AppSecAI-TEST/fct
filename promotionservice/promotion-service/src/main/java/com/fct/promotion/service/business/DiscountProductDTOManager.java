@@ -153,10 +153,6 @@ public class DiscountProductDTOManager {
                 p.setStartTime(discount.getStartTime());
                 p.setNotStartCanNotBuy(discount.getNotStartCanNotBuy());
             }
-            else
-            {
-                p.setDiscountPrice(p.getRealPrice());
-            }
         }
 
         if(!StringUtils.isEmpty(couponCode)) {

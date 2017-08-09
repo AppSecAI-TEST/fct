@@ -82,7 +82,7 @@ public class OrdersManager {
     public Integer getBuyCount(Integer memberId,Integer goodsId,Date startTime)
     {
         String sql = "select count(0) from Orders o inner join OrderGoods g on o.orderId=g.orderId";
-        sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.createTime>'%s'",
+        sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.createTime>='%s'",
                 memberId,goodsId,DateUtils.format(startTime));
 
         return jt.queryForObject(sql,Integer.class);
@@ -138,6 +138,7 @@ public class OrdersManager {
             }
             p.setProductId(g.getId());
             p.setCount(cart.getBuyCount());
+            p.setDiscountPrice(p.getRealPrice());
 
             lsOrderProduct.add(p);
         }

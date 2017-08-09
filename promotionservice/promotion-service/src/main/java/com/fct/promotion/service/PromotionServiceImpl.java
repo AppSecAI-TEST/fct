@@ -375,8 +375,8 @@ public class PromotionServiceImpl implements PromotionService {
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());
+            return -1;
         }
-        return 0;
     }
 
     public DiscountCouponDTO getPromotion(Integer memberId, List<OrderProductDTO> products, String couponCode)

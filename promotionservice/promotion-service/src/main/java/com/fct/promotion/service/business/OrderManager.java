@@ -204,7 +204,8 @@ public class OrderManager {
             }
             else
             {
-                if (discountProduct.getSingleCount() < dicProductCount.get(obj.getProductId()))
+                if (discountProduct.getSingleCount()>0 &&
+                        discountProduct.getSingleCount() < dicProductCount.get(obj.getProductId()))
                 {
                     throw new IllegalArgumentException("超过购买的件数限制");
                 }

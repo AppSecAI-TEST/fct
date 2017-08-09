@@ -87,7 +87,7 @@ public class OrderManager {
         for (OrderProductDTO obj:products
              ) {
             productIdList.add(obj.getProductId());
-            if (!discountIdList.contains(obj.getDiscountId()))
+            if (obj.getDiscountId()>0 && !discountIdList.contains(obj.getDiscountId()))
             {
                 discountIdList.add(obj.getDiscountId());
             }
@@ -96,20 +96,22 @@ public class OrderManager {
         Map<Integer,Discount> mapDiscount = new HashMap<>();
 
         List<DiscountProduct> discountProductList = discountProductManager.findByValid(productIdList,1);
-        List<Discount> discountList = discountManager.findByDiscountId(discountIdList);
+        if(discountIdList.size()>0) {
+            List<Discount> discountList = discountManager.findByDiscountId(discountIdList);
+            if (discountList != null && discountIdList.size()>0)
+            {
+                for (Discount obj:discountList
+                        ) {
+                    mapDiscount.put(obj.getId(),obj);
+                }
+            }
+        }
 
         if (discountProductList != null)
         {
             for (DiscountProduct obj:discountProductList
                  ) {
                 mapDiscountProduct.put(obj.getProductId(),obj);
-            }
-        }
-        if (discountList != null)
-        {
-            for (Discount obj:discountList
-                    ) {
-                mapDiscount.put(obj.getId(),obj);
             }
         }
 

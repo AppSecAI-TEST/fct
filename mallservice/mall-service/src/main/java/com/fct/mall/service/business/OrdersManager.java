@@ -136,6 +136,7 @@ public class OrdersManager {
                 }
                 p.setRealPrice(g.getSalePrice());
             }
+            p.setDiscountId(0);
             p.setProductId(g.getId());
             p.setCount(cart.getBuyCount());
             p.setDiscountPrice(p.getRealPrice());

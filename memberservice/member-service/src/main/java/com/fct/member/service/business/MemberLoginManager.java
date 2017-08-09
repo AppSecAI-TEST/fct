@@ -132,15 +132,32 @@ public class MemberLoginManager {
 
     public void updateLogin(String token,Member member,MemberInfo info)
     {
+        Boolean hasSave = false;
         MemberLogin  login = findByToken(token);
         if(login.getMemberId() != member.getId())
         {
             throw new IllegalArgumentException("非法操作。");
         }
-        login.setHeadPortrait(info.getHeadPortrait());
-        login.setUserName(member.getUserName());
 
-        memberLoginRepository.save(login);
+        if (login.getAuthStatus() != member.getAuthStatus())
+        {
+            login.setAuthStatus(member.getAuthStatus());
+            hasSave = true;
+        }
+
+        if (login.getHeadPortrait() != info.getHeadPortrait())
+        {
+            login.setHeadPortrait(info.getHeadPortrait());
+            hasSave = true;
+        }
+        if (login.getUserName() != member.getUserName())
+        {
+            login.setUserName(member.getUserName());
+            hasSave = true;
+        }
+
+        if (hasSave)
+            memberLoginRepository.save(login);
     }
 
     public void updateAudiStatus(Integer memberId,Integer audiStatus)

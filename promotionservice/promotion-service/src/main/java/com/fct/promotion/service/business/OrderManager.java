@@ -151,7 +151,7 @@ public class OrderManager {
 
         for (OrderProductDTO obj:products
              ) {
-            if (obj.getDiscountId() < 1)
+            if (obj.getDiscountId() == null || obj.getDiscountId() < 1)
             {
                 continue;
             }

@@ -90,7 +90,7 @@ public class OrderCommentManager {
             comment.setOrderId(orderId);
             comment.setMemberId(orders.getMemberId());
             comment.setLogisticsScore(logisticsScore);
-            comment.setStatus(saleScore);
+            comment.setSaleScore(saleScore);
             comment.setIsAnonymous(anonymous);
 
             int count = orderCommentRepository.countByOrderIdAndGoodsId(comment.getOrderId(),comment.getGoodsId());

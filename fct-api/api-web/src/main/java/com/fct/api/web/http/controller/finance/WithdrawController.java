@@ -122,9 +122,15 @@ public class WithdrawController extends BaseController {
 
         MemberLogin member = this.memberAuth();
 
+
+        if (member.getAuthStatus() == 1) {
+
+            return new ReturnValue(401, "您已提交认证信息，正在审核中");
+        }
+
         if (member.getAuthStatus() != 2) {
 
-            return new ReturnValue(404, "还未进行实名认证");
+            return new ReturnValue(402, "还未进行实名认证");
         }
 
         MemberBankInfo bankInfo = memberService.getMemberBankInfoByMember(member.getMemberId());

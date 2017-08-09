@@ -95,11 +95,9 @@ public class CouponCodeManager {
         param.add(DateUtils.format(new Date()));
         param.add(code);
 
-        synchronized (syncObj) {
-            int count = jt.update(sql,param.toArray());
-            if (count < 1) {
-                throw new IllegalArgumentException("优惠券使用成功出错");
-            }
+        int count = jt.update(sql,param.toArray());
+        if (count < 1) {
+            throw new IllegalArgumentException("优惠券使用成功出错");
         }
     }
 
@@ -108,11 +106,9 @@ public class CouponCodeManager {
         List<Object> param = new ArrayList<>();
         param.add(DateUtils.format(new Date()));
         param.add(code);
-        synchronized (syncObj) {
-            int count = jt.update(sql,param.toArray());
-            if (count < 1) {
-                throw new IllegalArgumentException("优惠券取消使用成功出错");
-            }
+        int count = jt.update(sql,param.toArray());
+        if (count < 1) {
+            throw new IllegalArgumentException("优惠券取消使用成功出错");
         }
     }
 

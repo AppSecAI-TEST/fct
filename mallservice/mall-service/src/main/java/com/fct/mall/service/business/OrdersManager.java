@@ -204,7 +204,7 @@ public class OrdersManager {
                     }
 
                     Integer buyCount = getBuyCount(memberId,product.getProductId(),product.getStartTime(),product.getCount());
-                    if(product.getCount() > product.getSingleCount() || buyCount>=product.getSingleCount())
+                    if(product.getCount() > product.getSingleCount() || buyCount>product.getSingleCount())
                     {
                         throw new IllegalArgumentException("宝贝超过限购数量");
                     }

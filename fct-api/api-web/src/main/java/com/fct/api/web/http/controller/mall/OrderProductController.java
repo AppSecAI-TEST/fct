@@ -44,6 +44,7 @@ public class OrderProductController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public ReturnValue<Map<String, Object>> getOrderProducts(String orderProductInfo) {
 
+
         MemberLogin member = this.memberAuth();
 
         List<OrderGoodsDTO> orderProductIds = JsonConverter.toObject(orderProductInfo,
@@ -57,29 +58,27 @@ public class OrderProductController extends BaseController {
         }
 
         OrderGoodsResponse lsOrderGoods = mallService.getSubmitOrderGoods(member.getMemberId(), orderProductIds);
+        if (lsOrderGoods == null || lsOrderGoods.getItems().size() < 1)
+            return new ReturnValue<>(404, "非法请求");
 
         //优惠券使用List<OrderProductDTO
         List<OrderProductDTO> lsOrderProduct = new ArrayList<>();
-        if (lsOrderGoods != null
-                && lsOrderGoods.getItems() != null) {
+        for (OrderGoods orderGoods:lsOrderGoods.getItems()) {
 
-            for (OrderGoods orderGoods:lsOrderGoods.getItems()) {
+            //设置图片
+            orderGoods.setImg(fctResourceUrl.thumbSmall(orderGoods.getImg()));
 
-                //设置图片
-                orderGoods.setImg(fctResourceUrl.thumbSmall(orderGoods.getImg()));
+            if (StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
 
-                if (StringUtils.isEmpty(lsOrderGoods.getCouponCode())) {
-
-                    OrderProductDTO productDTO = new OrderProductDTO();
-                    productDTO.setProductId(orderGoods.getGoodsId());
-                    productDTO.setSizeId(orderGoods.getGoodsSpecId());
-                    productDTO.setCount(orderGoods.getBuyCount());
-                    productDTO.setRealPrice(orderGoods.getPrice());
-                    productDTO.setDiscountId(0);
-                    productDTO.setSingleCount(0);
-                    productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
-                    lsOrderProduct.add(productDTO);
-                }
+                OrderProductDTO productDTO = new OrderProductDTO();
+                productDTO.setProductId(orderGoods.getGoodsId());
+                productDTO.setSizeId(orderGoods.getGoodsSpecId());
+                productDTO.setCount(orderGoods.getBuyCount());
+                productDTO.setRealPrice(orderGoods.getPrice());
+                productDTO.setDiscountId(0);
+                productDTO.setSingleCount(0);
+                productDTO.setDiscountPrice(orderGoods.getPromotionPrice());
+                lsOrderProduct.add(productDTO);
             }
         }
 

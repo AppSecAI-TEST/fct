@@ -33,7 +33,7 @@ public final class DefaultExceptionHandler implements HandlerExceptionResolver {
         }
         else if (ex instanceof IllegalArgumentException) {
             response.setStatus(200);
-            logger.info(request.getHeader("request-id") + " " + request.getMethod() + request.getServletPath());
+/*            logger.info(request.getHeader("request-id") + " " + request.getMethod() + request.getServletPath());
             logger.info(request.getQueryString());
             try {
                 logger.info(Okio.buffer(Okio.source(request.getInputStream())).readString(Charsets.UTF_8));
@@ -41,7 +41,7 @@ public final class DefaultExceptionHandler implements HandlerExceptionResolver {
                 //ignore
             }
             logger.info(getHeaderParam(request));
-            logger.info(Exceptions.getStackTraceAsString(ex));
+            logger.info(Exceptions.getStackTraceAsString(ex));*/
             return JsonModelAndViewBuilder.build(new ErrorMessage(404,ex.getMessage()));
         }
         else if (ex instanceof NullPointerException) {

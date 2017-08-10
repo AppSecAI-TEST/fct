@@ -212,6 +212,10 @@ public class MemberController extends BaseController {
     @RequestMapping(value = "logout", method = RequestMethod.POST)
     public ReturnValue logout() {
 
-        return new ReturnValue();
+        MemberLogin member = this.memberAuth(false);
+        if (member != null)
+            memberService.logoutMember(member.getToken());
+
+        return new ReturnValue(200, "退出成功");
     }
 }

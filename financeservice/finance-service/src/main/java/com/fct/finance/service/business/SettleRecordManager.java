@@ -75,6 +75,10 @@ public class SettleRecordManager {
             //额外奖励推荐者
             record.setInviterCommission(record.getCommission().multiply(new BigDecimal("0.1")));
         }
+        else
+        {
+            record.setInviterCommission(new BigDecimal(0));
+        }
 
         record.setStatus(0);
         record.setCreateTime(new Date());

@@ -57,10 +57,6 @@ public class ShoppingCartManager {
         {
             throw new IllegalArgumentException("商品不存在");
         }
-        if (buyCount < 1)
-        {
-            throw new IllegalArgumentException("请输入购买数量");
-        }
 
         Goods goods = goodsManager.findById(goodsId);
         if (goods.getStockCount() < 1)
@@ -119,6 +115,10 @@ public class ShoppingCartManager {
             cart.setCreateTime(new Date());
         }
         cart.setUpdateTime(new Date());
+
+        if(cart.getBuyCount() <=0) {
+            throw new IllegalArgumentException("购买数量不合法");
+        }
 
         if (cart.getBuyCount() > goods.getStockCount())
         {

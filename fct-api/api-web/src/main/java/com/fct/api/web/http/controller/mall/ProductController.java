@@ -105,7 +105,7 @@ public class ProductController extends BaseController {
             discount.put("discountRate", discountProductDTO.getDiscountProduct().getDiscountRate());
             discount.put("discountTime", endTime);
             discount.put("hasBegin", hasBegin);
-            discount.put("canBuy", !notCanBuy);
+            discount.put("canBuy", !(discountProductDTO.getDiscount().getNotStartCanNotBuy() == 1));
         }
 
         //活动开始或限制购买，价格变成折扣后价格
@@ -119,7 +119,16 @@ public class ProductController extends BaseController {
         product.put("subTitle", goods.getSubTitle());
         product.put("status", goods.getStatus());
         //如果是限制购买，在活动未开始之前禁止购买，库存为0
-        product.put("stockCount", notCanBuy ? 0 : goods.getStockCount());
+        Integer stock = 0;
+        if (!notCanBuy)
+        {
+            stock = discountProductDTO.getDiscountProduct().getSingleCount() > 0
+                    && discountProductDTO.getDiscountProduct().getSingleCount() <= goods.getStockCount()
+                    ? discountProductDTO.getDiscountProduct().getSingleCount()
+                    : goods.getStockCount();
+
+        }
+        product.put("stockCount", stock);
         product.put("salePrice", goods.getSalePrice());
         product.put("promotionPrice", goods.getSalePrice().multiply(discountRate));
         product.put("favoriteState", favoriteState);
@@ -141,7 +150,16 @@ public class ProductController extends BaseController {
             specification.put("id", spec.getId());
             specification.put("name", spec.getName());
             //如果是限制购买，在活动未开始之前禁止购买，库存为0
-            specification.put("stockCount", notCanBuy ? 0 : spec.getStockCount());
+            stock = 0;
+            if (hasBegin || !notCanBuy)
+            {
+                stock = discountProductDTO.getDiscountProduct().getSingleCount() > 0
+                        && discountProductDTO.getDiscountProduct().getSingleCount() <= spec.getStockCount()
+                        ? discountProductDTO.getDiscountProduct().getSingleCount()
+                        : spec.getStockCount();
+
+            }
+            specification.put("stockCount", stock);
             specification.put("salePrice", spec.getSalePrice());
             specification.put("promotionPrice", spec.getSalePrice().multiply(discountRate));
             lsSpec.add(specification);

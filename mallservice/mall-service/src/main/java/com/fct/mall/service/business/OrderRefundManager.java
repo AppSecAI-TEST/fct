@@ -294,9 +294,9 @@ public class OrderRefundManager {
         if (refundId < 1) {
             throw new IllegalArgumentException ("非法操作");
         }
-        if (StringUtils.isEmpty (description)) {
+        /*if (StringUtils.isEmpty (description)) {
             throw new IllegalArgumentException ("说明不能为空");
-        }
+        }*/
         OrderRefund refund = orderRefundRepository.findOne(refundId);
         if (refund == null) {
             throw new IllegalArgumentException ("非法操作");

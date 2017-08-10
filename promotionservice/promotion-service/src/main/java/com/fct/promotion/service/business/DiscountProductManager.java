@@ -119,8 +119,8 @@ public class DiscountProductManager {
         StringBuilder sb = new StringBuilder();
         sb.append("select p.ProductId,p.DiscountId,p.DiscountRate as DiscountPrice,p.SingleCount,d.StartTime as StartTime,");
         sb.append("d.NotStartCanNotBuy as NotStartCanNotBuy");
-        sb.append("from Discount d inner join DiscountProduct p on d.Id = p.DiscountId");
-        sb.append(String.format("where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
+        sb.append(" from Discount d inner join DiscountProduct p on d.Id = p.DiscountId");
+        sb.append(String.format(" where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
                 DateUtils.format(new Date())));
         sb.append(" AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)");
 

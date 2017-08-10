@@ -90,8 +90,8 @@ public class ShoppingCartController extends BaseController {
         if (product_id < 1)
             return new ReturnValue<>(404, "产品有误");
 
-        if (buy_number < 1)
-            return new ReturnValue<>(404, "购买数量不能小于1");
+/*        if (buy_number < 1)
+            return new ReturnValue<>(404, "购买数量不能小于1");*/
 
         MemberLogin member = this.memberAuth();
         mallService.saveShoppingCart(member.getMemberId(), 0, product_id, spec_id, buy_number);

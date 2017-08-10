@@ -29,9 +29,8 @@ public class FctResourceUrl {
     public String thumbnail(String url, int size)
     {
         if(StringUtils.isEmpty(url))
-        {
-            url = "";
-        }
+            return this.defaultNullImage();
+
         return String.format("%s!%d", this.getImageUrl(url), size);
     }
 

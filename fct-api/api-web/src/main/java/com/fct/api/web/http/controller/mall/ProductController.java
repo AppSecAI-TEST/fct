@@ -122,7 +122,7 @@ public class ProductController extends BaseController {
         Integer stock = 0;
         if (!notCanBuy)
         {
-            stock = discountProductDTO.getDiscountProduct().getSingleCount() > 0
+            stock = discountProductDTO != null && discountProductDTO.getDiscountProduct().getSingleCount() > 0
                     && discountProductDTO.getDiscountProduct().getSingleCount() <= goods.getStockCount()
                     ? discountProductDTO.getDiscountProduct().getSingleCount()
                     : goods.getStockCount();
@@ -153,7 +153,7 @@ public class ProductController extends BaseController {
             stock = 0;
             if (hasBegin || !notCanBuy)
             {
-                stock = discountProductDTO.getDiscountProduct().getSingleCount() > 0
+                stock = discountProductDTO != null && discountProductDTO.getDiscountProduct().getSingleCount() > 0
                         && discountProductDTO.getDiscountProduct().getSingleCount() <= spec.getStockCount()
                         ? discountProductDTO.getDiscountProduct().getSingleCount()
                         : spec.getStockCount();

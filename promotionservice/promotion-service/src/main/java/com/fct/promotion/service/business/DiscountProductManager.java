@@ -77,7 +77,7 @@ public class DiscountProductManager {
         return discountProductRepository.findByDiscountId(discountId);
     }
 
-    public List<DiscountProduct> findByValid(List<Integer> productIds, Integer filterNoBegin)
+    private String handleGoodsId(List<Integer> productIds)
     {
         String ids = "";
 
@@ -87,13 +87,19 @@ public class DiscountProductManager {
         }
 
         for (Integer id:productIds
-             ) {
+                ) {
             if(!StringUtils.isEmpty(ids))
             {
                 ids += ",";
             }
             ids += id;
         }
+        return ids;
+    }
+
+    public List<DiscountProduct> findByValid(List<Integer> productIds, Integer filterNoBegin)
+    {
+        String ids = handleGoodsId(productIds);
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("select p.* from Discount d inner join DiscountProduct p  on d.Id = p.DiscountId where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
@@ -104,6 +110,21 @@ public class DiscountProductManager {
         }
         return jt.query(sb.toString(), new Object[]{}, new BeanPropertyRowMapper<DiscountProduct>(DiscountProduct.class));
         //return jt.queryForList(sql,DiscountProduct.class);
+    }
+
+    public List<OrderProductDTO> findBySubmitOrder(List<Integer> productIds)
+    {
+        String ids = handleGoodsId(productIds);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("select p.ProductId,p.DiscountId,p.DiscountRate as DiscountPrice,p.SingleCount,d.StartTime as StartTime,");
+        sb.append("d.NotStartCanNotBuy as NotStartCanNotBuy");
+        sb.append("from Discount d inner join DiscountProduct p on d.Id = p.DiscountId");
+        sb.append(String.format("where d.AuditStatus=1 and p.ProductId in (" + ids + ") and d.EndTime>='%s'",
+                DateUtils.format(new Date())));
+        sb.append(" AND (d.StartTime<='" + DateUtils.getNowDateStr("yyyy-MM-dd HH:mm") + "' OR d.NotStartCanNotBuy=1)");
+
+        return jt.query(sb.toString(), new Object[]{}, new BeanPropertyRowMapper<OrderProductDTO>(OrderProductDTO.class));
     }
 
 

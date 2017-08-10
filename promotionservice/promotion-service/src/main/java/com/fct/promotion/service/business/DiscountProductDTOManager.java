@@ -118,39 +118,25 @@ public class DiscountProductDTOManager {
         }
 
         DiscountCouponDTO dc = new DiscountCouponDTO();
-        List<DiscountProduct> discountProductList = discountProductManager.findByValid(productIds,1);
+        List<OrderProductDTO> discountProductList = discountProductManager.findBySubmitOrder(productIds);
         if (discountProductList == null || discountProductList.size() < 1)
         {
             return null;
         }
-
-        List<Integer> discountIds = new ArrayList<>();
-        for (DiscountProduct p: discountProductList
-                ) {
-            discountIds.add(p.getDiscountId());
-        }
-        List<Discount> discountList = discountManager.findByDiscountId(discountIds);
-        Map<Integer, Discount> map = new HashMap<>();
-        for (Discount dicount:discountList
-                ) {
-            map.put(dicount.getId(),dicount);
-        }
-
         for (OrderProductDTO p:lsProduct
                 ) {
 
-            DiscountProduct dp = single(discountProductList,p.getProductId());
+            OrderProductDTO dp = single(discountProductList,p.getProductId());
             if (dp != null)
             {
-                Discount dis = map.get(dp.getDiscountId());
-
                 p.setDiscountId(dp.getDiscountId());
-                p.setDiscountPrice(p.getRealPrice().multiply(dp.getDiscountRate()));
+                //查询数据库，特意将discountRate转换成对像discountPrice.避免少加一个model;
+                p.setDiscountPrice(p.getRealPrice().multiply(dp.getDiscountPrice()));
                 p.setSingleCount(dp.getSingleCount());
 
                 //冗余，为了提交订单判断是否未开始活动和限购数量
-                p.setStartTime(dis.getStartTime());
-                p.setNotStartCanNotBuy(dis.getNotStartCanNotBuy());
+                p.setStartTime(dp.getStartTime());
+                p.setNotStartCanNotBuy(dp.getNotStartCanNotBuy());
             }
         }
 
@@ -162,9 +148,9 @@ public class DiscountProductDTOManager {
         return dc;
     }
 
-    private  DiscountProduct single(List<DiscountProduct> lsProduct,Integer productId)
+    private  OrderProductDTO single(List<OrderProductDTO> lsProduct,Integer productId)
     {
-        for (DiscountProduct p:lsProduct
+        for (OrderProductDTO p:lsProduct
              ) {
             if(p.getProductId() == productId)
             {

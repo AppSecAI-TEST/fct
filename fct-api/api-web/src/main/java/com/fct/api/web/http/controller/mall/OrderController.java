@@ -102,6 +102,7 @@ public class OrderController extends BaseController {
         map.put("payAmount", orders.getPayAmount());
         map.put("status", orders.getStatus());
         map.put("statusName", orderCache.getStatusName(orders.getStatus()));
+        map.put("commentStatus", orders.getCommentStatus());
         map.put("buyTotalCount", orders.getOrderGoods().size());
         map.put("payOrderId", orders.getPayOrderId());
         map.put("payPlatform", orders.getPayPlatform());

@@ -56,6 +56,7 @@ public class OrderCache {
                     map.put("payAmount", order.getPayAmount());
                     map.put("status", order.getStatus());
                     map.put("statusName", this.getStatusName(order.getStatus()));
+                    map.put("commentStatus", order.getCommentStatus());
                     map.put("buyTotalCount", order.getOrderGoods().size());
                     lsProductMaps = new ArrayList<>();
                     for (OrderGoods product: order.getOrderGoods()) {

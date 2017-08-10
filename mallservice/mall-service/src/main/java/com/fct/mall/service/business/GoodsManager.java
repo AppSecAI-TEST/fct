@@ -80,6 +80,11 @@ public class GoodsManager {
         return ls;
     }
 
+    public void update(Goods goods)
+    {
+        goodsRepository.save(goods);
+    }
+
     @Transactional
     public void save(Goods goods)
     {

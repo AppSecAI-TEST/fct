@@ -126,17 +126,17 @@ public class OrderCommentManager {
         {
             throw  new IllegalArgumentException("id不存在");
         }
-        OrderComment commnet = orderCommentRepository.findOne(id);
+        OrderComment comment = orderCommentRepository.findOne(id);
         if(status ==1)
         {
-            Goods g = goodsManager.findById(commnet.getGoodsId());
+            Goods g = goodsManager.findById(comment.getGoodsId());
             g.setCommentCount(g.getCommentCount()+1);
-            g.setCommentScore(getGoodsScore(g.getId(),commnet.getDescScore()));//计算动态评分
-            goodsManager.save(g);
+            g.setCommentScore(getGoodsScore(g.getId(),comment.getDescScore()));//计算动态评分
+            goodsManager.update(g);
         }
-        commnet.setStatus(status);
-        commnet.setUpdateTime(new Date());
-        orderCommentRepository.save(commnet);
+        comment.setStatus(status);
+        comment.setUpdateTime(new Date());
+        orderCommentRepository.save(comment);
     }
 
     public void reply(Integer id,String replyContent)

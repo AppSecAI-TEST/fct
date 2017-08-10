@@ -77,6 +77,8 @@ public class SettleRecordManager {
         }
 
         record.setStatus(0);
+        record.setCreateTime(new Date());
+        record.setUpdateTime(new Date());
         settleRecordRepository.save(record);
         return record.getId();
     }

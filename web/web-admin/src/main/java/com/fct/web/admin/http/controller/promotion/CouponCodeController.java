@@ -82,6 +82,7 @@ public class CouponCodeController extends BaseController {
         query.put("status", status);
         query.put("selkey", selkey);
         query.put("selvalue", selvalue);
+        query.put("policyid", policyid);
 
         model.addAttribute("query", query);
         model.addAttribute("lsCoupon", lsCoupon);

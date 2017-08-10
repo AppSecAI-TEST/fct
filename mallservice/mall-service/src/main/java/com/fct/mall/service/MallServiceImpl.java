@@ -378,6 +378,10 @@ public class MallServiceImpl implements MallService {
         try {
             return orderGoodsManager.findFinalGoods(memberId,lsGoods);
         }
+        catch (IllegalArgumentException exp)
+        {
+            throw exp;
+        }
         catch (Exception exp)
         {
             Constants.logger.error(exp.toString());

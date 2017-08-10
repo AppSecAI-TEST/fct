@@ -81,7 +81,7 @@ public class OrdersManager {
 
     public Integer getBuyCount(Integer memberId,Integer goodsId,Date startTime,Integer buyCount)
     {
-        String sql = "select count(0) from Orders o inner join OrderGoods g on o.orderId=g.orderId";
+        String sql = "select sum(g.buyCount) from Orders o inner join OrderGoods g on o.orderId=g.orderId";
         sql += String.format(" where o.memberId=%d and g.goodsId=%d and o.status!=4 and o.createTime>='%s'",
                 memberId,goodsId,DateUtils.format(startTime));
 

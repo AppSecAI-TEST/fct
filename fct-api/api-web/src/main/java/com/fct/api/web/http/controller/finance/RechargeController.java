@@ -1,5 +1,6 @@
 package com.fct.api.web.http.controller.finance;
 
+import com.fct.api.web.http.cache.DataCache;
 import com.fct.api.web.http.cache.PaymentCache;
 import com.fct.api.web.http.controller.BaseController;
 import com.fct.core.utils.ConvertUtils;
@@ -33,6 +34,9 @@ public class RechargeController extends BaseController {
 
     @Autowired
     private PaymentCache paymentCache;
+
+    @Autowired
+    private DataCache dataCache;
 
     /**获取用户充值列表
      *
@@ -132,7 +136,7 @@ public class RechargeController extends BaseController {
         recharge.setMemberId(member.getMemberId());
         recharge.setCellPhone(member.getCellPhone());
         recharge.setPayAmount(pay_amount);
-        recharge.setGiftAmount(this.getGiftAmount(pay_amount));
+        recharge.setGiftAmount(dataCache.getGift(pay_amount));
 
         Integer id = financeService.createRechargeRecord(recharge);
         ReturnValue<Integer> response = new ReturnValue<>();
@@ -152,40 +156,8 @@ public class RechargeController extends BaseController {
 
         //充值数据
         ReturnValue<Map<String, Object>> response = new ReturnValue<>();
-        response.setData(this.getRechargeRules());
+        response.setData(dataCache.getRechargeRules());
 
         return response;
-    }
-
-    private BigDecimal getGiftAmount(BigDecimal amount) {
-
-        Map<String, Object> map = this.getRechargeRules();
-        Map<Integer, Double> rules = (Map<Integer, Double>) map.get("rules");
-        if (rules.containsKey(amount)) {
-
-            return amount.multiply(ConvertUtils.toBigDeciaml(rules.get(amount)));
-        }
-
-        return amount.multiply(ConvertUtils.toBigDeciaml(map.get("defaultGift")));
-    }
-
-    private Map<String, Object> getRechargeRules() {
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("min", 100);
-        map.put("max", 10000000);
-        map.put("defaultGift", 0.2);
-
-        Map<Integer, Double> ruleMap = new HashMap<>();
-        ruleMap.put(500, 0.2);
-        ruleMap.put(1000, 0.3);
-        ruleMap.put(3000, 0.4);
-        ruleMap.put(5000, 0.5);
-        ruleMap.put(10000, 0.6);
-        ruleMap.put(50000, 0.7);
-
-        map.put("rules", ruleMap);
-
-        return map;
     }
 }
